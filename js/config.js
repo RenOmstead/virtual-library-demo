@@ -1,6 +1,6 @@
 /* =========================================================
    SHELFMARK
-   APP CONFIGURATION
+   CONFIG.JS
    ========================================================= */
 
 window.SHELFMARK_CONFIG = {
@@ -15,30 +15,35 @@ window.SHELFMARK_CONFIG = {
 
 
     /* =====================================================
-       STORAGE KEYS
+       STORAGE
        ===================================================== */
 
     storageKeys: {
 
-        shelves: "shelfmark_shelves",
+        shelves:
+            "shelfmark_shelves",
 
-        books: "shelfmark_books",
+        books:
+            "shelfmark_books",
 
-        settings: "shelfmark_settings"
+        settings:
+            "shelfmark_settings"
 
     },
 
 
     /* =====================================================
-       AVAILABLE THEMES
+       THEMES
        ===================================================== */
 
     themes: [
 
         {
-            id: "haunted",
+            id:
+                "haunted",
 
-            name: "Haunted Library",
+            name:
+                "Haunted Library",
 
             description:
                 "candlelight · rain · old wood",
@@ -54,11 +59,12 @@ window.SHELFMARK_CONFIG = {
             ]
         },
 
-
         {
-            id: "autumn",
+            id:
+                "autumn",
 
-            name: "Autumn Bookshop",
+            name:
+                "Autumn Bookshop",
 
             description:
                 "pumpkins · tea · warm evenings",
@@ -74,11 +80,12 @@ window.SHELFMARK_CONFIG = {
             ]
         },
 
-
         {
-            id: "forest",
+            id:
+                "forest",
 
-            name: "Enchanted Forest",
+            name:
+                "Enchanted Forest",
 
             description:
                 "moss · moonlight · strange little things",
@@ -94,11 +101,12 @@ window.SHELFMARK_CONFIG = {
             ]
         },
 
-
         {
-            id: "retro",
+            id:
+                "retro",
 
-            name: "Retro Horror",
+            name:
+                "Retro Horror",
 
             description:
                 "VHS · monsters · strange broadcasts",
@@ -112,11 +120,12 @@ window.SHELFMARK_CONFIG = {
             ]
         },
 
-
         {
-            id: "ghosts",
+            id:
+                "ghosts",
 
-            name: "Pastel Ghosts",
+            name:
+                "Pastel Ghosts",
 
             description:
                 "friendly spirits · dusty pink · sage",
@@ -136,99 +145,469 @@ window.SHELFMARK_CONFIG = {
 
 
     /* =====================================================
-       DECORATION LIBRARY
+       DECORATIONS
        ===================================================== */
 
     decorations: {
 
         plant: {
-            id: "plant",
-            label: "Plant",
-            category: "nature"
+            id:
+                "plant",
+
+            label:
+                "Plant",
+
+            category:
+                "nature"
         },
 
         candle: {
-            id: "candle",
-            label: "Candle",
-            category: "objects"
+            id:
+                "candle",
+
+            label:
+                "Candle",
+
+            category:
+                "objects"
         },
 
         flowers: {
-            id: "flowers",
-            label: "Flowers",
-            category: "nature"
+            id:
+                "flowers",
+
+            label:
+                "Flowers",
+
+            category:
+                "nature"
         },
 
         stars: {
-            id: "stars",
-            label: "Stars",
-            category: "magic"
+            id:
+                "stars",
+
+            label:
+                "Stars",
+
+            category:
+                "magic"
         },
 
         mug: {
-            id: "mug",
-            label: "Tea Mug",
-            category: "objects"
+            id:
+                "mug",
+
+            label:
+                "Tea Mug",
+
+            category:
+                "objects"
         },
 
         cat: {
-            id: "cat",
-            label: "Cat",
-            category: "creatures"
+            id:
+                "cat",
+
+            label:
+                "Cat",
+
+            category:
+                "creatures"
         },
 
         ghost: {
-            id: "ghost",
-            label: "Ghost",
-            category: "creatures"
+            id:
+                "ghost",
+
+            label:
+                "Ghost",
+
+            category:
+                "creatures"
         },
 
         bat: {
-            id: "bat",
-            label: "Bat",
-            category: "creatures"
+            id:
+                "bat",
+
+            label:
+                "Bat",
+
+            category:
+                "creatures"
         },
 
         goblin: {
-            id: "goblin",
-            label: "Goblin",
-            category: "creatures"
+            id:
+                "goblin",
+
+            label:
+                "Goblin",
+
+            category:
+                "creatures"
         },
 
         moss: {
-            id: "moss",
-            label: "Moss",
-            category: "nature"
+            id:
+                "moss",
+
+            label:
+                "Moss",
+
+            category:
+                "nature"
         },
 
         mushroom: {
-            id: "mushroom",
-            label: "Mushroom",
-            category: "nature"
+            id:
+                "mushroom",
+
+            label:
+                "Mushroom",
+
+            category:
+                "nature"
         },
 
         potion: {
-            id: "potion",
-            label: "Potion Bottle",
-            category: "magic"
+            id:
+                "potion",
+
+            label:
+                "Potion Bottle",
+
+            category:
+                "magic"
         },
 
         crystal: {
-            id: "crystal",
-            label: "Crystal",
-            category: "magic"
+            id:
+                "crystal",
+
+            label:
+                "Crystal",
+
+            category:
+                "magic"
         },
 
         raven: {
-            id: "raven",
-            label: "Raven",
-            category: "creatures"
+            id:
+                "raven",
+
+            label:
+                "Raven",
+
+            category:
+                "creatures"
         },
 
         pumpkin: {
-            id: "pumpkin",
-            label: "Pumpkin",
-            category: "objects"
+            id:
+                "pumpkin",
+
+            label:
+                "Pumpkin",
+
+            category:
+                "objects"
+        }
+
+    },
+
+
+    /* =====================================================
+       SPINE DESIGNS
+       ===================================================== */
+
+    spineStyles: [
+
+        {
+            id:
+                "classic",
+
+            name:
+                "Classic Cloth",
+
+            defaultOrnament:
+                "diamond",
+
+            defaultFont:
+                "serif"
+        },
+
+        {
+            id:
+                "gothic",
+
+            name:
+                "Ornate Gothic",
+
+            defaultOrnament:
+                "diamond",
+
+            defaultFont:
+                "roman"
+        },
+
+        {
+            id:
+                "botanical",
+
+            name:
+                "Botanical",
+
+            defaultOrnament:
+                "leaf",
+
+            defaultFont:
+                "serif"
+        },
+
+        {
+            id:
+                "celestial",
+
+            name:
+                "Celestial",
+
+            defaultOrnament:
+                "moon",
+
+            defaultFont:
+                "serif"
+        },
+
+        {
+            id:
+                "floral",
+
+            name:
+                "Vintage Floral",
+
+            defaultOrnament:
+                "flower",
+
+            defaultFont:
+                "storybook"
+        },
+
+        {
+            id:
+                "pastel",
+
+            name:
+                "Pastel",
+
+            defaultOrnament:
+                "heart",
+
+            defaultFont:
+                "storybook"
+        },
+
+        {
+            id:
+                "minimal",
+
+            name:
+                "Minimal",
+
+            defaultOrnament:
+                "none",
+
+            defaultFont:
+                "clean"
+        },
+
+        {
+            id:
+                "leather",
+
+            name:
+                "Leatherbound",
+
+            defaultOrnament:
+                "diamond",
+
+            defaultFont:
+                "roman"
+        },
+
+        {
+            id:
+                "academia",
+
+            name:
+                "Dark Academia",
+
+            defaultOrnament:
+                "star",
+
+            defaultFont:
+                "roman"
+        },
+
+        {
+            id:
+                "storybook",
+
+            name:
+                "Storybook",
+
+            defaultOrnament:
+                "star",
+
+            defaultFont:
+                "storybook"
+        }
+
+    ],
+
+
+    /* =====================================================
+       SPINE FONTS
+       ===================================================== */
+
+    spineFonts: [
+
+        {
+            id:
+                "serif",
+
+            name:
+                "Classic Serif"
+        },
+
+        {
+            id:
+                "roman",
+
+            name:
+                "Old Roman"
+        },
+
+        {
+            id:
+                "typewriter",
+
+            name:
+                "Typewriter"
+        },
+
+        {
+            id:
+                "storybook",
+
+            name:
+                "Storybook"
+        },
+
+        {
+            id:
+                "clean",
+
+            name:
+                "Clean"
+        }
+
+    ],
+
+
+    /* =====================================================
+       SPINE ORNAMENTS
+       ===================================================== */
+
+    spineOrnaments: {
+
+        auto: {
+            id:
+                "auto",
+
+            label:
+                "Match the design",
+
+            symbol:
+                ""
+        },
+
+        star: {
+            id:
+                "star",
+
+            label:
+                "Star",
+
+            symbol:
+                "✦"
+        },
+
+        moon: {
+            id:
+                "moon",
+
+            label:
+                "Moon",
+
+            symbol:
+                "☾"
+        },
+
+        flower: {
+            id:
+                "flower",
+
+            label:
+                "Flower",
+
+            symbol:
+                "✿"
+        },
+
+        leaf: {
+            id:
+                "leaf",
+
+            label:
+                "Leaf",
+
+            symbol:
+                "❧"
+        },
+
+        diamond: {
+            id:
+                "diamond",
+
+            label:
+                "Diamond",
+
+            symbol:
+                "◇"
+        },
+
+        heart: {
+            id:
+                "heart",
+
+            label:
+                "Heart",
+
+            symbol:
+                "♡"
+        },
+
+        none: {
+            id:
+                "none",
+
+            label:
+                "No ornament",
+
+            symbol:
+                ""
         }
 
     },
@@ -240,43 +619,80 @@ window.SHELFMARK_CONFIG = {
 
     defaultSettings: {
 
-        theme: "haunted",
+        theme:
+            "haunted",
 
-        candleGlow: true,
+        candleGlow:
+            true,
 
-        dust: true,
+        dust:
+            true,
 
-        rain: true,
+        rain:
+            true,
 
-        oddities: true,
+        oddities:
+            true,
 
-        reducedMotion: false,
+        reducedMotion:
+            false,
 
-        decorationDensity: "cozy"
+        decorationDensity:
+            "cozy"
 
     },
 
 
     /* =====================================================
-       DECORATION PLACEMENT DEFAULTS
+       DEFAULT BOOK DESIGN
+       ===================================================== */
 
-       These values will be used by library.js when we make
-       shelf decorations draggable.
+    defaultBookDesign: {
 
-       x and y are percentages inside the shelf.
-       scale controls size.
-       rotate controls angle.
+        style:
+            "classic",
+
+        spineColor:
+            "#6c2633",
+
+        textColor:
+            "#eadfca",
+
+        accentColor:
+            "#b28a4a",
+
+        spineFont:
+            "serif",
+
+        ornament:
+            "auto",
+
+        height:
+            "medium",
+
+        thickness:
+            "medium"
+
+    },
+
+
+    /* =====================================================
+       DECORATION PLACEMENT
        ===================================================== */
 
     decorationDefaults: {
 
-        x: 50,
+        x:
+            50,
 
-        y: 72,
+        y:
+            72,
 
-        scale: 1,
+        scale:
+            1,
 
-        rotate: 0
+        rotate:
+            0
 
     }
 
@@ -284,9 +700,7 @@ window.SHELFMARK_CONFIG = {
 
 
 /* =========================================================
-   STARTER DATA
-
-   Keep empty while building.
+   EMPTY STARTER DATA
    ========================================================= */
 
 window.SHELFMARK_DATA = {
