@@ -1,7 +1,7 @@
 /* =========================================================
    SHELFMARK
    LIBRARY.JS
-   v8 — FIXED SPINES + DIMENSIONAL DECORATIONS
+   v10 — SYNCHRONIZED SPINES + CLEAN DECORATIONS
    ========================================================= */
 
 
@@ -9,8 +9,7 @@
    CONFIG
    ========================================================= */
 
-const CONFIG =
-    window.SHELFMARK_CONFIG || {};
+const CONFIG = window.SHELFMARK_CONFIG || {};
 
 const STORAGE_KEYS = {
     shelves:
@@ -40,6 +39,7 @@ let selectedJournalSection = null;
 let pendingCoverData = "";
 
 let activeDrag = null;
+
 
 let settings = {
     theme:
@@ -117,23 +117,22 @@ function resetInitialUI() {
         "readingBook",
         "entryModal",
         "progressModal"
-    ]
-        .forEach(id => {
+    ].forEach(id => {
 
-            const element =
-                document.getElementById(id);
+        const element =
+            document.getElementById(id);
 
-            if (element) {
-                element.hidden = true;
-            }
+        if (element) {
+            element.hidden = true;
+        }
 
-        });
+    });
 
 }
 
 
 /* =========================================================
-   LOAD DATA
+   DATA
    ========================================================= */
 
 function loadData() {
@@ -141,15 +140,13 @@ function loadData() {
     shelves =
         loadCollection(
             STORAGE_KEYS.shelves
-        )
-            .map(normalizeShelf);
+        ).map(normalizeShelf);
 
 
     books =
         loadCollection(
             STORAGE_KEYS.books
-        )
-            .map(normalizeBook);
+        ).map(normalizeBook);
 
 
     syncSharedData();
@@ -168,8 +165,10 @@ function loadCollection(key) {
             return [];
         }
 
+
         const parsed =
             JSON.parse(saved);
+
 
         return Array.isArray(parsed)
             ? parsed
@@ -190,10 +189,6 @@ function loadCollection(key) {
 
 }
 
-
-/* =========================================================
-   SAVE DATA
-   ========================================================= */
 
 function saveShelves() {
 
@@ -246,7 +241,6 @@ function syncSharedData() {
 function normalizeShelf(shelf) {
 
     return {
-
         id:
             shelf.id ||
             generateId(),
@@ -283,7 +277,6 @@ function normalizeShelf(shelf) {
         created_at:
             shelf.created_at ||
             new Date().toISOString()
-
     };
 
 }
@@ -304,8 +297,7 @@ function normalizeDecorations(value) {
         .map(item => {
 
             if (
-                typeof item ===
-                "string"
+                typeof item === "string"
             ) {
 
                 return createDecorationRecord(
@@ -316,7 +308,6 @@ function normalizeDecorations(value) {
 
 
             return {
-
                 id:
                     item.id ||
                     generateId(),
@@ -349,13 +340,12 @@ function normalizeDecorations(value) {
                         item.rotate ??
                         0
                     )
-
             };
 
         })
         .filter(
-            decoration =>
-                decoration.type
+            item =>
+                item.type
         );
 
 }
@@ -373,7 +363,6 @@ function normalizeBook(book) {
 
 
     return {
-
         id:
             book.id ||
             generateId(),
@@ -530,19 +519,19 @@ function normalizeBook(book) {
         updated_at:
             book.updated_at ||
             new Date().toISOString()
-
     };
 
 }
 
 
 /* =========================================================
-   JOURNAL NORMALIZATION
+   JOURNAL
    ========================================================= */
 
 function normalizeJournal(journal) {
 
     const result = {};
+
 
     [
         "notes",
@@ -553,19 +542,18 @@ function normalizeJournal(journal) {
         "themes",
         "questions",
         "review"
-    ]
-        .forEach(section => {
+    ].forEach(section => {
 
-            result[section] =
-                Array.isArray(
-                    journal?.[section]
-                )
-                    ?
-                    journal[section]
-                    :
-                    [];
+        result[section] =
+            Array.isArray(
+                journal?.[section]
+            )
+                ?
+                journal[section]
+                :
+                [];
 
-        });
+    });
 
 
     return result;
@@ -574,7 +562,7 @@ function normalizeJournal(journal) {
 
 
 /* =========================================================
-   LEGACY MIGRATION
+   LEGACY BOOK CLEANUP
    ========================================================= */
 
 function migrateLegacyBooks() {
@@ -620,6 +608,7 @@ function loadSettings() {
                 STORAGE_KEYS.settings
             );
 
+
         if (!saved) {
             return;
         }
@@ -654,41 +643,31 @@ function applySettings() {
 
     document.body.classList.toggle(
         "ambient-candle",
-        Boolean(
-            settings.candleGlow
-        )
+        Boolean(settings.candleGlow)
     );
 
 
     document.body.classList.toggle(
         "ambient-dust",
-        Boolean(
-            settings.dust
-        )
+        Boolean(settings.dust)
     );
 
 
     document.body.classList.toggle(
         "ambient-rain",
-        Boolean(
-            settings.rain
-        )
+        Boolean(settings.rain)
     );
 
 
     document.body.classList.toggle(
         "ambient-oddities",
-        Boolean(
-            settings.oddities
-        )
+        Boolean(settings.oddities)
     );
 
 
     document.body.classList.toggle(
         "reduce-motion",
-        Boolean(
-            settings.reducedMotion
-        )
+        Boolean(settings.reducedMotion)
     );
 
 
@@ -742,7 +721,7 @@ function applySettings() {
 
 
 /* =========================================================
-   THEME
+   THEMES
    ========================================================= */
 
 function applyTheme(
@@ -750,15 +729,16 @@ function applyTheme(
     shouldSave = true
 ) {
 
+    const themes =
+        CONFIG.themes ||
+        [];
+
+
     const allowed =
-        (
-            CONFIG.themes ||
-            []
-        )
-            .map(
-                theme =>
-                    theme.id
-            );
+        themes.map(
+            theme =>
+                theme.id
+        );
 
 
     const nextTheme =
@@ -827,51 +807,43 @@ function bindControls() {
 
     bindClick(
         "sidebarAddBook",
-        () =>
-            openBookDrawer()
+        () => openBookDrawer()
     );
 
     bindClick(
         "topAddBook",
-        () =>
-            openBookDrawer()
+        () => openBookDrawer()
     );
 
     bindClick(
         "emptyAddBook",
-        () =>
-            openBookDrawer()
+        () => openBookDrawer()
     );
 
     bindClick(
         "readingEmptyAddBook",
-        () =>
-            openBookDrawer()
+        () => openBookDrawer()
     );
 
 
     bindClick(
         "sidebarAddShelf",
-        () =>
-            openShelfDrawer()
+        () => openShelfDrawer()
     );
 
     bindClick(
         "topAddShelf",
-        () =>
-            openShelfDrawer()
+        () => openShelfDrawer()
     );
 
     bindClick(
         "emptyAddShelf",
-        () =>
-            openShelfDrawer()
+        () => openShelfDrawer()
     );
 
     bindClick(
         "bottomAddShelf",
-        () =>
-            openShelfDrawer()
+        () => openShelfDrawer()
     );
 
 
@@ -943,17 +915,20 @@ function bindControls() {
         "ambient-candle"
     );
 
+
     bindSettingCheckbox(
         "settingDust",
         "dust",
         "ambient-dust"
     );
 
+
     bindSettingCheckbox(
         "settingRain",
         "rain",
         "ambient-rain"
     );
+
 
     bindSettingCheckbox(
         "settingOddities",
@@ -996,9 +971,7 @@ function bindControls() {
                 "change",
                 event => {
 
-                    if (
-                        !event.target.checked
-                    ) {
+                    if (!event.target.checked) {
                         return;
                     }
 
@@ -1049,58 +1022,7 @@ function bindControls() {
         );
 
 
-    const spineControls = [
-        "bookTitle",
-        "bookStyle",
-        "bookSpineColor",
-        "bookTextColor",
-        "bookAccentColor",
-        "bookSpineOrnament",
-        "bookSpineFont",
-        "bookSpineFontSize",
-        "bookSpineFontWeight",
-        "bookSpineLetterSpacing",
-        "bookSpineCase",
-        "bookSpineFontStyle",
-        "bookSpineTextAlign",
-        "bookSpineTitlePanel",
-        "bookHeight",
-        "bookThickness"
-    ];
-
-
-    spineControls.forEach(id => {
-
-        const element =
-            document.getElementById(id);
-
-        if (!element) {
-            return;
-        }
-
-
-        element.addEventListener(
-            "input",
-            updateSpinePreview
-        );
-
-
-        element.addEventListener(
-            "change",
-            updateSpinePreview
-        );
-
-    });
-
-
-    document
-        .getElementById(
-            "bookStyle"
-        )
-        ?.addEventListener(
-            "change",
-            handleSpineStyleChange
-        );
+    bindSpineControls();
 
 
     bindClick(
@@ -1108,10 +1030,12 @@ function bindControls() {
         closeBookReveal
     );
 
+
     bindClick(
         "editSelectedBook",
         editSelectedBook
     );
+
 
     bindClick(
         "openSelectedBook",
@@ -1150,15 +1074,18 @@ function bindControls() {
         showJournalContents
     );
 
+
     bindClick(
         "addJournalEntry",
         openJournalEntryModal
     );
 
+
     bindClick(
         "closeEntryModal",
         closeEntryModal
     );
+
 
     bindClick(
         "cancelEntry",
@@ -1180,12 +1107,15 @@ function bindControls() {
         "featuredOpenBook",
         () => {
 
+            const button =
+                document.getElementById(
+                    "featuredOpenBook"
+                );
+
+
             const id =
-                document
-                    .getElementById(
-                        "featuredOpenBook"
-                    )
-                    ?.dataset.bookId;
+                button?.dataset.bookId;
+
 
             if (id) {
                 openBookReveal(id);
@@ -1199,12 +1129,15 @@ function bindControls() {
         "featuredEditProgress",
         () => {
 
+            const button =
+                document.getElementById(
+                    "featuredEditProgress"
+                );
+
+
             const id =
-                document
-                    .getElementById(
-                        "featuredEditProgress"
-                    )
-                    ?.dataset.bookId;
+                button?.dataset.bookId;
+
 
             if (id) {
                 openProgressModal(id);
@@ -1218,6 +1151,7 @@ function bindControls() {
         "closeProgressModal",
         closeProgressModal
     );
+
 
     bindClick(
         "cancelProgressUpdate",
@@ -1287,6 +1221,69 @@ function bindControls() {
 
 
 /* =========================================================
+   SPINE CONTROLS
+   ========================================================= */
+
+function bindSpineControls() {
+
+    const controls = [
+        "bookTitle",
+        "bookStyle",
+        "bookSpineColor",
+        "bookTextColor",
+        "bookAccentColor",
+        "bookSpineOrnament",
+        "bookSpineFont",
+        "bookSpineFontSize",
+        "bookSpineFontWeight",
+        "bookSpineLetterSpacing",
+        "bookSpineCase",
+        "bookSpineFontStyle",
+        "bookSpineTextAlign",
+        "bookSpineTitlePanel",
+        "bookHeight",
+        "bookThickness"
+    ];
+
+
+    controls.forEach(id => {
+
+        const element =
+            document.getElementById(id);
+
+
+        if (!element) {
+            return;
+        }
+
+
+        element.addEventListener(
+            "input",
+            updateSpinePreview
+        );
+
+
+        element.addEventListener(
+            "change",
+            updateSpinePreview
+        );
+
+    });
+
+
+    document
+        .getElementById(
+            "bookStyle"
+        )
+        ?.addEventListener(
+            "change",
+            handleSpineStyleChange
+        );
+
+}
+
+
+/* =========================================================
    SETTING CHECKBOX
    ========================================================= */
 
@@ -1321,7 +1318,7 @@ function bindSettingCheckbox(
 
 
 /* =========================================================
-   RENDER EVERYTHING
+   RENDER ALL
    ========================================================= */
 
 function renderAll() {
@@ -1351,10 +1348,12 @@ function renderLibrary() {
             "shelfContainer"
         );
 
+
     const empty =
         document.getElementById(
             "libraryEmpty"
         );
+
 
     const addShelf =
         document.getElementById(
@@ -1376,9 +1375,11 @@ function renderLibrary() {
             empty.hidden = false;
         }
 
+
         if (addShelf) {
             addShelf.hidden = true;
         }
+
 
         return;
 
@@ -1409,7 +1410,7 @@ function renderLibrary() {
 
 
 /* =========================================================
-   LIBRARY SUMMARY
+   SUMMARY
    ========================================================= */
 
 function updateLibrarySummary() {
@@ -1460,8 +1461,7 @@ function createShelfElement(
         "library-shelf",
         `shelf-${shelf.material}`,
         `shelf-mood-${shelf.mood}`
-    ]
-        .join(" ");
+    ].join(" ");
 
 
     article.dataset.shelfId =
@@ -1547,7 +1547,7 @@ function createShelfElement(
         );
 
 
-    const bookRow =
+    const row =
         article.querySelector(
             ".shelf-books-row"
         );
@@ -1588,15 +1588,18 @@ function createShelfElement(
             .querySelector("button")
             ?.addEventListener(
                 "click",
-                () =>
+                () => {
+
                     openBookDrawer(
                         null,
                         shelf.id
-                    )
+                    );
+
+                }
             );
 
 
-        bookRow.appendChild(
+        row.appendChild(
             empty
         );
 
@@ -1606,7 +1609,7 @@ function createShelfElement(
 
         shelfBooks.forEach(book => {
 
-            bookRow.appendChild(
+            row.appendChild(
                 createBookElement(
                     book
                 )
@@ -1617,8 +1620,13 @@ function createShelfElement(
     }
 
 
-    shelf.decorations
-        .forEach(decoration => {
+    /*
+     * User-added decorations are ALWAYS rendered.
+     * Density controls only ambient room clutter.
+     */
+
+    shelf.decorations.forEach(
+        decoration => {
 
             body.appendChild(
                 createDecorationElement(
@@ -1627,7 +1635,8 @@ function createShelfElement(
                 )
             );
 
-        });
+        }
+    );
 
 
     article
@@ -1636,11 +1645,14 @@ function createShelfElement(
         )
         ?.addEventListener(
             "click",
-            () =>
+            () => {
+
                 openBookDrawer(
                     null,
                     shelf.id
-                )
+                );
+
+            }
         );
 
 
@@ -1650,10 +1662,13 @@ function createShelfElement(
         )
         ?.addEventListener(
             "click",
-            () =>
+            () => {
+
                 openShelfDrawer(
                     shelf.id
-                )
+                );
+
+            }
         );
 
 
@@ -1663,10 +1678,13 @@ function createShelfElement(
         )
         ?.addEventListener(
             "click",
-            () =>
+            () => {
+
                 deleteShelf(
                     shelf.id
-                )
+                );
+
+            }
         );
 
 
@@ -1676,7 +1694,7 @@ function createShelfElement(
 
 
 /* =========================================================
-   BOOKS FOR SHELF
+   BOOK SORTING
    ========================================================= */
 
 function getBooksForShelf(
@@ -1686,12 +1704,8 @@ function getBooksForShelf(
     const result =
         books.filter(
             book =>
-                String(
-                    book.shelf_id
-                ) ===
-                String(
-                    shelf.id
-                )
+                String(book.shelf_id) ===
+                String(shelf.id)
         );
 
 
@@ -1759,10 +1773,7 @@ function getBooksForShelf(
 
 
 /* =========================================================
-   CREATE BOOK SPINE
-   FIXED:
-   - style class is on .book-spine
-   - CSS variables are applied to the visible spine
+   BOOK SPINE
    ========================================================= */
 
 function createBookElement(
@@ -1775,30 +1786,17 @@ function createBookElement(
         );
 
 
-    wrapper.className = [
-        "shelf-book",
+    wrapper.className =
+        getBookTypographyClasses(
+            book,
+            "shelf-book"
+        );
 
+
+    wrapper.classList.add(
         `book-height-${book.height}`,
-
-        `book-thickness-${book.thickness}`,
-
-        `spine-font-${book.spine_font}`,
-
-        `spine-size-${book.spine_font_size}`,
-
-        `spine-weight-${book.spine_font_weight}`,
-
-        `spine-spacing-${book.spine_letter_spacing}`,
-
-        `spine-case-${book.spine_case}`,
-
-        `spine-text-${book.spine_font_style}`,
-
-        `spine-align-${book.spine_text_align}`,
-
-        `spine-panel-${book.spine_title_panel}`
-    ]
-        .join(" ");
+        `book-thickness-${book.thickness}`
+    );
 
 
     wrapper.dataset.bookId =
@@ -1828,6 +1826,7 @@ function createBookElement(
 
                 </div>
 
+
                 <span class="spine-ornament">
                     ${escapeHTML(
                         getBookOrnament(
@@ -1849,26 +1848,10 @@ function createBookElement(
         );
 
 
-    if (spine) {
-
-        spine.style.setProperty(
-            "--book-color",
-            book.spine_color
-        );
-
-
-        spine.style.setProperty(
-            "--book-text",
-            book.text_color
-        );
-
-
-        spine.style.setProperty(
-            "--book-accent",
-            book.accent_color
-        );
-
-    }
+    applyBookColors(
+        spine,
+        book
+    );
 
 
     wrapper.addEventListener(
@@ -1876,15 +1859,18 @@ function createBookElement(
         () => {
 
             window.setTimeout(
-                () =>
+                () => {
+
                     openBookReveal(
                         book.id
-                    ),
+                    );
+
+                },
                 settings.reducedMotion
                     ?
                     0
                     :
-                    170
+                    150
             );
 
         }
@@ -1897,7 +1883,75 @@ function createBookElement(
 
 
 /* =========================================================
-   BOOK ORNAMENT
+   BOOK TYPOGRAPHY CLASSES
+   ========================================================= */
+
+function getBookTypographyClasses(
+    book,
+    baseClass = ""
+) {
+
+    return [
+        baseClass,
+
+        `spine-font-${book.spine_font}`,
+
+        `spine-size-${book.spine_font_size}`,
+
+        `spine-weight-${book.spine_font_weight}`,
+
+        `spine-spacing-${book.spine_letter_spacing}`,
+
+        `spine-case-${book.spine_case}`,
+
+        `spine-text-${book.spine_font_style}`,
+
+        `spine-align-${book.spine_text_align}`,
+
+        `spine-panel-${book.spine_title_panel}`
+    ]
+        .filter(Boolean)
+        .join(" ");
+
+}
+
+
+/* =========================================================
+   BOOK COLORS
+   ========================================================= */
+
+function applyBookColors(
+    element,
+    book
+) {
+
+    if (!element) {
+        return;
+    }
+
+
+    element.style.setProperty(
+        "--book-color",
+        book.spine_color
+    );
+
+
+    element.style.setProperty(
+        "--book-text",
+        book.text_color
+    );
+
+
+    element.style.setProperty(
+        "--book-accent",
+        book.accent_color
+    );
+
+}
+
+
+/* =========================================================
+   ORNAMENT
    ========================================================= */
 
 function getBookOrnament(
@@ -1910,8 +1964,7 @@ function getBookOrnament(
 
     if (
         !ornament ||
-        ornament ===
-        "auto"
+        ornament === "auto"
     ) {
 
         ornament =
@@ -1940,7 +1993,7 @@ function getBookOrnament(
 
 
 /* =========================================================
-   DECORATION ELEMENT
+   DECORATIONS
    ========================================================= */
 
 function createDecorationElement(
@@ -1958,8 +2011,7 @@ function createDecorationElement(
         "shelf-decoration",
         `decor-${decoration.type}`,
         "draggable-decoration"
-    ]
-        .join(" ");
+    ].join(" ");
 
 
     element.dataset.decorationId =
@@ -1972,6 +2024,7 @@ function createDecorationElement(
 
     element.style.left =
         `${decoration.x}%`;
+
 
     element.style.top =
         `${decoration.y}%`;
@@ -1991,12 +2044,15 @@ function createDecorationElement(
 
     element.addEventListener(
         "pointerdown",
-        event =>
+        event => {
+
             startDecorationDrag(
                 event,
                 shelf.id,
                 decoration.id
-            )
+            );
+
+        }
     );
 
 
@@ -2005,6 +2061,7 @@ function createDecorationElement(
         event => {
 
             event.stopPropagation();
+
 
             cycleDecorationScale(
                 shelf.id,
@@ -2021,7 +2078,7 @@ function createDecorationElement(
 
 
 /* =========================================================
-   DECORATION ARTWORK
+   DECORATION ART
    ========================================================= */
 
 function getDecorationArtwork(type) {
@@ -2277,17 +2334,11 @@ function getDecorationArtwork(type) {
 
             return `
 
-                <span class="star star-1">
-                    ✦
-                </span>
+                <span class="star star-1">✦</span>
 
-                <span class="star star-2">
-                    ✧
-                </span>
+                <span class="star star-2">✧</span>
 
-                <span class="star star-3">
-                    ✦
-                </span>
+                <span class="star star-3">✦</span>
 
             `;
 
@@ -2330,10 +2381,6 @@ function getDecorationArtwork(type) {
 }
 
 
-/* =========================================================
-   FALLBACK DECORATION SYMBOL
-   ========================================================= */
-
 function getDecorationSymbol(type) {
 
     const symbols = {
@@ -2374,10 +2421,8 @@ function startDecorationDrag(
 ) {
 
     if (
-        event.button !==
-        undefined &&
-        event.button !==
-        0
+        event.button !== undefined &&
+        event.button !== 0
     ) {
         return;
     }
@@ -2434,13 +2479,7 @@ function startDecorationDrag(
 }
 
 
-/* =========================================================
-   HANDLE DECORATION DRAG
-   ========================================================= */
-
-function handleDecorationDrag(
-    event
-) {
+function handleDecorationDrag(event) {
 
     if (!activeDrag) {
         return;
@@ -2481,13 +2520,14 @@ function handleDecorationDrag(
             )
             *
             100,
-            8,
-            86
+            7,
+            87
         );
 
 
     activeDrag.element.style.left =
         `${x}%`;
+
 
     activeDrag.element.style.top =
         `${y}%`;
@@ -2500,14 +2540,13 @@ function handleDecorationDrag(
 
 
     const decoration =
-        shelf?.decorations
-            .find(
-                item =>
-                    String(item.id) ===
-                    String(
-                        activeDrag.decorationId
-                    )
-            );
+        shelf?.decorations.find(
+            item =>
+                String(item.id) ===
+                String(
+                    activeDrag.decorationId
+                )
+        );
 
 
     if (decoration) {
@@ -2516,6 +2555,7 @@ function handleDecorationDrag(
             Number(
                 x.toFixed(2)
             );
+
 
         decoration.y =
             Number(
@@ -2527,13 +2567,7 @@ function handleDecorationDrag(
 }
 
 
-/* =========================================================
-   END DECORATION DRAG
-   ========================================================= */
-
-function endDecorationDrag(
-    event
-) {
+function endDecorationDrag(event) {
 
     if (!activeDrag) {
         return;
@@ -2569,13 +2603,14 @@ function endDecorationDrag(
 
     saveShelves();
 
+
     activeDrag = null;
 
 }
 
 
 /* =========================================================
-   DECORATION SCALE
+   DECORATION SIZE
    ========================================================= */
 
 function cycleDecorationScale(
@@ -2590,12 +2625,11 @@ function cycleDecorationScale(
 
 
     const decoration =
-        shelf?.decorations
-            .find(
-                item =>
-                    String(item.id) ===
-                    String(decorationId)
-            );
+        shelf?.decorations.find(
+            item =>
+                String(item.id) ===
+                String(decorationId)
+        );
 
 
     if (!decoration) {
@@ -2603,7 +2637,7 @@ function cycleDecorationScale(
     }
 
 
-    const scales = [
+    const sizes = [
         .75,
         1,
         1.25,
@@ -2611,33 +2645,30 @@ function cycleDecorationScale(
     ];
 
 
-    const currentIndex =
-        scales.findIndex(
-            scale =>
+    const current =
+        sizes.findIndex(
+            size =>
                 Math.abs(
-                    scale -
+                    size -
                     decoration.scale
-                )
-                <
-                .01
+                ) < .01
         );
 
 
-    const nextIndex =
-        currentIndex ===
-        -1
+    const next =
+        current === -1
             ?
             1
             :
             (
-                currentIndex + 1
+                current + 1
             )
             %
-            scales.length;
+            sizes.length;
 
 
     decoration.scale =
-        scales[nextIndex];
+        sizes[next];
 
 
     saveShelves();
@@ -2647,35 +2678,23 @@ function cycleDecorationScale(
 }
 
 
-/* =========================================================
-   DECORATION TRANSFORM
-   ========================================================= */
-
 function applyDecorationTransform(
     element,
     decoration
 ) {
 
-    element.style.transform =
-        `
+    element.style.transform = `
         translate(-50%, -50%)
         scale(${decoration.scale})
         rotate(${decoration.rotate}deg)
-        `;
+    `;
 
 }
 
 
-/* =========================================================
-   CREATE DECORATION RECORD
-   ========================================================= */
-
-function createDecorationRecord(
-    type
-) {
+function createDecorationRecord(type) {
 
     return {
-
         id:
             generateId(),
 
@@ -2696,7 +2715,6 @@ function createDecorationRecord(
         rotate:
             CONFIG.decorationDefaults?.rotate ??
             0
-
     };
 
 }
@@ -2771,30 +2789,36 @@ function openShelfDrawer(
                 shelf.id
             );
 
+
             setValue(
                 "shelfName",
                 shelf.name
             );
+
 
             setValue(
                 "shelfDescription",
                 shelf.description
             );
 
+
             setValue(
                 "shelfMaterial",
                 shelf.material
             );
+
 
             setValue(
                 "shelfMood",
                 shelf.mood
             );
 
+
             setValue(
                 "shelfLayout",
                 shelf.layout
             );
+
 
             setValue(
                 "shelfSort",
@@ -2819,7 +2843,7 @@ function openShelfDrawer(
 
 
 /* =========================================================
-   DECORATION OPTIONS
+   DECORATION PICKER
    ========================================================= */
 
 function renderDecorationOptions(
@@ -2854,15 +2878,14 @@ function renderDecorationOptions(
         getThemeDecorations();
 
 
-    const optionTypes =
-        [
-            ...new Set(
-                [
-                    ...currentTypes,
-                    ...themeTypes
-                ]
-            )
-        ];
+    const optionTypes = [
+        ...new Set(
+            [
+                ...currentTypes,
+                ...themeTypes
+            ]
+        )
+    ];
 
 
     optionTypes.forEach(
@@ -2905,16 +2928,8 @@ function renderDecorationOptions(
 
                 <input
                     type="checkbox"
-                    value="${escapeHTML(
-                        type
-                    )}"
-                    ${
-                        checked
-                            ?
-                            "checked"
-                            :
-                            ""
-                    }
+                    value="${escapeHTML(type)}"
+                    ${checked ? "checked" : ""}
                 >
 
                 <span>
@@ -2935,10 +2950,6 @@ function renderDecorationOptions(
 
 }
 
-
-/* =========================================================
-   REFRESH DECORATION OPTIONS
-   ========================================================= */
 
 function updateOpenShelfDecorationChoices() {
 
@@ -2975,9 +2986,7 @@ function updateOpenShelfDecorationChoices() {
    SAVE SHELF
    ========================================================= */
 
-function saveShelfFromForm(
-    event
-) {
+function saveShelfFromForm(event) {
 
     event.preventDefault();
 
@@ -2989,16 +2998,14 @@ function saveShelfFromForm(
 
 
     const selectedTypes =
-        Array
-            .from(
-                document.querySelectorAll(
-                    ".decoration-options input:checked"
-                )
+        Array.from(
+            document.querySelectorAll(
+                ".decoration-options input:checked"
             )
-            .map(
-                input =>
-                    input.value
-            );
+        ).map(
+            input =>
+                input.value
+        );
 
 
     if (id) {
@@ -3069,22 +3076,17 @@ function saveShelfFromForm(
                     index
                 ) => {
 
-                    const existingDecoration =
+                    return (
                         existing.find(
                             item =>
                                 item.type ===
                                 type
-                        );
-
-
-                    if (existingDecoration) {
-                        return existingDecoration;
-                    }
-
-
-                    return createStaggeredDecoration(
-                        type,
-                        index
+                        )
+                        ||
+                        createStaggeredDecoration(
+                            type,
+                            index
+                        )
                     );
 
                 }
@@ -3108,7 +3110,6 @@ function saveShelfFromForm(
 
 
         shelves.push({
-
             id:
                 generateId(),
 
@@ -3157,7 +3158,6 @@ function saveShelfFromForm(
             created_at:
                 new Date()
                     .toISOString()
-
         });
 
     }
@@ -3173,7 +3173,7 @@ function saveShelfFromForm(
 
 
 /* =========================================================
-   STAGGER DECORATIONS
+   NEW DECORATION POSITIONS
    ========================================================= */
 
 function createStaggeredDecoration(
@@ -3188,47 +3188,14 @@ function createStaggeredDecoration(
 
 
     const positions = [
-
-        {
-            x: 11,
-            y: 72
-        },
-
-        {
-            x: 88,
-            y: 71
-        },
-
-        {
-            x: 74,
-            y: 33
-        },
-
-        {
-            x: 25,
-            y: 35
-        },
-
-        {
-            x: 93,
-            y: 42
-        },
-
-        {
-            x: 49,
-            y: 27
-        },
-
-        {
-            x: 60,
-            y: 70
-        },
-
-        {
-            x: 35,
-            y: 68
-        }
-
+        { x: 12, y: 73 },
+        { x: 88, y: 72 },
+        { x: 76, y: 32 },
+        { x: 26, y: 34 },
+        { x: 92, y: 44 },
+        { x: 50, y: 27 },
+        { x: 61, y: 70 },
+        { x: 36, y: 69 }
     ];
 
 
@@ -3241,6 +3208,7 @@ function createStaggeredDecoration(
 
     decoration.x =
         position.x;
+
 
     decoration.y =
         position.y;
@@ -3255,9 +3223,7 @@ function createStaggeredDecoration(
    DELETE SHELF
    ========================================================= */
 
-function deleteShelf(
-    shelfId
-) {
+function deleteShelf(shelfId) {
 
     const shelf =
         getShelfById(
@@ -3270,25 +3236,19 @@ function deleteShelf(
     }
 
 
-    const booksOnShelf =
+    const shelfBooks =
         books.filter(
             book =>
-                String(
-                    book.shelf_id
-                ) ===
-                String(
-                    shelfId
-                )
+                String(book.shelf_id) ===
+                String(shelfId)
         );
 
 
-    if (
-        booksOnShelf.length
-    ) {
+    if (shelfBooks.length) {
 
         const confirmed =
             window.confirm(
-                `"${shelf.name}" contains ${booksOnShelf.length} book(s). Remove the shelf and those books?`
+                `"${shelf.name}" contains ${shelfBooks.length} book(s). Remove the shelf and those books?`
             );
 
 
@@ -3300,12 +3260,8 @@ function deleteShelf(
         books =
             books.filter(
                 book =>
-                    String(
-                        book.shelf_id
-                    ) !==
-                    String(
-                        shelfId
-                    )
+                    String(book.shelf_id) !==
+                    String(shelfId)
             );
 
 
@@ -3330,13 +3286,9 @@ function deleteShelf(
 
     shelves =
         shelves.filter(
-            item =>
-                String(
-                    item.id
-                ) !==
-                String(
-                    shelfId
-                )
+            shelf =>
+                String(shelf.id) !==
+                String(shelfId)
         );
 
 
@@ -3381,10 +3333,12 @@ function openBookDrawer(
 
     form.reset();
 
+
     pendingCoverData = "";
 
 
     resetBookForm();
+
 
     populateBookShelfSelect();
 
@@ -3484,6 +3438,10 @@ function resetBookForm() {
         {};
 
 
+    const colors =
+        getThemeBookColors();
+
+
     setValue(
         "editingBookId",
         ""
@@ -3495,20 +3453,24 @@ function resetBookForm() {
         "want"
     );
 
+
     setValue(
         "bookRating",
         "0"
     );
+
 
     setValue(
         "bookCurrentPage",
         "0"
     );
 
+
     setValue(
         "bookTimesRead",
         "0"
     );
+
 
     setValue(
         "bookStyle",
@@ -3517,19 +3479,17 @@ function resetBookForm() {
     );
 
 
-    const colors =
-        getThemeBookColors();
-
-
     setValue(
         "bookSpineColor",
         colors.spine
     );
 
+
     setValue(
         "bookTextColor",
         colors.text
     );
+
 
     setValue(
         "bookAccentColor",
@@ -3543,11 +3503,13 @@ function resetBookForm() {
         "serif"
     );
 
+
     setValue(
         "bookSpineFontSize",
         defaults.fontSize ||
         "medium"
     );
+
 
     setValue(
         "bookSpineFontWeight",
@@ -3555,11 +3517,13 @@ function resetBookForm() {
         "regular"
     );
 
+
     setValue(
         "bookSpineLetterSpacing",
         defaults.letterSpacing ||
         "normal"
     );
+
 
     setValue(
         "bookSpineCase",
@@ -3567,11 +3531,13 @@ function resetBookForm() {
         "typed"
     );
 
+
     setValue(
         "bookSpineFontStyle",
         defaults.fontStyle ||
         "normal"
     );
+
 
     setValue(
         "bookSpineTextAlign",
@@ -3579,11 +3545,13 @@ function resetBookForm() {
         "center"
     );
 
+
     setValue(
         "bookSpineTitlePanel",
         defaults.titlePanel ||
         "none"
     );
+
 
     setValue(
         "bookSpineOrnament",
@@ -3591,11 +3559,13 @@ function resetBookForm() {
         "auto"
     );
 
+
     setValue(
         "bookHeight",
         defaults.height ||
         "medium"
     );
+
 
     setValue(
         "bookThickness",
@@ -3613,43 +3583,40 @@ function resetBookForm() {
 function getThemeBookColors() {
 
     const palettes = {
-
         haunted: {
-            spine: "#6c2633",
-            text: "#eadfca",
-            accent: "#b28a4a"
+            spine: "#734452",
+            text: "#f0e4cf",
+            accent: "#c39a59"
         },
 
         autumn: {
-            spine: "#9a5134",
-            text: "#f3dcc6",
-            accent: "#dc8a43"
+            spine: "#a56346",
+            text: "#f3dfc8",
+            accent: "#d89a59"
         },
 
         forest: {
-            spine: "#526746",
-            text: "#e4dec4",
-            accent: "#9ba86d"
+            spine: "#60755a",
+            text: "#ece6cd",
+            accent: "#a6b47d"
         },
 
         retro: {
-            spine: "#343126",
-            text: "#d6ca9f",
-            accent: "#94ad3f"
+            spine: "#4a4935",
+            text: "#ded3a7",
+            accent: "#a8bc58"
         },
 
         ghosts: {
-            spine: "#b4654f",
-            text: "#f4d8c8",
-            accent: "#667a5d"
+            spine: "#b47b70",
+            text: "#f6e0d3",
+            accent: "#78906e"
         }
-
     };
 
 
     return (
-        palettes[settings.theme]
-        ||
+        palettes[settings.theme] ||
         palettes.haunted
     );
 
@@ -3660,149 +3627,175 @@ function getThemeBookColors() {
    POPULATE BOOK FORM
    ========================================================= */
 
-function populateBookForm(
-    book
-) {
+function populateBookForm(book) {
 
     setValue(
         "bookTitle",
         book.title
     );
 
+
     setValue(
         "bookAuthor",
         book.author
     );
+
 
     setValue(
         "bookGenre",
         book.genre
     );
 
+
     setValue(
         "bookYear",
         book.year || ""
     );
+
 
     setValue(
         "bookPages",
         book.pages || ""
     );
 
+
     setValue(
         "bookISBN",
         book.isbn
     );
+
 
     setValue(
         "bookSeries",
         book.series
     );
 
+
     setValue(
         "bookShelf",
         book.shelf_id
     );
+
 
     setValue(
         "bookStatus",
         book.status
     );
 
+
     setValue(
         "bookRating",
         book.rating
     );
+
 
     setValue(
         "bookStarted",
         book.started
     );
 
+
     setValue(
         "bookFinished",
         book.finished
     );
+
 
     setValue(
         "bookCurrentPage",
         book.current_page
     );
 
+
     setValue(
         "bookTimesRead",
         book.times_read
     );
+
 
     setValue(
         "bookStyle",
         book.style
     );
 
+
     setValue(
         "bookSpineColor",
         book.spine_color
     );
+
 
     setValue(
         "bookTextColor",
         book.text_color
     );
 
+
     setValue(
         "bookAccentColor",
         book.accent_color
     );
+
 
     setValue(
         "bookSpineOrnament",
         book.spine_ornament
     );
 
+
     setValue(
         "bookSpineFont",
         book.spine_font
     );
+
 
     setValue(
         "bookSpineFontSize",
         book.spine_font_size
     );
 
+
     setValue(
         "bookSpineFontWeight",
         book.spine_font_weight
     );
+
 
     setValue(
         "bookSpineLetterSpacing",
         book.spine_letter_spacing
     );
 
+
     setValue(
         "bookSpineCase",
         book.spine_case
     );
+
 
     setValue(
         "bookSpineFontStyle",
         book.spine_font_style
     );
 
+
     setValue(
         "bookSpineTextAlign",
         book.spine_text_align
     );
+
 
     setValue(
         "bookSpineTitlePanel",
         book.spine_title_panel
     );
 
+
     setValue(
         "bookHeight",
         book.height
     );
+
 
     setValue(
         "bookThickness",
@@ -3834,23 +3827,21 @@ function populateBookShelfSelect() {
 
 
     select.innerHTML =
-        shelves
-            .map(
-                shelf => `
+        shelves.map(
+            shelf => `
 
-                    <option
-                        value="${escapeHTML(
-                            shelf.id
-                        )}"
-                    >
-                        ${escapeHTML(
-                            shelf.name
-                        )}
-                    </option>
+                <option
+                    value="${escapeHTML(
+                        shelf.id
+                    )}"
+                >
+                    ${escapeHTML(
+                        shelf.name
+                    )}
+                </option>
 
-                `
-            )
-            .join("");
+            `
+        ).join("");
 
 
     if (
@@ -3874,9 +3865,7 @@ function populateBookShelfSelect() {
    SAVE BOOK
    ========================================================= */
 
-function saveBookFromForm(
-    event
-) {
+function saveBookFromForm(event) {
 
     event.preventDefault();
 
@@ -3895,8 +3884,130 @@ function saveBookFromForm(
             null;
 
 
-    const bookData = {
+    const bookData =
+        readBookForm();
 
+
+    if (
+        bookData.pages &&
+        bookData.current_page >
+        bookData.pages
+    ) {
+
+        bookData.current_page =
+            bookData.pages;
+
+    }
+
+
+    if (
+        bookData.status ===
+        "reading" &&
+        !bookData.started
+    ) {
+
+        bookData.started =
+            todayISO();
+
+    }
+
+
+    if (
+        bookData.status ===
+        "finished"
+    ) {
+
+        if (!bookData.finished) {
+
+            bookData.finished =
+                todayISO();
+
+        }
+
+
+        if (bookData.pages) {
+
+            bookData.current_page =
+                bookData.pages;
+
+        }
+
+
+        if (
+            bookData.times_read < 1
+        ) {
+
+            bookData.times_read =
+                1;
+
+        }
+
+    }
+
+
+    if (existing) {
+
+        Object.assign(
+            existing,
+            bookData,
+            {
+                updated_at:
+                    new Date()
+                        .toISOString()
+            }
+        );
+
+    }
+
+    else {
+
+        books.push({
+            id:
+                generateId(),
+
+            ...bookData,
+
+            journal:
+                normalizeJournal(),
+
+            created_at:
+                new Date()
+                    .toISOString(),
+
+            updated_at:
+                new Date()
+                    .toISOString()
+        });
+
+    }
+
+
+    saveBooks();
+
+
+    pendingCoverData = "";
+
+
+    closeAllDrawers();
+
+
+    renderAll();
+
+}
+
+
+/* =========================================================
+   READ BOOK FORM
+   ========================================================= */
+
+function readBookForm() {
+
+    const defaults =
+        CONFIG.defaultBookDesign ||
+        {};
+
+
+    return {
         title:
             getValue(
                 "bookTitle"
@@ -3982,16 +4093,14 @@ function saveBookFromForm(
             ),
 
         cover_image:
-            pendingCoverData
-            ||
-            existing?.cover_image
-            ||
-            "",
+            pendingCoverData,
 
         style:
             getValue(
                 "bookStyle"
             )
+            ||
+            defaults.style
             ||
             "classic",
 
@@ -4016,17 +4125,12 @@ function saveBookFromForm(
             ||
             "#b28a4a",
 
-        spine_ornament:
-            getValue(
-                "bookSpineOrnament"
-            )
-            ||
-            "auto",
-
         spine_font:
             getValue(
                 "bookSpineFont"
             )
+            ||
+            defaults.spineFont
             ||
             "serif",
 
@@ -4035,12 +4139,16 @@ function saveBookFromForm(
                 "bookSpineFontSize"
             )
             ||
+            defaults.fontSize
+            ||
             "medium",
 
         spine_font_weight:
             getValue(
                 "bookSpineFontWeight"
             )
+            ||
+            defaults.fontWeight
             ||
             "regular",
 
@@ -4049,12 +4157,16 @@ function saveBookFromForm(
                 "bookSpineLetterSpacing"
             )
             ||
+            defaults.letterSpacing
+            ||
             "normal",
 
         spine_case:
             getValue(
                 "bookSpineCase"
             )
+            ||
+            defaults.textCase
             ||
             "typed",
 
@@ -4063,12 +4175,16 @@ function saveBookFromForm(
                 "bookSpineFontStyle"
             )
             ||
+            defaults.fontStyle
+            ||
             "normal",
 
         spine_text_align:
             getValue(
                 "bookSpineTextAlign"
             )
+            ||
+            defaults.textAlign
             ||
             "center",
 
@@ -4077,12 +4193,25 @@ function saveBookFromForm(
                 "bookSpineTitlePanel"
             )
             ||
+            defaults.titlePanel
+            ||
             "none",
+
+        spine_ornament:
+            getValue(
+                "bookSpineOrnament"
+            )
+            ||
+            defaults.ornament
+            ||
+            "auto",
 
         height:
             getValue(
                 "bookHeight"
             )
+            ||
+            defaults.height
             ||
             "medium",
 
@@ -4091,107 +4220,10 @@ function saveBookFromForm(
                 "bookThickness"
             )
             ||
+            defaults.thickness
+            ||
             "medium"
-
     };
-
-
-    if (
-        bookData.pages &&
-        bookData.current_page >
-        bookData.pages
-    ) {
-
-        bookData.current_page =
-            bookData.pages;
-
-    }
-
-
-    if (
-        bookData.status ===
-        "finished"
-    ) {
-
-        if (!bookData.finished) {
-
-            bookData.finished =
-                todayISO();
-
-        }
-
-
-        if (
-            bookData.pages &&
-            !bookData.current_page
-        ) {
-
-            bookData.current_page =
-                bookData.pages;
-
-        }
-
-    }
-
-
-    if (
-        bookData.status ===
-        "reading" &&
-        !bookData.started
-    ) {
-
-        bookData.started =
-            todayISO();
-
-    }
-
-
-    if (existing) {
-
-        Object.assign(
-            existing,
-            bookData,
-            {
-                updated_at:
-                    new Date()
-                        .toISOString()
-            }
-        );
-
-    }
-
-    else {
-
-        books.push({
-
-            id:
-                generateId(),
-
-            ...bookData,
-
-            journal:
-                normalizeJournal(),
-
-            created_at:
-                new Date()
-                    .toISOString(),
-
-            updated_at:
-                new Date()
-                    .toISOString()
-
-        });
-
-    }
-
-
-    saveBooks();
-
-    pendingCoverData = "";
-
-    closeAllDrawers();
-
-    renderAll();
 
 }
 
@@ -4200,9 +4232,7 @@ function saveBookFromForm(
    COVER UPLOAD
    ========================================================= */
 
-function handleCoverUpload(
-    event
-) {
+function handleCoverUpload(event) {
 
     const file =
         event.target.files?.[0];
@@ -4223,7 +4253,9 @@ function handleCoverUpload(
             "Please choose an image file."
         );
 
+
         event.target.value = "";
+
 
         return;
 
@@ -4234,16 +4266,15 @@ function handleCoverUpload(
         new FileReader();
 
 
-    reader.onload =
-        () => {
+    reader.onload = () => {
 
-            pendingCoverData =
-                String(
-                    reader.result ||
-                    ""
-                );
+        pendingCoverData =
+            String(
+                reader.result ||
+                ""
+            );
 
-        };
+    };
 
 
     reader.readAsDataURL(file);
@@ -4257,35 +4288,41 @@ function handleCoverUpload(
 
 function handleSpineStyleChange() {
 
-    const editing =
+    const styleId =
         getValue(
-            "editingBookId"
+            "bookStyle"
         );
 
 
-    if (!editing) {
-
-        const style =
-            CONFIG.spineStyles
-                ?.find(
-                    item =>
-                        item.id ===
-                        getValue(
-                            "bookStyle"
-                        )
-                );
-
-
-        if (
-            style?.defaultFont
-        ) {
-
-            setValue(
-                "bookSpineFont",
-                style.defaultFont
+    const style =
+        CONFIG.spineStyles
+            ?.find(
+                item =>
+                    item.id ===
+                    styleId
             );
 
-        }
+
+    /*
+     * Only assign a style's suggested font automatically
+     * when creating a NEW book.
+     *
+     * Editing an existing book should not overwrite the
+     * user's chosen font just because they view/change style.
+     */
+
+    if (
+        !getValue(
+            "editingBookId"
+        )
+        &&
+        style?.defaultFont
+    ) {
+
+        setValue(
+            "bookSpineFont",
+            style.defaultFont
+        );
 
     }
 
@@ -4312,141 +4349,54 @@ function updateSpinePreview() {
     }
 
 
-    const style =
-        getValue(
-            "bookStyle"
-        )
-        ||
-        "classic";
-
-
-    const font =
-        getValue(
-            "bookSpineFont"
-        )
-        ||
-        "serif";
-
-
-    const size =
-        getValue(
-            "bookSpineFontSize"
-        )
-        ||
-        "medium";
-
-
-    const weight =
-        getValue(
-            "bookSpineFontWeight"
-        )
-        ||
-        "regular";
-
-
-    const spacing =
-        getValue(
-            "bookSpineLetterSpacing"
-        )
-        ||
-        "normal";
-
-
-    const textCase =
-        getValue(
-            "bookSpineCase"
-        )
-        ||
-        "typed";
-
-
-    const fontStyle =
-        getValue(
-            "bookSpineFontStyle"
-        )
-        ||
-        "normal";
-
-
-    const alignment =
-        getValue(
-            "bookSpineTextAlign"
-        )
-        ||
-        "center";
-
-
-    const panel =
-        getValue(
-            "bookSpineTitlePanel"
-        )
-        ||
-        "none";
+    const design =
+        getCurrentSpineDesign();
 
 
     preview.className = [
-
         "spine-preview-book",
 
-        `book-style-${style}`,
+        `book-style-${design.style}`,
 
-        `spine-font-${font}`,
+        `spine-font-${design.font}`,
 
-        `spine-size-${size}`,
+        `spine-size-${design.size}`,
 
-        `spine-weight-${weight}`,
+        `spine-weight-${design.weight}`,
 
-        `spine-spacing-${spacing}`,
+        `spine-spacing-${design.spacing}`,
 
-        `spine-case-${textCase}`,
+        `spine-case-${design.textCase}`,
 
-        `spine-text-${fontStyle}`,
+        `spine-text-${design.fontStyle}`,
 
-        `spine-align-${alignment}`,
+        `spine-align-${design.align}`,
 
-        `spine-panel-${panel}`
-
-    ]
-        .join(" ");
+        `spine-panel-${design.panel}`
+    ].join(" ");
 
 
     preview.style.setProperty(
         "--book-color",
-        getValue(
-            "bookSpineColor"
-        )
-        ||
-        "#6c2633"
+        design.spineColor
     );
 
 
     preview.style.setProperty(
         "--book-text",
-        getValue(
-            "bookTextColor"
-        )
-        ||
-        "#eadfca"
+        design.textColor
     );
 
 
     preview.style.setProperty(
         "--book-accent",
-        getValue(
-            "bookAccentColor"
-        )
-        ||
-        "#b28a4a"
+        design.accentColor
     );
 
 
     setText(
         "bookSpinePreviewTitle",
-        getValue(
-            "bookTitle"
-        )
-        ||
-        "Your Book Title"
+        design.title
     );
 
 
@@ -4456,14 +4406,14 @@ function updateSpinePreview() {
     );
 
 
-    const heightMap = {
+    const heights = {
         small: 155,
         medium: 190,
         tall: 225
     };
 
 
-    const widthMap = {
+    const widths = {
         slim: 48,
         medium: 72,
         chunky: 95
@@ -4472,26 +4422,139 @@ function updateSpinePreview() {
 
     preview.style.height =
         `${
-            heightMap[
-                getValue(
-                    "bookHeight"
-                )
-            ]
-            ||
+            heights[design.height] ||
             190
         }px`;
 
 
     preview.style.width =
         `${
-            widthMap[
-                getValue(
-                    "bookThickness"
-                )
-            ]
-            ||
+            widths[design.thickness] ||
             72
         }px`;
+
+}
+
+
+/* =========================================================
+   CURRENT SPINE DESIGN
+   ========================================================= */
+
+function getCurrentSpineDesign() {
+
+    return {
+        title:
+            getValue(
+                "bookTitle"
+            )
+            ||
+            "Your Book Title",
+
+        style:
+            getValue(
+                "bookStyle"
+            )
+            ||
+            "classic",
+
+        spineColor:
+            getValue(
+                "bookSpineColor"
+            )
+            ||
+            "#6c2633",
+
+        textColor:
+            getValue(
+                "bookTextColor"
+            )
+            ||
+            "#eadfca",
+
+        accentColor:
+            getValue(
+                "bookAccentColor"
+            )
+            ||
+            "#b28a4a",
+
+        font:
+            getValue(
+                "bookSpineFont"
+            )
+            ||
+            "serif",
+
+        size:
+            getValue(
+                "bookSpineFontSize"
+            )
+            ||
+            "medium",
+
+        weight:
+            getValue(
+                "bookSpineFontWeight"
+            )
+            ||
+            "regular",
+
+        spacing:
+            getValue(
+                "bookSpineLetterSpacing"
+            )
+            ||
+            "normal",
+
+        textCase:
+            getValue(
+                "bookSpineCase"
+            )
+            ||
+            "typed",
+
+        fontStyle:
+            getValue(
+                "bookSpineFontStyle"
+            )
+            ||
+            "normal",
+
+        align:
+            getValue(
+                "bookSpineTextAlign"
+            )
+            ||
+            "center",
+
+        panel:
+            getValue(
+                "bookSpineTitlePanel"
+            )
+            ||
+            "none",
+
+        ornament:
+            getValue(
+                "bookSpineOrnament"
+            )
+            ||
+            "auto",
+
+        height:
+            getValue(
+                "bookHeight"
+            )
+            ||
+            "medium",
+
+        thickness:
+            getValue(
+                "bookThickness"
+            )
+            ||
+            "medium"
+    };
 
 }
 
@@ -4502,46 +4565,35 @@ function updateSpinePreview() {
 
 function getPreviewOrnament() {
 
-    const selected =
-        getValue(
-            "bookSpineOrnament"
-        );
+    const design =
+        getCurrentSpineDesign();
+
+
+    let ornament =
+        design.ornament;
 
 
     if (
-        selected &&
-        selected !==
-        "auto"
+        ornament === "auto"
     ) {
 
-        return (
-            CONFIG.spineOrnaments
-                ?.[selected]
-                ?.symbol
+        ornament =
+            CONFIG.spineStyles
+                ?.find(
+                    style =>
+                        style.id ===
+                        design.style
+                )
+                ?.defaultOrnament
             ||
-            ""
-        );
+            "diamond";
 
     }
 
 
-    const style =
-        CONFIG.spineStyles
-            ?.find(
-                item =>
-                    item.id ===
-                    getValue(
-                        "bookStyle"
-                    )
-            );
-
-
     return (
         CONFIG.spineOrnaments
-            ?.[
-                style?.defaultOrnament ||
-                "diamond"
-            ]
+            ?.[ornament]
             ?.symbol
         ||
         ""
@@ -4554,9 +4606,7 @@ function getPreviewOrnament() {
    BOOK REVEAL
    ========================================================= */
 
-function openBookReveal(
-    bookId
-) {
+function openBookReveal(bookId) {
 
     const book =
         getBookById(
@@ -4634,15 +4684,15 @@ function openBookReveal(
     );
 
 
-    const progress =
+    const fill =
         document.getElementById(
             "revealProgressBar"
         );
 
 
-    if (progress) {
+    if (fill) {
 
-        progress.style.width =
+        fill.style.width =
             `${percent}%`;
 
     }
@@ -4701,15 +4751,7 @@ function closeBookReveal() {
     }
 
 
-    if (
-        !isAnyModalOpen()
-    ) {
-
-        document.body.classList.remove(
-            "modal-open"
-        );
-
-    }
+    updateModalBodyState();
 
 }
 
@@ -4722,6 +4764,7 @@ function editSelectedBook() {
 
 
     closeBookReveal();
+
 
     openBookDrawer(
         selectedBookId
@@ -4745,12 +4788,10 @@ function openSelectedBookJournal() {
 
 
 /* =========================================================
-   OPEN BOOK JOURNAL
+   READING JOURNAL
    ========================================================= */
 
-function openReadingBook(
-    bookId
-) {
+function openReadingBook(bookId) {
 
     const book =
         getBookById(
@@ -4795,37 +4836,23 @@ function openReadingBook(
 
 function closeReadingBook() {
 
-    const readingBook =
+    const element =
         document.getElementById(
             "readingBook"
         );
 
 
-    if (readingBook) {
-        readingBook.hidden = true;
+    if (element) {
+        element.hidden = true;
     }
 
 
-    if (
-        !isAnyModalOpen()
-    ) {
-
-        document.body.classList.remove(
-            "modal-open"
-        );
-
-    }
+    updateModalBodyState();
 
 }
 
 
-/* =========================================================
-   JOURNAL DETAILS
-   ========================================================= */
-
-function renderJournalBookDetails(
-    book
-) {
+function renderJournalBookDetails(book) {
 
     setText(
         "journalBookTitle",
@@ -4868,9 +4895,7 @@ function renderJournalBookDetails(
         "journalPages",
         book.pages
             ?
-            String(
-                book.pages
-            )
+            String(book.pages)
             :
             "—"
     );
@@ -4883,10 +4908,6 @@ function renderJournalBookDetails(
 
 }
 
-
-/* =========================================================
-   JOURNAL CONTENTS
-   ========================================================= */
 
 function showJournalContents() {
 
@@ -5014,10 +5035,21 @@ function renderJournalEntries() {
     }
 
 
+    const addButton =
+        document.getElementById(
+            "addJournalEntry"
+        );
+
+
     if (
         selectedJournalSection ===
         "overview"
     ) {
+
+        if (addButton) {
+            addButton.hidden = true;
+        }
+
 
         renderOverview(
             container,
@@ -5025,26 +5057,9 @@ function renderJournalEntries() {
         );
 
 
-        const addButton =
-            document.getElementById(
-                "addJournalEntry"
-            );
-
-
-        if (addButton) {
-            addButton.hidden = true;
-        }
-
-
         return;
 
     }
-
-
-    const addButton =
-        document.getElementById(
-            "addJournalEntry"
-        );
 
 
     if (addButton) {
@@ -5094,10 +5109,6 @@ function renderJournalEntries() {
 
 }
 
-
-/* =========================================================
-   JOURNAL OVERVIEW
-   ========================================================= */
 
 function renderOverview(
     container,
@@ -5182,41 +5193,37 @@ function renderOverview(
 }
 
 
-/* =========================================================
-   CREATE JOURNAL ENTRY
-   ========================================================= */
-
 function createJournalEntryElement(
     entry,
     section
 ) {
 
-    const element =
+    const article =
         document.createElement(
             "article"
         );
 
 
-    element.className =
+    article.className =
         "journal-entry";
 
 
-    const presentation =
+    const content =
         getJournalEntryPresentation(
             entry,
             section
         );
 
 
-    element.innerHTML = `
+    article.innerHTML = `
 
         ${
-            presentation.title
+            content.title
                 ?
                 `
                 <h4>
                     ${escapeHTML(
-                        presentation.title
+                        content.title
                     )}
                 </h4>
                 `
@@ -5224,11 +5231,13 @@ function createJournalEntryElement(
                 ""
         }
 
+
         <p>
             ${escapeHTML(
-                presentation.body
+                content.body
             )}
         </p>
+
 
         <span class="journal-entry-meta">
             ${escapeHTML(
@@ -5241,14 +5250,10 @@ function createJournalEntryElement(
     `;
 
 
-    return element;
+    return article;
 
 }
 
-
-/* =========================================================
-   JOURNAL ENTRY PRESENTATION
-   ========================================================= */
 
 function getJournalEntryPresentation(
     entry,
@@ -5270,9 +5275,7 @@ function getJournalEntryPresentation(
                         entry.context
                     ]
                         .filter(Boolean)
-                        .join(
-                            "\n\n"
-                        )
+                        .join("\n\n")
             };
 
 
@@ -5390,9 +5393,7 @@ function openJournalEntryModal() {
 
     const definition =
         CONFIG.journalSections
-            ?.[
-                selectedJournalSection
-            ];
+            ?.[selectedJournalSection];
 
 
     setText(
@@ -5425,13 +5426,7 @@ function openJournalEntryModal() {
 }
 
 
-/* =========================================================
-   DYNAMIC ENTRY FIELDS
-   ========================================================= */
-
-function renderEntryFields(
-    section
-) {
+function renderEntryFields(section) {
 
     const container =
         document.getElementById(
@@ -5646,13 +5641,7 @@ function renderEntryFields(
 }
 
 
-/* =========================================================
-   SAVE JOURNAL ENTRY
-   ========================================================= */
-
-function saveJournalEntry(
-    event
-) {
+function saveJournalEntry(event) {
 
     event.preventDefault();
 
@@ -5805,8 +5794,9 @@ function saveJournalEntry(
     }
 
 
-    book.journal[section]
-        .push(entry);
+    book.journal[section].push(
+        entry
+    );
 
 
     book.updated_at =
@@ -5816,16 +5806,14 @@ function saveJournalEntry(
 
     saveBooks();
 
+
     closeEntryModal();
+
 
     renderJournalEntries();
 
 }
 
-
-/* =========================================================
-   CLOSE ENTRY MODAL
-   ========================================================= */
 
 function closeEntryModal() {
 
@@ -5840,15 +5828,7 @@ function closeEntryModal() {
     }
 
 
-    if (
-        !isAnyModalOpen()
-    ) {
-
-        document.body.classList.remove(
-            "modal-open"
-        );
-
-    }
+    updateModalBodyState();
 
 }
 
@@ -5872,13 +5852,13 @@ function renderReadingNow() {
     );
 
 
-    const featuredSection =
+    const featured =
         document.getElementById(
             "featuredReadingSection"
         );
 
 
-    const listSection =
+    const list =
         document.getElementById(
             "readingListSection"
         );
@@ -5892,30 +5872,33 @@ function renderReadingNow() {
 
     if (!readingBooks.length) {
 
-        if (featuredSection) {
-            featuredSection.hidden = true;
+        if (featured) {
+            featured.hidden = true;
         }
 
-        if (listSection) {
-            listSection.hidden = true;
+
+        if (list) {
+            list.hidden = true;
         }
+
 
         if (empty) {
             empty.hidden = false;
         }
+
 
         return;
 
     }
 
 
-    if (featuredSection) {
-        featuredSection.hidden = false;
+    if (featured) {
+        featured.hidden = false;
     }
 
 
-    if (listSection) {
-        listSection.hidden = false;
+    if (list) {
+        list.hidden = false;
     }
 
 
@@ -5924,14 +5907,14 @@ function renderReadingNow() {
     }
 
 
-    const featured =
+    const featuredBook =
         getFeaturedReadingBook(
             readingBooks
         );
 
 
     renderFeaturedReadingBook(
-        featured
+        featuredBook
     );
 
 
@@ -5941,10 +5924,6 @@ function renderReadingNow() {
 
 }
 
-
-/* =========================================================
-   READING SUMMARY
-   ========================================================= */
 
 function updateReadingNowSummary(
     readingBooks
@@ -5963,10 +5942,12 @@ function updateReadingNowSummary(
             "0%"
         );
 
+
         setText(
             "pagesRemaining",
             "0"
         );
+
 
         return;
 
@@ -5975,7 +5956,6 @@ function updateReadingNowSummary(
 
     const average =
         Math.round(
-
             readingBooks.reduce(
                 (
                     total,
@@ -5989,7 +5969,6 @@ function updateReadingNowSummary(
             )
             /
             readingBooks.length
-
         );
 
 
@@ -6033,10 +6012,6 @@ function updateReadingNowSummary(
 }
 
 
-/* =========================================================
-   FEATURED BOOK
-   ========================================================= */
-
 function getFeaturedReadingBook(
     readingBooks
 ) {
@@ -6053,9 +6028,7 @@ function getFeaturedReadingBook(
 }
 
 
-function renderFeaturedReadingBook(
-    book
-) {
+function renderFeaturedReadingBook(book) {
 
     if (!book) {
         return;
@@ -6127,10 +6100,8 @@ function renderFeaturedReadingBook(
 
 
     if (fill) {
-
         fill.style.width =
             `${percentage}%`;
-
     }
 
 
@@ -6141,10 +6112,8 @@ function renderFeaturedReadingBook(
 
 
     if (bookmark) {
-
         bookmark.style.left =
             `${percentage}%`;
-
     }
 
 
@@ -6155,10 +6124,8 @@ function renderFeaturedReadingBook(
 
 
     if (openButton) {
-
         openButton.dataset.bookId =
             book.id;
-
     }
 
 
@@ -6169,10 +6136,8 @@ function renderFeaturedReadingBook(
 
 
     if (progressButton) {
-
         progressButton.dataset.bookId =
             book.id;
-
     }
 
 }
@@ -6227,9 +6192,7 @@ function renderReadingGrid(
 }
 
 
-function createReadingCard(
-    book
-) {
+function createReadingCard(book) {
 
     const shelf =
         getShelfById(
@@ -6338,10 +6301,13 @@ function createReadingCard(
 
     card.addEventListener(
         "click",
-        () =>
+        () => {
+
             openBookReveal(
                 book.id
-            )
+            );
+
+        }
     );
 
 
@@ -6354,9 +6320,7 @@ function createReadingCard(
    PROGRESS MODAL
    ========================================================= */
 
-function openProgressModal(
-    bookId
-) {
+function openProgressModal(bookId) {
 
     const book =
         getBookById(
@@ -6414,9 +6378,7 @@ function openProgressModal(
         input.max =
             book.pages > 0
                 ?
-                String(
-                    book.pages
-                )
+                String(book.pages)
                 :
                 "";
 
@@ -6457,15 +6419,7 @@ function closeProgressModal() {
     }
 
 
-    if (
-        !isAnyModalOpen()
-    ) {
-
-        document.body.classList.remove(
-            "modal-open"
-        );
-
-    }
+    updateModalBodyState();
 
 }
 
@@ -6493,10 +6447,7 @@ function updateProgressPreview() {
         );
 
 
-    if (
-        book.pages >
-        0
-    ) {
+    if (book.pages > 0) {
 
         current =
             Math.min(
@@ -6529,10 +6480,8 @@ function updateProgressPreview() {
 
 
     if (fill) {
-
         fill.style.width =
             `${percentage}%`;
-
     }
 
 
@@ -6544,13 +6493,9 @@ function updateProgressPreview() {
 }
 
 
-function handleFinishedToggle(
-    event
-) {
+function handleFinishedToggle(event) {
 
-    if (
-        !event.target.checked
-    ) {
+    if (!event.target.checked) {
         return;
     }
 
@@ -6582,9 +6527,7 @@ function handleFinishedToggle(
 }
 
 
-function saveProgressUpdate(
-    event
-) {
+function saveProgressUpdate(event) {
 
     event.preventDefault();
 
@@ -6610,10 +6553,7 @@ function saveProgressUpdate(
         );
 
 
-    if (
-        book.pages >
-        0
-    ) {
+    if (book.pages > 0) {
 
         current =
             Math.min(
@@ -6644,24 +6584,14 @@ function saveProgressUpdate(
             todayISO();
 
 
-        if (
-            book.pages
-        ) {
-
+        if (book.pages) {
             book.current_page =
                 book.pages;
-
         }
 
 
-        if (
-            book.times_read <
-            1
-        ) {
-
-            book.times_read =
-                1;
-
+        if (book.times_read < 1) {
+            book.times_read = 1;
         }
 
     }
@@ -6674,7 +6604,9 @@ function saveProgressUpdate(
 
     saveBooks();
 
+
     closeProgressModal();
+
 
     renderAll();
 
@@ -6682,18 +6614,10 @@ function saveProgressUpdate(
 
 
 /* =========================================================
-   READING STATS
+   STATS
    ========================================================= */
 
 function renderReadingStats() {
-
-    const finished =
-        books.filter(
-            book =>
-                book.status ===
-                "finished"
-        );
-
 
     setText(
         "statsTotalBooks",
@@ -6703,7 +6627,9 @@ function renderReadingStats() {
 
     setText(
         "statsFinishedBooks",
-        finished.length
+        countStatus(
+            "finished"
+        )
     );
 
 
@@ -6772,10 +6698,6 @@ function renderReadingStats() {
 }
 
 
-/* =========================================================
-   PAGES READ
-   ========================================================= */
-
 function calculatePagesRead() {
 
     return books.reduce(
@@ -6822,17 +6744,12 @@ function calculatePagesRead() {
 }
 
 
-/* =========================================================
-   AVERAGE RATING
-   ========================================================= */
-
 function calculateAverageRating() {
 
     const rated =
         books.filter(
             book =>
-                Number(book.rating) >
-                0
+                Number(book.rating) > 0
         );
 
 
@@ -6848,9 +6765,7 @@ function calculateAverageRating() {
                 book
             ) =>
                 total +
-                Number(
-                    book.rating
-                ),
+                Number(book.rating),
             0
         )
         /
@@ -6861,10 +6776,6 @@ function calculateAverageRating() {
 
 }
 
-
-/* =========================================================
-   REREADS
-   ========================================================= */
 
 function calculateRereads() {
 
@@ -6894,13 +6805,7 @@ function calculateRereads() {
 }
 
 
-/* =========================================================
-   STATUS COUNT
-   ========================================================= */
-
-function countStatus(
-    status
-) {
+function countStatus(status) {
 
     return books.filter(
         book =>
@@ -6937,8 +6842,7 @@ function renderGenreStats() {
             String(
                 book.genre ||
                 ""
-            )
-                .trim();
+            ).trim();
 
 
         if (!genre) {
@@ -6958,14 +6862,9 @@ function renderGenreStats() {
 
 
     const entries =
-        Object.entries(
-            counts
-        )
+        Object.entries(counts)
             .sort(
-                (
-                    a,
-                    b
-                ) =>
+                (a, b) =>
                     b[1] -
                     a[1]
             )
@@ -6997,57 +6896,55 @@ function renderGenreStats() {
 
 
     container.innerHTML =
-        entries
-            .map(
-                (
-                    [
-                        genre,
-                        count
-                    ]
-                ) => {
+        entries.map(
+            (
+                [
+                    genre,
+                    count
+                ]
+            ) => {
 
-                    const percent =
-                        Math.round(
-                            (
-                                count /
-                                highest
-                            )
-                            *
-                            100
-                        );
+                const percent =
+                    Math.round(
+                        (
+                            count /
+                            highest
+                        )
+                        *
+                        100
+                    );
 
 
-                    return `
+                return `
 
-                        <div class="genre-stat-row">
+                    <div class="genre-stat-row">
 
-                            <span class="genre-stat-name">
-                                ${escapeHTML(
-                                    genre
-                                )}
-                            </span>
+                        <span class="genre-stat-name">
+                            ${escapeHTML(
+                                genre
+                            )}
+                        </span>
 
-                            <div class="genre-stat-track">
+                        <div class="genre-stat-track">
 
-                                <div
-                                    class="genre-stat-fill"
-                                    style="width:${percent}%"
-                                >
-                                </div>
-
+                            <div
+                                class="genre-stat-fill"
+                                style="width:${percent}%"
+                            >
                             </div>
-
-                            <span class="genre-stat-count">
-                                ${count}
-                            </span>
 
                         </div>
 
-                    `;
+                        <span class="genre-stat-count">
+                            ${count}
+                        </span>
 
-                }
-            )
-            .join("");
+                    </div>
+
+                `;
+
+            }
+        ).join("");
 
 }
 
@@ -7081,7 +6978,8 @@ function renderMonthlyReadingStats() {
 
                     if (
                         book.status !==
-                        "finished" ||
+                        "finished"
+                        ||
                         !book.finished
                     ) {
                         return false;
@@ -7129,63 +7027,61 @@ function renderMonthlyReadingStats() {
 
 
     container.innerHTML =
-        counts
-            .map(item => {
+        counts.map(item => {
 
-                const percent =
-                    item.count
-                        ?
-                        Math.max(
-                            5,
-                            Math.round(
-                                (
-                                    item.count /
-                                    highest
-                                )
-                                *
-                                100
+            const percent =
+                item.count
+                    ?
+                    Math.max(
+                        5,
+                        Math.round(
+                            (
+                                item.count /
+                                highest
                             )
+                            *
+                            100
                         )
-                        :
-                        2;
+                    )
+                    :
+                    2;
 
 
-                return `
+            return `
 
-                    <div class="month-stat">
+                <div class="month-stat">
 
-                        <strong>
-                            ${item.count}
-                        </strong>
+                    <strong>
+                        ${item.count}
+                    </strong>
 
-                        <div class="month-stat-bar-wrap">
+                    <div class="month-stat-bar-wrap">
 
-                            <div
-                                class="month-stat-bar"
-                                style="height:${percent}%"
-                            >
-                            </div>
-
+                        <div
+                            class="month-stat-bar"
+                            style="height:${percent}%"
+                        >
                         </div>
-
-                        <span>
-                            ${escapeHTML(
-                                item.label
-                            )}
-                        </span>
 
                     </div>
 
-                `;
+                    <span>
+                        ${escapeHTML(
+                            item.label
+                        )}
+                    </span>
 
-            })
-            .join("");
+                </div>
+
+            `;
+
+        }).join("");
 
 }
 
 
 /* =========================================================
-   LAST TWELVE MONTHS
+   MONTH HELPERS
    ========================================================= */
 
 function getLastTwelveMonths() {
@@ -7212,7 +7108,6 @@ function getLastTwelveMonths() {
 
 
         result.push({
-
             year:
                 date.getFullYear(),
 
@@ -7227,7 +7122,6 @@ function getLastTwelveMonths() {
                             "short"
                     }
                 )
-
         });
 
     }
@@ -7278,42 +7172,39 @@ function renderCoverInElement(
 
     element.innerHTML = "";
 
+
     element.style.backgroundImage =
         "";
+
 
     element.style.backgroundColor =
         book.spine_color;
 
 
-    if (
-        book.cover_image
-    ) {
+    if (book.cover_image) {
 
         element.style.backgroundImage =
             `url("${safeStyleURL(
                 book.cover_image
             )}")`;
 
+
         return;
 
     }
 
 
+    const classes =
+        getBookTypographyClasses(
+            book,
+            "generated-cover"
+        );
+
+
     element.innerHTML = `
 
         <div
-            class="
-                generated-cover
-                spine-font-${escapeHTML(
-                    book.spine_font
-                )}
-                spine-weight-${escapeHTML(
-                    book.spine_font_weight
-                )}
-                spine-case-${escapeHTML(
-                    book.spine_case
-                )}
-            "
+            class="${classes}"
             style="
                 --book-color:${escapeHTML(
                     book.spine_color
@@ -7335,11 +7226,13 @@ function renderCoverInElement(
                 )}
             </span>
 
+
             <strong>
                 ${escapeHTML(
                     book.title
                 )}
             </strong>
+
 
             <span>
                 ${escapeHTML(
@@ -7359,9 +7252,7 @@ function renderCoverInElement(
    STATUS
    ========================================================= */
 
-function getStatusLabel(
-    status
-) {
+function getStatusLabel(status) {
 
     return (
         CONFIG.readingStatuses
@@ -7380,9 +7271,7 @@ function getStatusLabel(
    PROGRESS
    ========================================================= */
 
-function getProgressPercent(
-    book
-) {
+function getProgressPercent(book) {
 
     if (!book.pages) {
         return 0;
@@ -7411,9 +7300,7 @@ function getProgressPercent(
    RATING
    ========================================================= */
 
-function getRatingText(
-    rating
-) {
+function getRatingText(rating) {
 
     const value =
         Math.min(
@@ -7453,6 +7340,7 @@ function openThemeDrawer() {
 
     hideAllDrawersImmediately();
 
+
     showDrawer(
         "themeDrawer"
     );
@@ -7460,9 +7348,7 @@ function openThemeDrawer() {
 }
 
 
-function showDrawer(
-    drawerId
-) {
+function showDrawer(drawerId) {
 
     const drawer =
         document.getElementById(
@@ -7516,23 +7402,15 @@ function showDrawer(
 
 function closeAllDrawers() {
 
-    const delay =
-        settings.reducedMotion
-            ?
-            0
-            :
-            250;
+    const drawers =
+        document.querySelectorAll(
+            ".form-drawer"
+        );
 
 
     const overlay =
         document.getElementById(
             "overlay"
-        );
-
-
-    const drawers =
-        document.querySelectorAll(
-            ".form-drawer"
         );
 
 
@@ -7552,16 +7430,22 @@ function closeAllDrawers() {
         );
 
 
+    const delay =
+        settings.reducedMotion
+            ?
+            0
+            :
+            220;
+
+
     window.setTimeout(
         () => {
 
-            drawers.forEach(
-                drawer => {
+            drawers.forEach(drawer => {
 
-                    drawer.hidden = true;
+                drawer.hidden = true;
 
-                }
-            );
+            });
 
 
             if (overlay) {
@@ -7569,15 +7453,7 @@ function closeAllDrawers() {
             }
 
 
-            if (
-                !isAnyModalOpen()
-            ) {
-
-                document.body.classList.remove(
-                    "modal-open"
-                );
-
-            }
+            updateModalBodyState();
 
         },
         delay
@@ -7598,6 +7474,7 @@ function hideAllDrawersImmediately() {
                 "open"
             );
 
+
             drawer.hidden = true;
 
         });
@@ -7615,9 +7492,59 @@ function hideAllDrawersImmediately() {
             "open"
         );
 
+
         overlay.hidden = true;
 
     }
+
+}
+
+
+/* =========================================================
+   MODAL STATE
+   ========================================================= */
+
+function updateModalBodyState() {
+
+    const drawerOpen =
+        Array.from(
+            document.querySelectorAll(
+                ".form-drawer"
+            )
+        ).some(
+            drawer =>
+                drawer.hidden === false
+        );
+
+
+    document.body.classList.toggle(
+        "modal-open",
+        drawerOpen ||
+        isAnyModalOpen()
+    );
+
+}
+
+
+function isAnyModalOpen() {
+
+    return [
+        "bookReveal",
+        "readingBook",
+        "entryModal",
+        "progressModal"
+    ].some(id => {
+
+        const element =
+            document.getElementById(id);
+
+
+        return (
+            element &&
+            element.hidden === false
+        );
+
+    });
 
 }
 
@@ -7642,12 +7569,13 @@ function bindSectionNavigation() {
             "click",
             () => {
 
-                links.forEach(
-                    item =>
-                        item.classList.remove(
-                            "active"
-                        )
-                );
+                links.forEach(item => {
+
+                    item.classList.remove(
+                        "active"
+                    );
+
+                });
 
 
                 link.classList.add(
@@ -7677,9 +7605,7 @@ function bindSectionNavigation() {
     ]
         .map(
             id =>
-                document.getElementById(
-                    id
-                )
+                document.getElementById(id)
         )
         .filter(Boolean);
 
@@ -7695,10 +7621,7 @@ function bindSectionNavigation() {
                                 entry.isIntersecting
                         )
                         .sort(
-                            (
-                                a,
-                                b
-                            ) =>
+                            (a, b) =>
                                 b.intersectionRatio -
                                 a.intersectionRatio
                         )[0];
@@ -7709,20 +7632,18 @@ function bindSectionNavigation() {
                 }
 
 
-                links.forEach(
-                    link => {
+                links.forEach(link => {
 
-                        link.classList.toggle(
-                            "active",
-                            link.getAttribute(
-                                "href"
-                            )
-                            ===
-                            `#${visible.target.id}`
-                        );
+                    link.classList.toggle(
+                        "active",
+                        link.getAttribute(
+                            "href"
+                        )
+                        ===
+                        `#${visible.target.id}`
+                    );
 
-                    }
-                );
+                });
 
             },
             {
@@ -7740,12 +7661,13 @@ function bindSectionNavigation() {
         );
 
 
-    sections.forEach(
-        section =>
-            observer.observe(
-                section
-            )
-    );
+    sections.forEach(section => {
+
+        observer.observe(
+            section
+        );
+
+    });
 
 }
 
@@ -7759,9 +7681,7 @@ function getBookById(id) {
     return (
         books.find(
             book =>
-                String(
-                    book.id
-                ) ===
+                String(book.id) ===
                 String(id)
         )
         ||
@@ -7776,9 +7696,7 @@ function getShelfById(id) {
     return (
         shelves.find(
             shelf =>
-                String(
-                    shelf.id
-                ) ===
+                String(shelf.id) ===
                 String(id)
         )
         ||
@@ -7787,10 +7705,6 @@ function getShelfById(id) {
 
 }
 
-
-/* =========================================================
-   THEME DECORATIONS
-   ========================================================= */
 
 function getThemeDecorations() {
 
@@ -7810,36 +7724,6 @@ function getThemeDecorations() {
 
 
 /* =========================================================
-   MODAL STATE
-   ========================================================= */
-
-function isAnyModalOpen() {
-
-    const ids = [
-        "bookReveal",
-        "readingBook",
-        "entryModal",
-        "progressModal"
-    ];
-
-
-    return ids.some(id => {
-
-        const element =
-            document.getElementById(id);
-
-        return (
-            element &&
-            element.hidden ===
-            false
-        );
-
-    });
-
-}
-
-
-/* =========================================================
    DATE HELPERS
    ========================================================= */
 
@@ -7853,23 +7737,19 @@ function todayISO() {
         date.getFullYear(),
 
         String(
-            date.getMonth() +
-            1
-        )
-            .padStart(
-                2,
-                "0"
-            ),
+            date.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        ),
 
         String(
             date.getDate()
+        ).padStart(
+            2,
+            "0"
         )
-            .padStart(
-                2,
-                "0"
-            )
-    ]
-        .join("-");
+    ].join("-");
 
 }
 
@@ -7983,7 +7863,7 @@ function dateValue(value) {
 
 
 /* =========================================================
-   VALUE HELPERS
+   NUMERIC HELPERS
    ========================================================= */
 
 function normalizeNumber(value) {
@@ -8071,6 +7951,10 @@ function clamp(
 }
 
 
+/* =========================================================
+   IDs
+   ========================================================= */
+
 function generateId() {
 
     if (
@@ -8130,8 +8014,7 @@ function getValue(id) {
     return String(
         element.value ??
         ""
-    )
-        .trim();
+    ).trim();
 
 }
 
@@ -8188,9 +8071,7 @@ function setChecked(
     if (element) {
 
         element.checked =
-            Boolean(
-                checked
-            );
+            Boolean(checked);
 
     }
 
