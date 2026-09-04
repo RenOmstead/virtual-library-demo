@@ -3772,3 +3772,671 @@ body[data-decoration-density="maximal"] .library-page::after {
     display:
         none !important;
 }
+/* =========================================================
+   MOBILE LIBRARY
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    /* -----------------------------------------------------
+       PAGE
+       ----------------------------------------------------- */
+
+    .library-page,
+    .reading-now-section,
+    .reading-stats-section {
+        width: calc(100% - 20px);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .library-page {
+        padding-top: 34px;
+        padding-bottom: 70px;
+    }
+
+    .library-page::before {
+        inset: 0;
+        border-radius: 14px;
+    }
+
+
+    /* -----------------------------------------------------
+       INTRO
+       ----------------------------------------------------- */
+
+    .library-intro {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        margin-bottom: 38px;
+    }
+
+    .library-intro h1 {
+        font-size: clamp(3rem, 15vw, 4.8rem);
+    }
+
+    .library-intro p {
+        font-size: 0.72rem;
+        line-height: 1.7;
+    }
+
+
+    /* -----------------------------------------------------
+       SUMMARY
+       ----------------------------------------------------- */
+
+    .library-summary,
+    .reading-now-summary {
+        width: 100%;
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .library-summary > div,
+    .reading-now-summary > div {
+        min-height: 82px;
+        padding: 10px 5px;
+    }
+
+    .library-summary strong,
+    .reading-now-summary strong {
+        font-size: 1.2rem;
+    }
+
+
+    /* -----------------------------------------------------
+       SHELF SPACING
+       ----------------------------------------------------- */
+
+    .shelf-container {
+        gap: 46px;
+    }
+
+
+    /* -----------------------------------------------------
+       SHELF FRAME
+       ----------------------------------------------------- */
+
+    .library-shelf {
+        width: 100%;
+        padding: 12px 8px 16px;
+
+        border-radius:
+            12px 12px 7px 7px;
+    }
+
+    .library-shelf::before {
+        left: -3px;
+        right: -3px;
+        top: -8px;
+
+        height: 17px;
+
+        border-radius:
+            9px 9px 4px 4px;
+    }
+
+
+    /* -----------------------------------------------------
+       SHELF HEADER
+       ----------------------------------------------------- */
+
+    .shelf-header {
+        min-height: auto;
+
+        margin:
+            0 3px;
+
+        padding:
+            15px;
+
+        gap:
+            14px;
+
+        flex-direction:
+            column;
+
+        align-items:
+            flex-start;
+    }
+
+    .shelf-header-copy {
+        width: 100%;
+    }
+
+    .shelf-header-copy h2 {
+        font-size: 1.32rem;
+    }
+
+    .shelf-header-copy p {
+        font-size: 0.55rem;
+    }
+
+    .shelf-actions {
+        width: 100%;
+
+        display: grid;
+
+        grid-template-columns:
+            1fr 1fr 1fr;
+
+        gap: 6px;
+    }
+
+    .shelf-action-button {
+        min-height: 36px;
+
+        padding:
+            0 5px;
+
+        font-size:
+            0.43rem;
+
+        text-align:
+            center;
+    }
+
+
+    /* -----------------------------------------------------
+       SHELF INTERIOR
+       ----------------------------------------------------- */
+
+    .shelf-body {
+        min-height: 290px;
+
+        margin:
+            0 3px;
+
+        border-left-width:
+            7px;
+
+        border-right-width:
+            7px;
+
+        overflow:
+            hidden;
+    }
+
+    .shelf-body::before {
+        inset:
+            12px 9px 39px;
+    }
+
+    .shelf-body::after {
+        bottom:
+            34px;
+    }
+
+
+    /* -----------------------------------------------------
+       SHELF BOARD
+       ----------------------------------------------------- */
+
+    .shelf-board {
+        height:
+            39px;
+    }
+
+    .shelf-board::before {
+        top:
+            6px;
+
+        height:
+            17px;
+    }
+
+
+    /* -----------------------------------------------------
+       BOOK ROW
+       ----------------------------------------------------- */
+
+    .shelf-books-row {
+        left:
+            10px;
+
+        right:
+            10px;
+
+        bottom:
+            38px;
+
+        height:
+            205px;
+
+        gap:
+            3px;
+
+        padding:
+            12px 6px 0;
+
+        overflow-x:
+            auto;
+
+        overflow-y:
+            visible;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE BOOK SIZES
+       ----------------------------------------------------- */
+
+    .book-height-small {
+        height:
+            126px;
+    }
+
+    .book-height-medium {
+        height:
+            154px;
+    }
+
+    .book-height-tall {
+        height:
+            184px;
+    }
+
+    .book-thickness-slim {
+        width:
+            38px;
+    }
+
+    .book-thickness-medium {
+        width:
+            51px;
+    }
+
+    .book-thickness-chunky {
+        width:
+            67px;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE SPINES
+       ----------------------------------------------------- */
+
+    .book-spine {
+        border-radius:
+            10px 8px 4px 4px;
+    }
+
+    .spine-inner {
+        inset:
+            7px 5px;
+    }
+
+    .spine-title-panel {
+        height:
+            calc(100% - 21px);
+
+        padding:
+            3px 2px;
+    }
+
+    .book-height-small .spine-title {
+        font-size:
+            min(
+                var(--shelfmark-spine-size, 0.42rem),
+                0.42rem
+            );
+    }
+
+    .book-height-medium .spine-title {
+        font-size:
+            min(
+                var(--shelfmark-spine-size, 0.48rem),
+                0.48rem
+            );
+    }
+
+    .book-height-tall .spine-title {
+        font-size:
+            min(
+                var(--shelfmark-spine-size, 0.53rem),
+                0.53rem
+            );
+    }
+
+    .spine-ornament {
+        bottom:
+            5px;
+
+        font-size:
+            0.5rem;
+    }
+
+
+    /* -----------------------------------------------------
+       DECORATIONS
+       ----------------------------------------------------- */
+
+    .shelf-decoration {
+        --mobile-decoration-scale: 0.72;
+
+        transform-origin:
+            center center;
+
+        filter:
+            drop-shadow(
+                0 4px 3px rgba(0, 0, 0, 0.17)
+            );
+    }
+
+
+    /* slightly larger important objects */
+
+    .decor-cat {
+        --mobile-decoration-scale: 0.8;
+    }
+
+    .decor-ghost {
+        --mobile-decoration-scale: 0.78;
+    }
+
+    .decor-raven {
+        --mobile-decoration-scale: 0.76;
+    }
+
+
+    /* small shelf objects */
+
+    .decor-mushroom,
+    .decor-pumpkin,
+    .decor-candle,
+    .decor-mug,
+    .decor-potion,
+    .decor-crystal {
+        --mobile-decoration-scale: 0.7;
+    }
+
+
+    /* plants need more room because the leaves spread */
+
+    .decor-plant,
+    .decor-flowers {
+        --mobile-decoration-scale: 0.68;
+    }
+
+
+    /* -----------------------------------------------------
+       PLANT MOBILE CORRECTION
+       ----------------------------------------------------- */
+
+    .decor-plant {
+        width:
+            74px;
+
+        height:
+            78px;
+    }
+
+    .plant-leaf {
+        width:
+            18px;
+
+        height:
+            34px;
+    }
+
+    .decor-plant .leaf-1 {
+        left:
+            26px;
+
+        top:
+            4px;
+    }
+
+    .decor-plant .leaf-2 {
+        left:
+            40px;
+
+        top:
+            11px;
+    }
+
+    .decor-plant .leaf-3 {
+        left:
+            16px;
+
+        top:
+            23px;
+    }
+
+    .decor-plant .leaf-4 {
+        left:
+            44px;
+
+        top:
+            27px;
+    }
+
+    .decor-plant .leaf-5 {
+        left:
+            28px;
+
+        top:
+            23px;
+    }
+
+
+    /* -----------------------------------------------------
+       EMPTY SHELF MESSAGE
+       ----------------------------------------------------- */
+
+    .empty-shelf-message {
+        bottom:
+            62px;
+
+        min-width:
+            180px;
+
+        max-width:
+            60%;
+
+        font-size:
+            0.57rem;
+    }
+
+    .empty-shelf-message button {
+        margin-top:
+            10px;
+
+        padding:
+            8px 11px;
+
+        font-size:
+            0.43rem;
+    }
+
+
+    /* -----------------------------------------------------
+       ADD SHELF BUTTON
+       ----------------------------------------------------- */
+
+    #bottomAddShelf,
+    .bottom-add-shelf,
+    .library-add-shelf-button {
+        width:
+            calc(100% - 20px);
+
+        min-height:
+            46px;
+
+        margin:
+            26px auto 0;
+
+        padding:
+            0 16px;
+
+        font-size:
+            0.68rem;
+    }
+
+
+    /* -----------------------------------------------------
+       READING NOW
+       ----------------------------------------------------- */
+
+    .reading-now-section,
+    .reading-stats-section {
+        padding:
+            68px 0;
+    }
+
+    .reading-now-intro {
+        grid-template-columns:
+            1fr;
+
+        gap:
+            25px;
+    }
+
+    .featured-reading-card {
+        grid-template-columns:
+            1fr;
+
+        gap:
+            30px;
+
+        padding:
+            28px 20px;
+
+        text-align:
+            center;
+    }
+
+    .featured-book-cover {
+        width:
+            170px;
+
+        margin:
+            0 auto;
+    }
+
+    .reading-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .reading-card {
+        grid-template-columns:
+            90px minmax(0, 1fr);
+
+        min-height:
+            205px;
+
+        padding:
+            15px;
+
+        gap:
+            15px;
+    }
+
+    .reading-card-cover {
+        width:
+            86px;
+    }
+
+
+    /* -----------------------------------------------------
+       STATS
+       ----------------------------------------------------- */
+
+    .stats-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 430px) {
+
+    .library-page,
+    .reading-now-section,
+    .reading-stats-section {
+        width:
+            calc(100% - 12px);
+    }
+
+    .library-shelf {
+        padding-left:
+            5px;
+
+        padding-right:
+            5px;
+    }
+
+    .shelf-body {
+        min-height:
+            270px;
+    }
+
+    .shelf-books-row {
+        left:
+            5px;
+
+        right:
+            5px;
+
+        height:
+            188px;
+    }
+
+    .book-height-small {
+        height:
+            115px;
+    }
+
+    .book-height-medium {
+        height:
+            143px;
+    }
+
+    .book-height-tall {
+        height:
+            170px;
+    }
+
+    .book-thickness-slim {
+        width:
+            35px;
+    }
+
+    .book-thickness-medium {
+        width:
+            47px;
+    }
+
+    .book-thickness-chunky {
+        width:
+            61px;
+    }
+
+    .shelf-decoration {
+        --mobile-decoration-scale:
+            0.62;
+    }
+
+    .decor-cat {
+        --mobile-decoration-scale:
+            0.7;
+    }
+
+    .decor-plant,
+    .decor-flowers {
+        --mobile-decoration-scale:
+            0.58;
+    }
+
+    .empty-shelf-message {
+        max-width:
+            54%;
+
+        font-size:
+            0.52rem;
+    }
+}
