@@ -1,17 +1,22 @@
 /* =========================================================
    SHELFMARK
    CONFIG.JS
+   v5
    ========================================================= */
 
 window.SHELFMARK_CONFIG = {
 
-    productName: "Shelfmark",
+    productName:
+        "Shelfmark",
 
-    tagline: "my little library",
+    tagline:
+        "my little library",
 
-    environment: "Portfolio Demo",
+    environment:
+        "Portfolio Demo",
 
-    defaultTheme: "haunted",
+    defaultTheme:
+        "haunted",
 
 
     /* =====================================================
@@ -145,7 +150,7 @@ window.SHELFMARK_CONFIG = {
 
 
     /* =====================================================
-       DECORATIONS
+       SHELF DECORATIONS
        ===================================================== */
 
     decorations: {
@@ -319,6 +324,70 @@ window.SHELFMARK_CONFIG = {
 
 
     /* =====================================================
+       DECORATION PLACEMENT
+       ===================================================== */
+
+    decorationDefaults: {
+
+        x:
+            50,
+
+        y:
+            72,
+
+        scale:
+            1,
+
+        rotate:
+            0
+
+    },
+
+
+    /* =====================================================
+       AMBIENT CLUTTER
+       This does NOT control user-placed decorations.
+       ===================================================== */
+
+    decorationDensity: {
+
+        minimal: {
+            id:
+                "minimal",
+
+            label:
+                "Tidy",
+
+            ambientLevel:
+                0
+        },
+
+        cozy: {
+            id:
+                "cozy",
+
+            label:
+                "Cozy",
+
+            ambientLevel:
+                1
+        },
+
+        maximal: {
+            id:
+                "maximal",
+
+            label:
+                "Curio Cabinet",
+
+            ambientLevel:
+                2
+        }
+
+    },
+
+
+    /* =====================================================
        SPINE DESIGNS
        ===================================================== */
 
@@ -349,7 +418,7 @@ window.SHELFMARK_CONFIG = {
                 "diamond",
 
             defaultFont:
-                "roman"
+                "gothic"
         },
 
         {
@@ -363,7 +432,7 @@ window.SHELFMARK_CONFIG = {
                 "leaf",
 
             defaultFont:
-                "serif"
+                "bookish"
         },
 
         {
@@ -377,7 +446,7 @@ window.SHELFMARK_CONFIG = {
                 "moon",
 
             defaultFont:
-                "serif"
+                "elegant"
         },
 
         {
@@ -405,7 +474,7 @@ window.SHELFMARK_CONFIG = {
                 "heart",
 
             defaultFont:
-                "storybook"
+                "handwritten"
         },
 
         {
@@ -447,7 +516,7 @@ window.SHELFMARK_CONFIG = {
                 "star",
 
             defaultFont:
-                "roman"
+                "bookish"
         },
 
         {
@@ -491,10 +560,50 @@ window.SHELFMARK_CONFIG = {
 
         {
             id:
+                "bookish",
+
+            name:
+                "Bookish Serif"
+        },
+
+        {
+            id:
+                "elegant",
+
+            name:
+                "Elegant Serif"
+        },
+
+        {
+            id:
                 "typewriter",
 
             name:
                 "Typewriter"
+        },
+
+        {
+            id:
+                "clean",
+
+            name:
+                "Clean Sans"
+        },
+
+        {
+            id:
+                "condensed",
+
+            name:
+                "Condensed Sans"
+        },
+
+        {
+            id:
+                "heavy",
+
+            name:
+                "Heavy Sans"
         },
 
         {
@@ -507,10 +616,305 @@ window.SHELFMARK_CONFIG = {
 
         {
             id:
-                "clean",
+                "handwritten",
 
             name:
-                "Clean"
+                "Handwritten"
+        },
+
+        {
+            id:
+                "gothic",
+
+            name:
+                "Gothic Display"
+        },
+
+        {
+            id:
+                "deco",
+
+            name:
+                "Art Deco"
+        },
+
+        {
+            id:
+                "retro",
+
+            name:
+                "Retro Horror"
+        }
+
+    ],
+
+
+    /* =====================================================
+       SPINE FONT SIZES
+       ===================================================== */
+
+    spineFontSizes: [
+
+        {
+            id:
+                "small",
+
+            name:
+                "Small"
+        },
+
+        {
+            id:
+                "medium",
+
+            name:
+                "Medium"
+        },
+
+        {
+            id:
+                "large",
+
+            name:
+                "Large"
+        },
+
+        {
+            id:
+                "xlarge",
+
+            name:
+                "Extra Large"
+        }
+
+    ],
+
+
+    /* =====================================================
+       SPINE FONT WEIGHTS
+       ===================================================== */
+
+    spineFontWeights: [
+
+        {
+            id:
+                "light",
+
+            name:
+                "Light"
+        },
+
+        {
+            id:
+                "regular",
+
+            name:
+                "Regular"
+        },
+
+        {
+            id:
+                "bold",
+
+            name:
+                "Bold"
+        },
+
+        {
+            id:
+                "heavy",
+
+            name:
+                "Heavy"
+        }
+
+    ],
+
+
+    /* =====================================================
+       LETTER SPACING
+       ===================================================== */
+
+    spineLetterSpacing: [
+
+        {
+            id:
+                "tight",
+
+            name:
+                "Tight"
+        },
+
+        {
+            id:
+                "normal",
+
+            name:
+                "Normal"
+        },
+
+        {
+            id:
+                "wide",
+
+            name:
+                "Wide"
+        },
+
+        {
+            id:
+                "extra-wide",
+
+            name:
+                "Extra Wide"
+        }
+
+    ],
+
+
+    /* =====================================================
+       TEXT CASE
+       ===================================================== */
+
+    spineCases: [
+
+        {
+            id:
+                "typed",
+
+            name:
+                "As Typed"
+        },
+
+        {
+            id:
+                "uppercase",
+
+            name:
+                "UPPERCASE"
+        },
+
+        {
+            id:
+                "lowercase",
+
+            name:
+                "lowercase"
+        }
+
+    ],
+
+
+    /* =====================================================
+       FONT STYLE
+       ===================================================== */
+
+    spineFontStyles: [
+
+        {
+            id:
+                "normal",
+
+            name:
+                "Normal"
+        },
+
+        {
+            id:
+                "italic",
+
+            name:
+                "Italic"
+        }
+
+    ],
+
+
+    /* =====================================================
+       TITLE PLACEMENT
+       ===================================================== */
+
+    spineTextAlignments: [
+
+        {
+            id:
+                "top",
+
+            name:
+                "Toward Top"
+        },
+
+        {
+            id:
+                "center",
+
+            name:
+                "Center"
+        },
+
+        {
+            id:
+                "bottom",
+
+            name:
+                "Toward Bottom"
+        }
+
+    ],
+
+
+    /* =====================================================
+       TITLE PANELS
+       ===================================================== */
+
+    spineTitlePanels: [
+
+        {
+            id:
+                "none",
+
+            name:
+                "No Panel"
+        },
+
+        {
+            id:
+                "simple",
+
+            name:
+                "Simple Label"
+        },
+
+        {
+            id:
+                "bordered",
+
+            name:
+                "Bordered Label"
+        },
+
+        {
+            id:
+                "ornate",
+
+            name:
+                "Ornate Label"
+        },
+
+        {
+            id:
+                "dark",
+
+            name:
+                "Dark Inset Label"
+        },
+
+        {
+            id:
+                "light",
+
+            name:
+                "Light Paper Label"
         }
 
     ],
@@ -614,6 +1018,60 @@ window.SHELFMARK_CONFIG = {
 
 
     /* =====================================================
+       DEFAULT BOOK DESIGN
+       ===================================================== */
+
+    defaultBookDesign: {
+
+        style:
+            "classic",
+
+        spineColor:
+            "#6c2633",
+
+        textColor:
+            "#eadfca",
+
+        accentColor:
+            "#b28a4a",
+
+        spineFont:
+            "serif",
+
+        fontSize:
+            "medium",
+
+        fontWeight:
+            "regular",
+
+        letterSpacing:
+            "normal",
+
+        textCase:
+            "typed",
+
+        fontStyle:
+            "normal",
+
+        textAlign:
+            "center",
+
+        titlePanel:
+            "none",
+
+        ornament:
+            "auto",
+
+        height:
+            "medium",
+
+        thickness:
+            "medium"
+
+    },
+
+
+    /* =====================================================
        DEFAULT USER SETTINGS
        ===================================================== */
 
@@ -639,60 +1097,6 @@ window.SHELFMARK_CONFIG = {
 
         decorationDensity:
             "cozy"
-
-    },
-
-
-    /* =====================================================
-       DEFAULT BOOK DESIGN
-       ===================================================== */
-
-    defaultBookDesign: {
-
-        style:
-            "classic",
-
-        spineColor:
-            "#6c2633",
-
-        textColor:
-            "#eadfca",
-
-        accentColor:
-            "#b28a4a",
-
-        spineFont:
-            "serif",
-
-        ornament:
-            "auto",
-
-        height:
-            "medium",
-
-        thickness:
-            "medium"
-
-    },
-
-
-    /* =====================================================
-       DECORATION PLACEMENT
-       ===================================================== */
-
-    decorationDefaults: {
-
-        x:
-            50,
-
-        y:
-            72,
-
-        scale:
-            1,
-
-        rotate:
-            0
 
     }
 
