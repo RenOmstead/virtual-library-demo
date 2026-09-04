@@ -1,7 +1,7 @@
 /* =========================================================
    SHELFMARK
    LIBRARY.JS
-   v7 — DIMENSIONAL SHELF + RICH DECORATIONS
+   v8 — FIXED SPINES + DIMENSIONAL DECORATIONS
    ========================================================= */
 
 
@@ -13,7 +13,6 @@ const CONFIG =
     window.SHELFMARK_CONFIG || {};
 
 const STORAGE_KEYS = {
-
     shelves:
         CONFIG.storageKeys?.shelves ||
         "shelfmark_shelves",
@@ -25,7 +24,6 @@ const STORAGE_KEYS = {
     settings:
         CONFIG.storageKeys?.settings ||
         "shelfmark_settings"
-
 };
 
 
@@ -43,9 +41,7 @@ let pendingCoverData = "";
 
 let activeDrag = null;
 
-
 let settings = {
-
     theme:
         CONFIG.defaultSettings?.theme ||
         CONFIG.defaultTheme ||
@@ -74,7 +70,6 @@ let settings = {
     decorationDensity:
         CONFIG.defaultSettings?.decorationDensity ||
         "cozy"
-
 };
 
 
@@ -978,10 +973,12 @@ function bindControls() {
                 settings.reducedMotion =
                     event.target.checked;
 
+
                 document.body.classList.toggle(
                     "reduce-motion",
                     settings.reducedMotion
                 );
+
 
                 saveSettings();
 
@@ -1053,7 +1050,6 @@ function bindControls() {
 
 
     const spineControls = [
-
         "bookTitle",
         "bookStyle",
         "bookSpineColor",
@@ -1070,7 +1066,6 @@ function bindControls() {
         "bookSpineTitlePanel",
         "bookHeight",
         "bookThickness"
-
     ];
 
 
@@ -1462,13 +1457,9 @@ function createShelfElement(
 
 
     article.className = [
-
         "library-shelf",
-
         `shelf-${shelf.material}`,
-
         `shelf-mood-${shelf.mood}`
-
     ]
         .join(" ");
 
@@ -1626,11 +1617,6 @@ function createShelfElement(
     }
 
 
-    /*
-     * ALL user-placed decorations render.
-     * Ambient clutter settings do NOT hide them.
-     */
-
     shelf.decorations
         .forEach(decoration => {
 
@@ -1709,9 +1695,7 @@ function getBooksForShelf(
         );
 
 
-    switch (
-        shelf.sort
-    ) {
+    switch (shelf.sort) {
 
         case "title":
 
@@ -1776,6 +1760,9 @@ function getBooksForShelf(
 
 /* =========================================================
    CREATE BOOK SPINE
+   FIXED:
+   - style class is on .book-spine
+   - CSS variables are applied to the visible spine
    ========================================================= */
 
 function createBookElement(
@@ -1789,14 +1776,11 @@ function createBookElement(
 
 
     wrapper.className = [
-
         "shelf-book",
 
         `book-height-${book.height}`,
 
         `book-thickness-${book.thickness}`,
-
-        `book-style-${book.style}`,
 
         `spine-font-${book.spine_font}`,
 
@@ -1813,7 +1797,6 @@ function createBookElement(
         `spine-align-${book.spine_text_align}`,
 
         `spine-panel-${book.spine_title_panel}`
-
     ]
         .join(" ");
 
@@ -1822,25 +1805,16 @@ function createBookElement(
         book.id;
 
 
-    wrapper.style.setProperty(
-        "--book-color",
-        book.spine_color
-    );
-
-    wrapper.style.setProperty(
-        "--book-text",
-        book.text_color
-    );
-
-    wrapper.style.setProperty(
-        "--book-accent",
-        book.accent_color
-    );
-
-
     wrapper.innerHTML = `
 
-        <div class="book-spine">
+        <div
+            class="
+                book-spine
+                book-style-${escapeHTML(
+                    book.style
+                )}
+            "
+        >
 
             <div class="spine-inner">
 
@@ -1867,6 +1841,34 @@ function createBookElement(
         </div>
 
     `;
+
+
+    const spine =
+        wrapper.querySelector(
+            ".book-spine"
+        );
+
+
+    if (spine) {
+
+        spine.style.setProperty(
+            "--book-color",
+            book.spine_color
+        );
+
+
+        spine.style.setProperty(
+            "--book-text",
+            book.text_color
+        );
+
+
+        spine.style.setProperty(
+            "--book-accent",
+            book.accent_color
+        );
+
+    }
 
 
     wrapper.addEventListener(
@@ -1938,7 +1940,7 @@ function getBookOrnament(
 
 
 /* =========================================================
-   RICH DECORATIONS
+   DECORATION ELEMENT
    ========================================================= */
 
 function createDecorationElement(
@@ -1953,13 +1955,9 @@ function createDecorationElement(
 
 
     element.className = [
-
         "shelf-decoration",
-
         `decor-${decoration.type}`,
-
         "draggable-decoration"
-
     ]
         .join(" ");
 
@@ -2030,10 +2028,6 @@ function getDecorationArtwork(type) {
 
     switch (type) {
 
-        /* -------------------------------------------------
-           CAT
-           ------------------------------------------------- */
-
         case "cat":
 
             return `
@@ -2047,9 +2041,11 @@ function getDecorationArtwork(type) {
                 <span class="cat-head">
 
                     <span class="cat-ear left"></span>
+
                     <span class="cat-ear right"></span>
 
                     <span class="cat-eye left"></span>
+
                     <span class="cat-eye right"></span>
 
                     <span class="cat-nose"></span>
@@ -2057,14 +2053,11 @@ function getDecorationArtwork(type) {
                 </span>
 
                 <span class="cat-paw left"></span>
+
                 <span class="cat-paw right"></span>
 
             `;
 
-
-        /* -------------------------------------------------
-           GHOST
-           ------------------------------------------------- */
 
         case "ghost":
 
@@ -2075,21 +2068,19 @@ function getDecorationArtwork(type) {
                 <span class="ghost-glow"></span>
 
                 <span class="ghost-arm left"></span>
+
                 <span class="ghost-arm right"></span>
 
                 <span class="ghost-body"></span>
 
                 <span class="ghost-eye left"></span>
+
                 <span class="ghost-eye right"></span>
 
                 <span class="ghost-mouth"></span>
 
             `;
 
-
-        /* -------------------------------------------------
-           BAT
-           ------------------------------------------------- */
 
         case "bat":
 
@@ -2106,10 +2097,6 @@ function getDecorationArtwork(type) {
             `;
 
 
-        /* -------------------------------------------------
-           GOBLIN
-           ------------------------------------------------- */
-
         case "goblin":
 
             return `
@@ -2117,6 +2104,7 @@ function getDecorationArtwork(type) {
                 <span class="decor-shadow"></span>
 
                 <span class="goblin-ear left"></span>
+
                 <span class="goblin-ear right"></span>
 
                 <span class="goblin-body"></span>
@@ -2124,16 +2112,13 @@ function getDecorationArtwork(type) {
                 <span class="goblin-head"></span>
 
                 <span class="goblin-eye left"></span>
+
                 <span class="goblin-eye right"></span>
 
                 <span class="goblin-smile"></span>
 
             `;
 
-
-        /* -------------------------------------------------
-           MOSS
-           ------------------------------------------------- */
 
         case "moss":
 
@@ -2142,15 +2127,13 @@ function getDecorationArtwork(type) {
                 <span class="decor-shadow"></span>
 
                 <span class="moss-clump moss-1"></span>
+
                 <span class="moss-clump moss-2"></span>
+
                 <span class="moss-clump moss-3"></span>
 
             `;
 
-
-        /* -------------------------------------------------
-           MUSHROOM
-           ------------------------------------------------- */
 
         case "mushroom":
 
@@ -2166,10 +2149,6 @@ function getDecorationArtwork(type) {
 
             `;
 
-
-        /* -------------------------------------------------
-           POTION
-           ------------------------------------------------- */
 
         case "potion":
 
@@ -2192,10 +2171,6 @@ function getDecorationArtwork(type) {
             `;
 
 
-        /* -------------------------------------------------
-           CRYSTAL
-           ------------------------------------------------- */
-
         case "crystal":
 
             return `
@@ -2210,10 +2185,6 @@ function getDecorationArtwork(type) {
 
             `;
 
-
-        /* -------------------------------------------------
-           RAVEN
-           ------------------------------------------------- */
 
         case "raven":
 
@@ -2232,10 +2203,6 @@ function getDecorationArtwork(type) {
             `;
 
 
-        /* -------------------------------------------------
-           PUMPKIN
-           ------------------------------------------------- */
-
         case "pumpkin":
 
             return `
@@ -2249,10 +2216,6 @@ function getDecorationArtwork(type) {
             `;
 
 
-        /* -------------------------------------------------
-           PLANT
-           ------------------------------------------------- */
-
         case "plant":
 
             return `
@@ -2260,18 +2223,17 @@ function getDecorationArtwork(type) {
                 <span class="decor-shadow"></span>
 
                 <span class="plant-leaf leaf-1"></span>
+
                 <span class="plant-leaf leaf-2"></span>
+
                 <span class="plant-leaf leaf-3"></span>
+
                 <span class="plant-leaf leaf-4"></span>
 
                 <span class="plant-pot"></span>
 
             `;
 
-
-        /* -------------------------------------------------
-           CANDLE
-           ------------------------------------------------- */
 
         case "candle":
 
@@ -2290,10 +2252,6 @@ function getDecorationArtwork(type) {
             `;
 
 
-        /* -------------------------------------------------
-           FLOWERS
-           ------------------------------------------------- */
-
         case "flowers":
 
             return `
@@ -2301,36 +2259,38 @@ function getDecorationArtwork(type) {
                 <span class="decor-shadow"></span>
 
                 <span class="flower-stem stem-1"></span>
+
                 <span class="flower-stem stem-2"></span>
+
                 <span class="flower-stem stem-3"></span>
 
                 <span class="flower-bloom bloom-1"></span>
+
                 <span class="flower-bloom bloom-2"></span>
+
                 <span class="flower-bloom bloom-3"></span>
 
             `;
 
 
-        /* -------------------------------------------------
-           STARS
-           ------------------------------------------------- */
-
         case "stars":
 
             return `
 
-                <span class="star star-1">✦</span>
+                <span class="star star-1">
+                    ✦
+                </span>
 
-                <span class="star star-2">✧</span>
+                <span class="star star-2">
+                    ✧
+                </span>
 
-                <span class="star star-3">✦</span>
+                <span class="star star-3">
+                    ✦
+                </span>
 
             `;
 
-
-        /* -------------------------------------------------
-           MUG
-           ------------------------------------------------- */
 
         case "mug":
 
@@ -2339,6 +2299,7 @@ function getDecorationArtwork(type) {
                 <span class="decor-shadow"></span>
 
                 <span class="steam steam-1"></span>
+
                 <span class="steam steam-2"></span>
 
                 <span class="mug-handle"></span>
@@ -2347,10 +2308,6 @@ function getDecorationArtwork(type) {
 
             `;
 
-
-        /* -------------------------------------------------
-           FALLBACK
-           ------------------------------------------------- */
 
         default:
 
@@ -2374,13 +2331,12 @@ function getDecorationArtwork(type) {
 
 
 /* =========================================================
-   FALLBACK SYMBOL
+   FALLBACK DECORATION SYMBOL
    ========================================================= */
 
 function getDecorationSymbol(type) {
 
     const symbols = {
-
         cat: "✦",
         ghost: "✧",
         bat: "⌁",
@@ -2396,7 +2352,6 @@ function getDecorationSymbol(type) {
         candle: "│",
         mug: "◡",
         stars: "✦"
-
     };
 
 
@@ -2444,12 +2399,10 @@ function startDecorationDrag(
 
 
     activeDrag = {
-
         shelfId,
         decorationId,
         element,
         shelfBody
-
     };
 
 
@@ -2481,6 +2434,10 @@ function startDecorationDrag(
 }
 
 
+/* =========================================================
+   HANDLE DECORATION DRAG
+   ========================================================= */
+
 function handleDecorationDrag(
     event
 ) {
@@ -2507,8 +2464,8 @@ function handleDecorationDrag(
             )
             *
             100,
-            2,
-            98
+            3,
+            97
         );
 
 
@@ -2524,8 +2481,8 @@ function handleDecorationDrag(
             )
             *
             100,
-            5,
-            91
+            8,
+            86
         );
 
 
@@ -2569,6 +2526,10 @@ function handleDecorationDrag(
 
 }
 
+
+/* =========================================================
+   END DECORATION DRAG
+   ========================================================= */
 
 function endDecorationDrag(
     event
@@ -2706,10 +2667,12 @@ function applyDecorationTransform(
 
 
 /* =========================================================
-   DECORATION RECORD
+   CREATE DECORATION RECORD
    ========================================================= */
 
-function createDecorationRecord(type) {
+function createDecorationRecord(
+    type
+) {
 
     return {
 
@@ -2974,7 +2937,7 @@ function renderDecorationOptions(
 
 
 /* =========================================================
-   OPEN DRAWER DECORATION REFRESH
+   REFRESH DECORATION OPTIONS
    ========================================================= */
 
 function updateOpenShelfDecorationChoices() {
@@ -3101,92 +3064,46 @@ function saveShelfFromForm(
 
         shelf.decorations =
             selectedTypes.map(
-                type =>
-                    existing.find(
-                        item =>
-                            item.type ===
-                            type
-                    )
-                    ||
-                    createDecorationRecord(
-                        type
-                    )
+                (
+                    type,
+                    index
+                ) => {
+
+                    const existingDecoration =
+                        existing.find(
+                            item =>
+                                item.type ===
+                                type
+                        );
+
+
+                    if (existingDecoration) {
+                        return existingDecoration;
+                    }
+
+
+                    return createStaggeredDecoration(
+                        type,
+                        index
+                    );
+
+                }
             );
 
     }
 
     else {
 
-        const staggeredDecorations =
+        const decorations =
             selectedTypes.map(
                 (
                     type,
                     index
-                ) => {
-
-                    const decoration =
-                        createDecorationRecord(
-                            type
-                        );
-
-
-                    /*
-                     * Give new shelves a more natural arrangement
-                     * instead of stacking everything at 50 / 72.
-                     */
-
-                    const positions = [
-
-                        {
-                            x: 12,
-                            y: 72
-                        },
-
-                        {
-                            x: 82,
-                            y: 69
-                        },
-
-                        {
-                            x: 67,
-                            y: 34
-                        },
-
-                        {
-                            x: 28,
-                            y: 38
-                        },
-
-                        {
-                            x: 91,
-                            y: 42
-                        },
-
-                        {
-                            x: 46,
-                            y: 29
-                        }
-
-                    ];
-
-
-                    const position =
-                        positions[
-                            index %
-                            positions.length
-                        ];
-
-
-                    decoration.x =
-                        position.x;
-
-                    decoration.y =
-                        position.y;
-
-
-                    return decoration;
-
-                }
+                ) =>
+                    createStaggeredDecoration(
+                        type,
+                        index
+                    )
             );
 
 
@@ -3235,8 +3152,7 @@ function saveShelfFromForm(
                 ||
                 "manual",
 
-            decorations:
-                staggeredDecorations,
+            decorations,
 
             created_at:
                 new Date()
@@ -3252,6 +3168,85 @@ function saveShelfFromForm(
     closeAllDrawers();
 
     renderAll();
+
+}
+
+
+/* =========================================================
+   STAGGER DECORATIONS
+   ========================================================= */
+
+function createStaggeredDecoration(
+    type,
+    index
+) {
+
+    const decoration =
+        createDecorationRecord(
+            type
+        );
+
+
+    const positions = [
+
+        {
+            x: 11,
+            y: 72
+        },
+
+        {
+            x: 88,
+            y: 71
+        },
+
+        {
+            x: 74,
+            y: 33
+        },
+
+        {
+            x: 25,
+            y: 35
+        },
+
+        {
+            x: 93,
+            y: 42
+        },
+
+        {
+            x: 49,
+            y: 27
+        },
+
+        {
+            x: 60,
+            y: 70
+        },
+
+        {
+            x: 35,
+            y: 68
+        }
+
+    ];
+
+
+    const position =
+        positions[
+            index %
+            positions.length
+        ];
+
+
+    decoration.x =
+        position.x;
+
+    decoration.y =
+        position.y;
+
+
+    return decoration;
 
 }
 
@@ -4462,20 +4457,16 @@ function updateSpinePreview() {
 
 
     const heightMap = {
-
         small: 155,
         medium: 190,
         tall: 225
-
     };
 
 
     const widthMap = {
-
         slim: 48,
         medium: 72,
         chunky: 95
-
     };
 
 
@@ -4967,13 +4958,11 @@ function openJournalSection(
             ?.[sectionName]
         ||
         {
-
             label:
                 sectionName.toUpperCase(),
 
             title:
                 sectionName
-
         };
 
 
@@ -5271,7 +5260,6 @@ function getJournalEntryPresentation(
         case "words":
 
             return {
-
                 title:
                     entry.word ||
                     "Word",
@@ -5285,14 +5273,12 @@ function getJournalEntryPresentation(
                         .join(
                             "\n\n"
                         )
-
             };
 
 
         case "quotes":
 
             return {
-
                 title:
                     entry.page
                         ?
@@ -5304,14 +5290,12 @@ function getJournalEntryPresentation(
                     entry.quote ||
                     entry.text ||
                     ""
-
             };
 
 
         case "characters":
 
             return {
-
                 title:
                     entry.name ||
                     "Character",
@@ -5320,14 +5304,12 @@ function getJournalEntryPresentation(
                     entry.notes ||
                     entry.text ||
                     ""
-
             };
 
 
         case "themes":
 
             return {
-
                 title:
                     entry.theme ||
                     "Theme",
@@ -5336,14 +5318,12 @@ function getJournalEntryPresentation(
                     entry.notes ||
                     entry.text ||
                     ""
-
             };
 
 
         case "questions":
 
             return {
-
                 title:
                     entry.question ||
                     "Question",
@@ -5351,14 +5331,12 @@ function getJournalEntryPresentation(
                 body:
                     entry.notes ||
                     ""
-
             };
 
 
         case "review":
 
             return {
-
                 title:
                     entry.title ||
                     "Review",
@@ -5367,14 +5345,12 @@ function getJournalEntryPresentation(
                     entry.review ||
                     entry.text ||
                     ""
-
             };
 
 
         default:
 
             return {
-
                 title:
                     entry.title ||
                     "",
@@ -5383,7 +5359,6 @@ function getJournalEntryPresentation(
                     entry.text ||
                     entry.notes ||
                     ""
-
             };
 
     }
@@ -5703,14 +5678,12 @@ function saveJournalEntry(
 
 
     const entry = {
-
         id:
             generateId(),
 
         created_at:
             new Date()
                 .toISOString()
-
     };
 
 
@@ -5940,9 +5913,11 @@ function renderReadingNow() {
         featuredSection.hidden = false;
     }
 
+
     if (listSection) {
         listSection.hidden = false;
     }
+
 
     if (empty) {
         empty.hidden = true;
@@ -7210,7 +7185,7 @@ function renderMonthlyReadingStats() {
 
 
 /* =========================================================
-   LAST 12 MONTHS
+   LAST TWELVE MONTHS
    ========================================================= */
 
 function getLastTwelveMonths() {
@@ -7327,7 +7302,18 @@ function renderCoverInElement(
     element.innerHTML = `
 
         <div
-            class="generated-cover"
+            class="
+                generated-cover
+                spine-font-${escapeHTML(
+                    book.spine_font
+                )}
+                spine-weight-${escapeHTML(
+                    book.spine_font_weight
+                )}
+                spine-case-${escapeHTML(
+                    book.spine_case
+                )}
+            "
             style="
                 --book-color:${escapeHTML(
                     book.spine_color
@@ -7685,11 +7671,9 @@ function bindSectionNavigation() {
 
 
     const sections = [
-
         "library",
         "reading",
         "stats"
-
     ]
         .map(
             id =>
@@ -7832,12 +7816,10 @@ function getThemeDecorations() {
 function isAnyModalOpen() {
 
     const ids = [
-
         "bookReveal",
         "readingBook",
         "entryModal",
         "progressModal"
-
     ];
 
 
@@ -7868,7 +7850,6 @@ function todayISO() {
 
 
     return [
-
         date.getFullYear(),
 
         String(
@@ -7887,7 +7868,6 @@ function todayISO() {
                 2,
                 "0"
             )
-
     ]
         .join("-");
 
