@@ -1,7 +1,7 @@
 /* =========================================================
    SHELFMARK
    LIBRARY.JS
-   v6
+   v7 — DIMENSIONAL SHELF + RICH DECORATIONS
    ========================================================= */
 
 
@@ -108,7 +108,7 @@ function initializeShelfmark() {
 
 
 /* =========================================================
-   INITIAL UI SAFETY
+   INITIAL UI
    ========================================================= */
 
 function resetInitialUI() {
@@ -157,10 +157,7 @@ function loadData() {
             .map(normalizeBook);
 
 
-    window.SHELFMARK_DATA = {
-        shelves,
-        books
-    };
+    syncSharedData();
 
 }
 
@@ -248,7 +245,7 @@ function syncSharedData() {
 
 
 /* =========================================================
-   NORMALIZE SHELVES
+   NORMALIZE SHELF
    ========================================================= */
 
 function normalizeShelf(shelf) {
@@ -370,7 +367,7 @@ function normalizeDecorations(value) {
 
 
 /* =========================================================
-   NORMALIZE BOOKS
+   NORMALIZE BOOK
    ========================================================= */
 
 function normalizeBook(book) {
@@ -545,7 +542,7 @@ function normalizeBook(book) {
 
 
 /* =========================================================
-   NORMALIZE JOURNAL
+   JOURNAL NORMALIZATION
    ========================================================= */
 
 function normalizeJournal(journal) {
@@ -750,7 +747,7 @@ function applySettings() {
 
 
 /* =========================================================
-   APPLY THEME
+   THEME
    ========================================================= */
 
 function applyTheme(
@@ -808,10 +805,6 @@ function applyTheme(
 }
 
 
-/* =========================================================
-   THEME CARDS
-   ========================================================= */
-
 function updateThemeCardState() {
 
     document
@@ -832,14 +825,10 @@ function updateThemeCardState() {
 
 
 /* =========================================================
-   CONTROL BINDING
+   CONTROLS
    ========================================================= */
 
 function bindControls() {
-
-    /* -------------------------------
-       sidebar / top buttons
-       ------------------------------- */
 
     bindClick(
         "sidebarAddBook",
@@ -902,10 +891,6 @@ function bindControls() {
     );
 
 
-    /* -------------------------------
-       close drawers
-       ------------------------------- */
-
     bindClick(
         "closeThemeDrawer",
         closeAllDrawers
@@ -937,10 +922,6 @@ function bindControls() {
     );
 
 
-    /* -------------------------------
-       theme cards
-       ------------------------------- */
-
     document
         .querySelectorAll(
             ".theme-card"
@@ -960,10 +941,6 @@ function bindControls() {
 
         });
 
-
-    /* -------------------------------
-       ambient settings
-       ------------------------------- */
 
     bindSettingCheckbox(
         "settingCandleGlow",
@@ -1045,10 +1022,6 @@ function bindControls() {
         });
 
 
-    /* -------------------------------
-       shelf form
-       ------------------------------- */
-
     document
         .getElementById(
             "shelfForm"
@@ -1058,10 +1031,6 @@ function bindControls() {
             saveShelfFromForm
         );
 
-
-    /* -------------------------------
-       book form
-       ------------------------------- */
 
     document
         .getElementById(
@@ -1073,10 +1042,6 @@ function bindControls() {
         );
 
 
-    /* -------------------------------
-       cover upload
-       ------------------------------- */
-
     document
         .getElementById(
             "bookCoverUpload"
@@ -1087,11 +1052,7 @@ function bindControls() {
         );
 
 
-    /* -------------------------------
-       spine preview
-       ------------------------------- */
-
-    const spineControlIds = [
+    const spineControls = [
 
         "bookTitle",
         "bookStyle",
@@ -1113,7 +1074,7 @@ function bindControls() {
     ];
 
 
-    spineControlIds.forEach(id => {
+    spineControls.forEach(id => {
 
         const element =
             document.getElementById(id);
@@ -1127,6 +1088,7 @@ function bindControls() {
             "input",
             updateSpinePreview
         );
+
 
         element.addEventListener(
             "change",
@@ -1146,10 +1108,6 @@ function bindControls() {
         );
 
 
-    /* -------------------------------
-       book reveal
-       ------------------------------- */
-
     bindClick(
         "closeBookReveal",
         closeBookReveal
@@ -1165,10 +1123,6 @@ function bindControls() {
         openSelectedBookJournal
     );
 
-
-    /* -------------------------------
-       journal
-       ------------------------------- */
 
     bindClick(
         "closeReadingBook",
@@ -1206,7 +1160,6 @@ function bindControls() {
         openJournalEntryModal
     );
 
-
     bindClick(
         "closeEntryModal",
         closeEntryModal
@@ -1227,10 +1180,6 @@ function bindControls() {
             saveJournalEntry
         );
 
-
-    /* -------------------------------
-       Reading Now
-       ------------------------------- */
 
     bindClick(
         "featuredOpenBook",
@@ -1269,10 +1218,6 @@ function bindControls() {
         }
     );
 
-
-    /* -------------------------------
-       progress modal
-       ------------------------------- */
 
     bindClick(
         "closeProgressModal",
@@ -1315,10 +1260,6 @@ function bindControls() {
         );
 
 
-    /* -------------------------------
-       escape key
-       ------------------------------- */
-
     document.addEventListener(
         "keydown",
         event => {
@@ -1344,10 +1285,6 @@ function bindControls() {
         }
     );
 
-
-    /* -------------------------------
-       nav active state
-       ------------------------------- */
 
     bindSectionNavigation();
 
@@ -1404,7 +1341,7 @@ function renderAll() {
 
 
 /* =========================================================
-   RENDER LIBRARY
+   LIBRARY
    ========================================================= */
 
 function renderLibrary() {
@@ -1456,6 +1393,7 @@ function renderLibrary() {
     if (empty) {
         empty.hidden = true;
     }
+
 
     if (addShelf) {
         addShelf.hidden = false;
@@ -1524,9 +1462,13 @@ function createShelfElement(
 
 
     article.className = [
+
         "library-shelf",
+
         `shelf-${shelf.material}`,
+
         `shelf-mood-${shelf.mood}`
+
     ]
         .join(" ");
 
@@ -1579,7 +1521,7 @@ function createShelfElement(
                     type="button"
                     data-edit-shelf
                 >
-                    edit
+                    edit shelf
                 </button>
 
                 <button
@@ -1685,9 +1627,8 @@ function createShelfElement(
 
 
     /*
-     * IMPORTANT:
-     * Every decoration chosen by the user is rendered.
-     * Density / ambient oddities never suppress these.
+     * ALL user-placed decorations render.
+     * Ambient clutter settings do NOT hide them.
      */
 
     shelf.decorations
@@ -1938,8 +1879,10 @@ function createBookElement(
                         book.id
                     ),
                 settings.reducedMotion
-                    ? 0
-                    : 170
+                    ?
+                    0
+                    :
+                    170
             );
 
         }
@@ -1995,7 +1938,7 @@ function getBookOrnament(
 
 
 /* =========================================================
-   DECORATION ELEMENT
+   RICH DECORATIONS
    ========================================================= */
 
 function createDecorationElement(
@@ -2042,17 +1985,10 @@ function createDecorationElement(
     );
 
 
-    element.innerHTML = `
-
-        <span class="decoration-symbol">
-            ${escapeHTML(
-                getDecorationSymbol(
-                    decoration.type
-                )
-            )}
-        </span>
-
-    `;
+    element.innerHTML =
+        getDecorationArtwork(
+            decoration.type
+        );
 
 
     element.addEventListener(
@@ -2087,15 +2023,366 @@ function createDecorationElement(
 
 
 /* =========================================================
-   DECORATION FALLBACK SYMBOL
+   DECORATION ARTWORK
+   ========================================================= */
+
+function getDecorationArtwork(type) {
+
+    switch (type) {
+
+        /* -------------------------------------------------
+           CAT
+           ------------------------------------------------- */
+
+        case "cat":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="cat-tail"></span>
+
+                <span class="cat-body"></span>
+
+                <span class="cat-head">
+
+                    <span class="cat-ear left"></span>
+                    <span class="cat-ear right"></span>
+
+                    <span class="cat-eye left"></span>
+                    <span class="cat-eye right"></span>
+
+                    <span class="cat-nose"></span>
+
+                </span>
+
+                <span class="cat-paw left"></span>
+                <span class="cat-paw right"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           GHOST
+           ------------------------------------------------- */
+
+        case "ghost":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="ghost-glow"></span>
+
+                <span class="ghost-arm left"></span>
+                <span class="ghost-arm right"></span>
+
+                <span class="ghost-body"></span>
+
+                <span class="ghost-eye left"></span>
+                <span class="ghost-eye right"></span>
+
+                <span class="ghost-mouth"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           BAT
+           ------------------------------------------------- */
+
+        case "bat":
+
+            return `
+
+                <span class="bat-wing left"></span>
+
+                <span class="bat-wing right"></span>
+
+                <span class="bat-body"></span>
+
+                <span class="bat-head"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           GOBLIN
+           ------------------------------------------------- */
+
+        case "goblin":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="goblin-ear left"></span>
+                <span class="goblin-ear right"></span>
+
+                <span class="goblin-body"></span>
+
+                <span class="goblin-head"></span>
+
+                <span class="goblin-eye left"></span>
+                <span class="goblin-eye right"></span>
+
+                <span class="goblin-smile"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           MOSS
+           ------------------------------------------------- */
+
+        case "moss":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="moss-clump moss-1"></span>
+                <span class="moss-clump moss-2"></span>
+                <span class="moss-clump moss-3"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           MUSHROOM
+           ------------------------------------------------- */
+
+        case "mushroom":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="mushroom-stem"></span>
+
+                <span class="mushroom-rim"></span>
+
+                <span class="mushroom-cap"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           POTION
+           ------------------------------------------------- */
+
+        case "potion":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="potion-neck"></span>
+
+                <span class="potion-cork"></span>
+
+                <span class="potion-bottle">
+
+                    <span class="potion-liquid"></span>
+
+                </span>
+
+                <span class="potion-shine"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           CRYSTAL
+           ------------------------------------------------- */
+
+        case "crystal":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="crystal-glow"></span>
+
+                <span class="crystal-main"></span>
+
+                <span class="crystal-face"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           RAVEN
+           ------------------------------------------------- */
+
+        case "raven":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="raven-body"></span>
+
+                <span class="raven-head"></span>
+
+                <span class="raven-beak"></span>
+
+                <span class="raven-eye"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           PUMPKIN
+           ------------------------------------------------- */
+
+        case "pumpkin":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="pumpkin-body"></span>
+
+                <span class="pumpkin-stem"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           PLANT
+           ------------------------------------------------- */
+
+        case "plant":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="plant-leaf leaf-1"></span>
+                <span class="plant-leaf leaf-2"></span>
+                <span class="plant-leaf leaf-3"></span>
+                <span class="plant-leaf leaf-4"></span>
+
+                <span class="plant-pot"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           CANDLE
+           ------------------------------------------------- */
+
+        case "candle":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="candle-glow"></span>
+
+                <span class="candle-body"></span>
+
+                <span class="candle-wax"></span>
+
+                <span class="candle-flame"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           FLOWERS
+           ------------------------------------------------- */
+
+        case "flowers":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="flower-stem stem-1"></span>
+                <span class="flower-stem stem-2"></span>
+                <span class="flower-stem stem-3"></span>
+
+                <span class="flower-bloom bloom-1"></span>
+                <span class="flower-bloom bloom-2"></span>
+                <span class="flower-bloom bloom-3"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           STARS
+           ------------------------------------------------- */
+
+        case "stars":
+
+            return `
+
+                <span class="star star-1">✦</span>
+
+                <span class="star star-2">✧</span>
+
+                <span class="star star-3">✦</span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           MUG
+           ------------------------------------------------- */
+
+        case "mug":
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="steam steam-1"></span>
+                <span class="steam steam-2"></span>
+
+                <span class="mug-handle"></span>
+
+                <span class="mug-body"></span>
+
+            `;
+
+
+        /* -------------------------------------------------
+           FALLBACK
+           ------------------------------------------------- */
+
+        default:
+
+            return `
+
+                <span class="decor-shadow"></span>
+
+                <span class="decoration-symbol">
+                    ${escapeHTML(
+                        getDecorationSymbol(
+                            type
+                        )
+                    )}
+                </span>
+
+            `;
+
+    }
+
+}
+
+
+/* =========================================================
+   FALLBACK SYMBOL
    ========================================================= */
 
 function getDecorationSymbol(type) {
 
     const symbols = {
 
-        cat: "◕",
-        ghost: "◌",
+        cat: "✦",
+        ghost: "✧",
         bat: "⌁",
         goblin: "◉",
         raven: "◆",
@@ -2113,7 +2400,10 @@ function getDecorationSymbol(type) {
     };
 
 
-    return symbols[type] || "✦";
+    return (
+        symbols[type] ||
+        "✦"
+    );
 
 }
 
@@ -2191,10 +2481,6 @@ function startDecorationDrag(
 }
 
 
-/* =========================================================
-   HANDLE DECORATION DRAG
-   ========================================================= */
-
 function handleDecorationDrag(
     event
 ) {
@@ -2221,8 +2507,8 @@ function handleDecorationDrag(
             )
             *
             100,
-            0,
-            100
+            2,
+            98
         );
 
 
@@ -2238,8 +2524,8 @@ function handleDecorationDrag(
             )
             *
             100,
-            0,
-            100
+            5,
+            91
         );
 
 
@@ -2284,10 +2570,6 @@ function handleDecorationDrag(
 }
 
 
-/* =========================================================
-   END DECORATION DRAG
-   ========================================================= */
-
 function endDecorationDrag(
     event
 ) {
@@ -2325,7 +2607,6 @@ function endDecorationDrag(
 
 
     saveShelves();
-
 
     activeDrag = null;
 
@@ -2425,7 +2706,7 @@ function applyDecorationTransform(
 
 
 /* =========================================================
-   CREATE DECORATION RECORD
+   DECORATION RECORD
    ========================================================= */
 
 function createDecorationRecord(type) {
@@ -2693,7 +2974,7 @@ function renderDecorationOptions(
 
 
 /* =========================================================
-   UPDATE DECORATION CHOICES
+   OPEN DRAWER DECORATION REFRESH
    ========================================================= */
 
 function updateOpenShelfDecorationChoices() {
@@ -2762,6 +3043,7 @@ function saveShelfFromForm(
         const shelf =
             getShelfById(id);
 
+
         if (!shelf) {
             return;
         }
@@ -2817,11 +3099,6 @@ function saveShelfFromForm(
             "manual";
 
 
-        /*
-         * One instance per decoration type for now.
-         * Existing positions/scales are preserved.
-         */
-
         shelf.decorations =
             selectedTypes.map(
                 type =>
@@ -2839,6 +3116,79 @@ function saveShelfFromForm(
     }
 
     else {
+
+        const staggeredDecorations =
+            selectedTypes.map(
+                (
+                    type,
+                    index
+                ) => {
+
+                    const decoration =
+                        createDecorationRecord(
+                            type
+                        );
+
+
+                    /*
+                     * Give new shelves a more natural arrangement
+                     * instead of stacking everything at 50 / 72.
+                     */
+
+                    const positions = [
+
+                        {
+                            x: 12,
+                            y: 72
+                        },
+
+                        {
+                            x: 82,
+                            y: 69
+                        },
+
+                        {
+                            x: 67,
+                            y: 34
+                        },
+
+                        {
+                            x: 28,
+                            y: 38
+                        },
+
+                        {
+                            x: 91,
+                            y: 42
+                        },
+
+                        {
+                            x: 46,
+                            y: 29
+                        }
+
+                    ];
+
+
+                    const position =
+                        positions[
+                            index %
+                            positions.length
+                        ];
+
+
+                    decoration.x =
+                        position.x;
+
+                    decoration.y =
+                        position.y;
+
+
+                    return decoration;
+
+                }
+            );
+
 
         shelves.push({
 
@@ -2886,12 +3236,11 @@ function saveShelfFromForm(
                 "manual",
 
             decorations:
-                selectedTypes.map(
-                    createDecorationRecord
-                ),
+                staggeredDecorations,
 
             created_at:
-                new Date().toISOString()
+                new Date()
+                    .toISOString()
 
         });
 
@@ -3042,7 +3391,6 @@ function openBookDrawer(
 
     resetBookForm();
 
-
     populateBookShelfSelect();
 
 
@@ -3167,7 +3515,6 @@ function resetBookForm() {
         "0"
     );
 
-
     setValue(
         "bookStyle",
         defaults.style ||
@@ -3175,23 +3522,23 @@ function resetBookForm() {
     );
 
 
-    const themeColors =
+    const colors =
         getThemeBookColors();
 
 
     setValue(
         "bookSpineColor",
-        themeColors.spine
+        colors.spine
     );
 
     setValue(
         "bookTextColor",
-        themeColors.text
+        colors.text
     );
 
     setValue(
         "bookAccentColor",
-        themeColors.accent
+        colors.accent
     );
 
 
@@ -3471,7 +3818,7 @@ function populateBookForm(
 
 
 /* =========================================================
-   POPULATE SHELF SELECT
+   SHELF SELECT
    ========================================================= */
 
 function populateBookShelfSelect() {
@@ -3772,8 +4119,10 @@ function saveBookFromForm(
     ) {
 
         if (!bookData.finished) {
+
             bookData.finished =
                 todayISO();
+
         }
 
 
@@ -4113,16 +4462,20 @@ function updateSpinePreview() {
 
 
     const heightMap = {
+
         small: 155,
         medium: 190,
         tall: 225
+
     };
 
 
     const widthMap = {
+
         slim: 48,
         medium: 72,
         chunky: 95
+
     };
 
 
@@ -4333,9 +4686,7 @@ function openBookReveal(
 
 
     if (reveal) {
-
         reveal.hidden = false;
-
     }
 
 
@@ -4345,10 +4696,6 @@ function openBookReveal(
 
 }
 
-
-/* =========================================================
-   CLOSE BOOK REVEAL
-   ========================================================= */
 
 function closeBookReveal() {
 
@@ -4376,10 +4723,6 @@ function closeBookReveal() {
 }
 
 
-/* =========================================================
-   EDIT SELECTED BOOK
-   ========================================================= */
-
 function editSelectedBook() {
 
     if (!selectedBookId) {
@@ -4396,10 +4739,6 @@ function editSelectedBook() {
 }
 
 
-/* =========================================================
-   OPEN SELECTED BOOK JOURNAL
-   ========================================================= */
-
 function openSelectedBookJournal() {
 
     if (!selectedBookId) {
@@ -4415,7 +4754,7 @@ function openSelectedBookJournal() {
 
 
 /* =========================================================
-   OPEN READING BOOK
+   OPEN BOOK JOURNAL
    ========================================================= */
 
 function openReadingBook(
@@ -4463,10 +4802,6 @@ function openReadingBook(
 }
 
 
-/* =========================================================
-   CLOSE READING BOOK
-   ========================================================= */
-
 function closeReadingBook() {
 
     const readingBook =
@@ -4494,7 +4829,7 @@ function closeReadingBook() {
 
 
 /* =========================================================
-   JOURNAL BOOK DETAILS
+   JOURNAL DETAILS
    ========================================================= */
 
 function renderJournalBookDetails(
@@ -4592,10 +4927,6 @@ function showJournalContents() {
 }
 
 
-/* =========================================================
-   OPEN JOURNAL SECTION
-   ========================================================= */
-
 function openJournalSection(
     sectionName
 ) {
@@ -4636,11 +4967,13 @@ function openJournalSection(
             ?.[sectionName]
         ||
         {
+
             label:
                 sectionName.toUpperCase(),
 
             title:
                 sectionName
+
         };
 
 
@@ -4662,7 +4995,7 @@ function openJournalSection(
 
 
 /* =========================================================
-   RENDER JOURNAL ENTRIES
+   JOURNAL ENTRIES
    ========================================================= */
 
 function renderJournalEntries() {
@@ -4833,13 +5166,11 @@ function renderOverview(
             </h4>
 
             <p>
-                ${
-                    escapeHTML(
-                        getRatingText(
-                            book.rating
-                        )
+                ${escapeHTML(
+                    getRatingText(
+                        book.rating
                     )
-                }
+                )}
             </p>
 
         </div>
@@ -4852,11 +5183,7 @@ function renderOverview(
             </h4>
 
             <p>
-                ${
-                    book.times_read
-                    ||
-                    0
-                }
+                ${book.times_read || 0}
             </p>
 
         </div>
@@ -4908,22 +5235,18 @@ function createJournalEntryElement(
                 ""
         }
 
-
         <p>
             ${escapeHTML(
                 presentation.body
             )}
         </p>
 
-
         <span class="journal-entry-meta">
-            ${
-                escapeHTML(
-                    formatDateTime(
-                        entry.created_at
-                    )
+            ${escapeHTML(
+                formatDateTime(
+                    entry.created_at
                 )
-            }
+            )}
         </span>
 
     `;
@@ -5069,7 +5392,7 @@ function getJournalEntryPresentation(
 
 
 /* =========================================================
-   OPEN JOURNAL ENTRY MODAL
+   JOURNAL ENTRY MODAL
    ========================================================= */
 
 function openJournalEntryModal() {
@@ -5153,7 +5476,6 @@ function renderEntryFields(
             container.innerHTML = `
 
                 <label>
-
                     Word
 
                     <input
@@ -5161,30 +5483,23 @@ function renderEntryFields(
                         type="text"
                         required
                     >
-
                 </label>
 
-
                 <label>
-
                     Definition
 
                     <textarea
                         id="entryDefinition"
                         required
                     ></textarea>
-
                 </label>
 
-
                 <label>
-
                     Context / why I saved it
 
                     <textarea
                         id="entryContext"
                     ></textarea>
-
                 </label>
 
             `;
@@ -5197,19 +5512,15 @@ function renderEntryFields(
             container.innerHTML = `
 
                 <label>
-
                     Quote
 
                     <textarea
                         id="entryQuote"
                         required
                     ></textarea>
-
                 </label>
 
-
                 <label>
-
                     Page
 
                     <input
@@ -5217,7 +5528,6 @@ function renderEntryFields(
                         type="number"
                         min="0"
                     >
-
                 </label>
 
             `;
@@ -5230,7 +5540,6 @@ function renderEntryFields(
             container.innerHTML = `
 
                 <label>
-
                     Character
 
                     <input
@@ -5238,19 +5547,15 @@ function renderEntryFields(
                         type="text"
                         required
                     >
-
                 </label>
 
-
                 <label>
-
                     Notes
 
                     <textarea
                         id="entryCharacterNotes"
                         required
                     ></textarea>
-
                 </label>
 
             `;
@@ -5263,7 +5568,6 @@ function renderEntryFields(
             container.innerHTML = `
 
                 <label>
-
                     Theme
 
                     <input
@@ -5271,19 +5575,15 @@ function renderEntryFields(
                         type="text"
                         required
                     >
-
                 </label>
 
-
                 <label>
-
                     Thoughts
 
                     <textarea
                         id="entryThemeNotes"
                         required
                     ></textarea>
-
                 </label>
 
             `;
@@ -5296,25 +5596,20 @@ function renderEntryFields(
             container.innerHTML = `
 
                 <label>
-
                     Question
 
                     <textarea
                         id="entryQuestion"
                         required
                     ></textarea>
-
                 </label>
 
-
                 <label>
-
                     Notes
 
                     <textarea
                         id="entryQuestionNotes"
                     ></textarea>
-
                 </label>
 
             `;
@@ -5327,14 +5622,12 @@ function renderEntryFields(
             container.innerHTML = `
 
                 <label>
-
                     Review
 
                     <textarea
                         id="entryReview"
                         required
                     ></textarea>
-
                 </label>
 
             `;
@@ -5347,19 +5640,15 @@ function renderEntryFields(
             container.innerHTML = `
 
                 <label>
-
                     Title
 
                     <input
                         id="entryTitle"
                         type="text"
                     >
-
                 </label>
 
-
                 <label>
-
                     ${
                         section ===
                         "thoughts"
@@ -5373,7 +5662,6 @@ function renderEntryFields(
                         id="entryText"
                         required
                     ></textarea>
-
                 </label>
 
             `;
@@ -5771,7 +6059,7 @@ function updateReadingNowSummary(
 
 
 /* =========================================================
-   FEATURED READING BOOK
+   FEATURED BOOK
    ========================================================= */
 
 function getFeaturedReadingBook(
@@ -5789,10 +6077,6 @@ function getFeaturedReadingBook(
 
 }
 
-
-/* =========================================================
-   RENDER FEATURED BOOK
-   ========================================================= */
 
 function renderFeaturedReadingBook(
     book
@@ -5967,10 +6251,6 @@ function renderReadingGrid(
 
 }
 
-
-/* =========================================================
-   CREATE READING CARD
-   ========================================================= */
 
 function createReadingCard(
     book
@@ -6189,10 +6469,6 @@ function openProgressModal(
 }
 
 
-/* =========================================================
-   CLOSE PROGRESS MODAL
-   ========================================================= */
-
 function closeProgressModal() {
 
     const modal =
@@ -6218,10 +6494,6 @@ function closeProgressModal() {
 
 }
 
-
-/* =========================================================
-   UPDATE PROGRESS PREVIEW
-   ========================================================= */
 
 function updateProgressPreview() {
 
@@ -6297,10 +6569,6 @@ function updateProgressPreview() {
 }
 
 
-/* =========================================================
-   FINISHED TOGGLE
-   ========================================================= */
-
 function handleFinishedToggle(
     event
 ) {
@@ -6338,10 +6606,6 @@ function handleFinishedToggle(
 
 }
 
-
-/* =========================================================
-   SAVE PROGRESS
-   ========================================================= */
 
 function saveProgressUpdate(
     event
@@ -6788,7 +7052,6 @@ function renderGenreStats() {
                                 )}
                             </span>
 
-
                             <div class="genre-stat-track">
 
                                 <div
@@ -6798,7 +7061,6 @@ function renderGenreStats() {
                                 </div>
 
                             </div>
-
 
                             <span class="genre-stat-count">
                                 ${count}
@@ -6816,7 +7078,7 @@ function renderGenreStats() {
 
 
 /* =========================================================
-   MONTHLY READING STATS
+   MONTHLY STATS
    ========================================================= */
 
 function renderMonthlyReadingStats() {
@@ -6921,7 +7183,6 @@ function renderMonthlyReadingStats() {
                             ${item.count}
                         </strong>
 
-
                         <div class="month-stat-bar-wrap">
 
                             <div
@@ -6931,7 +7192,6 @@ function renderMonthlyReadingStats() {
                             </div>
 
                         </div>
-
 
                         <span>
                             ${escapeHTML(
@@ -6950,7 +7210,7 @@ function renderMonthlyReadingStats() {
 
 
 /* =========================================================
-   LAST TWELVE MONTHS
+   LAST 12 MONTHS
    ========================================================= */
 
 function getLastTwelveMonths() {
@@ -7031,14 +7291,15 @@ function renderCover(
 }
 
 
-/* =========================================================
-   COVER IN ELEMENT
-   ========================================================= */
-
 function renderCoverInElement(
     element,
     book
 ) {
+
+    if (!element) {
+        return;
+    }
+
 
     element.innerHTML = "";
 
@@ -7088,13 +7349,11 @@ function renderCoverInElement(
                 )}
             </span>
 
-
             <strong>
                 ${escapeHTML(
                     book.title
                 )}
             </strong>
-
 
             <span>
                 ${escapeHTML(
@@ -7111,7 +7370,7 @@ function renderCoverInElement(
 
 
 /* =========================================================
-   STATUS LABEL
+   STATUS
    ========================================================= */
 
 function getStatusLabel(
@@ -7132,7 +7391,7 @@ function getStatusLabel(
 
 
 /* =========================================================
-   PROGRESS PERCENT
+   PROGRESS
    ========================================================= */
 
 function getProgressPercent(
@@ -7163,7 +7422,7 @@ function getProgressPercent(
 
 
 /* =========================================================
-   RATING TEXT
+   RATING
    ========================================================= */
 
 function getRatingText(
@@ -7201,7 +7460,7 @@ function getRatingText(
 
 
 /* =========================================================
-   DRAWER HELPERS
+   DRAWERS
    ========================================================= */
 
 function openThemeDrawer() {
@@ -7256,6 +7515,7 @@ function showDrawer(
                 "open"
             );
 
+
             overlay
                 ?.classList
                 .add(
@@ -7267,10 +7527,6 @@ function showDrawer(
 
 }
 
-
-/* =========================================================
-   CLOSE DRAWERS
-   ========================================================= */
 
 function closeAllDrawers() {
 
@@ -7344,10 +7600,6 @@ function closeAllDrawers() {
 }
 
 
-/* =========================================================
-   IMMEDIATE DRAWER HIDE
-   ========================================================= */
-
 function hideAllDrawersImmediately() {
 
     document
@@ -7385,7 +7637,7 @@ function hideAllDrawersImmediately() {
 
 
 /* =========================================================
-   ACTIVE NAVIGATION
+   NAVIGATION
    ========================================================= */
 
 function bindSectionNavigation() {
@@ -7423,25 +7675,29 @@ function bindSectionNavigation() {
 
 
     if (
-        !("IntersectionObserver" in window)
+        !(
+            "IntersectionObserver"
+            in window
+        )
     ) {
         return;
     }
 
 
-    const sections =
-        [
-            "library",
-            "reading",
-            "stats"
-        ]
-            .map(
-                id =>
-                    document.getElementById(
-                        id
-                    )
-            )
-            .filter(Boolean);
+    const sections = [
+
+        "library",
+        "reading",
+        "stats"
+
+    ]
+        .map(
+            id =>
+                document.getElementById(
+                    id
+                )
+        )
+        .filter(Boolean);
 
 
     const observer =
@@ -7747,7 +8003,7 @@ function dateValue(value) {
 
 
 /* =========================================================
-   BASIC HELPERS
+   VALUE HELPERS
    ========================================================= */
 
 function normalizeNumber(value) {
