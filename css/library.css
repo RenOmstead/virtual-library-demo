@@ -1,7 +1,7 @@
 /* =========================================================
    SHELFMARK
    LIBRARY.CSS
-   v11 — SOFTER SHELVES + MORE REALISTIC BOOKS
+   v12 — REAL BOOKS + ILLUSTRATED DECOR
    ========================================================= */
 
 
@@ -175,13 +175,12 @@ body[data-decoration-density="maximal"] .library-page::after {
    ========================================================= */
 
 .library-shelf {
-    --shelf-main: #684a39;
-    --shelf-light: #876550;
-    --shelf-mid: #593c2e;
-    --shelf-dark: #39271e;
-    --shelf-deep: #261a14;
-    --shelf-back: #342822;
-    --shelf-grain: rgba(255,255,255,.025);
+    --shelf-main: #694b39;
+    --shelf-light: #896650;
+    --shelf-mid: #573c2f;
+    --shelf-dark: #38261e;
+    --shelf-deep: #241813;
+    --shelf-back: #352a24;
 
     position: relative;
     isolation: isolate;
@@ -379,17 +378,21 @@ body[data-decoration-density="maximal"] .library-page::after {
 .shelf-actions {
     display: flex;
     gap: 7px;
-    flex: 0 0 auto;
 }
 
 .shelf-action-button {
     min-height: 34px;
     padding: 0 12px;
+
     border: 1px solid rgba(255,255,255,.14);
     border-radius: 7px;
+
     background: rgba(255,255,255,.03);
+
     color: rgba(255,246,228,.84);
+
     cursor: pointer;
+
     font-size: .48rem;
 }
 
@@ -400,7 +403,7 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 
 /* =========================================================
-   SHELF BODY
+   SHELF INTERIOR
    ========================================================= */
 
 .shelf-body {
@@ -421,11 +424,6 @@ body[data-decoration-density="maximal"] .library-page::after {
             transparent 0 115px,
             rgba(255,255,255,.012) 115px 116px
         ),
-        repeating-linear-gradient(
-            0deg,
-            transparent 0 22px,
-            rgba(255,255,255,.006) 22px 23px
-        ),
         var(--shelf-back);
 
     box-shadow:
@@ -438,15 +436,11 @@ body[data-decoration-density="maximal"] .library-page::after {
     content: "";
     position: absolute;
     z-index: 0;
-
     inset: 18px 17px 47px;
 
     pointer-events: none;
 
     border: 1px solid rgba(255,255,255,.03);
-
-    box-shadow:
-        inset 0 0 20px rgba(0,0,0,.06);
 }
 
 .shelf-body::after {
@@ -454,8 +448,8 @@ body[data-decoration-density="maximal"] .library-page::after {
     position: absolute;
     z-index: 1;
 
-    left: 6%;
-    right: 6%;
+    left: 5%;
+    right: 5%;
     bottom: 42px;
 
     height: 45px;
@@ -468,41 +462,6 @@ body[data-decoration-density="maximal"] .library-page::after {
             rgba(0,0,0,.17),
             transparent
         );
-}
-
-
-/* =========================================================
-   SHELF MOODS
-   ========================================================= */
-
-.shelf-mood-cozy .shelf-body {
-    background:
-        radial-gradient(circle at 80% 20%, rgba(234,181,105,.06), transparent 25%),
-        var(--shelf-back);
-}
-
-.shelf-mood-botanical .shelf-body {
-    background:
-        radial-gradient(circle at 83% 19%, rgba(126,158,103,.07), transparent 27%),
-        var(--shelf-back);
-}
-
-.shelf-mood-celestial .shelf-body {
-    background:
-        radial-gradient(circle at 78% 18%, rgba(219,204,142,.065), transparent 27%),
-        var(--shelf-back);
-}
-
-.shelf-mood-gothic .shelf-body {
-    background:
-        radial-gradient(circle at 48% 11%, rgba(112,62,76,.07), transparent 31%),
-        var(--shelf-back);
-}
-
-.shelf-mood-cottage .shelf-body {
-    background:
-        radial-gradient(circle at 20% 22%, rgba(220,177,126,.065), transparent 25%),
-        var(--shelf-back);
 }
 
 
@@ -544,25 +503,20 @@ body[data-decoration-density="maximal"] .library-page::after {
 .shelf-board::before {
     content: "";
     position: absolute;
+
     left: -6px;
     right: -6px;
     top: 8px;
+
     height: 21px;
+
     border-radius: 2px 2px 5px 5px;
+
     background: var(--shelf-main);
+
     box-shadow:
         inset 0 1px rgba(255,255,255,.06),
         inset 0 -5px rgba(0,0,0,.08);
-}
-
-.shelf-board::after {
-    content: "";
-    position: absolute;
-    left: 4%;
-    right: 4%;
-    top: 5px;
-    height: 1px;
-    background: rgba(255,255,255,.11);
 }
 
 
@@ -578,16 +532,17 @@ body[data-decoration-density="maximal"] .library-page::after {
     right: 28px;
     bottom: 48px;
 
-    height: 232px;
+    height: 238px;
 
     display: flex;
     align-items: flex-end;
-    gap: 2px;
+
+    gap: 3px;
 
     overflow-x: auto;
     overflow-y: visible;
 
-    padding: 15px 11px 0;
+    padding: 18px 11px 0;
 
     scrollbar-width: thin;
     scrollbar-color: rgba(255,255,255,.15) transparent;
@@ -595,7 +550,7 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 
 /* =========================================================
-   BOOK WRAPPER
+   BOOK
    ========================================================= */
 
 .shelf-book {
@@ -607,39 +562,45 @@ body[data-decoration-density="maximal"] .library-page::after {
 
     flex: 0 0 auto;
 
+    perspective: 500px;
+
     cursor: pointer;
 
     transform-origin: center bottom;
 
     filter:
         drop-shadow(
-            3px 6px 3px rgba(0,0,0,.23)
+            4px 7px 3px rgba(0,0,0,.24)
         );
 
     transition:
-        transform .18s ease,
-        filter .18s ease;
+        transform .2s ease,
+        filter .2s ease;
 }
 
-.shelf-book:nth-child(6n + 2) {
-    transform: rotate(-.55deg);
+.shelf-book:nth-child(5n + 1) {
+    transform: rotate(-.6deg);
 }
 
-.shelf-book:nth-child(8n + 4) {
-    transform: rotate(.65deg);
+.shelf-book:nth-child(7n + 3) {
+    transform: rotate(.85deg);
+}
+
+.shelf-book:nth-child(11n + 4) {
+    transform: rotate(-1deg);
 }
 
 .shelf-book:hover {
-    z-index: 30;
+    z-index: 40;
 
     transform:
-        translateY(-12px)
+        translateY(-13px)
         rotate(0deg)
-        scale(1.018);
+        scale(1.02);
 
     filter:
         drop-shadow(
-            5px 10px 5px rgba(0,0,0,.32)
+            6px 12px 6px rgba(0,0,0,.32)
         );
 }
 
@@ -649,69 +610,73 @@ body[data-decoration-density="maximal"] .library-page::after {
    ========================================================= */
 
 .book-height-small {
-    height: 145px;
+    height: 148px;
 }
 
 .book-height-medium {
-    height: 177px;
+    height: 180px;
 }
 
 .book-height-tall {
-    height: 208px;
+    height: 212px;
 }
 
 .book-thickness-slim {
-    width: 40px;
+    width: 42px;
 }
 
 .book-thickness-medium {
-    width: 59px;
+    width: 61px;
 }
 
 .book-thickness-chunky {
-    width: 79px;
+    width: 82px;
 }
 
 
 /* =========================================================
-   BOOK PAGE BLOCK
+   PAGE BLOCK
    ========================================================= */
 
-.shelf-book::after {
-    content: "";
-
+.book-pages {
     position: absolute;
 
-    z-index: -1;
+    z-index: 0;
 
-    top: 4px;
-    right: -3px;
+    top: 5px;
+    right: -4px;
+    bottom: 5px;
 
-    width: 5px;
-    height: calc(100% - 8px);
+    width: 8px;
 
-    border-radius: 0 2px 2px 0;
+    border-radius:
+        0 3px 3px 0;
 
     background:
         repeating-linear-gradient(
             to bottom,
-            #ded4c0 0 1px,
-            #cabda7 1px 2px
+            #e1d7c5 0 1px,
+            #cfc2ac 1px 2px,
+            #e5dac8 2px 3px
         );
 
     box-shadow:
-        inset -1px 0 rgba(0,0,0,.08);
+        inset -2px 0 rgba(0,0,0,.08),
+        1px 0 rgba(255,255,255,.12);
 
-    opacity: .78;
+    transform:
+        translateZ(-2px);
 }
 
 
 /* =========================================================
-   BOOK SPINE
+   REAL SPINE
    ========================================================= */
 
 .book-spine {
     position: relative;
+
+    z-index: 2;
 
     width: 100%;
     height: 100%;
@@ -727,17 +692,17 @@ body[data-decoration-density="maximal"] .library-page::after {
         );
 
     border-radius:
-        4px 5px 2px 2px;
+        7px 6px 3px 3px;
 
     background:
         repeating-linear-gradient(
             0deg,
-            rgba(255,255,255,.008) 0 1px,
+            rgba(255,255,255,.012) 0 1px,
             transparent 1px 3px
         ),
         repeating-linear-gradient(
             90deg,
-            rgba(0,0,0,.016) 0 1px,
+            rgba(0,0,0,.012) 0 1px,
             transparent 1px 4px
         ),
         var(--book-color);
@@ -745,19 +710,20 @@ body[data-decoration-density="maximal"] .library-page::after {
     color: var(--book-text);
 
     box-shadow:
-        inset 4px 0 5px rgba(255,255,255,.045),
-        inset -6px 0 7px rgba(0,0,0,.11),
-        inset 0 1px rgba(255,255,255,.065),
-        inset 0 -3px rgba(0,0,0,.08);
+        inset 7px 0 9px rgba(255,255,255,.045),
+        inset -9px 0 12px rgba(0,0,0,.13),
+        inset 0 2px rgba(255,255,255,.08),
+        inset 0 -3px rgba(0,0,0,.10);
 }
 
 
-/* rounded binding ridge */
+/* curved highlight */
 
 .book-spine::before {
     content: "";
 
     position: absolute;
+
     z-index: 2;
 
     top: 0;
@@ -765,48 +731,241 @@ body[data-decoration-density="maximal"] .library-page::after {
 
     left: 4px;
 
-    width: 4px;
+    width: 10px;
 
-    pointer-events: none;
-
-    border-radius: 2px;
+    border-radius: 50%;
 
     background:
         linear-gradient(
             to right,
             rgba(255,255,255,.09),
-            rgba(0,0,0,.04)
+            transparent 70%
         );
 
-    box-shadow:
-        1px 0 rgba(0,0,0,.05);
+    opacity: .75;
+
+    pointer-events: none;
 }
 
 
-/* bottom binding seam */
+/* binding seam */
 
 .book-spine::after {
     content: "";
 
     position: absolute;
-    z-index: 2;
+
+    z-index: 3;
 
     left: 4px;
     right: 4px;
+
     bottom: 4px;
 
-    height: 2px;
-
-    background:
-        rgba(255,255,255,.055);
+    height: 3px;
 
     border-top:
-        1px solid rgba(0,0,0,.08);
+        1px solid rgba(255,255,255,.055);
+
+    border-bottom:
+        1px solid rgba(0,0,0,.11);
 }
 
 
 /* =========================================================
-   BOOK STYLE TEXTURES
+   BOOK EDGE WEAR
+   ========================================================= */
+
+.book-edge-top,
+.book-edge-bottom {
+    position: absolute;
+
+    z-index: 6;
+
+    left: 5px;
+    right: 5px;
+
+    height: 2px;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.15) 16%,
+            rgba(255,255,255,.06) 70%,
+            transparent
+        );
+
+    opacity: .45;
+}
+
+.book-edge-top {
+    top: 3px;
+}
+
+.book-edge-bottom {
+    bottom: 4px;
+}
+
+
+/* =========================================================
+   BINDING BANDS
+   ========================================================= */
+
+.binding-band {
+    position: absolute;
+
+    z-index: 4;
+
+    left: 2px;
+    right: 2px;
+
+    height: 5px;
+
+    pointer-events: none;
+
+    border-top:
+        1px solid rgba(255,255,255,.09);
+
+    border-bottom:
+        1px solid rgba(0,0,0,.10);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--book-color) 90%,
+            black
+        );
+
+    box-shadow:
+        0 1px rgba(255,255,255,.025);
+}
+
+.binding-band.band-top {
+    top: 16px;
+}
+
+.binding-band.band-bottom {
+    bottom: 17px;
+}
+
+
+/* =========================================================
+   SPINE CONTENT
+   ========================================================= */
+
+.spine-inner {
+    position: absolute;
+
+    z-index: 8;
+
+    inset: 8px 7px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    overflow: visible;
+}
+
+
+/* =========================================================
+   TITLE PLATE
+   ========================================================= */
+
+.spine-title-panel {
+    position: relative;
+
+    z-index: 10;
+
+    width: auto;
+    height: auto;
+
+    max-width: calc(100% - 3px);
+    max-height: calc(100% - 42px);
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 8px 5px;
+
+    box-sizing: border-box;
+
+    overflow: visible;
+}
+
+
+/* =========================================================
+   SPINE TITLE
+   ========================================================= */
+
+.spine-title {
+    display: block;
+
+    width: auto;
+
+    max-height: 100%;
+
+    overflow: hidden;
+
+    writing-mode: vertical-rl;
+
+    text-orientation: mixed;
+
+    transform:
+        rotate(180deg);
+
+    color: inherit;
+
+    font-size: .64rem;
+
+    line-height: 1.08;
+
+    text-align: center;
+
+    white-space: nowrap;
+
+    text-rendering: geometricPrecision;
+
+    -webkit-font-smoothing: antialiased;
+}
+
+
+/* =========================================================
+   ORNAMENT
+   ========================================================= */
+
+.spine-ornament {
+    position: absolute;
+
+    z-index: 11;
+
+    left: 50%;
+    bottom: 7px;
+
+    transform:
+        translateX(-50%);
+
+    color: var(--book-accent);
+
+    font-size: .64rem;
+
+    line-height: 1;
+
+    text-shadow:
+        0 1px rgba(0,0,0,.12);
+}
+
+
+/* =========================================================
+   BOOK STYLES
    ========================================================= */
 
 
@@ -816,7 +975,7 @@ body[data-decoration-density="maximal"] .library-page::after {
     background:
         repeating-linear-gradient(
             0deg,
-            rgba(255,255,255,.012) 0 1px,
+            rgba(255,255,255,.015) 0 1px,
             transparent 1px 3px
         ),
         repeating-linear-gradient(
@@ -827,10 +986,8 @@ body[data-decoration-density="maximal"] .library-page::after {
         var(--book-color);
 }
 
-.book-spine.book-style-classic .spine-inner {
-    border-top: 2px solid var(--book-accent);
-    border-bottom: 2px solid var(--book-accent);
-    padding: 7px 0;
+.book-style-classic .binding-band {
+    display: block;
 }
 
 
@@ -838,36 +995,32 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 .book-spine.book-style-gothic {
     background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(0,0,0,.02),
+            transparent 55%
+        ),
         repeating-linear-gradient(
             135deg,
-            rgba(0,0,0,.018) 0 2px,
+            rgba(0,0,0,.015) 0 2px,
             transparent 2px 5px
         ),
         var(--book-color);
 }
 
 .book-spine.book-style-gothic .spine-inner {
-    border: 3px double var(--book-accent);
+    border:
+        3px double var(--book-accent);
+
     padding: 9px 2px;
 }
 
-.book-spine.book-style-gothic .spine-title-panel::before,
-.book-spine.book-style-gothic .spine-title-panel::after {
-    content: "◆";
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--book-accent);
-    font-size: .31rem;
-    opacity: .75;
-}
+.book-style-gothic .binding-band {
+    height: 4px;
 
-.book-spine.book-style-gothic .spine-title-panel::before {
-    top: -9px;
-}
+    background: var(--book-accent);
 
-.book-spine.book-style-gothic .spine-title-panel::after {
-    bottom: -9px;
+    opacity: .38;
 }
 
 
@@ -875,35 +1028,48 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 .book-spine.book-style-botanical {
     background:
-        linear-gradient(
-            to right,
-            rgba(255,255,255,.025),
-            transparent 28%
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.009) 0 1px,
+            transparent 1px 4px
         ),
         var(--book-color);
 }
 
-.book-spine.book-style-botanical .spine-inner::before,
-.book-spine.book-style-botanical .spine-inner::after {
+.book-spine.book-style-botanical
+.spine-inner::before {
+    content: "❦";
+
     position: absolute;
+
+    top: 6px;
+
     color: var(--book-accent);
+
     font-family: Georgia, serif;
-    opacity: .52;
-}
 
-.book-spine.book-style-botanical .spine-inner::before {
-    content: "❧";
-    top: 5px;
-    right: 2px;
     font-size: .72rem;
+
+    opacity: .72;
 }
 
-.book-spine.book-style-botanical .spine-inner::after {
+.book-spine.book-style-botanical
+.spine-inner::after {
     content: "❧";
-    left: 2px;
-    bottom: 5px;
+
+    position: absolute;
+
+    bottom: 7px;
+
+    color: var(--book-accent);
+
+    font-family: Georgia, serif;
+
     font-size: .66rem;
+
     transform: rotate(180deg);
+
+    opacity: .58;
 }
 
 
@@ -911,19 +1077,20 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 .book-spine.book-style-celestial {
     background:
-        radial-gradient(circle at 27% 15%, var(--book-accent) 0 1px, transparent 1.7px),
-        radial-gradient(circle at 70% 28%, var(--book-accent) 0 1px, transparent 1.7px),
-        radial-gradient(circle at 30% 70%, var(--book-accent) 0 1px, transparent 1.7px),
-        radial-gradient(circle at 72% 83%, var(--book-accent) 0 1px, transparent 1.7px),
+        radial-gradient(circle at 25% 14%, var(--book-accent) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 75% 25%, var(--book-accent) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 28% 66%, var(--book-accent) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 72% 82%, var(--book-accent) 0 1px, transparent 1.8px),
         var(--book-color);
 }
 
-.book-spine.book-style-celestial .spine-inner {
+.book-spine.book-style-celestial
+.spine-inner {
     border:
         1px solid
         color-mix(
             in srgb,
-            var(--book-accent) 72%,
+            var(--book-accent) 65%,
             transparent
         );
 }
@@ -933,9 +1100,9 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 .book-spine.book-style-floral {
     background:
-        radial-gradient(circle at 23% 15%, var(--book-accent) 0 2px, transparent 2.8px),
-        radial-gradient(circle at 75% 34%, var(--book-accent) 0 2px, transparent 2.8px),
-        radial-gradient(circle at 25% 75%, var(--book-accent) 0 2px, transparent 2.8px),
+        radial-gradient(circle at 20% 16%, var(--book-accent) 0 2px, transparent 2.8px),
+        radial-gradient(circle at 78% 34%, var(--book-accent) 0 2px, transparent 2.8px),
+        radial-gradient(circle at 21% 78%, var(--book-accent) 0 2px, transparent 2.8px),
         var(--book-color);
 }
 
@@ -943,23 +1110,25 @@ body[data-decoration-density="maximal"] .library-page::after {
 /* PASTEL */
 
 .book-spine.book-style-pastel {
+    border-color:
+        rgba(255,255,255,.17);
+
     background:
         linear-gradient(
             to bottom,
-            rgba(255,255,255,.07),
-            transparent 35%
+            rgba(255,255,255,.075),
+            transparent 40%
         ),
         var(--book-color);
-
-    border-color: rgba(255,255,255,.15);
 }
 
-.book-spine.book-style-pastel .spine-inner {
+.book-spine.book-style-pastel
+.spine-inner {
     border:
         1px solid
         color-mix(
             in srgb,
-            var(--book-accent) 68%,
+            var(--book-accent) 65%,
             white
         );
 }
@@ -972,17 +1141,13 @@ body[data-decoration-density="maximal"] .library-page::after {
         repeating-linear-gradient(
             0deg,
             rgba(255,255,255,.007) 0 1px,
-            transparent 1px 4px
+            transparent 1px 5px
         ),
         var(--book-color);
 }
 
-.book-spine.book-style-minimal .spine-inner {
-    inset: 10px 8px;
-}
-
-.book-spine.book-style-minimal .spine-ornament {
-    opacity: .42;
+.book-style-minimal .binding-band {
+    display: none;
 }
 
 
@@ -990,27 +1155,23 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 .book-spine.book-style-leather {
     background:
-        radial-gradient(
-            circle at 10% 15%,
-            rgba(255,255,255,.018) 0 1px,
-            transparent 1.5px
-        ),
-        radial-gradient(
-            circle at 65% 46%,
-            rgba(0,0,0,.025) 0 1px,
-            transparent 1.5px
-        ),
-        radial-gradient(
-            circle at 30% 80%,
-            rgba(255,255,255,.012) 0 1px,
-            transparent 1.5px
-        ),
+        radial-gradient(circle at 18% 12%, rgba(255,255,255,.025) 0 1px, transparent 1.6px),
+        radial-gradient(circle at 66% 44%, rgba(0,0,0,.03) 0 1px, transparent 1.6px),
+        radial-gradient(circle at 37% 82%, rgba(255,255,255,.02) 0 1px, transparent 1.6px),
+        radial-gradient(circle at 82% 63%, rgba(0,0,0,.025) 0 1px, transparent 1.6px),
         var(--book-color);
 }
 
-.book-spine.book-style-leather .spine-inner {
-    border-top: 3px double var(--book-accent);
-    border-bottom: 3px double var(--book-accent);
+.book-style-leather .binding-band {
+    height: 6px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255,255,255,.05),
+            rgba(0,0,0,.08)
+        ),
+        var(--book-color);
 }
 
 
@@ -1026,9 +1187,16 @@ body[data-decoration-density="maximal"] .library-page::after {
         var(--book-color);
 }
 
-.book-spine.book-style-academia .spine-title-panel {
-    border: 1px solid var(--book-accent);
-    background: rgba(0,0,0,.09);
+.book-spine.book-style-academia
+.spine-title-panel {
+    border:
+        1px solid var(--book-accent);
+
+    background:
+        rgba(0,0,0,.08);
+
+    box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,.018);
 }
 
 
@@ -1037,173 +1205,199 @@ body[data-decoration-density="maximal"] .library-page::after {
 .book-spine.book-style-storybook {
     background:
         radial-gradient(
-            circle at center,
+            circle at 50% 50%,
             rgba(255,255,255,.035),
             transparent 58%
         ),
         var(--book-color);
 }
 
-.book-spine.book-style-storybook .spine-inner {
-    border: 1px dashed var(--book-accent);
-    border-radius: 13px;
+.book-spine.book-style-storybook
+.spine-inner {
+    border:
+        1px dashed var(--book-accent);
+
+    border-radius: 12px;
 }
 
 
 /* =========================================================
-   SPINE CONTENT
+   TITLE PANELS
    ========================================================= */
 
-.spine-inner {
-    position: absolute;
-    z-index: 3;
-
-    inset: 7px 6px;
-
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    overflow: visible;
+.spine-panel-none .spine-title-panel,
+.spine-panel-none .spine-preview-title-panel {
+    border: none;
+    background: transparent;
 }
 
-.spine-title-panel {
-    position: relative;
-    z-index: 5;
+.spine-panel-simple .spine-title-panel,
+.spine-panel-simple .spine-preview-title-panel {
+    background:
+        rgba(0,0,0,.11);
 
-    width: auto;
-    height: auto;
-
-    max-width: calc(100% - 2px);
-    max-height: calc(100% - 30px);
-
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    flex: 0 0 auto;
-
-    padding: 7px 5px;
-
-    box-sizing: border-box;
-
-    overflow: visible;
+    border-radius: 2px;
 }
 
-.spine-title {
-    display: block;
+.spine-panel-bordered .spine-title-panel,
+.spine-panel-bordered .spine-preview-title-panel {
+    border:
+        1px solid var(--book-accent);
 
-    width: auto;
-    height: auto;
-
-    max-height: calc(100% - 2px);
-
-    overflow: hidden;
-
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-
-    transform: rotate(180deg);
-
-    color: inherit;
-
-    font-family: Georgia, serif;
-
-    font-size: .65rem;
-    line-height: 1.08;
-
-    text-align: center;
-
-    white-space: nowrap;
+    background:
+        color-mix(
+            in srgb,
+            var(--book-color) 86%,
+            black
+        );
 }
 
-.spine-ornament {
-    position: absolute;
-    z-index: 7;
+.spine-panel-ornate .spine-title-panel,
+.spine-panel-ornate .spine-preview-title-panel {
+    border:
+        3px double var(--book-accent);
 
-    left: 50%;
-    bottom: 6px;
+    background:
+        color-mix(
+            in srgb,
+            var(--book-color) 90%,
+            black
+        );
 
-    transform: translateX(-50%);
+    box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,.025);
+}
 
-    color: var(--book-accent);
+.spine-panel-dark .spine-title-panel,
+.spine-panel-dark .spine-preview-title-panel {
+    background:
+        rgba(20,15,15,.62);
 
-    font-size: .65rem;
-    line-height: 1;
+    color:
+        #f2e6d2;
+}
+
+.spine-panel-light .spine-title-panel,
+.spine-panel-light .spine-preview-title-panel {
+    background:
+        #e8dbc2;
+
+    color:
+        #40332c;
+
+    box-shadow:
+        inset 0 0 0 1px rgba(80,60,45,.16);
 }
 
 
 /* =========================================================
-   FONT FAMILIES
+   FONT FAMILY
    ========================================================= */
 
 .spine-font-serif .spine-title,
 .spine-font-serif .spine-preview-title {
-    font-family: Georgia, "Times New Roman", serif;
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
 }
 
 .spine-font-roman .spine-title,
 .spine-font-roman .spine-preview-title {
-    font-family: "Times New Roman", Times, serif;
+    font-family:
+        "Times New Roman",
+        Times,
+        serif;
 }
 
 .spine-font-bookish .spine-title,
 .spine-font-bookish .spine-preview-title {
-    font-family: Palatino, "Book Antiqua", Georgia, serif;
+    font-family:
+        Palatino,
+        "Book Antiqua",
+        Georgia,
+        serif;
 }
 
 .spine-font-elegant .spine-title,
 .spine-font-elegant .spine-preview-title {
-    font-family: Garamond, Baskerville, Georgia, serif;
+    font-family:
+        Garamond,
+        Baskerville,
+        Georgia,
+        serif;
 }
 
 .spine-font-typewriter .spine-title,
 .spine-font-typewriter .spine-preview-title {
-    font-family: "Courier New", Courier, monospace;
+    font-family:
+        "Courier New",
+        Courier,
+        monospace;
 }
 
 .spine-font-clean .spine-title,
 .spine-font-clean .spine-preview-title {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 }
 
 .spine-font-condensed .spine-title,
 .spine-font-condensed .spine-preview-title {
-    font-family: "Arial Narrow", Arial, sans-serif;
-    font-stretch: condensed;
+    font-family:
+        "Arial Narrow",
+        Arial,
+        sans-serif;
 }
 
 .spine-font-heavy .spine-title,
 .spine-font-heavy .spine-preview-title {
-    font-family: Impact, "Arial Black", sans-serif;
+    font-family:
+        Impact,
+        "Arial Black",
+        sans-serif;
 }
 
 .spine-font-storybook .spine-title,
 .spine-font-storybook .spine-preview-title {
-    font-family: "Trebuchet MS", Georgia, serif;
+    font-family:
+        "Trebuchet MS",
+        Georgia,
+        serif;
 }
 
 .spine-font-handwritten .spine-title,
 .spine-font-handwritten .spine-preview-title {
-    font-family: "Segoe Print", "Bradley Hand", cursive;
+    font-family:
+        "Segoe Print",
+        "Bradley Hand",
+        cursive;
 }
 
 .spine-font-gothic .spine-title,
 .spine-font-gothic .spine-preview-title {
-    font-family: "Old English Text MT", Georgia, serif;
+    font-family:
+        "Old English Text MT",
+        Georgia,
+        serif;
 }
 
 .spine-font-deco .spine-title,
 .spine-font-deco .spine-preview-title {
-    font-family: "Arial Black", Impact, sans-serif;
+    font-family:
+        "Arial Black",
+        Impact,
+        sans-serif;
 }
 
 .spine-font-retro .spine-title,
 .spine-font-retro .spine-preview-title {
-    font-family: Impact, "Arial Black", sans-serif;
+    font-family:
+        Impact,
+        "Arial Black",
+        sans-serif;
 }
 
 
@@ -1228,7 +1422,7 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 .spine-size-xlarge .spine-title,
 .spine-size-xlarge .spine-preview-title {
-    font-size: .92rem;
+    font-size: .91rem;
 }
 
 
@@ -1239,39 +1433,57 @@ body[data-decoration-density="maximal"] .library-page::after {
 .spine-weight-light .spine-title,
 .spine-weight-light .spine-preview-title {
     font-weight: 300;
-    opacity: .85;
-    -webkit-text-stroke: 0 transparent;
-    text-shadow: none;
+
+    opacity: .80;
+
+    -webkit-text-stroke:
+        0 transparent;
+
+    text-shadow:
+        none;
 }
 
 .spine-weight-regular .spine-title,
 .spine-weight-regular .spine-preview-title {
     font-weight: 400;
+
     opacity: 1;
-    -webkit-text-stroke: 0 transparent;
-    text-shadow: none;
+
+    -webkit-text-stroke:
+        0 transparent;
+
+    text-shadow:
+        none;
 }
 
 .spine-weight-bold .spine-title,
 .spine-weight-bold .spine-preview-title {
     font-weight: 700;
+
     opacity: 1;
-    -webkit-text-stroke: .15px currentColor;
+
+    -webkit-text-stroke:
+        .15px currentColor;
+
     text-shadow:
-        .2px 0 currentColor,
-        -.2px 0 currentColor;
+        .18px 0 currentColor,
+        -.18px 0 currentColor;
 }
 
 .spine-weight-heavy .spine-title,
 .spine-weight-heavy .spine-preview-title {
     font-weight: 900;
+
     opacity: 1;
-    -webkit-text-stroke: .32px currentColor;
+
+    -webkit-text-stroke:
+        .34px currentColor;
+
     text-shadow:
-        .35px 0 currentColor,
-        -.35px 0 currentColor,
-        0 .2px currentColor,
-        0 -.2px currentColor;
+        .34px 0 currentColor,
+        -.34px 0 currentColor,
+        0 .18px currentColor,
+        0 -.18px currentColor;
 }
 
 
@@ -1291,17 +1503,17 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 .spine-spacing-wide .spine-title,
 .spine-spacing-wide .spine-preview-title {
-    letter-spacing: .075em;
+    letter-spacing: .07em;
 }
 
 .spine-spacing-extra-wide .spine-title,
 .spine-spacing-extra-wide .spine-preview-title {
-    letter-spacing: .135em;
+    letter-spacing: .13em;
 }
 
 
 /* =========================================================
-   CASE
+   TEXT CASE
    ========================================================= */
 
 .spine-case-uppercase .spine-title,
@@ -1336,13 +1548,13 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 
 /* =========================================================
-   ALIGNMENT
+   TITLE ALIGNMENT
    ========================================================= */
 
 .spine-align-top .spine-inner,
 .spine-align-top .spine-preview-inner {
     justify-content: flex-start;
-    padding-top: 8px;
+    padding-top: 9px;
 }
 
 .spine-align-center .spine-inner,
@@ -1353,52 +1565,7 @@ body[data-decoration-density="maximal"] .library-page::after {
 .spine-align-bottom .spine-inner,
 .spine-align-bottom .spine-preview-inner {
     justify-content: flex-end;
-    padding-bottom: 25px;
-}
-
-
-/* =========================================================
-   TITLE PANELS
-   ========================================================= */
-
-.spine-panel-none .spine-title-panel,
-.spine-panel-none .spine-preview-title-panel {
-    border: none;
-    background: transparent;
-}
-
-.spine-panel-simple .spine-title-panel,
-.spine-panel-simple .spine-preview-title-panel {
-    padding: 7px 5px;
-    background: rgba(0,0,0,.11);
-}
-
-.spine-panel-bordered .spine-title-panel,
-.spine-panel-bordered .spine-preview-title-panel {
-    padding: 7px 5px;
-    border: 1px solid var(--book-accent);
-    background: rgba(255,255,255,.012);
-}
-
-.spine-panel-ornate .spine-title-panel,
-.spine-panel-ornate .spine-preview-title-panel {
-    padding: 8px 6px;
-    border: 3px double var(--book-accent);
-    background: rgba(0,0,0,.035);
-}
-
-.spine-panel-dark .spine-title-panel,
-.spine-panel-dark .spine-preview-title-panel {
-    padding: 7px 5px;
-    background: rgba(0,0,0,.47);
-    color: #f4ead8;
-}
-
-.spine-panel-light .spine-title-panel,
-.spine-panel-light .spine-preview-title-panel {
-    padding: 7px 5px;
-    background: #e9dcc5;
-    color: #40332d;
+    padding-bottom: 28px;
 }
 
 
@@ -1419,26 +1586,28 @@ body[data-decoration-density="maximal"] .library-page::after {
         1px solid
         color-mix(
             in srgb,
-            var(--book-color) 70%,
+            var(--book-color) 72%,
             black
         );
 
-    border-radius: 5px;
+    border-radius:
+        7px 6px 3px 3px;
 
     background:
         repeating-linear-gradient(
             0deg,
-            rgba(255,255,255,.008) 0 1px,
+            rgba(255,255,255,.012) 0 1px,
             transparent 1px 3px
         ),
         var(--book-color);
 
-    color: var(--book-text);
+    color:
+        var(--book-text);
 
     box-shadow:
-        inset 5px 0 6px rgba(255,255,255,.05),
-        inset -6px 0 7px rgba(0,0,0,.11),
-        5px 7px 10px rgba(0,0,0,.16);
+        inset 7px 0 9px rgba(255,255,255,.045),
+        inset -9px 0 12px rgba(0,0,0,.13),
+        6px 9px 13px rgba(0,0,0,.18);
 }
 
 .spine-preview-inner {
@@ -1451,7 +1620,6 @@ body[data-decoration-density="maximal"] .library-page::after {
     flex-direction: column;
 
     align-items: center;
-
     justify-content: center;
 }
 
@@ -1459,16 +1627,15 @@ body[data-decoration-density="maximal"] .library-page::after {
     width: auto;
     height: auto;
 
-    max-width: calc(100% - 2px);
-    max-height: calc(100% - 30px);
+    max-width: calc(100% - 3px);
+    max-height: calc(100% - 42px);
 
     display: inline-flex;
 
     align-items: center;
-
     justify-content: center;
 
-    padding: 7px 5px;
+    padding: 8px 5px;
 
     overflow: visible;
 }
@@ -1476,67 +1643,72 @@ body[data-decoration-density="maximal"] .library-page::after {
 .spine-preview-title {
     display: block;
 
+    max-height: 100%;
+
     overflow: hidden;
 
-    writing-mode: vertical-rl;
+    writing-mode:
+        vertical-rl;
 
-    text-orientation: mixed;
+    transform:
+        rotate(180deg);
 
-    transform: rotate(180deg);
+    white-space:
+        nowrap;
 
-    white-space: nowrap;
+    color:
+        var(--book-text);
 
-    color: var(--book-text);
+    line-height:
+        1.08;
 
-    line-height: 1.08;
+    text-rendering:
+        geometricPrecision;
+
+    -webkit-font-smoothing:
+        antialiased;
 }
 
 .spine-preview-ornament {
     position: absolute;
 
     left: 50%;
-    bottom: 6px;
+    bottom: 7px;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 
-    color: var(--book-accent);
+    color:
+        var(--book-accent);
 
-    font-size: .65rem;
+    font-size:
+        .64rem;
 }
 
 
 /* =========================================================
-   DECOR BASE
+   DECORATION BASE
    ========================================================= */
 
 .shelf-decoration {
     position: absolute;
-    z-index: 12;
 
-    width: 72px;
-    height: 72px;
+    z-index: 13;
+
+    width: 66px;
+    height: 66px;
 
     cursor: grab;
 
     user-select: none;
     touch-action: none;
 
-    transform-origin: center bottom;
+    transform-origin:
+        center bottom;
 
     filter:
         drop-shadow(
-            0 6px 4px rgba(0,0,0,.19)
-        );
-
-    transition:
-        filter .16s ease,
-        transform .16s ease;
-}
-
-.shelf-decoration:hover {
-    filter:
-        drop-shadow(
-            0 8px 5px rgba(0,0,0,.25)
+            0 5px 3px rgba(0,0,0,.18)
         );
 }
 
@@ -1552,12 +1724,14 @@ body[data-decoration-density="maximal"] .library-page::after {
     display: none;
 }
 
-.shelf-decoration .decor-shadow {
+.decor-shadow {
     position: absolute;
+
     z-index: 0;
 
-    left: 16%;
-    right: 16%;
+    left: 15%;
+    right: 15%;
+
     bottom: 1px;
 
     height: 7px;
@@ -1573,110 +1747,117 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 
 /* =========================================================
-   CAT — SOFTER
+   CAT
    ========================================================= */
 
 .decor-cat {
-    width: 78px;
-    height: 79px;
+    width: 70px;
+    height: 72px;
 }
 
-.decor-cat .cat-tail {
+.cat-tail {
     position: absolute;
-    z-index: 1;
 
-    right: 0;
-    bottom: 9px;
+    z-index: 2;
 
-    width: 38px;
-    height: 44px;
+    right: 1px;
+    bottom: 8px;
 
-    border: 7px solid #383033;
-    border-left-color: transparent;
-    border-bottom-color: transparent;
+    width: 34px;
+    height: 39px;
 
-    border-radius: 50%;
+    border:
+        7px solid #383235;
 
-    transform: rotate(18deg);
-}
+    border-left-color:
+        transparent;
 
-.decor-cat .cat-body {
-    position: absolute;
-    z-index: 3;
-
-    left: 22px;
-    bottom: 7px;
-
-    width: 39px;
-    height: 46px;
+    border-bottom-color:
+        transparent;
 
     border-radius:
-        52% 52% 38% 38%;
+        50%;
+
+    transform:
+        rotate(17deg);
+}
+
+.cat-body {
+    position: absolute;
+
+    z-index: 4;
+
+    left: 20px;
+    bottom: 6px;
+
+    width: 36px;
+    height: 42px;
+
+    border-radius:
+        52% 52% 42% 42%;
 
     background:
         radial-gradient(
-            circle at 35% 20%,
-            rgba(255,255,255,.035),
-            transparent 28%
+            circle at 32% 22%,
+            rgba(255,255,255,.05),
+            transparent 26%
         ),
-        #3d3537;
+        #3f383b;
 
     box-shadow:
-        inset -5px -4px rgba(0,0,0,.05);
+        inset -5px -4px rgba(0,0,0,.06);
 }
 
-.decor-cat .cat-head {
+.cat-chest {
     position: absolute;
+
     z-index: 5;
 
-    left: 20px;
-    top: 7px;
+    left: 29px;
+    bottom: 12px;
 
-    width: 43px;
-    height: 40px;
+    width: 17px;
+    height: 24px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.025);
+}
+
+.cat-head {
+    position: absolute;
+
+    z-index: 6;
+
+    left: 18px;
+    top: 8px;
+
+    width: 40px;
+    height: 37px;
 
     border-radius:
         48% 48% 46% 46%;
 
     background:
         radial-gradient(
-            circle at 35% 25%,
-            rgba(255,255,255,.03),
-            transparent 30%
+            circle at 32% 20%,
+            rgba(255,255,255,.06),
+            transparent 28%
         ),
-        #443b3d;
+        #443c3f;
 }
 
-.decor-cat .cat-ear {
+.cat-ear {
     position: absolute;
 
     top: -8px;
 
-    width: 16px;
-    height: 19px;
+    width: 15px;
+    height: 18px;
 
-    background: #443b3d;
-
-    clip-path:
-        polygon(
-            50% 0,
-            100% 100%,
-            0 100%
-        );
-}
-
-.decor-cat .cat-ear::after {
-    content: "";
-
-    position: absolute;
-
-    left: 4px;
-    top: 6px;
-
-    width: 8px;
-    height: 10px;
-
-    background: #785b60;
+    background:
+        #443c3f;
 
     clip-path:
         polygon(
@@ -1686,86 +1867,738 @@ body[data-decoration-density="maximal"] .library-page::after {
         );
 }
 
-.decor-cat .cat-ear.left {
+.cat-ear.left {
     left: 1px;
-    transform: rotate(-7deg);
+
+    transform:
+        rotate(-7deg);
 }
 
-.decor-cat .cat-ear.right {
+.cat-ear.right {
     right: 1px;
-    transform: rotate(7deg);
+
+    transform:
+        rotate(7deg);
 }
 
-.decor-cat .cat-eye {
+.cat-ear-inner {
     position: absolute;
 
-    top: 16px;
+    top: 6px;
+    left: 4px;
+
+    width: 7px;
+    height: 9px;
+
+    background:
+        #825f66;
+
+    clip-path:
+        polygon(
+            50% 0,
+            100% 100%,
+            0 100%
+        );
+}
+
+.cat-eye {
+    position: absolute;
+
+    top: 15px;
 
     width: 7px;
     height: 8px;
 
     border-radius: 50%;
 
-    background: #d5b56d;
+    background:
+        #d9b96e;
 
     box-shadow:
-        0 0 3px rgba(213,181,109,.28);
+        0 0 3px rgba(217,185,110,.25);
 }
 
-.decor-cat .cat-eye.left {
-    left: 10px;
+.cat-eye.left {
+    left: 9px;
 }
 
-.decor-cat .cat-eye.right {
-    right: 10px;
+.cat-eye.right {
+    right: 9px;
 }
 
-.decor-cat .cat-eye::after {
+.cat-eye::after {
     content: "";
+
     position: absolute;
+
     left: 3px;
     top: 1px;
+
     width: 1px;
     height: 6px;
-    background: #1e1a1b;
+
+    background:
+        #1e1a1b;
 }
 
-.decor-cat .cat-nose {
+.cat-nose {
     position: absolute;
 
     left: 50%;
-    top: 26px;
+    top: 25px;
 
     width: 5px;
     height: 4px;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
-    background: #b77f7c;
+    background:
+        #bc8382;
 }
 
-.decor-cat .cat-paw {
+.cat-mouth {
     position: absolute;
+
+    left: 50%;
+    top: 29px;
+
+    width: 10px;
+    height: 5px;
+
+    transform:
+        translateX(-50%);
+
+    border-bottom:
+        1px solid #282124;
+
+    border-radius:
+        50%;
+}
+
+.cat-whisker {
+    position: absolute;
+
+    top: 27px;
+
+    width: 12px;
+    height: 1px;
+
+    background:
+        rgba(230,220,210,.30);
+}
+
+.cat-whisker.left {
+    left: -5px;
+
+    transform:
+        rotate(-8deg);
+}
+
+.cat-whisker.right {
+    right: -5px;
+
+    transform:
+        rotate(8deg);
+}
+
+
+/* =========================================================
+   MUSHROOM
+   ========================================================= */
+
+.decor-mushroom {
+    width: 58px;
+    height: 63px;
+}
+
+.mushroom-stem {
+    position: absolute;
+
+    z-index: 2;
+
+    left: 20px;
+    bottom: 5px;
+
+    width: 20px;
+    height: 31px;
+
+    border-radius:
+        48% 48% 34% 34%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #d5c1a4,
+            #ead8bb 55%,
+            #c6b197
+        );
+
+    box-shadow:
+        inset -3px 0 rgba(0,0,0,.03);
+}
+
+.mushroom-cap {
+    position: absolute;
+
+    z-index: 4;
+
+    left: 5px;
+    top: 7px;
+
+    width: 50px;
+    height: 29px;
+
+    border-radius:
+        56% 56% 34% 34%;
+
+    background:
+        radial-gradient(circle at 27% 44%, #f0dfc6 0 3px, transparent 3.8px),
+        radial-gradient(circle at 52% 25%, #f0dfc6 0 4px, transparent 4.8px),
+        radial-gradient(circle at 78% 48%, #f0dfc6 0 3px, transparent 3.8px),
+        linear-gradient(
+            to bottom,
+            #b96659,
+            #9e5147
+        );
+
+    box-shadow:
+        inset 0 -5px rgba(0,0,0,.05),
+        0 3px 4px rgba(0,0,0,.10);
+}
+
+.mushroom-gill {
+    position: absolute;
+
+    z-index: 3;
+
+    left: 8px;
+    top: 31px;
+
+    width: 44px;
+    height: 7px;
+
+    border-radius:
+        50%;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #d9c4a8 0 2px,
+            #c5ae92 2px 3px
+        );
+}
+
+
+/* =========================================================
+   PLANT
+   ========================================================= */
+
+.decor-plant {
+    width: 70px;
+    height: 77px;
+}
+
+.plant-pot {
+    position: absolute;
+
+    z-index: 5;
+
+    left: 19px;
+    bottom: 3px;
+
+    width: 34px;
+    height: 28px;
+
+    border-radius:
+        3px 3px 8px 8px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #986149,
+            #b37658 52%,
+            #89533f
+        );
+
+    clip-path:
+        polygon(
+            5% 0,
+            95% 0,
+            80% 100%,
+            20% 100%
+        );
+
+    box-shadow:
+        0 4px 5px rgba(0,0,0,.11);
+}
+
+.plant-pot-rim {
+    position: absolute;
+
     z-index: 6;
 
-    bottom: 4px;
+    left: 17px;
+    bottom: 27px;
 
-    width: 15px;
-    height: 8px;
+    width: 38px;
+    height: 7px;
+
+    border-radius: 3px;
+
+    background:
+        #b7785a;
+}
+
+.plant-leaf {
+    position: absolute;
+
+    z-index: 2;
+
+    width: 22px;
+    height: 40px;
+
+    border-radius:
+        100% 0 100% 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            #849975,
+            #657b5a
+        );
+
+    box-shadow:
+        inset -2px 0 rgba(0,0,0,.025);
+
+    transform-origin:
+        bottom center;
+}
+
+.leaf-1 {
+    left: 25px;
+    top: 2px;
+
+    transform:
+        rotate(-18deg);
+}
+
+.leaf-2 {
+    left: 38px;
+    top: 8px;
+
+    transform:
+        rotate(28deg);
+}
+
+.leaf-3 {
+    left: 16px;
+    top: 18px;
+
+    transform:
+        rotate(-51deg)
+        scale(.84);
+}
+
+.leaf-4 {
+    left: 42px;
+    top: 24px;
+
+    transform:
+        rotate(58deg)
+        scale(.76);
+}
+
+
+/* =========================================================
+   MUG
+   ========================================================= */
+
+.decor-mug {
+    width: 64px;
+    height: 58px;
+}
+
+.mug-body {
+    position: absolute;
+
+    z-index: 3;
+
+    left: 7px;
+    bottom: 5px;
+
+    width: 41px;
+    height: 36px;
+
+    border-radius:
+        7px 7px 12px 12px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #a46d58,
+            #bb8066 52%,
+            #95604d
+        );
+
+    box-shadow:
+        inset -4px -3px rgba(0,0,0,.035),
+        0 4px 5px rgba(0,0,0,.10);
+}
+
+.mug-body::before {
+    content: "";
+
+    position: absolute;
+
+    left: 5px;
+    right: 5px;
+    top: 4px;
+
+    height: 5px;
 
     border-radius: 50%;
 
-    background: #352d30;
+    background:
+        #574137;
 }
 
-.decor-cat .cat-paw.left {
-    left: 24px;
+.mug-handle {
+    position: absolute;
+
+    z-index: 2;
+
+    right: 1px;
+    bottom: 11px;
+
+    width: 23px;
+    height: 23px;
+
+    border:
+        6px solid #a56e58;
+
+    border-left:
+        none;
+
+    border-radius:
+        0 50% 50% 0;
 }
 
-.decor-cat .cat-paw.right {
-    left: 43px;
+.steam {
+    position: absolute;
+
+    z-index: 5;
+
+    top: 0;
+
+    width: 10px;
+    height: 22px;
+
+    border-left:
+        2px solid rgba(235,225,210,.28);
+
+    border-radius:
+        50%;
+}
+
+.steam-1 {
+    left: 18px;
+
+    transform:
+        rotate(10deg);
+}
+
+.steam-2 {
+    left: 32px;
+
+    transform:
+        rotate(-8deg);
+}
+
+
+/* =========================================================
+   FLOWERS
+   ========================================================= */
+
+.decor-flowers {
+    width: 65px;
+    height: 69px;
+}
+
+.flower-stem {
+    position: absolute;
+
+    z-index: 1;
+
+    left: 50%;
+    bottom: 5px;
+
+    width: 2px;
+    height: 40px;
+
+    background:
+        #657752;
+
+    transform-origin:
+        bottom;
+}
+
+.stem-1 {
+    transform:
+        translateX(-50%)
+        rotate(-16deg);
+}
+
+.stem-2 {
+    transform:
+        translateX(-50%);
+}
+
+.stem-3 {
+    transform:
+        translateX(-50%)
+        rotate(18deg);
+}
+
+.flower-bloom {
+    position: absolute;
+
+    z-index: 4;
+
+    width: 21px;
+    height: 21px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #dab97c 0 20%,
+            #cb8b93 21% 48%,
+            transparent 50%
+        );
+}
+
+.bloom-1 {
+    left: 8px;
+    top: 12px;
+}
+
+.bloom-2 {
+    left: 25px;
+    top: 2px;
+
+    transform:
+        scale(1.08);
+}
+
+.bloom-3 {
+    right: 5px;
+    top: 17px;
+
+    background:
+        radial-gradient(
+            circle,
+            #dab97c 0 20%,
+            #b486a0 21% 48%,
+            transparent 50%
+        );
+}
+
+
+/* =========================================================
+   CANDLE
+   ========================================================= */
+
+.decor-candle {
+    width: 51px;
+    height: 72px;
+}
+
+.candle-body {
+    position: absolute;
+
+    z-index: 3;
+
+    left: 14px;
+    bottom: 5px;
+
+    width: 25px;
+    height: 44px;
+
+    border-radius:
+        7px 7px 3px 3px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #dfcfad,
+            #f0dfbc 55%,
+            #d4c19f
+        );
+
+    box-shadow:
+        inset -4px 0 rgba(0,0,0,.03),
+        0 3px 4px rgba(0,0,0,.08);
+}
+
+.candle-wax {
+    position: absolute;
+
+    z-index: 4;
+
+    left: 17px;
+    top: 23px;
+
+    width: 8px;
+    height: 16px;
+
+    border-radius:
+        0 0 7px 7px;
+
+    background:
+        #f1dfbd;
+}
+
+.candle-flame {
+    position: absolute;
+
+    z-index: 6;
+
+    left: 20px;
+    top: 3px;
+
+    width: 14px;
+    height: 21px;
+
+    border-radius:
+        65% 35% 65% 35%;
+
+    background:
+        radial-gradient(
+            circle at 55% 58%,
+            #fff0a6 0 27%,
+            #e99a58 28% 68%,
+            #d97846 69%
+        );
+
+    transform:
+        rotate(45deg);
+
+    box-shadow:
+        0 0 10px rgba(236,157,85,.36);
+
+    animation:
+        candleFlicker
+        1.2s
+        ease-in-out
+        infinite alternate;
+}
+
+.candle-glow {
+    position: absolute;
+
+    z-index: 0;
+
+    left: 4px;
+    top: -5px;
+
+    width: 45px;
+    height: 45px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(237,157,85,.09);
+
+    filter:
+        blur(9px);
+}
+
+
+/* =========================================================
+   PUMPKIN
+   ========================================================= */
+
+.decor-pumpkin {
+    width: 68px;
+    height: 58px;
+}
+
+.pumpkin-body {
+    position: absolute;
+
+    z-index: 3;
+
+    left: 5px;
+    bottom: 4px;
+
+    width: 58px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            #d67b45 0 22%,
+            #c86d3b 23% 42%,
+            #dc8049 43% 58%,
+            #bd6035 59% 76%,
+            #d77943 77%
+        );
+
+    box-shadow:
+        inset 0 -6px rgba(0,0,0,.045),
+        0 3px 4px rgba(0,0,0,.10);
+}
+
+.pumpkin-highlight {
+    position: absolute;
+
+    z-index: 4;
+
+    left: 22px;
+    bottom: 13px;
+
+    width: 11px;
+    height: 23px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.06);
+
+    transform:
+        rotate(8deg);
+}
+
+.pumpkin-stem {
+    position: absolute;
+
+    z-index: 5;
+
+    left: 29px;
+    top: 1px;
+
+    width: 11px;
+    height: 18px;
+
+    border-radius:
+        5px 5px 2px 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #596347,
+            #747c55
+        );
+
+    transform:
+        rotate(7deg);
 }
 
 
@@ -1774,15 +2607,19 @@ body[data-decoration-density="maximal"] .library-page::after {
    ========================================================= */
 
 .decor-ghost {
-    width: 72px;
-    height: 82px;
+    width: 67px;
+    height: 76px;
 
     animation:
-        ghostFloat 4s ease-in-out infinite;
+        ghostFloat
+        4s
+        ease-in-out
+        infinite;
 }
 
-.decor-ghost .ghost-glow {
+.ghost-glow {
     position: absolute;
+
     z-index: 0;
 
     inset: 10px;
@@ -1796,24 +2633,25 @@ body[data-decoration-density="maximal"] .library-page::after {
         blur(9px);
 }
 
-.decor-ghost .ghost-body {
+.ghost-body {
     position: absolute;
-    z-index: 2;
 
-    left: 12px;
+    z-index: 3;
+
+    left: 11px;
     top: 5px;
 
-    width: 49px;
-    height: 64px;
+    width: 46px;
+    height: 59px;
 
     border-radius:
-        50% 50% 38% 38%;
+        50% 50% 39% 39%;
 
     background:
         radial-gradient(
-            circle at 35% 20%,
-            rgba(255,255,255,.22),
-            transparent 30%
+            circle at 34% 20%,
+            rgba(255,255,255,.23),
+            transparent 28%
         ),
         #eee5d8;
 
@@ -1831,446 +2669,165 @@ body[data-decoration-density="maximal"] .library-page::after {
         );
 
     box-shadow:
-        inset -6px -5px rgba(70,55,48,.035);
+        inset -5px -4px rgba(70,55,48,.03);
 }
 
-.decor-ghost .ghost-eye {
+.ghost-eye {
     position: absolute;
-    z-index: 4;
 
-    top: 28px;
-
-    width: 6px;
-    height: 8px;
-
-    border-radius: 50%;
-
-    background: #625756;
-}
-
-.decor-ghost .ghost-eye.left {
-    left: 27px;
-}
-
-.decor-ghost .ghost-eye.right {
-    right: 26px;
-}
-
-.decor-ghost .ghost-mouth {
-    position: absolute;
-    z-index: 4;
-
-    left: 50%;
-    top: 42px;
-
-    width: 8px;
-    height: 5px;
-
-    transform: translateX(-50%);
-
-    border-bottom:
-        2px solid #756866;
-
-    border-radius: 50%;
-}
-
-.decor-ghost .ghost-arm {
-    position: absolute;
-    z-index: 1;
-
-    top: 36px;
-
-    width: 24px;
-    height: 13px;
-
-    border-radius: 50%;
-
-    background: #e0d7cb;
-}
-
-.decor-ghost .ghost-arm.left {
-    left: 1px;
-    transform: rotate(-24deg);
-}
-
-.decor-ghost .ghost-arm.right {
-    right: 1px;
-    transform: rotate(24deg);
-}
-
-
-/* =========================================================
-   BAT
-   ========================================================= */
-
-.decor-bat {
-    width: 84px;
-    height: 57px;
-
-    animation:
-        batHover 3.4s ease-in-out infinite;
-}
-
-.decor-bat .bat-body {
-    position: absolute;
-    z-index: 4;
-
-    left: 34px;
-    top: 19px;
-
-    width: 17px;
-    height: 27px;
-
-    border-radius: 50%;
-
-    background: #252126;
-}
-
-.decor-bat .bat-head {
-    position: absolute;
     z-index: 5;
 
-    left: 35px;
-    top: 9px;
+    top: 27px;
 
-    width: 16px;
-    height: 17px;
-
-    border-radius: 50%;
-
-    background: #2d282e;
-}
-
-.decor-bat .bat-head::before,
-.decor-bat .bat-head::after {
-    content: "";
-
-    position: absolute;
-
-    top: -6px;
-
-    width: 7px;
-    height: 10px;
-
-    background: #2d282e;
-
-    clip-path:
-        polygon(
-            50% 0,
-            100% 100%,
-            0 100%
-        );
-}
-
-.decor-bat .bat-head::before {
-    left: 0;
-}
-
-.decor-bat .bat-head::after {
-    right: 0;
-}
-
-.decor-bat .bat-wing {
-    position: absolute;
-    z-index: 2;
-
-    top: 16px;
-
-    width: 39px;
-    height: 30px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #3c343e,
-            #2f2932
-        );
-}
-
-.decor-bat .bat-wing.left {
-    left: 0;
-
-    clip-path:
-        polygon(
-            100% 33%,
-            74% 7%,
-            62% 38%,
-            31% 18%,
-            37% 54%,
-            3% 47%,
-            28% 76%,
-            70% 62%,
-            100% 100%
-        );
-}
-
-.decor-bat .bat-wing.right {
-    right: 0;
-    transform: scaleX(-1);
-
-    clip-path:
-        polygon(
-            100% 33%,
-            74% 7%,
-            62% 38%,
-            31% 18%,
-            37% 54%,
-            3% 47%,
-            28% 76%,
-            70% 62%,
-            100% 100%
-        );
-}
-
-
-/* =========================================================
-   GOBLIN
-   ========================================================= */
-
-.decor-goblin {
-    width: 76px;
-    height: 79px;
-}
-
-.decor-goblin .goblin-body {
-    position: absolute;
-    z-index: 2;
-
-    left: 19px;
-    bottom: 5px;
-
-    width: 39px;
-    height: 41px;
-
-    border-radius:
-        48% 48% 37% 37%;
-
-    background:
-        radial-gradient(
-            circle at 35% 20%,
-            rgba(255,255,255,.04),
-            transparent 30%
-        ),
-        #667b57;
-}
-
-.decor-goblin .goblin-head {
-    position: absolute;
-    z-index: 4;
-
-    left: 16px;
-    top: 7px;
-
-    width: 46px;
-    height: 40px;
-
-    border-radius:
-        50% 50% 46% 46%;
-
-    background:
-        radial-gradient(
-            circle at 35% 25%,
-            rgba(255,255,255,.045),
-            transparent 28%
-        ),
-        #788c65;
-}
-
-.decor-goblin .goblin-ear {
-    position: absolute;
-    z-index: 3;
-
-    top: 19px;
-
-    width: 23px;
-    height: 15px;
-
-    background: #70835e;
-
-    clip-path:
-        polygon(
-            0 50%,
-            100% 0,
-            80% 100%
-        );
-}
-
-.decor-goblin .goblin-ear.left {
-    left: 3px;
-}
-
-.decor-goblin .goblin-ear.right {
-    right: 3px;
-    transform: scaleX(-1);
-}
-
-.decor-goblin .goblin-eye {
-    position: absolute;
-    z-index: 6;
-
-    top: 23px;
-
-    width: 7px;
-    height: 6px;
+    width: 5px;
+    height: 7px;
 
     border-radius: 50%;
 
-    background: #293025;
+    background:
+        #625756;
 }
 
-.decor-goblin .goblin-eye.left {
-    left: 27px;
+.ghost-eye.left {
+    left: 25px;
 }
 
-.decor-goblin .goblin-eye.right {
-    right: 27px;
+.ghost-eye.right {
+    right: 24px;
 }
 
-.decor-goblin .goblin-smile {
+.ghost-mouth {
     position: absolute;
-    z-index: 6;
+
+    z-index: 5;
 
     left: 50%;
-    top: 34px;
+    top: 40px;
 
-    width: 13px;
-    height: 7px;
+    width: 7px;
+    height: 4px;
 
     transform:
         translateX(-50%);
 
     border-bottom:
-        2px solid #34412e;
+        2px solid #756866;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 }
 
 
 /* =========================================================
-   MOSS
+   RAVEN
    ========================================================= */
 
-.decor-moss {
-    width: 92px;
-    height: 45px;
+.decor-raven {
+    width: 69px;
+    height: 70px;
 }
 
-.decor-moss .moss-clump {
+.raven-body {
     position: absolute;
-    z-index: 2;
 
-    bottom: 5px;
+    z-index: 3;
+
+    left: 17px;
+    bottom: 7px;
+
+    width: 34px;
+    height: 43px;
 
     border-radius:
-        55% 45% 50% 50%;
+        58% 42% 48% 44%;
 
     background:
         radial-gradient(
-            circle at 35% 25%,
-            rgba(255,255,255,.04),
-            transparent 35%
+            circle at 30% 20%,
+            rgba(255,255,255,.025),
+            transparent 28%
         ),
-        #71865c;
+        #27282d;
 
-    box-shadow:
-        inset 0 -4px rgba(0,0,0,.035);
+    transform:
+        rotate(-5deg);
 }
 
-.decor-moss .moss-1 {
-    left: 4px;
-    width: 37px;
-    height: 22px;
-}
-
-.decor-moss .moss-2 {
-    left: 30px;
-    width: 43px;
-    height: 29px;
-    background: #7e9268;
-}
-
-.decor-moss .moss-3 {
-    right: 1px;
-    width: 33px;
-    height: 21px;
-}
-
-
-/* =========================================================
-   MUSHROOM
-   ========================================================= */
-
-.decor-mushroom {
-    width: 66px;
-    height: 66px;
-}
-
-.decor-mushroom .mushroom-stem {
+.raven-wing {
     position: absolute;
-    z-index: 2;
 
-    left: 23px;
-    bottom: 7px;
+    z-index: 4;
 
-    width: 22px;
-    height: 34px;
+    left: 20px;
+    bottom: 15px;
+
+    width: 27px;
+    height: 27px;
 
     border-radius:
-        45% 45% 30% 30%;
+        55% 45% 60% 40%;
 
     background:
-        linear-gradient(
-            to right,
-            #d6c3a5,
-            #ead8bb 55%,
-            #c5b093
-        );
+        #1c1d21;
 
-    box-shadow:
-        inset -4px 0 rgba(0,0,0,.03);
+    transform:
+        rotate(13deg);
 }
 
-.decor-mushroom .mushroom-rim {
+.raven-head {
     position: absolute;
-    z-index: 3;
 
-    left: 10px;
-    top: 31px;
+    z-index: 5;
 
-    width: 47px;
-    height: 7px;
+    left: 27px;
+    top: 7px;
+
+    width: 28px;
+    height: 27px;
 
     border-radius: 50%;
 
-    background: #d5bea3;
+    background:
+        #1d1e22;
 }
 
-.decor-mushroom .mushroom-cap {
+.raven-beak {
     position: absolute;
-    z-index: 4;
 
-    left: 8px;
-    top: 8px;
+    z-index: 6;
 
-    width: 51px;
-    height: 30px;
+    right: 1px;
+    top: 19px;
 
-    border-radius:
-        55% 55% 30% 30%;
+    width: 23px;
+    height: 10px;
 
     background:
-        radial-gradient(circle at 25% 42%, #f0dec3 0 3px, transparent 3.8px),
-        radial-gradient(circle at 52% 23%, #f0dec3 0 4px, transparent 4.8px),
-        radial-gradient(circle at 76% 48%, #f0dec3 0 3px, transparent 3.8px),
-        linear-gradient(
-            to bottom,
-            #b86256,
-            #9f5047
-        );
+        #17181b;
 
-    box-shadow:
-        inset 0 -5px rgba(0,0,0,.05),
-        0 3px 4px rgba(0,0,0,.10);
+    clip-path:
+        polygon(
+            0 20%,
+            100% 50%,
+            0 85%
+        );
+}
+
+.raven-eye {
+    position: absolute;
+
+    z-index: 7;
+
+    right: 16px;
+    top: 16px;
+
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+
+    background:
+        #d0ae69;
 }
 
 
@@ -2279,19 +2836,20 @@ body[data-decoration-density="maximal"] .library-page::after {
    ========================================================= */
 
 .decor-potion {
-    width: 66px;
-    height: 73px;
+    width: 60px;
+    height: 68px;
 }
 
-.decor-potion .potion-bottle {
+.potion-bottle {
     position: absolute;
-    z-index: 2;
 
-    left: 13px;
-    bottom: 6px;
+    z-index: 3;
 
-    width: 40px;
-    height: 48px;
+    left: 12px;
+    bottom: 5px;
+
+    width: 36px;
+    height: 44px;
 
     overflow: hidden;
 
@@ -2299,97 +2857,82 @@ body[data-decoration-density="maximal"] .library-page::after {
         2px solid rgba(236,234,226,.48);
 
     border-radius:
-        10px 10px 16px 16px;
+        10px 10px 15px 15px;
 
     background:
         linear-gradient(
             110deg,
-            rgba(255,255,255,.10),
-            rgba(255,255,255,.035)
+            rgba(255,255,255,.11),
+            rgba(255,255,255,.025)
         );
 
     box-shadow:
         inset -5px 0 rgba(0,0,0,.035),
-        0 3px 4px rgba(0,0,0,.09);
+        0 3px 4px rgba(0,0,0,.08);
 }
 
-.decor-potion .potion-liquid {
+.potion-liquid {
     position: absolute;
 
     left: 0;
     right: 0;
     bottom: 0;
 
-    height: 64%;
+    height: 63%;
 
     background:
         linear-gradient(
             to bottom,
             #936da1,
-            #795884
+            #765380
         );
 }
 
-.decor-potion .potion-liquid::before {
-    content: "";
-
+.potion-shine {
     position: absolute;
 
-    top: -2px;
-    left: 0;
-    right: 0;
+    z-index: 5;
 
-    height: 4px;
-
-    border-radius: 50%;
-
-    background: #a37bb0;
-}
-
-.decor-potion .potion-shine {
-    position: absolute;
-    z-index: 4;
-
-    left: 20px;
-    top: 26px;
+    left: 18px;
+    top: 25px;
 
     width: 4px;
-    height: 18px;
+    height: 16px;
 
     border-radius: 4px;
 
     background:
-        rgba(255,255,255,.26);
+        rgba(255,255,255,.24);
 }
 
-.decor-potion .potion-neck {
+.potion-neck {
     position: absolute;
-    z-index: 3;
 
-    left: 24px;
+    z-index: 4;
+
+    left: 22px;
     top: 5px;
 
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 17px;
 
     border:
         2px solid rgba(236,234,226,.48);
 
-    border-bottom: none;
-
-    background:
-        rgba(255,255,255,.045);
+    border-bottom:
+        none;
 }
 
-.decor-potion .potion-cork {
+.potion-cork {
     position: absolute;
-    z-index: 5;
 
-    left: 22px;
+    z-index: 6;
+
+    left: 20px;
     top: 0;
 
-    width: 22px;
-    height: 10px;
+    width: 20px;
+    height: 9px;
 
     border-radius:
         4px 4px 2px 2px;
@@ -2408,19 +2951,20 @@ body[data-decoration-density="maximal"] .library-page::after {
    ========================================================= */
 
 .decor-crystal {
-    width: 66px;
-    height: 72px;
+    width: 59px;
+    height: 66px;
 }
 
-.decor-crystal .crystal-main {
+.crystal-main {
     position: absolute;
-    z-index: 3;
 
-    left: 17px;
+    z-index: 4;
+
+    left: 15px;
     top: 4px;
 
-    width: 36px;
-    height: 58px;
+    width: 33px;
+    height: 54px;
 
     background:
         linear-gradient(
@@ -2440,15 +2984,16 @@ body[data-decoration-density="maximal"] .library-page::after {
         );
 }
 
-.decor-crystal .crystal-face {
+.crystal-face {
     position: absolute;
-    z-index: 4;
 
-    left: 31px;
+    z-index: 5;
+
+    left: 28px;
     top: 12px;
 
-    width: 13px;
-    height: 41px;
+    width: 11px;
+    height: 37px;
 
     background:
         rgba(255,255,255,.16);
@@ -2462,16 +3007,17 @@ body[data-decoration-density="maximal"] .library-page::after {
         );
 }
 
-.decor-crystal .crystal-glow {
+.crystal-glow {
     position: absolute;
+
     z-index: 0;
 
-    inset: 10px;
+    inset: 9px;
 
     border-radius: 50%;
 
     background:
-        rgba(177,140,194,.13);
+        rgba(177,140,194,.12);
 
     filter:
         blur(9px);
@@ -2479,434 +3025,182 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 
 /* =========================================================
-   RAVEN
+   GOBLIN
    ========================================================= */
 
-.decor-raven {
-    width: 77px;
-    height: 77px;
+.decor-goblin {
+    width: 68px;
+    height: 71px;
 }
 
-.decor-raven .raven-body {
+.goblin-body {
     position: absolute;
+
     z-index: 3;
 
     left: 18px;
-    bottom: 8px;
+    bottom: 5px;
 
-    width: 39px;
-    height: 48px;
+    width: 35px;
+    height: 37px;
 
     border-radius:
-        57% 43% 50% 42%;
+        48% 48% 37% 37%;
+
+    background:
+        #667b57;
+}
+
+.goblin-head {
+    position: absolute;
+
+    z-index: 5;
+
+    left: 14px;
+    top: 7px;
+
+    width: 42px;
+    height: 37px;
+
+    border-radius:
+        50% 50% 46% 46%;
 
     background:
         radial-gradient(
-            circle at 32% 20%,
-            rgba(255,255,255,.025),
-            transparent 28%
+            circle at 35% 25%,
+            rgba(255,255,255,.04),
+            transparent 30%
         ),
-        #25262b;
-
-    transform: rotate(-6deg);
+        #788c65;
 }
 
-.decor-raven .raven-body::after {
-    content: "";
-
+.goblin-ear {
     position: absolute;
 
-    left: 5px;
-    top: 15px;
+    z-index: 4;
 
-    width: 28px;
-    height: 29px;
+    top: 18px;
 
-    border-radius: 50%;
+    width: 21px;
+    height: 13px;
 
-    background: #1b1c20;
-
-    transform: rotate(12deg);
-}
-
-.decor-raven .raven-head {
-    position: absolute;
-    z-index: 5;
-
-    left: 29px;
-    top: 7px;
-
-    width: 31px;
-    height: 30px;
-
-    border-radius: 50%;
-
-    background: #1d1e22;
-}
-
-.decor-raven .raven-beak {
-    position: absolute;
-    z-index: 6;
-
-    right: 2px;
-    top: 20px;
-
-    width: 25px;
-    height: 11px;
-
-    background: #17181b;
+    background:
+        #70835e;
 
     clip-path:
         polygon(
-            0 20%,
-            100% 50%,
-            0 85%
+            0 50%,
+            100% 0,
+            80% 100%
         );
 }
 
-.decor-raven .raven-eye {
+.goblin-ear.left {
+    left: 2px;
+}
+
+.goblin-ear.right {
+    right: 2px;
+
+    transform:
+        scaleX(-1);
+}
+
+.goblin-eye {
     position: absolute;
-    z-index: 7;
 
-    right: 18px;
-    top: 17px;
+    z-index: 6;
 
-    width: 5px;
+    top: 21px;
+
+    width: 6px;
     height: 5px;
 
     border-radius: 50%;
 
-    background: #d0ae69;
-}
-
-
-/* =========================================================
-   PUMPKIN
-   ========================================================= */
-
-.decor-pumpkin {
-    width: 73px;
-    height: 62px;
-}
-
-.decor-pumpkin .pumpkin-body {
-    position: absolute;
-    z-index: 2;
-
-    left: 7px;
-    bottom: 5px;
-
-    width: 59px;
-    height: 43px;
-
-    border-radius: 50%;
-
     background:
-        radial-gradient(
-            ellipse at center,
-            #d67b45 0 22%,
-            #c86d3b 23% 42%,
-            #dc8049 43% 58%,
-            #bd6035 59% 76%,
-            #d77943 77%
-        );
-
-    box-shadow:
-        inset 0 -6px rgba(0,0,0,.045),
-        0 3px 4px rgba(0,0,0,.10);
+        #293025;
 }
 
-.decor-pumpkin .pumpkin-stem {
+.goblin-eye.left {
+    left: 25px;
+}
+
+.goblin-eye.right {
+    right: 25px;
+}
+
+.goblin-smile {
     position: absolute;
-    z-index: 4;
 
-    left: 31px;
-    top: 2px;
-
-    width: 12px;
-    height: 19px;
-
-    border-radius:
-        5px 5px 2px 2px;
-
-    background:
-        linear-gradient(
-            to right,
-            #596347,
-            #747c55
-        );
-
-    transform: rotate(7deg);
-}
-
-
-/* =========================================================
-   PLANT
-   ========================================================= */
-
-.decor-plant {
-    width: 75px;
-    height: 83px;
-}
-
-.decor-plant .plant-pot {
-    position: absolute;
-    z-index: 4;
-
-    left: 20px;
-    bottom: 4px;
-
-    width: 36px;
-    height: 29px;
-
-    background:
-        linear-gradient(
-            to right,
-            #986149,
-            #b37558 52%,
-            #8b5843
-        );
-
-    clip-path:
-        polygon(
-            8% 0,
-            92% 0,
-            77% 100%,
-            23% 100%
-        );
-
-    box-shadow:
-        0 4px 5px rgba(0,0,0,.11);
-}
-
-.decor-plant .plant-leaf {
-    position: absolute;
-    z-index: 2;
-
-    width: 24px;
-    height: 42px;
-
-    border-radius:
-        100% 0 100% 0;
-
-    background:
-        linear-gradient(
-            135deg,
-            #7d936f,
-            #667d5c
-        );
-
-    transform-origin:
-        bottom center;
-
-    box-shadow:
-        inset -2px 0 rgba(0,0,0,.025);
-}
-
-.decor-plant .leaf-1 {
-    left: 26px;
-    top: 4px;
-    transform: rotate(-18deg);
-}
-
-.decor-plant .leaf-2 {
-    left: 39px;
-    top: 10px;
-    transform: rotate(27deg);
-}
-
-.decor-plant .leaf-3 {
-    left: 17px;
-    top: 18px;
-    transform: rotate(-50deg) scale(.85);
-}
-
-.decor-plant .leaf-4 {
-    left: 43px;
-    top: 25px;
-    transform: rotate(57deg) scale(.78);
-}
-
-
-/* =========================================================
-   CANDLE
-   ========================================================= */
-
-.decor-candle {
-    width: 56px;
-    height: 76px;
-}
-
-.decor-candle .candle-body {
-    position: absolute;
-    z-index: 2;
-
-    left: 16px;
-    bottom: 6px;
-
-    width: 27px;
-    height: 46px;
-
-    border-radius:
-        6px 6px 3px 3px;
-
-    background:
-        linear-gradient(
-            to right,
-            #dfcfad,
-            #f0dfbc 55%,
-            #d4c19f
-        );
-
-    box-shadow:
-        inset -4px 0 rgba(0,0,0,.03);
-}
-
-.decor-candle .candle-wax {
-    position: absolute;
-    z-index: 3;
-
-    left: 19px;
-    top: 23px;
-
-    width: 9px;
-    height: 17px;
-
-    border-radius:
-        0 0 7px 7px;
-
-    background: #f1dfbd;
-}
-
-.decor-candle .candle-flame {
-    position: absolute;
-    z-index: 5;
-
-    left: 22px;
-    top: 3px;
-
-    width: 15px;
-    height: 23px;
-
-    border-radius:
-        65% 35% 65% 35%;
-
-    background:
-        radial-gradient(
-            circle at 55% 58%,
-            #fff0a6 0 27%,
-            #e99a58 28% 68%,
-            #d97846 69%
-        );
-
-    transform: rotate(45deg);
-
-    box-shadow:
-        0 0 11px rgba(236,157,85,.38);
-
-    animation:
-        candleFlicker
-        1.2s
-        ease-in-out
-        infinite alternate;
-}
-
-.decor-candle .candle-glow {
-    position: absolute;
-    z-index: 0;
-
-    left: 5px;
-    top: -5px;
-
-    width: 48px;
-    height: 48px;
-
-    border-radius: 50%;
-
-    background:
-        rgba(237,157,85,.10);
-
-    filter:
-        blur(9px);
-}
-
-
-/* =========================================================
-   FLOWERS
-   ========================================================= */
-
-.decor-flowers {
-    width: 73px;
-    height: 75px;
-}
-
-.decor-flowers .flower-stem {
-    position: absolute;
-    z-index: 1;
+    z-index: 6;
 
     left: 50%;
-    bottom: 8px;
+    top: 32px;
 
-    width: 2px;
-    height: 42px;
+    width: 12px;
+    height: 6px;
 
-    background: #667853;
+    transform:
+        translateX(-50%);
 
-    transform-origin: bottom;
-}
-
-.decor-flowers .stem-1 {
-    transform: translateX(-50%) rotate(-17deg);
-}
-
-.decor-flowers .stem-2 {
-    transform: translateX(-50%);
-}
-
-.decor-flowers .stem-3 {
-    transform: translateX(-50%) rotate(19deg);
-}
-
-.decor-flowers .flower-bloom {
-    position: absolute;
-    z-index: 3;
-
-    width: 25px;
-    height: 25px;
+    border-bottom:
+        2px solid #34412e;
 
     border-radius: 50%;
+}
+
+
+/* =========================================================
+   MOSS
+   ========================================================= */
+
+.decor-moss {
+    width: 82px;
+    height: 39px;
+}
+
+.moss-clump {
+    position: absolute;
+
+    z-index: 3;
+
+    bottom: 4px;
+
+    border-radius:
+        55% 45% 50% 50%;
 
     background:
         radial-gradient(
-            circle,
-            #d8b678 0 20%,
-            #c9878e 21% 50%,
-            transparent 51%
-        );
+            circle at 35% 25%,
+            rgba(255,255,255,.04),
+            transparent 35%
+        ),
+        #71865c;
 }
 
-.decor-flowers .bloom-1 {
-    left: 7px;
-    top: 11px;
+.moss-1 {
+    left: 4px;
+
+    width: 34px;
+    height: 20px;
 }
 
-.decor-flowers .bloom-2 {
+.moss-2 {
     left: 27px;
-    top: 2px;
-    transform: scale(1.08);
-}
 
-.decor-flowers .bloom-3 {
-    right: 5px;
-    top: 16px;
+    width: 39px;
+    height: 27px;
 
     background:
-        radial-gradient(
-            circle,
-            #d8b678 0 20%,
-            #ae8099 21% 50%,
-            transparent 51%
-        );
+        #7e9268;
+}
+
+.moss-3 {
+    right: 1px;
+
+    width: 30px;
+    height: 19px;
 }
 
 
@@ -2915,159 +3209,42 @@ body[data-decoration-density="maximal"] .library-page::after {
    ========================================================= */
 
 .decor-stars {
-    width: 75px;
-    height: 68px;
+    width: 68px;
+    height: 63px;
 }
 
-.decor-stars .star {
+.star {
     position: absolute;
 
-    color: #d5b973;
+    color:
+        #d5b973;
 
     text-shadow:
-        0 0 4px rgba(216,186,114,.20);
+        0 0 4px rgba(216,186,114,.18);
 }
 
-.decor-stars .star-1 {
+.star-1 {
     left: 7px;
     top: 10px;
-    font-size: 1.45rem;
+
+    font-size:
+        1.3rem;
 }
 
-.decor-stars .star-2 {
+.star-2 {
     right: 7px;
     top: 23px;
-    font-size: .95rem;
+
+    font-size:
+        .85rem;
 }
 
-.decor-stars .star-3 {
-    left: 33px;
+.star-3 {
+    left: 31px;
     bottom: 5px;
-    font-size: .78rem;
-}
 
-
-/* =========================================================
-   MUG
-   ========================================================= */
-
-.decor-mug {
-    width: 69px;
-    height: 59px;
-}
-
-.decor-mug .mug-body {
-    position: absolute;
-    z-index: 2;
-
-    left: 8px;
-    bottom: 6px;
-
-    width: 43px;
-    height: 37px;
-
-    border-radius:
-        7px 7px 11px 11px;
-
-    background:
-        linear-gradient(
-            to right,
-            #a66f59,
-            #b97f65 52%,
-            #99644f
-        );
-
-    box-shadow:
-        inset -5px -3px rgba(0,0,0,.035),
-        0 4px 5px rgba(0,0,0,.10);
-}
-
-.decor-mug .mug-body::before {
-    content: "";
-
-    position: absolute;
-
-    left: 6px;
-    right: 6px;
-    top: 4px;
-
-    height: 5px;
-
-    border-radius: 50%;
-
-    background: #5e473c;
-}
-
-.decor-mug .mug-handle {
-    position: absolute;
-    z-index: 1;
-
-    right: 3px;
-    bottom: 12px;
-
-    width: 24px;
-    height: 24px;
-
-    border: 6px solid #a9755e;
-    border-left: none;
-
-    border-radius:
-        0 50% 50% 0;
-}
-
-.decor-mug .steam {
-    position: absolute;
-    z-index: 4;
-
-    top: 0;
-
-    width: 10px;
-    height: 22px;
-
-    border-left:
-        2px solid rgba(235,225,210,.28);
-
-    border-radius: 50%;
-}
-
-.decor-mug .steam-1 {
-    left: 20px;
-    transform: rotate(10deg);
-}
-
-.decor-mug .steam-2 {
-    left: 34px;
-    transform: rotate(-8deg);
-}
-
-
-/* =========================================================
-   FALLBACK DECOR
-   ========================================================= */
-
-.shelf-decoration:not(
-    .decor-cat,
-    .decor-ghost,
-    .decor-bat,
-    .decor-goblin,
-    .decor-moss,
-    .decor-mushroom,
-    .decor-potion,
-    .decor-crystal,
-    .decor-raven,
-    .decor-pumpkin,
-    .decor-plant,
-    .decor-candle,
-    .decor-flowers,
-    .decor-stars,
-    .decor-mug
-) .decoration-symbol {
-    display: grid;
-    width: 100%;
-    height: 100%;
-    place-items: center;
-    color: var(--accent-light);
-    font-size: 1.35rem;
+    font-size:
+        .72rem;
 }
 
 
@@ -3083,17 +3260,6 @@ body[data-decoration-density="maximal"] .library-page::after {
 
     50% {
         margin-top: -5px;
-    }
-}
-
-@keyframes batHover {
-    0%,
-    100% {
-        margin-top: 0;
-    }
-
-    50% {
-        margin-top: -4px;
     }
 }
 
@@ -3118,42 +3284,64 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 .empty-shelf-message {
     position: absolute;
+
     z-index: 5;
 
     left: 50%;
     bottom: 77px;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 
-    min-width: 280px;
+    min-width:
+        280px;
 
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
 
-    color: rgba(255,255,255,.43);
+    color:
+        rgba(255,255,255,.43);
 
-    font-family: Georgia, serif;
-    font-size: .65rem;
-    font-style: italic;
+    font-family:
+        Georgia,
+        serif;
 
-    text-align: center;
+    font-size:
+        .65rem;
+
+    font-style:
+        italic;
+
+    text-align:
+        center;
 }
 
 .empty-shelf-message button {
     margin-top: 13px;
-    padding: 9px 13px;
 
-    border: 1px solid rgba(255,255,255,.16);
-    border-radius: 7px;
+    padding:
+        9px 13px;
 
-    background: rgba(255,255,255,.035);
+    border:
+        1px solid rgba(255,255,255,.16);
 
-    color: rgba(255,255,255,.71);
+    border-radius:
+        7px;
 
-    cursor: pointer;
+    background:
+        rgba(255,255,255,.035);
 
-    font-size: .48rem;
+    color:
+        rgba(255,255,255,.71);
+
+    cursor:
+        pointer;
+
+    font-size:
+        .48rem;
 }
 
 
@@ -3163,46 +3351,38 @@ body[data-decoration-density="maximal"] .library-page::after {
 
 .library-empty,
 .reading-empty {
-    min-height: 430px;
+    min-height:
+        430px;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    display:
+        flex;
 
-    padding: 46px;
+    flex-direction:
+        column;
 
-    border: 1px solid var(--border);
-    border-radius: 17px;
+    align-items:
+        center;
 
-    background: rgba(255,255,255,.02);
+    justify-content:
+        center;
+
+    padding:
+        46px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        17px;
+
+    background:
+        rgba(255,255,255,.02);
 
     box-shadow:
         0 18px 34px rgba(0,0,0,.13);
 
-    text-align: center;
-}
-
-.empty-stars {
-    color: var(--accent);
-    letter-spacing: .3em;
-}
-
-.library-empty h2,
-.reading-empty h3 {
-    margin: 16px 0 0;
-    color: var(--text);
-    font-size: 1.9rem;
-}
-
-.library-empty p,
-.reading-empty p {
-    max-width: 470px;
-    margin: 13px 0 22px;
-    color: var(--muted);
-    font-family: Georgia, serif;
-    font-size: .67rem;
-    line-height: 1.7;
+    text-align:
+        center;
 }
 
 
@@ -3215,19 +3395,32 @@ body[data-decoration-density="maximal"] .library-page::after {
     --book-text: #eadfca;
     --book-accent: #b28a4a;
 
-    position: relative;
+    position:
+        relative;
 
-    width: 100%;
-    height: 100%;
+    width:
+        100%;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    height:
+        100%;
 
-    overflow: hidden;
+    display:
+        flex;
 
-    padding: 26px;
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    overflow:
+        hidden;
+
+    padding:
+        26px;
 
     background:
         repeating-linear-gradient(
@@ -3237,276 +3430,241 @@ body[data-decoration-density="maximal"] .library-page::after {
         ),
         var(--book-color);
 
-    color: var(--book-text);
+    color:
+        var(--book-text);
 
-    text-align: center;
+    text-align:
+        center;
 }
 
 .generated-cover::before {
     content: "";
 
-    position: absolute;
+    position:
+        absolute;
 
-    inset: 14px;
+    inset:
+        14px;
 
     border:
         1px solid var(--book-accent);
 }
 
-.generated-cover::after {
-    content: "";
-
-    position: absolute;
-
-    left: 5px;
-    top: 0;
-    bottom: 0;
-
-    width: 4px;
-
-    background:
-        rgba(255,255,255,.05);
-}
-
-.generated-cover strong {
-    position: relative;
-    z-index: 2;
-
-    font-family: Georgia, serif;
-    font-size: 1.45rem;
-    line-height: 1.08;
-}
-
-.generated-cover span {
-    position: relative;
-    z-index: 2;
-
-    color: var(--book-accent);
-}
-
-.generated-cover span:last-child {
-    margin-top: 17px;
-
-    color: var(--book-text);
-
-    font-family: Georgia, serif;
-    font-size: .64rem;
-    font-style: italic;
-}
-
 
 /* =========================================================
-   BOOK REVEAL
-   ========================================================= */
-
-.book-reveal {
-    position: fixed;
-    inset: 0;
-    z-index: 2200;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    overflow-y: auto;
-
-    padding: 50px 30px;
-
-    background: rgba(18,15,15,.95);
-
-    backdrop-filter: blur(14px);
-}
-
-.revealed-book {
-    width: min(930px,100%);
-
-    display: grid;
-    grid-template-columns: 330px minmax(0,1fr);
-    gap: 68px;
-    align-items: center;
-}
-
-.revealed-cover {
-    width: 285px;
-    margin: auto;
-    aspect-ratio: 2 / 3;
-    overflow: hidden;
-    border-radius: 5px 12px 12px 5px;
-    background: var(--accent-2);
-    background-position: center;
-    background-size: cover;
-    box-shadow:
-        18px 24px 36px rgba(0,0,0,.34),
-        inset 6px 0 8px rgba(255,255,255,.035);
-}
-
-
-/* =========================================================
-   READING NOW / STATS
+   READING NOW
    ========================================================= */
 
 .reading-now-section,
 .reading-stats-section {
-    padding: 94px 0;
-    border-top: 1px solid var(--border-soft);
+    padding:
+        94px 0;
+
+    border-top:
+        1px solid var(--border-soft);
 }
 
 .reading-now-intro {
-    display: grid;
-    grid-template-columns: minmax(0,1fr) auto;
-    gap: 46px;
-    align-items: end;
-    margin-bottom: 58px;
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0,1fr)
+        auto;
+
+    gap:
+        46px;
+
+    align-items:
+        end;
+
+    margin-bottom:
+        58px;
 }
 
 .reading-now-intro h2,
 .stats-intro h2 {
-    margin: 12px 0 0;
-    color: var(--text);
-    font-size: clamp(3rem,6vw,5.8rem);
-    line-height: .9;
-    letter-spacing: -.05em;
+    margin:
+        12px 0 0;
+
+    color:
+        var(--text);
+
+    font-size:
+        clamp(3rem,6vw,5.8rem);
+
+    line-height:
+        .9;
+
+    letter-spacing:
+        -.05em;
 }
 
 .reading-now-intro h2 em,
 .stats-intro h2 em {
-    display: block;
-    color: var(--accent-2);
-    font-weight: 400;
+    display:
+        block;
+
+    color:
+        var(--accent-2);
+
+    font-weight:
+        400;
 }
 
 .reading-now-intro p,
 .stats-intro p {
-    max-width: 620px;
-    margin: 22px 0 0;
-    color: var(--muted);
-    font-family: Georgia, serif;
-    font-size: .75rem;
-    line-height: 1.8;
+    max-width:
+        620px;
+
+    margin:
+        22px 0 0;
+
+    color:
+        var(--muted);
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size:
+        .75rem;
+
+    line-height:
+        1.8;
 }
 
 
 /* =========================================================
-   FEATURED READING
+   FEATURED BOOK
    ========================================================= */
 
-.featured-reading-section {
-    margin-bottom: 68px;
-}
-
 .featured-reading-card {
-    position: relative;
+    display:
+        grid;
 
-    min-height: 440px;
+    grid-template-columns:
+        350px
+        minmax(0,1fr);
 
-    display: grid;
-    grid-template-columns: 350px minmax(0,1fr);
-    gap: 58px;
-    align-items: center;
+    gap:
+        58px;
 
-    overflow: hidden;
+    align-items:
+        center;
 
-    padding: 46px 58px;
+    min-height:
+        440px;
 
-    border: 1px solid var(--border);
-    border-radius: 17px;
+    padding:
+        46px 58px;
 
-    background: rgba(255,255,255,.02);
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        17px;
+
+    background:
+        rgba(255,255,255,.02);
 
     box-shadow:
         0 20px 36px rgba(0,0,0,.14);
 }
 
 .featured-book-cover {
-    position: relative;
-    z-index: 3;
+    width:
+        215px;
 
-    width: 215px;
-    aspect-ratio: 2 / 3;
+    aspect-ratio:
+        2 / 3;
 
-    overflow: hidden;
+    overflow:
+        hidden;
 
-    border: 1px solid var(--border);
+    border-radius:
+        5px 10px 10px 5px;
 
-    border-radius: 5px 10px 10px 5px;
+    background-position:
+        center;
 
-    background: var(--accent-2);
-    background-position: center;
-    background-size: cover;
+    background-size:
+        cover;
 
     box-shadow:
         16px 21px 30px rgba(0,0,0,.25);
-
-    transform: rotate(-1.5deg);
-
-    transition: transform .22s ease;
-}
-
-.featured-book-cover:hover {
-    transform:
-        rotate(0)
-        translateY(-6px);
 }
 
 
 /* =========================================================
-   READING CARDS
+   READING GRID
    ========================================================= */
 
 .reading-grid {
-    display: grid;
-    grid-template-columns: repeat(3,minmax(0,1fr));
-    gap: 17px;
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap:
+        17px;
 }
 
 .reading-card {
-    position: relative;
+    display:
+        grid;
 
-    min-height: 270px;
+    grid-template-columns:
+        118px
+        minmax(0,1fr);
 
-    display: grid;
-    grid-template-columns: 118px minmax(0,1fr);
-    gap: 20px;
-    align-items: center;
+    gap:
+        20px;
 
-    overflow: hidden;
+    align-items:
+        center;
 
-    padding: 20px;
+    min-height:
+        270px;
 
-    border: 1px solid var(--border);
-    border-radius: 13px;
+    padding:
+        20px;
 
-    background: rgba(255,255,255,.02);
+    border:
+        1px solid var(--border);
 
-    cursor: pointer;
+    border-radius:
+        13px;
+
+    background:
+        rgba(255,255,255,.02);
+
+    cursor:
+        pointer;
 
     box-shadow:
         0 10px 22px rgba(0,0,0,.10);
-
-    transition:
-        transform .18s ease,
-        border-color .18s ease,
-        box-shadow .18s ease;
-}
-
-.reading-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--accent);
-    box-shadow:
-        0 15px 28px rgba(0,0,0,.16);
 }
 
 .reading-card-cover {
-    width: 107px;
-    aspect-ratio: 2 / 3;
+    width:
+        107px;
 
-    overflow: hidden;
+    aspect-ratio:
+        2 / 3;
 
-    border-radius: 3px 7px 7px 3px;
+    overflow:
+        hidden;
 
-    background: var(--accent-2);
-    background-position: center;
-    background-size: cover;
+    border-radius:
+        3px 7px 7px 3px;
+
+    background-position:
+        center;
+
+    background-size:
+        cover;
 
     box-shadow:
         7px 9px 13px rgba(0,0,0,.17);
@@ -3518,51 +3676,26 @@ body[data-decoration-density="maximal"] .library-page::after {
    ========================================================= */
 
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4,minmax(0,1fr));
-    gap: 12px;
-    margin-bottom: 18px;
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+
+    gap:
+        12px;
 }
 
-.stat-card {
-    position: relative;
-
-    min-height: 175px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-
-    padding: 22px;
-
-    border: 1px solid var(--border);
-    border-radius: 13px;
-
-    background: rgba(255,255,255,.02);
-
-    box-shadow:
-        0 10px 22px rgba(0,0,0,.09);
-}
-
-.stats-insight-grid {
-    display: grid;
-    grid-template-columns: repeat(2,minmax(0,1fr));
-    gap: 18px;
-}
-
+.stat-card,
 .stats-panel {
-    position: relative;
-    min-height: 320px;
-    overflow: hidden;
-    padding: 26px;
-    border: 1px solid var(--border);
-    border-radius: 13px;
-    background: rgba(255,255,255,.02);
-}
+    border:
+        1px solid var(--border);
 
-.stats-panel-wide {
-    grid-column: 1 / -1;
-    min-height: 220px;
+    border-radius:
+        13px;
+
+    background:
+        rgba(255,255,255,.02);
 }
 
 
@@ -3571,93 +3704,53 @@ body[data-decoration-density="maximal"] .library-page::after {
    ========================================================= */
 
 @media (max-width: 1200px) {
+
     .reading-grid {
-        grid-template-columns: repeat(2,minmax(0,1fr));
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
     }
+
 }
 
 @media (max-width: 1000px) {
+
     .library-intro,
     .reading-now-intro {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
 
     .featured-reading-card {
-        grid-template-columns: 280px minmax(0,1fr);
-        gap: 34px;
-        padding: 40px;
+        grid-template-columns:
+            280px
+            minmax(0,1fr);
     }
 
-    .stats-grid {
-        grid-template-columns: repeat(2,minmax(0,1fr));
-    }
-}
-
-@media (max-width: 800px) {
-    .revealed-book {
-        grid-template-columns: 1fr;
-        gap: 34px;
-        text-align: center;
-    }
-
-    .stats-insight-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 @media (max-width: 760px) {
+
     .library-page,
     .reading-now-section,
     .reading-stats-section {
-        width: calc(100% - 30px);
+        width:
+            calc(100% - 30px);
     }
 
     .shelf-header {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction:
+            column;
+
+        align-items:
+            flex-start;
     }
 
-    .featured-reading-card,
-    .reading-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 560px) {
-    .library-summary,
-    .reading-now-summary {
-        width: 100%;
-        grid-template-columns: repeat(3,1fr);
+    .reading-grid,
+    .featured-reading-card {
+        grid-template-columns:
+            1fr;
     }
 
-    .library-intro h1,
-    .reading-now-intro h2,
-    .stats-intro h2 {
-        font-size: 3.6rem;
-    }
-
-    .shelf-body {
-        min-height: 325px;
-        border-left-width: 7px;
-        border-right-width: 7px;
-    }
-
-    .shelf-books-row {
-        left: 10px;
-        right: 10px;
-    }
-
-    .reading-card {
-        grid-template-columns: 90px minmax(0,1fr);
-    }
-
-    .reading-card-cover {
-        width: 82px;
-    }
-
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 
@@ -3666,15 +3759,9 @@ body[data-decoration-density="maximal"] .library-page::after {
    ========================================================= */
 
 .reduce-motion .decor-ghost,
-.reduce-motion .decor-bat,
 .reduce-motion .decor-candle .candle-flame {
-    animation: none !important;
-}
-
-.reduce-motion .shelf-book,
-.reduce-motion .featured-book-cover,
-.reduce-motion .reading-card {
-    transition: none !important;
+    animation:
+        none !important;
 }
 
 
@@ -3683,5 +3770,6 @@ body[data-decoration-density="maximal"] .library-page::after {
    ========================================================= */
 
 [hidden] {
-    display: none !important;
+    display:
+        none !important;
 }
