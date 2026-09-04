@@ -27,7 +27,7 @@
 </head>
 
 
-<body>
+<body class="theme-haunted">
 
 
     <!-- =====================================================
@@ -46,7 +46,10 @@
 
             <div class="brand">
 
-                <a href="index.html" class="brand-link">
+                <a
+                    href="index.html"
+                    class="brand-link"
+                >
 
                     <div class="brand-flower">
                         ✦
@@ -77,6 +80,7 @@
                     href="#library"
                     class="nav-link active"
                 >
+
                     <span class="nav-mark">
                         01
                     </span>
@@ -84,6 +88,7 @@
                     <span>
                         my library
                     </span>
+
                 </a>
 
 
@@ -91,6 +96,7 @@
                     href="#reading"
                     class="nav-link"
                 >
+
                     <span class="nav-mark">
                         02
                     </span>
@@ -98,6 +104,7 @@
                     <span>
                         reading now
                     </span>
+
                 </a>
 
 
@@ -105,6 +112,7 @@
                     href="#journal"
                     class="nav-link"
                 >
+
                     <span class="nav-mark">
                         03
                     </span>
@@ -112,6 +120,7 @@
                     <span>
                         my journal
                     </span>
+
                 </a>
 
 
@@ -119,6 +128,7 @@
                     href="#words"
                     class="nav-link"
                 >
+
                     <span class="nav-mark">
                         04
                     </span>
@@ -126,6 +136,7 @@
                     <span>
                         little words
                     </span>
+
                 </a>
 
 
@@ -133,6 +144,7 @@
                     href="#quotes"
                     class="nav-link"
                 >
+
                     <span class="nav-mark">
                         05
                     </span>
@@ -140,6 +152,7 @@
                     <span>
                         saved quotes
                     </span>
+
                 </a>
 
 
@@ -147,6 +160,7 @@
                     href="#stats"
                     class="nav-link"
                 >
+
                     <span class="nav-mark">
                         06
                     </span>
@@ -154,12 +168,17 @@
                     <span>
                         reading stats
                     </span>
+
                 </a>
 
 
             </nav>
 
 
+
+            <!-- =================================================
+                 SIDEBAR ACTIONS
+                 ================================================= -->
 
             <div class="sidebar-actions">
 
@@ -186,7 +205,48 @@
 
 
 
+            <!-- =================================================
+                 READING ROOM SETTINGS
+                 ================================================= -->
+
+            <div class="sidebar-settings">
+
+
+                <button
+                    id="openThemeSettings"
+                    class="reading-room-button"
+                    type="button"
+                >
+
+                    <span class="reading-room-icon">
+                        ✦
+                    </span>
+
+                    <span>
+
+                        <strong>
+                            reading room
+                        </strong>
+
+                        <small>
+                            choose your atmosphere
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 FOOTER
+                 ================================================= -->
+
             <div class="sidebar-footer">
+
 
                 <div class="tiny-book-stack">
 
@@ -196,11 +256,13 @@
 
                 </div>
 
+
                 <p>
                     every collection starts
                     <br>
                     with one book.
                 </p>
+
 
             </div>
 
@@ -234,6 +296,15 @@
 
 
                 <div class="topbar-actions">
+
+
+                    <button
+                        id="topThemeSettings"
+                        class="text-button"
+                        type="button"
+                    >
+                        reading room
+                    </button>
 
 
                     <button
@@ -271,10 +342,15 @@
             >
 
 
+                <!-- =========================================
+                     INTRO
+                     ========================================= -->
+
                 <div class="library-intro">
 
 
                     <div>
+
 
                         <span class="eyebrow">
                             MY LITTLE LIBRARY
@@ -284,7 +360,10 @@
                         <h1>
 
                             Books I've
-                            <em>tucked away.</em>
+
+                            <em>
+                                tucked away.
+                            </em>
 
                         </h1>
 
@@ -297,9 +376,14 @@
 
                         </p>
 
+
                     </div>
 
 
+
+                    <!-- =====================================
+                         SUMMARY
+                         ===================================== -->
 
                     <div class="library-summary">
 
@@ -361,6 +445,7 @@
                 </div>
 
 
+
                 <!-- =========================================
                      EMPTY LIBRARY
                      ========================================= -->
@@ -373,7 +458,7 @@
 
 
                     <div class="empty-stars">
-                        ✦　·　✧
+                        ✦ · ✧
                     </div>
 
 
@@ -417,8 +502,9 @@
                 </div>
 
 
+
                 <!-- =========================================
-                     ADD ANOTHER SHELF
+                     ADD SHELF
                      ========================================= -->
 
                 <button
@@ -457,7 +543,7 @@
 
 
     <!-- =====================================================
-         DIM OVERLAY
+         OVERLAY
          ===================================================== -->
 
     <div
@@ -466,6 +552,658 @@
         hidden
     >
     </div>
+
+
+
+    <!-- =====================================================
+         READING ROOM SETTINGS DRAWER
+         ===================================================== -->
+
+    <aside
+        id="themeDrawer"
+        class="form-drawer theme-drawer"
+        hidden
+    >
+
+
+        <!-- =============================================
+             HEADER
+             ============================================= -->
+
+        <div class="drawer-header">
+
+
+            <div>
+
+                <span>
+                    YOUR READING ROOM
+                </span>
+
+                <h2>
+                    Choose your atmosphere
+                </h2>
+
+            </div>
+
+
+            <button
+                id="closeThemeDrawer"
+                class="close-button"
+                type="button"
+            >
+                ×
+            </button>
+
+
+        </div>
+
+
+
+        <!-- =============================================
+             THEME SETTINGS
+             ============================================= -->
+
+        <div class="theme-settings-content">
+
+
+            <p class="theme-intro-copy">
+
+                Change the mood of your library without changing
+                your books, shelves, notes, or reading history.
+
+            </p>
+
+
+
+            <!-- =========================================
+                 THEME GRID
+                 ========================================= -->
+
+            <div class="theme-grid">
+
+
+                <!-- =====================================
+                     HAUNTED LIBRARY
+                     ===================================== -->
+
+                <button
+                    class="theme-card active"
+                    type="button"
+                    data-theme="haunted"
+                >
+
+
+                    <div class="theme-preview theme-preview-haunted">
+
+
+                        <div class="preview-window">
+                        </div>
+
+
+                        <div class="preview-fire">
+                        </div>
+
+
+                        <div class="preview-books">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="theme-card-copy">
+
+
+                        <div>
+
+                            <strong>
+                                Haunted Library
+                            </strong>
+
+                            <span>
+                                candlelight · rain · old wood
+                            </span>
+
+                        </div>
+
+
+                        <span class="theme-check">
+                            ✓
+                        </span>
+
+
+                    </div>
+
+
+                </button>
+
+
+
+                <!-- =====================================
+                     AUTUMN BOOKSHOP
+                     ===================================== -->
+
+                <button
+                    class="theme-card"
+                    type="button"
+                    data-theme="autumn"
+                >
+
+
+                    <div class="theme-preview theme-preview-autumn">
+
+
+                        <div class="preview-window">
+                        </div>
+
+
+                        <div class="preview-pumpkin">
+                        </div>
+
+
+                        <div class="preview-books">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="theme-card-copy">
+
+
+                        <div>
+
+                            <strong>
+                                Autumn Bookshop
+                            </strong>
+
+                            <span>
+                                pumpkins · tea · warm evenings
+                            </span>
+
+                        </div>
+
+
+                        <span class="theme-check">
+                            ✓
+                        </span>
+
+
+                    </div>
+
+
+                </button>
+
+
+
+                <!-- =====================================
+                     ENCHANTED FOREST
+                     ===================================== -->
+
+                <button
+                    class="theme-card"
+                    type="button"
+                    data-theme="forest"
+                >
+
+
+                    <div class="theme-preview theme-preview-forest">
+
+
+                        <div class="preview-moon">
+                        </div>
+
+
+                        <div class="preview-leaf leaf-one">
+                        </div>
+
+
+                        <div class="preview-leaf leaf-two">
+                        </div>
+
+
+                        <div class="preview-books">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="theme-card-copy">
+
+
+                        <div>
+
+                            <strong>
+                                Enchanted Forest
+                            </strong>
+
+                            <span>
+                                moss · moonlight · strange little things
+                            </span>
+
+                        </div>
+
+
+                        <span class="theme-check">
+                            ✓
+                        </span>
+
+
+                    </div>
+
+
+                </button>
+
+
+
+                <!-- =====================================
+                     RETRO HORROR
+                     ===================================== -->
+
+                <button
+                    class="theme-card"
+                    type="button"
+                    data-theme="retro"
+                >
+
+
+                    <div class="theme-preview theme-preview-retro">
+
+
+                        <div class="preview-tv">
+
+                            <span>
+                                ◉
+                            </span>
+
+                        </div>
+
+
+                        <div class="preview-tape">
+                        </div>
+
+
+                        <div class="preview-books">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="theme-card-copy">
+
+
+                        <div>
+
+                            <strong>
+                                Retro Horror
+                            </strong>
+
+                            <span>
+                                VHS · monsters · strange broadcasts
+                            </span>
+
+                        </div>
+
+
+                        <span class="theme-check">
+                            ✓
+                        </span>
+
+
+                    </div>
+
+
+                </button>
+
+
+
+                <!-- =====================================
+                     PASTEL GHOSTS
+                     ===================================== -->
+
+                <button
+                    class="theme-card"
+                    type="button"
+                    data-theme="ghosts"
+                >
+
+
+                    <div class="theme-preview theme-preview-ghosts">
+
+
+                        <div class="preview-ghost ghost-one">
+                        </div>
+
+
+                        <div class="preview-ghost ghost-two">
+                        </div>
+
+
+                        <div class="preview-books">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="theme-card-copy">
+
+
+                        <div>
+
+                            <strong>
+                                Pastel Ghosts
+                            </strong>
+
+                            <span>
+                                friendly spirits · dusty pink · sage
+                            </span>
+
+                        </div>
+
+
+                        <span class="theme-check">
+                            ✓
+                        </span>
+
+
+                    </div>
+
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =========================================
+                 AMBIENT SETTINGS
+                 ========================================= -->
+
+            <div class="theme-settings-section">
+
+
+                <div class="theme-section-heading">
+
+                    <span>
+                        AMBIENT DETAILS
+                    </span>
+
+                    <h3>
+                        Make the room feel alive
+                    </h3>
+
+                </div>
+
+
+
+                <div class="setting-list">
+
+
+                    <label class="setting-row">
+
+
+                        <span>
+
+                            <strong>
+                                Candle glow
+                            </strong>
+
+                            <small>
+                                subtle warm light around shelves
+                            </small>
+
+                        </span>
+
+
+                        <input
+                            id="settingCandleGlow"
+                            type="checkbox"
+                            checked
+                        >
+
+
+                    </label>
+
+
+
+                    <label class="setting-row">
+
+
+                        <span>
+
+                            <strong>
+                                Floating dust
+                            </strong>
+
+                            <small>
+                                tiny particles drifting through the room
+                            </small>
+
+                        </span>
+
+
+                        <input
+                            id="settingDust"
+                            type="checkbox"
+                            checked
+                        >
+
+
+                    </label>
+
+
+
+                    <label class="setting-row">
+
+
+                        <span>
+
+                            <strong>
+                                Rainy window
+                            </strong>
+
+                            <small>
+                                add a quiet stormy atmosphere
+                            </small>
+
+                        </span>
+
+
+                        <input
+                            id="settingRain"
+                            type="checkbox"
+                            checked
+                        >
+
+
+                    </label>
+
+
+
+                    <label class="setting-row">
+
+
+                        <span>
+
+                            <strong>
+                                Shelf surprises
+                            </strong>
+
+                            <small>
+                                allow tiny decorative oddities to appear
+                            </small>
+
+                        </span>
+
+
+                        <input
+                            id="settingOddities"
+                            type="checkbox"
+                            checked
+                        >
+
+
+                    </label>
+
+
+
+                    <label class="setting-row">
+
+
+                        <span>
+
+                            <strong>
+                                Reduce motion
+                            </strong>
+
+                            <small>
+                                calm book and ambient animations
+                            </small>
+
+                        </span>
+
+
+                        <input
+                            id="settingReducedMotion"
+                            type="checkbox"
+                        >
+
+
+                    </label>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =========================================
+                 DECORATION DENSITY
+                 ========================================= -->
+
+            <div class="theme-settings-section">
+
+
+                <div class="theme-section-heading">
+
+                    <span>
+                        DECORATION
+                    </span>
+
+                    <h3>
+                        How cluttered is your reading room?
+                    </h3>
+
+                </div>
+
+
+
+                <div class="density-options">
+
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="decorationDensity"
+                            value="minimal"
+                        >
+
+                        <span>
+
+                            <strong>
+                                Tidy
+                            </strong>
+
+                            <small>
+                                just a few treasures
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="decorationDensity"
+                            value="cozy"
+                            checked
+                        >
+
+                        <span>
+
+                            <strong>
+                                Cozy
+                            </strong>
+
+                            <small>
+                                comfortably collected
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+
+                    <label>
+
+                        <input
+                            type="radio"
+                            name="decorationDensity"
+                            value="maximal"
+                        >
+
+                        <span>
+
+                            <strong>
+                                Curio Cabinet
+                            </strong>
+
+                            <small>
+                                delightful clutter everywhere
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </aside>
 
 
 
@@ -698,63 +1436,78 @@
 
 
                     <label>
+
                         <input
                             type="checkbox"
                             name="shelfDecoration"
                             value="plant"
                             checked
                         >
+
                         <span>
                             plant
                         </span>
+
                     </label>
 
 
                     <label>
+
                         <input
                             type="checkbox"
                             name="shelfDecoration"
                             value="candle"
                         >
+
                         <span>
                             candle
                         </span>
+
                     </label>
 
 
                     <label>
+
                         <input
                             type="checkbox"
                             name="shelfDecoration"
                             value="flowers"
                         >
+
                         <span>
                             flowers
                         </span>
+
                     </label>
 
 
                     <label>
+
                         <input
                             type="checkbox"
                             name="shelfDecoration"
                             value="stars"
                         >
+
                         <span>
                             stars
                         </span>
+
                     </label>
 
 
                     <label>
+
                         <input
                             type="checkbox"
                             name="shelfDecoration"
                             value="mug"
                         >
+
                         <span>
                             tea mug
                         </span>
+
                     </label>
 
 
@@ -780,6 +1533,7 @@
                     class="primary-button"
                     type="submit"
                 >
+
                     <span id="saveShelfLabel">
                         create shelf
                     </span>
@@ -787,6 +1541,7 @@
                     <span>
                         ✦
                     </span>
+
                 </button>
 
 
@@ -854,7 +1609,7 @@
 
 
             <!-- =============================================
-                 BOOK
+                 BOOK INFO
                  ============================================= -->
 
             <div class="form-section-title full">
@@ -1200,7 +1955,7 @@
                 <input
                     id="bookSpineColor"
                     type="color"
-                    value="#b98f85"
+                    value="#6c2633"
                 >
 
             </div>
@@ -1216,7 +1971,7 @@
                 <input
                     id="bookTextColor"
                     type="color"
-                    value="#fff8ee"
+                    value="#eadfca"
                 >
 
             </div>
@@ -1235,7 +1990,10 @@
                         Small
                     </option>
 
-                    <option value="medium" selected>
+                    <option
+                        value="medium"
+                        selected
+                    >
                         Medium
                     </option>
 
@@ -1261,7 +2019,10 @@
                         Slim
                     </option>
 
-                    <option value="medium" selected>
+                    <option
+                        value="medium"
+                        selected
+                    >
                         Medium
                     </option>
 
@@ -1377,7 +2138,7 @@
 
 
         <div class="reveal-stars">
-            ✦　　✧　·
+            ✦ ✧ ·
         </div>
 
 
@@ -1511,11 +2272,13 @@
                         class="open-book-button"
                         type="button"
                     >
+
                         open book
 
                         <span>
                             →
                         </span>
+
                     </button>
 
 
@@ -1533,7 +2296,7 @@
 
 
     <!-- =====================================================
-         OPEN BOOK / READING JOURNAL
+         OPEN BOOK
          ===================================================== -->
 
     <section
@@ -1667,10 +2430,6 @@
 
                 <div class="page-inner">
 
-
-                    <!-- =====================================
-                         CONTENTS
-                         ===================================== -->
 
                     <div
                         id="journalContents"
@@ -1814,7 +2573,7 @@
 
 
                     <!-- =====================================
-                         JOURNAL SECTION
+                         SELECTED SECTION
                          ===================================== -->
 
                     <div
@@ -1930,7 +2689,6 @@
                 >
 
 
-
                 <div
                     id="entryDynamicFields"
                     class="entry-fields"
@@ -1938,8 +2696,8 @@
                 </div>
 
 
-
                 <div class="entry-actions">
+
 
                     <button
                         id="cancelEntry"
@@ -1954,12 +2712,15 @@
                         class="primary-button"
                         type="submit"
                     >
+
                         save it
 
                         <span>
                             ✦
                         </span>
+
                     </button>
+
 
                 </div>
 
@@ -1973,6 +2734,10 @@
     </section>
 
 
+
+    <!-- =====================================================
+         SCRIPTS
+         ===================================================== -->
 
     <script src="js/config.js"></script>
     <script src="js/library.js"></script>
