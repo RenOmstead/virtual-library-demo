@@ -1,7 +1,7 @@
 /* =========================================================
    SHELFMARK
    LIBRARY.JS
-   v12 — REAL BOOK CONSTRUCTION + ILLUSTRATED DECOR
+   v14 — ILLUSTRATED BOOKS + TITLE FITTING
    ========================================================= */
 
 
@@ -37,7 +37,6 @@ let selectedBookId = null;
 let selectedJournalSection = null;
 
 let pendingCoverData = "";
-
 let activeDrag = null;
 
 let settings = {
@@ -73,7 +72,7 @@ let settings = {
 
 
 /* =========================================================
-   INIT
+   INITIALIZE
    ========================================================= */
 
 document.addEventListener(
@@ -272,7 +271,7 @@ function normalizeShelf(shelf) {
 
 
 /* =========================================================
-   DECOR NORMALIZATION
+   NORMALIZE DECORATIONS
    ========================================================= */
 
 function normalizeDecorations(value) {
@@ -284,10 +283,7 @@ function normalizeDecorations(value) {
     return value
         .map(item => {
 
-            if (
-                typeof item ===
-                "string"
-            ) {
+            if (typeof item === "string") {
 
                 return createDecorationRecord(
                     item
@@ -331,10 +327,7 @@ function normalizeDecorations(value) {
             };
 
         })
-        .filter(
-            item =>
-                item.type
-        );
+        .filter(item => item.type);
 
 }
 
@@ -515,7 +508,7 @@ function normalizeBook(book) {
    JOURNAL NORMALIZATION
    ========================================================= */
 
-function normalizeJournal(journal) {
+function normalizeJournal(journal = {}) {
 
     const result = {};
 
@@ -545,7 +538,7 @@ function normalizeJournal(journal) {
 
 
 /* =========================================================
-   OLD DATA MIGRATION
+   LEGACY MIGRATION
    ========================================================= */
 
 function migrateLegacyBooks() {
@@ -603,7 +596,7 @@ function loadSettings() {
     catch (error) {
 
         console.error(
-            "Could not load Shelfmark settings.",
+            "Could not load settings.",
             error
         );
 
@@ -769,7 +762,7 @@ function updateThemeCardState() {
 
 
 /* =========================================================
-   BINDING
+   BIND CONTROLS
    ========================================================= */
 
 function bindControls() {
@@ -1164,7 +1157,7 @@ function bindControls() {
 
 
 /* =========================================================
-   SPINE FORM EVENTS
+   SPINE CONTROLS
    ========================================================= */
 
 function bindSpineControls() {
@@ -1208,6 +1201,7 @@ function bindSpineControls() {
         );
 
     });
+
 
     document
         .getElementById(
@@ -1254,7 +1248,7 @@ function bindSettingCheckbox(
 
 
 /* =========================================================
-   RENDER
+   RENDER ALL
    ========================================================= */
 
 function renderAll() {
@@ -1293,11 +1287,15 @@ function renderLibrary() {
             "bottomAddShelf"
         );
 
+
     if (!container) {
         return;
     }
 
-    container.innerHTML = "";
+
+    container.innerHTML =
+        "";
+
 
     if (!shelves.length) {
 
@@ -1313,6 +1311,7 @@ function renderLibrary() {
 
     }
 
+
     if (empty) {
         empty.hidden = true;
     }
@@ -1320,6 +1319,7 @@ function renderLibrary() {
     if (addShelf) {
         addShelf.hidden = false;
     }
+
 
     shelves.forEach(shelf => {
 
@@ -1331,11 +1331,16 @@ function renderLibrary() {
 
     });
 
+
+    requestAnimationFrame(
+        fitAllSpineTitles
+    );
+
 }
 
 
 /* =========================================================
-   LIBRARY COUNTS
+   SUMMARY
    ========================================================= */
 
 function updateLibrarySummary() {
@@ -1367,7 +1372,7 @@ function updateLibrarySummary() {
 
 
 /* =========================================================
-   SHELF ELEMENT
+   CREATE SHELF
    ========================================================= */
 
 function createShelfElement(
@@ -1382,11 +1387,13 @@ function createShelfElement(
     article.className = [
         "library-shelf",
         `shelf-${shelf.material}`,
-        `shelf-mood-${shelf.mood}`
+        `shelf-mood-${shelf.mood}`,
+        `shelf-layout-${shelf.layout}`
     ].join(" ");
 
     article.dataset.shelfId =
         shelf.id;
+
 
     article.innerHTML = `
 
@@ -1499,6 +1506,7 @@ function createShelfElement(
 
         `;
 
+
         empty
             .querySelector(
                 "button"
@@ -1514,6 +1522,7 @@ function createShelfElement(
 
                 }
             );
+
 
         row.appendChild(
             empty
@@ -1535,13 +1544,6 @@ function createShelfElement(
 
     }
 
-
-    /*
-       Decorations belong to the shelf.
-
-       They are intentionally NOT affected by
-       decorationDensity or ambient oddities.
-    */
 
     shelf.decorations.forEach(
         decoration => {
@@ -1631,6 +1633,7 @@ function getBooksForShelf(
                 )
         );
 
+
     switch (shelf.sort) {
 
         case "title":
@@ -1695,7 +1698,7 @@ function getBooksForShelf(
 
 
 /* =========================================================
-   REAL BOOK MARKUP
+   CREATE BOOK
    ========================================================= */
 
 function createBookElement(
@@ -1707,26 +1710,25 @@ function createBookElement(
             "div"
         );
 
+
     wrapper.className =
         getBookTypographyClasses(
             book,
             "shelf-book"
         );
 
+
     wrapper.classList.add(
         `book-height-${book.height}`,
         `book-thickness-${book.thickness}`
     );
+
 
     wrapper.dataset.bookId =
         book.id;
 
 
     wrapper.innerHTML = `
-
-        <span class="book-pages">
-        </span>
-
 
         <div
             class="
@@ -1751,6 +1753,7 @@ function createBookElement(
                 "
             >
             </span>
+
 
             <span
                 class="
@@ -1796,6 +1799,7 @@ function createBookElement(
             ".book-spine"
         );
 
+
     applyBookColors(
         spine,
         book
@@ -1806,17 +1810,19 @@ function createBookElement(
         "click",
         () => {
 
-            window.setTimeout(
-                () => {
+            openBookReveal(
+                book.id
+            );
 
-                    openBookReveal(
-                        book.id
-                    );
+        }
+    );
 
-                },
-                settings.reducedMotion
-                    ? 0
-                    : 140
+
+    requestAnimationFrame(
+        () => {
+
+            fitSpineTitle(
+                wrapper
             );
 
         }
@@ -1829,7 +1835,126 @@ function createBookElement(
 
 
 /* =========================================================
-   BOOK CLASS LIST
+   AUTO-FIT SPINE TITLES
+   ========================================================= */
+
+function fitAllSpineTitles() {
+
+    document
+        .querySelectorAll(
+            ".shelf-book"
+        )
+        .forEach(
+            fitSpineTitle
+        );
+
+}
+
+
+function fitSpineTitle(
+    bookElement
+) {
+
+    const title =
+        bookElement.querySelector(
+            ".spine-title"
+        );
+
+    const panel =
+        bookElement.querySelector(
+            ".spine-title-panel"
+        );
+
+
+    if (
+        !title ||
+        !panel
+    ) {
+        return;
+    }
+
+
+    /*
+       Reset any previous JS size so CSS
+       supplies the user's requested size.
+    */
+
+    title.style.fontSize =
+        "";
+
+
+    const computed =
+        window.getComputedStyle(
+            title
+        );
+
+
+    let size =
+        parseFloat(
+            computed.fontSize
+        );
+
+
+    if (
+        !size ||
+        Number.isNaN(size)
+    ) {
+        size = 8;
+    }
+
+
+    const minimum =
+        5.25;
+
+
+    /*
+       With vertical writing-mode, scrollHeight
+       represents the amount of vertical title space.
+    */
+
+    let safety =
+        30;
+
+
+    while (
+        safety > 0 &&
+        size > minimum &&
+        (
+            title.scrollHeight >
+            panel.clientHeight
+        )
+    ) {
+
+        size -= 0.25;
+
+        title.style.fontSize =
+            `${size}px`;
+
+        safety -= 1;
+
+    }
+
+
+    /*
+       Very long titles can still need slightly
+       tighter spacing after reaching minimum size.
+    */
+
+    if (
+        title.scrollHeight >
+        panel.clientHeight
+    ) {
+
+        title.style.letterSpacing =
+            "-0.04em";
+
+    }
+
+}
+
+
+/* =========================================================
+   BOOK TYPOGRAPHY CLASSES
    ========================================================= */
 
 function getBookTypographyClasses(
@@ -1863,7 +1988,7 @@ function getBookTypographyClasses(
 
 
 /* =========================================================
-   BOOK COLORS
+   COLORS
    ========================================================= */
 
 function applyBookColors(
@@ -1904,6 +2029,7 @@ function getBookOrnament(
     let ornament =
         book.spine_ornament;
 
+
     if (
         !ornament ||
         ornament ===
@@ -1923,6 +2049,7 @@ function getBookOrnament(
 
     }
 
+
     return (
         CONFIG.spineOrnaments
             ?.[ornament]
@@ -1935,7 +2062,7 @@ function getBookOrnament(
 
 
 /* =========================================================
-   DECORATION ELEMENT
+   CREATE DECORATION
    ========================================================= */
 
 function createDecorationElement(
@@ -1948,11 +2075,13 @@ function createDecorationElement(
             "div"
         );
 
+
     element.className = [
         "shelf-decoration",
         `decor-${decoration.type}`,
         "draggable-decoration"
     ].join(" ");
+
 
     element.dataset.decorationId =
         decoration.id;
@@ -1960,16 +2089,19 @@ function createDecorationElement(
     element.dataset.shelfId =
         shelf.id;
 
+
     element.style.left =
         `${decoration.x}%`;
 
     element.style.top =
         `${decoration.y}%`;
 
+
     applyDecorationTransform(
         element,
         decoration
     );
+
 
     element.innerHTML =
         getDecorationArtwork(
@@ -2012,14 +2144,13 @@ function createDecorationElement(
 
 
 /* =========================================================
-   DECOR ARTWORK
+   DECORATION ARTWORK
    ========================================================= */
 
 function getDecorationArtwork(type) {
 
     switch (type) {
 
-        /* ---------------- CAT ---------------- */
 
         case "cat":
 
@@ -2037,51 +2168,233 @@ function getDecorationArtwork(type) {
                 <span class="cat-chest">
                 </span>
 
-
                 <span class="cat-head">
 
                     <span class="cat-ear left">
-
-                        <span class="cat-ear-inner">
-                        </span>
-
+                        <span class="cat-ear-inner"></span>
                     </span>
-
 
                     <span class="cat-ear right">
-
-                        <span class="cat-ear-inner">
-                        </span>
-
+                        <span class="cat-ear-inner"></span>
                     </span>
 
+                    <span class="cat-eye left"></span>
 
-                    <span class="cat-eye left">
-                    </span>
+                    <span class="cat-eye right"></span>
 
-                    <span class="cat-eye right">
-                    </span>
+                    <span class="cat-nose"></span>
 
+                    <span class="cat-mouth"></span>
 
-                    <span class="cat-nose">
-                    </span>
+                    <span class="cat-whisker left"></span>
 
-                    <span class="cat-mouth">
-                    </span>
-
-
-                    <span class="cat-whisker left">
-                    </span>
-
-                    <span class="cat-whisker right">
-                    </span>
+                    <span class="cat-whisker right"></span>
 
                 </span>
 
             `;
 
 
-        /* ---------------- GHOST ---------------- */
+        case "mushroom":
+
+            return `
+
+                <span class="mushroom-shadow">
+                </span>
+
+                <span class="mushroom-stem">
+                </span>
+
+                <span class="mushroom-gills">
+                </span>
+
+                <span class="mushroom-cap">
+                </span>
+
+                <span class="mushroom-cap-highlight">
+                </span>
+
+            `;
+
+
+        case "plant":
+
+            return `
+
+                <span class="decor-shadow">
+                </span>
+
+                <span class="plant-stem stem-a">
+                </span>
+
+                <span class="plant-stem stem-b">
+                </span>
+
+                <span class="plant-stem stem-c">
+                </span>
+
+                <span class="plant-leaf leaf-1">
+                </span>
+
+                <span class="plant-leaf leaf-2">
+                </span>
+
+                <span class="plant-leaf leaf-3">
+                </span>
+
+                <span class="plant-leaf leaf-4">
+                </span>
+
+                <span class="plant-leaf leaf-5">
+                </span>
+
+                <span class="plant-pot">
+                </span>
+
+                <span class="plant-pot-rim">
+                </span>
+
+            `;
+
+
+        case "flowers":
+
+            return `
+
+                <span class="decor-shadow">
+                </span>
+
+                <span class="flower-stem stem-1"></span>
+
+                <span class="flower-stem stem-2"></span>
+
+                <span class="flower-stem stem-3"></span>
+
+
+                <span class="flower one">
+
+                    <span class="petal"></span>
+                    <span class="petal"></span>
+                    <span class="petal"></span>
+                    <span class="petal"></span>
+                    <span class="petal"></span>
+
+                    <span class="flower-center"></span>
+
+                </span>
+
+
+                <span class="flower two">
+
+                    <span class="petal"></span>
+                    <span class="petal"></span>
+                    <span class="petal"></span>
+                    <span class="petal"></span>
+                    <span class="petal"></span>
+
+                    <span class="flower-center"></span>
+
+                </span>
+
+
+                <span class="flower three">
+
+                    <span class="petal"></span>
+                    <span class="petal"></span>
+                    <span class="petal"></span>
+                    <span class="petal"></span>
+                    <span class="petal"></span>
+
+                    <span class="flower-center"></span>
+
+                </span>
+
+            `;
+
+
+        case "candle":
+
+            return `
+
+                <span class="decor-shadow">
+                </span>
+
+                <span class="candle-glow">
+                </span>
+
+                <span class="candle-body">
+                </span>
+
+                <span class="candle-top">
+                </span>
+
+                <span class="candle-drip one">
+                </span>
+
+                <span class="candle-drip two">
+                </span>
+
+                <span class="candle-wick">
+                </span>
+
+                <span class="candle-flame">
+                </span>
+
+            `;
+
+
+        case "pumpkin":
+
+            return `
+
+                <span class="decor-shadow">
+                </span>
+
+                <span class="pumpkin-lobe outer-left">
+                </span>
+
+                <span class="pumpkin-lobe left">
+                </span>
+
+                <span class="pumpkin-lobe center">
+                </span>
+
+                <span class="pumpkin-lobe right">
+                </span>
+
+                <span class="pumpkin-lobe outer-right">
+                </span>
+
+                <span class="pumpkin-highlight">
+                </span>
+
+                <span class="pumpkin-stem">
+                </span>
+
+            `;
+
+
+        case "mug":
+
+            return `
+
+                <span class="decor-shadow">
+                </span>
+
+                <span class="steam steam-1">
+                </span>
+
+                <span class="steam steam-2">
+                </span>
+
+                <span class="mug-handle">
+                </span>
+
+                <span class="mug-body">
+                </span>
+
+            `;
+
 
         case "ghost":
 
@@ -2108,8 +2421,6 @@ function getDecorationArtwork(type) {
             `;
 
 
-        /* ---------------- BAT ---------------- */
-
         case "bat":
 
             return `
@@ -2128,8 +2439,6 @@ function getDecorationArtwork(type) {
 
             `;
 
-
-        /* ---------------- GOBLIN ---------------- */
 
         case "goblin":
 
@@ -2162,8 +2471,6 @@ function getDecorationArtwork(type) {
             `;
 
 
-        /* ---------------- MOSS ---------------- */
-
         case "moss":
 
             return `
@@ -2182,29 +2489,6 @@ function getDecorationArtwork(type) {
 
             `;
 
-
-        /* ---------------- MUSHROOM ---------------- */
-
-        case "mushroom":
-
-            return `
-
-                <span class="decor-shadow">
-                </span>
-
-                <span class="mushroom-stem">
-                </span>
-
-                <span class="mushroom-gill">
-                </span>
-
-                <span class="mushroom-cap">
-                </span>
-
-            `;
-
-
-        /* ---------------- POTION ---------------- */
 
         case "potion":
 
@@ -2232,8 +2516,6 @@ function getDecorationArtwork(type) {
             `;
 
 
-        /* ---------------- CRYSTAL ---------------- */
-
         case "crystal":
 
             return `
@@ -2252,8 +2534,6 @@ function getDecorationArtwork(type) {
 
             `;
 
-
-        /* ---------------- RAVEN ---------------- */
 
         case "raven":
 
@@ -2280,113 +2560,6 @@ function getDecorationArtwork(type) {
             `;
 
 
-        /* ---------------- PUMPKIN ---------------- */
-
-        case "pumpkin":
-
-            return `
-
-                <span class="decor-shadow">
-                </span>
-
-                <span class="pumpkin-body">
-                </span>
-
-                <span class="pumpkin-highlight">
-                </span>
-
-                <span class="pumpkin-stem">
-                </span>
-
-            `;
-
-
-        /* ---------------- PLANT ---------------- */
-
-        case "plant":
-
-            return `
-
-                <span class="decor-shadow">
-                </span>
-
-                <span class="plant-leaf leaf-1">
-                </span>
-
-                <span class="plant-leaf leaf-2">
-                </span>
-
-                <span class="plant-leaf leaf-3">
-                </span>
-
-                <span class="plant-leaf leaf-4">
-                </span>
-
-                <span class="plant-pot">
-                </span>
-
-                <span class="plant-pot-rim">
-                </span>
-
-            `;
-
-
-        /* ---------------- CANDLE ---------------- */
-
-        case "candle":
-
-            return `
-
-                <span class="decor-shadow">
-                </span>
-
-                <span class="candle-glow">
-                </span>
-
-                <span class="candle-body">
-                </span>
-
-                <span class="candle-wax">
-                </span>
-
-                <span class="candle-flame">
-                </span>
-
-            `;
-
-
-        /* ---------------- FLOWERS ---------------- */
-
-        case "flowers":
-
-            return `
-
-                <span class="decor-shadow">
-                </span>
-
-                <span class="flower-stem stem-1">
-                </span>
-
-                <span class="flower-stem stem-2">
-                </span>
-
-                <span class="flower-stem stem-3">
-                </span>
-
-                <span class="flower-bloom bloom-1">
-                </span>
-
-                <span class="flower-bloom bloom-2">
-                </span>
-
-                <span class="flower-bloom bloom-3">
-                </span>
-
-            `;
-
-
-        /* ---------------- STARS ---------------- */
-
         case "stars":
 
             return `
@@ -2401,30 +2574,6 @@ function getDecorationArtwork(type) {
 
                 <span class="star star-3">
                     ✦
-                </span>
-
-            `;
-
-
-        /* ---------------- MUG ---------------- */
-
-        case "mug":
-
-            return `
-
-                <span class="decor-shadow">
-                </span>
-
-                <span class="steam steam-1">
-                </span>
-
-                <span class="steam steam-2">
-                </span>
-
-                <span class="mug-handle">
-                </span>
-
-                <span class="mug-body">
                 </span>
 
             `;
@@ -2455,7 +2604,7 @@ function getDecorationArtwork(type) {
 
 
 /* =========================================================
-   FALLBACK SYMBOL
+   DECOR FALLBACK SYMBOL
    ========================================================= */
 
 function getDecorationSymbol(type) {
@@ -2503,17 +2652,21 @@ function startDecorationDrag(
         return;
     }
 
+
     const element =
         event.currentTarget;
+
 
     const shelfBody =
         element.closest(
             ".shelf-body"
         );
 
+
     if (!shelfBody) {
         return;
     }
+
 
     activeDrag = {
         shelfId,
@@ -2522,28 +2675,34 @@ function startDecorationDrag(
         shelfBody
     };
 
+
     element.setPointerCapture?.(
         event.pointerId
     );
+
 
     element.addEventListener(
         "pointermove",
         handleDecorationDrag
     );
 
+
     element.addEventListener(
         "pointerup",
         endDecorationDrag
     );
+
 
     element.addEventListener(
         "pointercancel",
         endDecorationDrag
     );
 
+
     event.preventDefault();
 
 }
+
 
 function handleDecorationDrag(event) {
 
@@ -2551,9 +2710,11 @@ function handleDecorationDrag(event) {
         return;
     }
 
+
     const rect =
         activeDrag.shelfBody
             .getBoundingClientRect();
+
 
     const x =
         clamp(
@@ -2571,6 +2732,7 @@ function handleDecorationDrag(event) {
             97
         );
 
+
     const y =
         clamp(
             (
@@ -2587,16 +2749,19 @@ function handleDecorationDrag(event) {
             91
         );
 
+
     activeDrag.element.style.left =
         `${x}%`;
 
     activeDrag.element.style.top =
         `${y}%`;
 
+
     const shelf =
         getShelfById(
             activeDrag.shelfId
         );
+
 
     const decoration =
         shelf?.decorations.find(
@@ -2606,6 +2771,7 @@ function handleDecorationDrag(event) {
                     activeDrag.decorationId
                 )
         );
+
 
     if (decoration) {
 
@@ -2623,16 +2789,19 @@ function handleDecorationDrag(event) {
 
 }
 
+
 function endDecorationDrag(event) {
 
     if (!activeDrag) {
         return;
     }
 
+
     activeDrag.element
         .releasePointerCapture?.(
             event.pointerId
         );
+
 
     activeDrag.element
         .removeEventListener(
@@ -2640,11 +2809,13 @@ function endDecorationDrag(event) {
             handleDecorationDrag
         );
 
+
     activeDrag.element
         .removeEventListener(
             "pointerup",
             endDecorationDrag
         );
+
 
     activeDrag.element
         .removeEventListener(
@@ -2652,9 +2823,11 @@ function endDecorationDrag(event) {
             endDecorationDrag
         );
 
+
     saveShelves();
 
-    activeDrag = null;
+    activeDrag =
+        null;
 
 }
 
@@ -2673,6 +2846,7 @@ function cycleDecorationScale(
             shelfId
         );
 
+
     const decoration =
         shelf?.decorations.find(
             item =>
@@ -2680,16 +2854,19 @@ function cycleDecorationScale(
                 String(decorationId)
         );
 
+
     if (!decoration) {
         return;
     }
 
+
     const sizes = [
-        .75,
+        0.75,
         1,
         1.25,
         1.5
     ];
+
 
     const current =
         sizes.findIndex(
@@ -2697,20 +2874,24 @@ function cycleDecorationScale(
                 Math.abs(
                     size -
                     decoration.scale
-                ) < .01
+                ) < 0.01
         );
+
 
     const next =
         current === -1
             ? 1
             : (
-                current + 1
+                current +
+                1
             )
             %
             sizes.length;
 
+
     decoration.scale =
         sizes[next];
+
 
     saveShelves();
 
@@ -2718,22 +2899,27 @@ function cycleDecorationScale(
 
 }
 
+
 function applyDecorationTransform(
     element,
     decoration
 ) {
 
     element.style.transform = `
+
         translate(-50%, -50%)
+
         scale(${decoration.scale})
+
         rotate(${decoration.rotate}deg)
+
     `;
 
 }
 
 
 /* =========================================================
-   NEW DECOR RECORD
+   DECOR RECORD
    ========================================================= */
 
 function createDecorationRecord(type) {
@@ -2774,21 +2960,26 @@ function openShelfDrawer(
 
     hideAllDrawersImmediately();
 
+
     const form =
         document.getElementById(
             "shelfForm"
         );
 
+
     if (!form) {
         return;
     }
 
+
     form.reset();
+
 
     setValue(
         "editingShelfId",
         ""
     );
+
 
     setText(
         "shelfDrawerTitle",
@@ -2797,6 +2988,7 @@ function openShelfDrawer(
             : "Create a shelf"
     );
 
+
     setText(
         "saveShelfLabel",
         shelfId
@@ -2804,7 +2996,10 @@ function openShelfDrawer(
             : "create shelf"
     );
 
-    let shelf = null;
+
+    let shelf =
+        null;
+
 
     if (shelfId) {
 
@@ -2812,6 +3007,7 @@ function openShelfDrawer(
             getShelfById(
                 shelfId
             );
+
 
         if (shelf) {
 
@@ -2854,9 +3050,11 @@ function openShelfDrawer(
 
     }
 
+
     renderDecorationOptions(
         shelf
     );
+
 
     showDrawer(
         "shelfDrawer"
@@ -2866,7 +3064,7 @@ function openShelfDrawer(
 
 
 /* =========================================================
-   DECORATION OPTIONS
+   DECOR OPTIONS
    ========================================================= */
 
 function renderDecorationOptions(
@@ -2878,11 +3076,15 @@ function renderDecorationOptions(
             ".decoration-options"
         );
 
+
     if (!container) {
         return;
     }
 
-    container.innerHTML = "";
+
+    container.innerHTML =
+        "";
+
 
     const currentTypes =
         shelf?.decorations
@@ -2893,8 +3095,10 @@ function renderDecorationOptions(
         ||
         [];
 
+
     const themeTypes =
         getThemeDecorations();
+
 
     const optionTypes = [
         ...new Set(
@@ -2904,6 +3108,7 @@ function renderDecorationOptions(
             ]
         )
     ];
+
 
     optionTypes.forEach(
         (
@@ -2919,14 +3124,17 @@ function renderDecorationOptions(
                             type
                     );
 
+
             if (!definition) {
                 return;
             }
+
 
             const label =
                 document.createElement(
                     "label"
                 );
+
 
             const checked =
                 shelf
@@ -2934,6 +3142,7 @@ function renderDecorationOptions(
                         type
                     )
                     : index < 3;
+
 
             label.innerHTML = `
 
@@ -2951,6 +3160,7 @@ function renderDecorationOptions(
 
             `;
 
+
             container.appendChild(
                 label
             );
@@ -2960,12 +3170,14 @@ function renderDecorationOptions(
 
 }
 
+
 function updateOpenShelfDecorationChoices() {
 
     const drawer =
         document.getElementById(
             "shelfDrawer"
         );
+
 
     if (
         !drawer ||
@@ -2974,12 +3186,14 @@ function updateOpenShelfDecorationChoices() {
         return;
     }
 
+
     const shelf =
         getShelfById(
             getValue(
                 "editingShelfId"
             )
         );
+
 
     renderDecorationOptions(
         shelf
@@ -2996,10 +3210,12 @@ function saveShelfFromForm(event) {
 
     event.preventDefault();
 
+
     const id =
         getValue(
             "editingShelfId"
         );
+
 
     const selectedTypes =
         Array.from(
@@ -3011,17 +3227,21 @@ function saveShelfFromForm(event) {
                 input.value
         );
 
+
     if (id) {
 
         const shelf =
             getShelfById(id);
 
+
         if (!shelf) {
             return;
         }
 
+
         const existing =
             shelf.decorations;
+
 
         shelf.name =
             getValue(
@@ -3030,10 +3250,12 @@ function saveShelfFromForm(event) {
             ||
             "My Shelf";
 
+
         shelf.description =
             getValue(
                 "shelfDescription"
             );
+
 
         shelf.material =
             getValue(
@@ -3042,12 +3264,14 @@ function saveShelfFromForm(event) {
             ||
             "walnut";
 
+
         shelf.mood =
             getValue(
                 "shelfMood"
             )
             ||
             "cozy";
+
 
         shelf.layout =
             getValue(
@@ -3056,12 +3280,14 @@ function saveShelfFromForm(event) {
             ||
             "mixed";
 
+
         shelf.sort =
             getValue(
                 "shelfSort"
             )
             ||
             "manual";
+
 
         shelf.decorations =
             selectedTypes.map(
@@ -3090,19 +3316,8 @@ function saveShelfFromForm(event) {
 
     else {
 
-        const decorations =
-            selectedTypes.map(
-                (
-                    type,
-                    index
-                ) =>
-                    createStaggeredDecoration(
-                        type,
-                        index
-                    )
-            );
-
         shelves.push({
+
             id:
                 generateId(),
 
@@ -3146,14 +3361,26 @@ function saveShelfFromForm(event) {
                 ||
                 "manual",
 
-            decorations,
+            decorations:
+                selectedTypes.map(
+                    (
+                        type,
+                        index
+                    ) =>
+                        createStaggeredDecoration(
+                            type,
+                            index
+                        )
+                ),
 
             created_at:
                 new Date()
                     .toISOString()
+
         });
 
     }
+
 
     saveShelves();
 
@@ -3165,7 +3392,7 @@ function saveShelfFromForm(event) {
 
 
 /* =========================================================
-   DECOR START POSITIONS
+   START POSITIONS
    ========================================================= */
 
 function createStaggeredDecoration(
@@ -3178,16 +3405,51 @@ function createStaggeredDecoration(
             type
         );
 
+
     const positions = [
-        { x: 13, y: 76 },
-        { x: 88, y: 77 },
-        { x: 75, y: 42 },
-        { x: 28, y: 47 },
-        { x: 92, y: 50 },
-        { x: 51, y: 35 },
-        { x: 62, y: 74 },
-        { x: 39, y: 75 }
+
+        {
+            x: 13,
+            y: 76
+        },
+
+        {
+            x: 88,
+            y: 77
+        },
+
+        {
+            x: 75,
+            y: 42
+        },
+
+        {
+            x: 28,
+            y: 47
+        },
+
+        {
+            x: 92,
+            y: 50
+        },
+
+        {
+            x: 51,
+            y: 35
+        },
+
+        {
+            x: 62,
+            y: 74
+        },
+
+        {
+            x: 39,
+            y: 75
+        }
+
     ];
+
 
     const position =
         positions[
@@ -3195,11 +3457,13 @@ function createStaggeredDecoration(
             positions.length
         ];
 
+
     decoration.x =
         position.x;
 
     decoration.y =
         position.y;
+
 
     return decoration;
 
@@ -3217,9 +3481,11 @@ function deleteShelf(shelfId) {
             shelfId
         );
 
+
     if (!shelf) {
         return;
     }
+
 
     const shelfBooks =
         books.filter(
@@ -3233,6 +3499,7 @@ function deleteShelf(shelfId) {
                 )
         );
 
+
     if (shelfBooks.length) {
 
         const confirmed =
@@ -3240,9 +3507,11 @@ function deleteShelf(shelfId) {
                 `"${shelf.name}" contains ${shelfBooks.length} book(s). Remove the shelf and those books?`
             );
 
+
         if (!confirmed) {
             return;
         }
+
 
         books =
             books.filter(
@@ -3256,6 +3525,7 @@ function deleteShelf(shelfId) {
                     )
             );
 
+
         saveBooks();
 
     }
@@ -3267,11 +3537,13 @@ function deleteShelf(shelfId) {
                 `Remove "${shelf.name}"?`
             );
 
+
         if (!confirmed) {
             return;
         }
 
     }
+
 
     shelves =
         shelves.filter(
@@ -3284,6 +3556,7 @@ function deleteShelf(shelfId) {
                     shelfId
                 )
         );
+
 
     saveShelves();
 
@@ -3309,24 +3582,31 @@ function openBookDrawer(
 
     }
 
+
     hideAllDrawersImmediately();
+
 
     const form =
         document.getElementById(
             "bookForm"
         );
 
+
     if (!form) {
         return;
     }
 
+
     form.reset();
 
-    pendingCoverData = "";
+    pendingCoverData =
+        "";
+
 
     resetBookForm();
 
     populateBookShelfSelect();
+
 
     if (shelfId) {
 
@@ -3337,6 +3617,7 @@ function openBookDrawer(
 
     }
 
+
     if (bookId) {
 
         const book =
@@ -3344,28 +3625,34 @@ function openBookDrawer(
                 bookId
             );
 
+
         if (!book) {
             return;
         }
+
 
         setValue(
             "editingBookId",
             book.id
         );
 
+
         setText(
             "bookDrawerTitle",
             "Edit book"
         );
+
 
         setText(
             "saveBookLabel",
             "save book"
         );
 
+
         populateBookForm(
             book
         );
+
 
         pendingCoverData =
             book.cover_image ||
@@ -3380,10 +3667,12 @@ function openBookDrawer(
             ""
         );
 
+
         setText(
             "bookDrawerTitle",
             "Add a book"
         );
+
 
         setText(
             "saveBookLabel",
@@ -3392,7 +3681,9 @@ function openBookDrawer(
 
     }
 
+
     updateSpinePreview();
+
 
     showDrawer(
         "bookDrawer"
@@ -3402,7 +3693,7 @@ function openBookDrawer(
 
 
 /* =========================================================
-   BOOK DEFAULT FORM
+   DEFAULT BOOK FORM
    ========================================================= */
 
 function resetBookForm() {
@@ -3411,33 +3702,40 @@ function resetBookForm() {
         CONFIG.defaultBookDesign ||
         {};
 
+
     const colors =
         getThemeBookColors();
+
 
     setValue(
         "editingBookId",
         ""
     );
 
+
     setValue(
         "bookStatus",
         "want"
     );
+
 
     setValue(
         "bookRating",
         "0"
     );
 
+
     setValue(
         "bookCurrentPage",
         "0"
     );
 
+
     setValue(
         "bookTimesRead",
         "0"
     );
+
 
     setValue(
         "bookStyle",
@@ -3445,20 +3743,24 @@ function resetBookForm() {
         "classic"
     );
 
+
     setValue(
         "bookSpineColor",
         colors.spine
     );
+
 
     setValue(
         "bookTextColor",
         colors.text
     );
 
+
     setValue(
         "bookAccentColor",
         colors.accent
     );
+
 
     setValue(
         "bookSpineFont",
@@ -3466,11 +3768,13 @@ function resetBookForm() {
         "serif"
     );
 
+
     setValue(
         "bookSpineFontSize",
         defaults.fontSize ||
         "medium"
     );
+
 
     setValue(
         "bookSpineFontWeight",
@@ -3478,11 +3782,13 @@ function resetBookForm() {
         "regular"
     );
 
+
     setValue(
         "bookSpineLetterSpacing",
         defaults.letterSpacing ||
         "normal"
     );
+
 
     setValue(
         "bookSpineCase",
@@ -3490,11 +3796,13 @@ function resetBookForm() {
         "typed"
     );
 
+
     setValue(
         "bookSpineFontStyle",
         defaults.fontStyle ||
         "normal"
     );
+
 
     setValue(
         "bookSpineTextAlign",
@@ -3502,11 +3810,13 @@ function resetBookForm() {
         "center"
     );
 
+
     setValue(
         "bookSpineTitlePanel",
         defaults.titlePanel ||
         "none"
     );
+
 
     setValue(
         "bookSpineOrnament",
@@ -3514,11 +3824,13 @@ function resetBookForm() {
         "auto"
     );
 
+
     setValue(
         "bookHeight",
         defaults.height ||
         "medium"
     );
+
 
     setValue(
         "bookThickness",
@@ -3530,7 +3842,7 @@ function resetBookForm() {
 
 
 /* =========================================================
-   THEME BOOK DEFAULTS
+   THEME BOOK COLORS
    ========================================================= */
 
 function getThemeBookColors() {
@@ -3568,6 +3880,7 @@ function getThemeBookColors() {
         }
 
     };
+
 
     return (
         palettes[settings.theme] ||
@@ -3742,12 +4055,15 @@ function populateBookShelfSelect() {
             "bookShelf"
         );
 
+
     if (!select) {
         return;
     }
 
+
     const current =
         select.value;
+
 
     select.innerHTML =
         shelves.map(
@@ -3765,6 +4081,7 @@ function populateBookShelfSelect() {
 
             `
         ).join("");
+
 
     if (
         current &&
@@ -3796,18 +4113,24 @@ function saveBookFromForm(event) {
 
     event.preventDefault();
 
+
     const id =
         getValue(
             "editingBookId"
         );
+
 
     const existing =
         id
             ? getBookById(id)
             : null;
 
+
     const bookData =
-        readBookForm();
+        readBookForm(
+            existing
+        );
+
 
     if (
         bookData.pages &&
@@ -3820,6 +4143,7 @@ function saveBookFromForm(event) {
 
     }
 
+
     if (
         bookData.status ===
         "reading" &&
@@ -3830,6 +4154,7 @@ function saveBookFromForm(event) {
             todayISO();
 
     }
+
 
     if (
         bookData.status ===
@@ -3843,12 +4168,14 @@ function saveBookFromForm(event) {
 
         }
 
+
         if (bookData.pages) {
 
             bookData.current_page =
                 bookData.pages;
 
         }
+
 
         if (
             bookData.times_read <
@@ -3861,6 +4188,7 @@ function saveBookFromForm(event) {
         }
 
     }
+
 
     if (existing) {
 
@@ -3879,6 +4207,7 @@ function saveBookFromForm(event) {
     else {
 
         books.push({
+
             id:
                 generateId(),
 
@@ -3894,13 +4223,17 @@ function saveBookFromForm(event) {
             updated_at:
                 new Date()
                     .toISOString()
+
         });
 
     }
 
+
     saveBooks();
 
-    pendingCoverData = "";
+    pendingCoverData =
+        "";
+
 
     closeAllDrawers();
 
@@ -3913,13 +4246,17 @@ function saveBookFromForm(event) {
    READ BOOK FORM
    ========================================================= */
 
-function readBookForm() {
+function readBookForm(
+    existing = null
+) {
 
     const defaults =
         CONFIG.defaultBookDesign ||
         {};
 
+
     return {
+
         title:
             getValue(
                 "bookTitle"
@@ -4005,7 +4342,11 @@ function readBookForm() {
             ),
 
         cover_image:
-            pendingCoverData,
+            pendingCoverData
+            ||
+            existing?.cover_image
+            ||
+            "",
 
         style:
             getValue(
@@ -4135,6 +4476,7 @@ function readBookForm() {
             defaults.thickness
             ||
             "medium"
+
     };
 
 }
@@ -4149,9 +4491,11 @@ function handleCoverUpload(event) {
     const file =
         event.target.files?.[0];
 
+
     if (!file) {
         return;
     }
+
 
     if (
         !file.type.startsWith(
@@ -4163,6 +4507,7 @@ function handleCoverUpload(event) {
             "Please choose an image file."
         );
 
+
         event.target.value =
             "";
 
@@ -4170,8 +4515,10 @@ function handleCoverUpload(event) {
 
     }
 
+
     const reader =
         new FileReader();
+
 
     reader.onload = () => {
 
@@ -4183,7 +4530,10 @@ function handleCoverUpload(event) {
 
     };
 
-    reader.readAsDataURL(file);
+
+    reader.readAsDataURL(
+        file
+    );
 
 }
 
@@ -4199,6 +4549,7 @@ function handleSpineStyleChange() {
             "bookStyle"
         );
 
+
     const style =
         CONFIG.spineStyles
             ?.find(
@@ -4206,6 +4557,7 @@ function handleSpineStyleChange() {
                     item.id ===
                     styleId
             );
+
 
     if (
         !getValue(
@@ -4222,13 +4574,14 @@ function handleSpineStyleChange() {
 
     }
 
+
     updateSpinePreview();
 
 }
 
 
 /* =========================================================
-   SPINE PREVIEW
+   PREVIEW
    ========================================================= */
 
 function updateSpinePreview() {
@@ -4238,14 +4591,18 @@ function updateSpinePreview() {
             "bookSpinePreview"
         );
 
+
     if (!preview) {
         return;
     }
 
+
     const design =
         getCurrentSpineDesign();
 
+
     preview.className = [
+
         "spine-preview-book",
 
         `book-style-${design.style}`,
@@ -4265,32 +4622,39 @@ function updateSpinePreview() {
         `spine-align-${design.align}`,
 
         `spine-panel-${design.panel}`
+
     ].join(" ");
+
 
     preview.style.setProperty(
         "--book-color",
         design.spineColor
     );
 
+
     preview.style.setProperty(
         "--book-text",
         design.textColor
     );
+
 
     preview.style.setProperty(
         "--book-accent",
         design.accentColor
     );
 
+
     setText(
         "bookSpinePreviewTitle",
         design.title
     );
 
+
     setText(
         "bookSpinePreviewOrnament",
         getPreviewOrnament()
     );
+
 
     const heights = {
         small: 160,
@@ -4298,11 +4662,13 @@ function updateSpinePreview() {
         tall: 235
     };
 
+
     const widths = {
         slim: 52,
         medium: 76,
         chunky: 100
     };
+
 
     preview.style.height =
         `${
@@ -4310,22 +4676,136 @@ function updateSpinePreview() {
             198
         }px`;
 
+
     preview.style.width =
         `${
             widths[design.thickness] ||
             76
         }px`;
 
+
+    requestAnimationFrame(
+        fitPreviewTitle
+    );
+
 }
 
 
 /* =========================================================
-   CURRENT SPINE FORM STATE
+   FIT PREVIEW TITLE
+   ========================================================= */
+
+function fitPreviewTitle() {
+
+    const preview =
+        document.getElementById(
+            "bookSpinePreview"
+        );
+
+
+    if (!preview) {
+        return;
+    }
+
+
+    const title =
+        preview.querySelector(
+            ".spine-preview-title"
+        );
+
+
+    const panel =
+        preview.querySelector(
+            ".spine-preview-title-panel"
+        );
+
+
+    if (
+        !title ||
+        !panel
+    ) {
+        return;
+    }
+
+
+    title.style.fontSize =
+        "";
+
+    title.style.letterSpacing =
+        "";
+
+
+    let size =
+        parseFloat(
+            window
+                .getComputedStyle(
+                    title
+                )
+                .fontSize
+        );
+
+
+    if (
+        !size ||
+        Number.isNaN(size)
+    ) {
+
+        size =
+            8;
+
+    }
+
+
+    const minimum =
+        5.25;
+
+
+    let safety =
+        30;
+
+
+    while (
+        safety > 0 &&
+        size > minimum &&
+        title.scrollHeight >
+        panel.clientHeight
+    ) {
+
+        size -=
+            0.25;
+
+
+        title.style.fontSize =
+            `${size}px`;
+
+
+        safety -=
+            1;
+
+    }
+
+
+    if (
+        title.scrollHeight >
+        panel.clientHeight
+    ) {
+
+        title.style.letterSpacing =
+            "-0.04em";
+
+    }
+
+}
+
+
+/* =========================================================
+   CURRENT SPINE DESIGN
    ========================================================= */
 
 function getCurrentSpineDesign() {
 
     return {
+
         title:
             getValue(
                 "bookTitle"
@@ -4437,17 +4917,25 @@ function getCurrentSpineDesign() {
             )
             ||
             "medium"
+
     };
 
 }
+
+
+/* =========================================================
+   PREVIEW ORNAMENT
+   ========================================================= */
 
 function getPreviewOrnament() {
 
     const design =
         getCurrentSpineDesign();
 
+
     let ornament =
         design.ornament;
+
 
     if (
         ornament ===
@@ -4466,6 +4954,7 @@ function getPreviewOrnament() {
             "diamond";
 
     }
+
 
     return (
         CONFIG.spineOrnaments
@@ -4489,17 +4978,21 @@ function openBookReveal(bookId) {
             bookId
         );
 
+
     if (!book) {
         return;
     }
 
+
     selectedBookId =
         book.id;
+
 
     renderCover(
         "revealCover",
         book
     );
+
 
     setText(
         "revealStatus",
@@ -4508,16 +5001,19 @@ function openBookReveal(bookId) {
         )
     );
 
+
     setText(
         "revealTitle",
         book.title
     );
+
 
     setText(
         "revealAuthor",
         book.author ||
         "Author not recorded"
     );
+
 
     setText(
         "revealStarted",
@@ -4526,6 +5022,7 @@ function openBookReveal(bookId) {
         )
     );
 
+
     setText(
         "revealFinished",
         formatDate(
@@ -4533,40 +5030,52 @@ function openBookReveal(bookId) {
         )
     );
 
+
     setText(
         "revealPageCount",
         `${book.current_page} / ${book.pages || 0} pages`
     );
+
 
     const percent =
         getProgressPercent(
             book
         );
 
+
     setText(
         "revealPercent",
         `${percent}%`
     );
+
 
     const fill =
         document.getElementById(
             "revealProgressBar"
         );
 
+
     if (fill) {
+
         fill.style.width =
             `${percent}%`;
+
     }
+
 
     const bookmark =
         document.getElementById(
             "progressBookmark"
         );
 
+
     if (bookmark) {
+
         bookmark.style.left =
             `${percent}%`;
+
     }
+
 
     setText(
         "revealRating",
@@ -4575,20 +5084,27 @@ function openBookReveal(bookId) {
         )
     );
 
+
     const reveal =
         document.getElementById(
             "bookReveal"
         );
 
+
     if (reveal) {
-        reveal.hidden = false;
+
+        reveal.hidden =
+            false;
+
     }
+
 
     document.body.classList.add(
         "modal-open"
     );
 
 }
+
 
 function closeBookReveal() {
 
@@ -4597,13 +5113,19 @@ function closeBookReveal() {
             "bookReveal"
         );
 
+
     if (reveal) {
-        reveal.hidden = true;
+
+        reveal.hidden =
+            true;
+
     }
+
 
     updateModalBodyState();
 
 }
+
 
 function editSelectedBook() {
 
@@ -4611,7 +5133,9 @@ function editSelectedBook() {
         return;
     }
 
+
     closeBookReveal();
+
 
     openBookDrawer(
         selectedBookId
@@ -4619,11 +5143,13 @@ function editSelectedBook() {
 
 }
 
+
 function openSelectedBookJournal() {
 
     if (!selectedBookId) {
         return;
     }
+
 
     openReadingBook(
         selectedBookId
@@ -4633,7 +5159,7 @@ function openSelectedBookJournal() {
 
 
 /* =========================================================
-   JOURNAL BOOK
+   OPEN READING BOOK
    ========================================================= */
 
 function openReadingBook(bookId) {
@@ -4643,33 +5169,44 @@ function openReadingBook(bookId) {
             bookId
         );
 
+
     if (!book) {
         return;
     }
 
+
     selectedBookId =
         book.id;
+
 
     renderJournalBookDetails(
         book
     );
 
+
     showJournalContents();
+
 
     const readingBook =
         document.getElementById(
             "readingBook"
         );
 
+
     if (readingBook) {
-        readingBook.hidden = false;
+
+        readingBook.hidden =
+            false;
+
     }
+
 
     document.body.classList.add(
         "modal-open"
     );
 
 }
+
 
 function closeReadingBook() {
 
@@ -4678,13 +5215,23 @@ function closeReadingBook() {
             "readingBook"
         );
 
+
     if (element) {
-        element.hidden = true;
+
+        element.hidden =
+            true;
+
     }
+
 
     updateModalBodyState();
 
 }
+
+
+/* =========================================================
+   JOURNAL DETAILS
+   ========================================================= */
 
 function renderJournalBookDetails(book) {
 
@@ -4693,11 +5240,13 @@ function renderJournalBookDetails(book) {
         book.title
     );
 
+
     setText(
         "journalBookAuthor",
         book.author ||
         "Author not recorded"
     );
+
 
     setText(
         "journalStatus",
@@ -4706,12 +5255,14 @@ function renderJournalBookDetails(book) {
         )
     );
 
+
     setText(
         "journalStarted",
         formatDate(
             book.started
         )
     );
+
 
     setText(
         "journalFinished",
@@ -4720,12 +5271,14 @@ function renderJournalBookDetails(book) {
         )
     );
 
+
     setText(
         "journalPages",
         book.pages
             ? String(book.pages)
             : "—"
     );
+
 
     renderCover(
         "journalCover",
@@ -4744,25 +5297,30 @@ function showJournalContents() {
     selectedJournalSection =
         null;
 
+
     const contents =
         document.getElementById(
             "journalContents"
         );
+
 
     const section =
         document.getElementById(
             "journalSection"
         );
 
+
     if (contents) {
         contents.hidden = false;
     }
+
 
     if (section) {
         section.hidden = true;
     }
 
 }
+
 
 function openJournalSection(
     sectionName
@@ -4772,26 +5330,32 @@ function openJournalSection(
         return;
     }
 
+
     selectedJournalSection =
         sectionName;
+
 
     const contents =
         document.getElementById(
             "journalContents"
         );
 
+
     const section =
         document.getElementById(
             "journalSection"
         );
 
+
     if (contents) {
         contents.hidden = true;
     }
 
+
     if (section) {
         section.hidden = false;
     }
+
 
     const definition =
         CONFIG.journalSections
@@ -4805,15 +5369,18 @@ function openJournalSection(
                 sectionName
         };
 
+
     setText(
         "journalSectionLabel",
         definition.label
     );
 
+
     setText(
         "journalSectionTitle",
         definition.title
     );
+
 
     renderJournalEntries();
 
@@ -4821,7 +5388,7 @@ function openJournalSection(
 
 
 /* =========================================================
-   JOURNAL ENTRY RENDER
+   JOURNAL ENTRIES
    ========================================================= */
 
 function renderJournalEntries() {
@@ -4831,25 +5398,32 @@ function renderJournalEntries() {
             "journalEntries"
         );
 
+
     if (!container) {
         return;
     }
 
-    container.innerHTML = "";
+
+    container.innerHTML =
+        "";
+
 
     const book =
         getBookById(
             selectedBookId
         );
 
+
     if (!book) {
         return;
     }
+
 
     const addButton =
         document.getElementById(
             "addJournalEntry"
         );
+
 
     if (
         selectedJournalSection ===
@@ -4860,18 +5434,22 @@ function renderJournalEntries() {
             addButton.hidden = true;
         }
 
+
         renderOverview(
             container,
             book
         );
 
+
         return;
 
     }
 
+
     if (addButton) {
         addButton.hidden = false;
     }
+
 
     const entries =
         book.journal
@@ -4880,6 +5458,7 @@ function renderJournalEntries() {
             ]
         ||
         [];
+
 
     if (!entries.length) {
 
@@ -4898,6 +5477,7 @@ function renderJournalEntries() {
 
     }
 
+
     entries
         .slice()
         .reverse()
@@ -4914,6 +5494,11 @@ function renderJournalEntries() {
 
 }
 
+
+/* =========================================================
+   OVERVIEW
+   ========================================================= */
+
 function renderOverview(
     container,
     book
@@ -4923,6 +5508,7 @@ function renderOverview(
         getProgressPercent(
             book
         );
+
 
     container.innerHTML = `
 
@@ -4995,6 +5581,11 @@ function renderOverview(
 
 }
 
+
+/* =========================================================
+   JOURNAL ENTRY ELEMENT
+   ========================================================= */
+
 function createJournalEntryElement(
     entry,
     section
@@ -5005,14 +5596,17 @@ function createJournalEntryElement(
             "article"
         );
 
+
     article.className =
         "journal-entry";
+
 
     const content =
         getJournalEntryPresentation(
             entry,
             section
         );
+
 
     article.innerHTML = `
 
@@ -5030,13 +5624,11 @@ function createJournalEntryElement(
                 ""
         }
 
-
         <p>
             ${escapeHTML(
                 content.body
             )}
         </p>
-
 
         <span class="journal-entry-meta">
 
@@ -5050,9 +5642,15 @@ function createJournalEntryElement(
 
     `;
 
+
     return article;
 
 }
+
+
+/* =========================================================
+   JOURNAL ENTRY DISPLAY
+   ========================================================= */
 
 function getJournalEntryPresentation(
     entry,
@@ -5167,7 +5765,7 @@ function getJournalEntryPresentation(
 
 
 /* =========================================================
-   JOURNAL MODAL
+   JOURNAL ENTRY MODAL
    ========================================================= */
 
 function openJournalEntryModal() {
@@ -5181,14 +5779,17 @@ function openJournalEntryModal() {
         return;
     }
 
+
     setValue(
         "entrySection",
         selectedJournalSection
     );
 
+
     const definition =
         CONFIG.journalSections
             ?.[selectedJournalSection];
+
 
     setText(
         "entryModalTitle",
@@ -5196,24 +5797,33 @@ function openJournalEntryModal() {
         "Add entry"
     );
 
+
     renderEntryFields(
         selectedJournalSection
     );
+
 
     const modal =
         document.getElementById(
             "entryModal"
         );
 
+
     if (modal) {
         modal.hidden = false;
     }
+
 
     document.body.classList.add(
         "modal-open"
     );
 
 }
+
+
+/* =========================================================
+   ENTRY FIELDS
+   ========================================================= */
 
 function renderEntryFields(section) {
 
@@ -5222,9 +5832,11 @@ function renderEntryFields(section) {
             "entryDynamicFields"
         );
 
+
     if (!container) {
         return;
     }
+
 
     switch (section) {
 
@@ -5233,6 +5845,7 @@ function renderEntryFields(section) {
             container.innerHTML = `
 
                 <label>
+
                     Word
 
                     <input
@@ -5240,23 +5853,30 @@ function renderEntryFields(section) {
                         type="text"
                         required
                     >
+
                 </label>
 
+
                 <label>
+
                     Definition
 
                     <textarea
                         id="entryDefinition"
                         required
                     ></textarea>
+
                 </label>
 
+
                 <label>
+
                     Context / why I saved it
 
                     <textarea
                         id="entryContext"
                     ></textarea>
+
                 </label>
 
             `;
@@ -5269,15 +5889,19 @@ function renderEntryFields(section) {
             container.innerHTML = `
 
                 <label>
+
                     Quote
 
                     <textarea
                         id="entryQuote"
                         required
                     ></textarea>
+
                 </label>
 
+
                 <label>
+
                     Page
 
                     <input
@@ -5285,6 +5909,7 @@ function renderEntryFields(section) {
                         type="number"
                         min="0"
                     >
+
                 </label>
 
             `;
@@ -5297,6 +5922,7 @@ function renderEntryFields(section) {
             container.innerHTML = `
 
                 <label>
+
                     Character
 
                     <input
@@ -5304,15 +5930,19 @@ function renderEntryFields(section) {
                         type="text"
                         required
                     >
+
                 </label>
 
+
                 <label>
+
                     Notes
 
                     <textarea
                         id="entryCharacterNotes"
                         required
                     ></textarea>
+
                 </label>
 
             `;
@@ -5325,6 +5955,7 @@ function renderEntryFields(section) {
             container.innerHTML = `
 
                 <label>
+
                     Theme
 
                     <input
@@ -5332,15 +5963,19 @@ function renderEntryFields(section) {
                         type="text"
                         required
                     >
+
                 </label>
 
+
                 <label>
+
                     Thoughts
 
                     <textarea
                         id="entryThemeNotes"
                         required
                     ></textarea>
+
                 </label>
 
             `;
@@ -5353,20 +5988,25 @@ function renderEntryFields(section) {
             container.innerHTML = `
 
                 <label>
+
                     Question
 
                     <textarea
                         id="entryQuestion"
                         required
                     ></textarea>
+
                 </label>
 
+
                 <label>
+
                     Notes
 
                     <textarea
                         id="entryQuestionNotes"
                     ></textarea>
+
                 </label>
 
             `;
@@ -5379,12 +6019,14 @@ function renderEntryFields(section) {
             container.innerHTML = `
 
                 <label>
+
                     Review
 
                     <textarea
                         id="entryReview"
                         required
                     ></textarea>
+
                 </label>
 
             `;
@@ -5397,13 +6039,16 @@ function renderEntryFields(section) {
             container.innerHTML = `
 
                 <label>
+
                     Title
 
                     <input
                         id="entryTitle"
                         type="text"
                     >
+
                 </label>
+
 
                 <label>
 
@@ -5427,19 +6072,27 @@ function renderEntryFields(section) {
 
 }
 
+
+/* =========================================================
+   SAVE JOURNAL ENTRY
+   ========================================================= */
+
 function saveJournalEntry(event) {
 
     event.preventDefault();
+
 
     const book =
         getBookById(
             selectedBookId
         );
 
+
     const section =
         getValue(
             "entrySection"
         );
+
 
     if (
         !book ||
@@ -5448,14 +6101,18 @@ function saveJournalEntry(event) {
         return;
     }
 
+
     const entry = {
+
         id:
             generateId(),
 
         created_at:
             new Date()
                 .toISOString()
+
     };
+
 
     switch (section) {
 
@@ -5563,6 +6220,7 @@ function saveJournalEntry(event) {
 
     }
 
+
     if (
         !Array.isArray(
             book.journal[section]
@@ -5574,13 +6232,16 @@ function saveJournalEntry(event) {
 
     }
 
+
     book.journal[section].push(
         entry
     );
 
+
     book.updated_at =
         new Date()
             .toISOString();
+
 
     saveBooks();
 
@@ -5590,6 +6251,7 @@ function saveJournalEntry(event) {
 
 }
 
+
 function closeEntryModal() {
 
     const modal =
@@ -5597,9 +6259,11 @@ function closeEntryModal() {
             "entryModal"
         );
 
+
     if (modal) {
         modal.hidden = true;
     }
+
 
     updateModalBodyState();
 
@@ -5619,24 +6283,29 @@ function renderReadingNow() {
                 "reading"
         );
 
+
     updateReadingNowSummary(
         readingBooks
     );
+
 
     const featured =
         document.getElementById(
             "featuredReadingSection"
         );
 
+
     const list =
         document.getElementById(
             "readingListSection"
         );
 
+
     const empty =
         document.getElementById(
             "readingEmpty"
         );
+
 
     if (!readingBooks.length) {
 
@@ -5656,32 +6325,43 @@ function renderReadingNow() {
 
     }
 
+
     if (featured) {
         featured.hidden = false;
     }
+
 
     if (list) {
         list.hidden = false;
     }
 
+
     if (empty) {
         empty.hidden = true;
     }
+
 
     const featuredBook =
         getFeaturedReadingBook(
             readingBooks
         );
 
+
     renderFeaturedReadingBook(
         featuredBook
     );
+
 
     renderReadingGrid(
         readingBooks
     );
 
 }
+
+
+/* =========================================================
+   READING SUMMARY
+   ========================================================= */
 
 function updateReadingNowSummary(
     readingBooks
@@ -5691,6 +6371,7 @@ function updateReadingNowSummary(
         "currentReadingCount",
         readingBooks.length
     );
+
 
     if (!readingBooks.length) {
 
@@ -5708,6 +6389,7 @@ function updateReadingNowSummary(
 
     }
 
+
     const average =
         Math.round(
             readingBooks.reduce(
@@ -5724,6 +6406,7 @@ function updateReadingNowSummary(
             /
             readingBooks.length
         );
+
 
     const remaining =
         readingBooks.reduce(
@@ -5749,10 +6432,12 @@ function updateReadingNowSummary(
             0
         );
 
+
     setText(
         "averageProgress",
         `${average}%`
     );
+
 
     setText(
         "pagesRemaining",
@@ -5760,6 +6445,11 @@ function updateReadingNowSummary(
     );
 
 }
+
+
+/* =========================================================
+   FEATURED READING BOOK
+   ========================================================= */
 
 function getFeaturedReadingBook(
     readingBooks
@@ -5776,21 +6466,25 @@ function getFeaturedReadingBook(
 
 }
 
+
 function renderFeaturedReadingBook(book) {
 
     if (!book) {
         return;
     }
 
+
     const shelf =
         getShelfById(
             book.shelf_id
         );
 
+
     renderCover(
         "featuredBookCover",
         book
     );
+
 
     setText(
         "featuredBookShelf",
@@ -5798,16 +6492,19 @@ function renderFeaturedReadingBook(book) {
         "my library"
     );
 
+
     setText(
         "featuredBookTitle",
         book.title
     );
+
 
     setText(
         "featuredBookAuthor",
         book.author ||
         "Author not recorded"
     );
+
 
     setText(
         "featuredBookStarted",
@@ -5816,59 +6513,78 @@ function renderFeaturedReadingBook(book) {
         )
     );
 
+
     setText(
         "featuredBookPages",
         `${book.current_page} / ${book.pages || 0}`
     );
+
 
     const percentage =
         getProgressPercent(
             book
         );
 
+
     setText(
         "featuredBookPercent",
         `${percentage}%`
     );
+
 
     const fill =
         document.getElementById(
             "featuredProgressFill"
         );
 
+
     if (fill) {
+
         fill.style.width =
             `${percentage}%`;
+
     }
+
 
     const bookmark =
         document.getElementById(
             "featuredProgressBookmark"
         );
 
+
     if (bookmark) {
+
         bookmark.style.left =
             `${percentage}%`;
+
     }
+
 
     const openButton =
         document.getElementById(
             "featuredOpenBook"
         );
 
+
     if (openButton) {
+
         openButton.dataset.bookId =
             book.id;
+
     }
+
 
     const progressButton =
         document.getElementById(
             "featuredEditProgress"
         );
 
+
     if (progressButton) {
+
         progressButton.dataset.bookId =
             book.id;
+
     }
 
 }
@@ -5887,11 +6603,15 @@ function renderReadingGrid(
             "readingGrid"
         );
 
+
     if (!grid) {
         return;
     }
 
-    grid.innerHTML = "";
+
+    grid.innerHTML =
+        "";
+
 
     readingBooks
         .slice()
@@ -5919,6 +6639,7 @@ function renderReadingGrid(
 
 }
 
+
 function createReadingCard(book) {
 
     const shelf =
@@ -5926,27 +6647,31 @@ function createReadingCard(book) {
             book.shelf_id
         );
 
+
     const percent =
         getProgressPercent(
             book
         );
+
 
     const card =
         document.createElement(
             "article"
         );
 
+
     card.className =
         "reading-card";
 
+
     card.dataset.bookId =
         book.id;
+
 
     card.innerHTML = `
 
         <div class="reading-card-cover">
         </div>
-
 
         <div class="reading-card-copy">
 
@@ -5959,13 +6684,11 @@ function createReadingCard(book) {
 
             </span>
 
-
             <h3>
                 ${escapeHTML(
                     book.title
                 )}
             </h3>
-
 
             <p class="reading-card-author">
 
@@ -5975,7 +6698,6 @@ function createReadingCard(book) {
                 )}
 
             </p>
-
 
             <div class="reading-card-pages">
 
@@ -5991,7 +6713,6 @@ function createReadingCard(book) {
 
             </div>
 
-
             <div class="reading-card-progress">
 
                 <span
@@ -6000,7 +6721,6 @@ function createReadingCard(book) {
                 </span>
 
             </div>
-
 
             <div class="reading-card-started">
 
@@ -6017,12 +6737,14 @@ function createReadingCard(book) {
 
     `;
 
+
     renderCoverInElement(
         card.querySelector(
             ".reading-card-cover"
         ),
         book
     );
+
 
     card.addEventListener(
         "click",
@@ -6034,6 +6756,7 @@ function createReadingCard(book) {
 
         }
     );
+
 
     return card;
 
@@ -6051,19 +6774,23 @@ function openProgressModal(bookId) {
             bookId
         );
 
+
     if (!book) {
         return;
     }
+
 
     setValue(
         "progressBookId",
         book.id
     );
 
+
     setText(
         "progressBookTitle",
         book.title
     );
+
 
     setText(
         "progressBookTotal",
@@ -6072,20 +6799,24 @@ function openProgressModal(bookId) {
             : "Page count not recorded"
     );
 
+
     setValue(
         "progressCurrentPage",
         book.current_page
     );
+
 
     setChecked(
         "markBookFinished",
         false
     );
 
+
     const input =
         document.getElementById(
             "progressCurrentPage"
         );
+
 
     if (input) {
 
@@ -6098,22 +6829,30 @@ function openProgressModal(bookId) {
 
     }
 
+
     updateProgressPreview();
+
 
     const modal =
         document.getElementById(
             "progressModal"
         );
 
+
     if (modal) {
-        modal.hidden = false;
+
+        modal.hidden =
+            false;
+
     }
+
 
     document.body.classList.add(
         "modal-open"
     );
 
 }
+
 
 function closeProgressModal() {
 
@@ -6122,13 +6861,19 @@ function closeProgressModal() {
             "progressModal"
         );
 
+
     if (modal) {
-        modal.hidden = true;
+
+        modal.hidden =
+            true;
+
     }
+
 
     updateModalBodyState();
 
 }
+
 
 function updateProgressPreview() {
 
@@ -6139,9 +6884,11 @@ function updateProgressPreview() {
             )
         );
 
+
     if (!book) {
         return;
     }
+
 
     let current =
         normalizeNumber(
@@ -6149,6 +6896,7 @@ function updateProgressPreview() {
                 "progressCurrentPage"
             )
         );
+
 
     if (book.pages > 0) {
 
@@ -6159,6 +6907,7 @@ function updateProgressPreview() {
             );
 
     }
+
 
     const percentage =
         book.pages
@@ -6174,15 +6923,20 @@ function updateProgressPreview() {
             :
             0;
 
+
     const fill =
         document.getElementById(
             "progressPreviewFill"
         );
 
+
     if (fill) {
+
         fill.style.width =
             `${percentage}%`;
+
     }
+
 
     setText(
         "progressPreviewPercent",
@@ -6191,11 +6945,13 @@ function updateProgressPreview() {
 
 }
 
+
 function handleFinishedToggle(event) {
 
     if (!event.target.checked) {
         return;
     }
+
 
     const book =
         getBookById(
@@ -6203,6 +6959,7 @@ function handleFinishedToggle(event) {
                 "progressBookId"
             )
         );
+
 
     if (
         !book ||
@@ -6211,18 +6968,22 @@ function handleFinishedToggle(event) {
         return;
     }
 
+
     setValue(
         "progressCurrentPage",
         book.pages
     );
 
+
     updateProgressPreview();
 
 }
 
+
 function saveProgressUpdate(event) {
 
     event.preventDefault();
+
 
     const book =
         getBookById(
@@ -6231,9 +6992,11 @@ function saveProgressUpdate(event) {
             )
         );
 
+
     if (!book) {
         return;
     }
+
 
     let current =
         normalizeNumber(
@@ -6241,6 +7004,7 @@ function saveProgressUpdate(event) {
                 "progressCurrentPage"
             )
         );
+
 
     if (book.pages > 0) {
 
@@ -6252,8 +7016,10 @@ function saveProgressUpdate(event) {
 
     }
 
+
     book.current_page =
         current;
+
 
     if (
         document
@@ -6266,27 +7032,36 @@ function saveProgressUpdate(event) {
         book.status =
             "finished";
 
+
         book.finished =
             todayISO();
 
+
         if (book.pages) {
+
             book.current_page =
                 book.pages;
+
         }
+
 
         if (
             book.times_read <
             1
         ) {
+
             book.times_read =
                 1;
+
         }
 
     }
 
+
     book.updated_at =
         new Date()
             .toISOString();
+
 
     saveBooks();
 
@@ -6308,6 +7083,7 @@ function renderReadingStats() {
         books.length
     );
 
+
     setText(
         "statsFinishedBooks",
         countStatus(
@@ -6315,15 +7091,18 @@ function renderReadingStats() {
         )
     );
 
+
     setText(
         "statsPagesRead",
         calculatePagesRead()
     );
 
+
     setText(
         "statsAverageRating",
         calculateAverageRating()
     );
+
 
     setText(
         "statsCurrentlyReading",
@@ -6332,12 +7111,14 @@ function renderReadingStats() {
         )
     );
 
+
     setText(
         "statsWantToRead",
         countStatus(
             "want"
         )
     );
+
 
     setText(
         "statsPaused",
@@ -6346,12 +7127,14 @@ function renderReadingStats() {
         )
     );
 
+
     setText(
         "statsDNF",
         countStatus(
             "dnf"
         )
     );
+
 
     setText(
         "statsReference",
@@ -6360,16 +7143,23 @@ function renderReadingStats() {
         )
     );
 
+
     setText(
         "statsRereads",
         calculateRereads()
     );
+
 
     renderGenreStats();
 
     renderMonthlyReadingStats();
 
 }
+
+
+/* =========================================================
+   PAGES READ
+   ========================================================= */
 
 function calculatePagesRead() {
 
@@ -6394,6 +7184,7 @@ function calculatePagesRead() {
 
             }
 
+
             if (
                 book.status ===
                 "reading"
@@ -6406,6 +7197,7 @@ function calculatePagesRead() {
 
             }
 
+
             return total;
 
         },
@@ -6413,6 +7205,11 @@ function calculatePagesRead() {
     );
 
 }
+
+
+/* =========================================================
+   AVERAGE RATING
+   ========================================================= */
 
 function calculateAverageRating() {
 
@@ -6425,9 +7222,11 @@ function calculateAverageRating() {
                 0
         );
 
+
     if (!rated.length) {
         return "—";
     }
+
 
     const average =
         rated.reduce(
@@ -6444,9 +7243,15 @@ function calculateAverageRating() {
         /
         rated.length;
 
+
     return `${average.toFixed(1)} ★`;
 
 }
+
+
+/* =========================================================
+   REREADS
+   ========================================================= */
 
 function calculateRereads() {
 
@@ -6475,6 +7280,7 @@ function calculateRereads() {
 
 }
 
+
 function countStatus(status) {
 
     return books.filter(
@@ -6487,7 +7293,7 @@ function countStatus(status) {
 
 
 /* =========================================================
-   GENRES
+   GENRE STATS
    ========================================================= */
 
 function renderGenreStats() {
@@ -6497,11 +7303,14 @@ function renderGenreStats() {
             "genreStats"
         );
 
+
     if (!container) {
         return;
     }
 
+
     const counts = {};
+
 
     books.forEach(book => {
 
@@ -6511,9 +7320,11 @@ function renderGenreStats() {
                 ""
             ).trim();
 
+
         if (!genre) {
             return;
         }
+
 
         counts[genre] =
             (
@@ -6524,6 +7335,7 @@ function renderGenreStats() {
             1;
 
     });
+
 
     const entries =
         Object.entries(counts)
@@ -6536,6 +7348,7 @@ function renderGenreStats() {
                 0,
                 6
             );
+
 
     if (!entries.length) {
 
@@ -6554,8 +7367,10 @@ function renderGenreStats() {
 
     }
 
+
     const highest =
         entries[0][1];
+
 
     container.innerHTML =
         entries.map(
@@ -6576,6 +7391,7 @@ function renderGenreStats() {
                         100
                     );
 
+
                 return `
 
                     <div class="genre-stat-row">
@@ -6588,7 +7404,6 @@ function renderGenreStats() {
 
                         </span>
 
-
                         <div class="genre-stat-track">
 
                             <div
@@ -6598,7 +7413,6 @@ function renderGenreStats() {
                             </div>
 
                         </div>
-
 
                         <span class="genre-stat-count">
 
@@ -6627,12 +7441,15 @@ function renderMonthlyReadingStats() {
             "monthlyReadingStats"
         );
 
+
     if (!container) {
         return;
     }
 
+
     const months =
         getLastTwelveMonths();
+
 
     const counts =
         months.map(month => {
@@ -6649,14 +7466,17 @@ function renderMonthlyReadingStats() {
                         return false;
                     }
 
+
                     const date =
                         parseDate(
                             book.finished
                         );
 
+
                     if (!date) {
                         return false;
                     }
+
 
                     return (
                         date.getFullYear() ===
@@ -6668,12 +7488,14 @@ function renderMonthlyReadingStats() {
 
                 }).length;
 
+
             return {
                 ...month,
                 count
             };
 
         });
+
 
     const highest =
         Math.max(
@@ -6683,6 +7505,7 @@ function renderMonthlyReadingStats() {
                     item.count
             )
         );
+
 
     container.innerHTML =
         counts.map(item => {
@@ -6704,6 +7527,7 @@ function renderMonthlyReadingStats() {
                     :
                     2;
 
+
             return `
 
                 <div class="month-stat">
@@ -6711,7 +7535,6 @@ function renderMonthlyReadingStats() {
                     <strong>
                         ${item.count}
                     </strong>
-
 
                     <div class="month-stat-bar-wrap">
 
@@ -6722,7 +7545,6 @@ function renderMonthlyReadingStats() {
                         </div>
 
                     </div>
-
 
                     <span>
                         ${escapeHTML(
@@ -6738,12 +7560,16 @@ function renderMonthlyReadingStats() {
 
 }
 
+
 function getLastTwelveMonths() {
 
-    const result = [];
+    const result =
+        [];
+
 
     const now =
         new Date();
+
 
     for (
         let index = 11;
@@ -6759,7 +7585,9 @@ function getLastTwelveMonths() {
                 1
             );
 
+
         result.push({
+
             year:
                 date.getFullYear(),
 
@@ -6774,9 +7602,11 @@ function getLastTwelveMonths() {
                             "short"
                     }
                 )
+
         });
 
     }
+
 
     return result;
 
@@ -6784,7 +7614,7 @@ function getLastTwelveMonths() {
 
 
 /* =========================================================
-   COVER
+   COVERS
    ========================================================= */
 
 function renderCover(
@@ -6797,9 +7627,11 @@ function renderCover(
             elementId
         );
 
+
     if (!element) {
         return;
     }
+
 
     renderCoverInElement(
         element,
@@ -6807,6 +7639,7 @@ function renderCover(
     );
 
 }
+
 
 function renderCoverInElement(
     element,
@@ -6817,13 +7650,18 @@ function renderCoverInElement(
         return;
     }
 
-    element.innerHTML = "";
+
+    element.innerHTML =
+        "";
+
 
     element.style.backgroundImage =
         "";
 
+
     element.style.backgroundColor =
         book.spine_color;
+
 
     if (book.cover_image) {
 
@@ -6836,11 +7674,13 @@ function renderCoverInElement(
 
     }
 
+
     const classes =
         getBookTypographyClasses(
             book,
             "generated-cover"
         );
+
 
     element.innerHTML = `
 
@@ -6916,6 +7756,7 @@ function getProgressPercent(book) {
         return 0;
     }
 
+
     return Math.min(
         100,
         Math.max(
@@ -6952,9 +7793,11 @@ function getRatingText(rating) {
             )
         );
 
+
     if (!value) {
         return "not rated";
     }
+
 
     return (
         "★".repeat(value)
@@ -6976,11 +7819,13 @@ function openThemeDrawer() {
 
     hideAllDrawersImmediately();
 
+
     showDrawer(
         "themeDrawer"
     );
 
 }
+
 
 function showDrawer(drawerId) {
 
@@ -6989,26 +7834,31 @@ function showDrawer(drawerId) {
             drawerId
         );
 
+
     const overlay =
         document.getElementById(
             "overlay"
         );
 
+
     if (!drawer) {
         return;
     }
 
+
     drawer.hidden =
         false;
 
+
     if (overlay) {
-        overlay.hidden =
-            false;
+        overlay.hidden = false;
     }
+
 
     document.body.classList.add(
         "modal-open"
     );
+
 
     requestAnimationFrame(
         () => {
@@ -7016,6 +7866,7 @@ function showDrawer(drawerId) {
             drawer.classList.add(
                 "open"
             );
+
 
             overlay
                 ?.classList
@@ -7028,6 +7879,7 @@ function showDrawer(drawerId) {
 
 }
 
+
 function closeAllDrawers() {
 
     const drawers =
@@ -7035,10 +7887,12 @@ function closeAllDrawers() {
             ".form-drawer"
         );
 
+
     const overlay =
         document.getElementById(
             "overlay"
         );
+
 
     drawers.forEach(drawer => {
 
@@ -7048,16 +7902,19 @@ function closeAllDrawers() {
 
     });
 
+
     overlay
         ?.classList
         .remove(
             "open"
         );
 
+
     const delay =
         settings.reducedMotion
             ? 0
             : 220;
+
 
     window.setTimeout(
         () => {
@@ -7069,10 +7926,14 @@ function closeAllDrawers() {
 
             });
 
+
             if (overlay) {
+
                 overlay.hidden =
                     true;
+
             }
+
 
             updateModalBodyState();
 
@@ -7081,6 +7942,7 @@ function closeAllDrawers() {
     );
 
 }
+
 
 function hideAllDrawersImmediately() {
 
@@ -7094,21 +7956,25 @@ function hideAllDrawersImmediately() {
                 "open"
             );
 
+
             drawer.hidden =
                 true;
 
         });
+
 
     const overlay =
         document.getElementById(
             "overlay"
         );
 
+
     if (overlay) {
 
         overlay.classList.remove(
             "open"
         );
+
 
         overlay.hidden =
             true;
@@ -7119,7 +7985,7 @@ function hideAllDrawersImmediately() {
 
 
 /* =========================================================
-   MODAL STATE
+   MODAL BODY STATE
    ========================================================= */
 
 function updateModalBodyState() {
@@ -7135,6 +8001,7 @@ function updateModalBodyState() {
                 false
         );
 
+
     document.body.classList.toggle(
         "modal-open",
         drawerOpen ||
@@ -7142,6 +8009,7 @@ function updateModalBodyState() {
     );
 
 }
+
 
 function isAnyModalOpen() {
 
@@ -7157,6 +8025,7 @@ function isAnyModalOpen() {
                 id
             );
 
+
         return (
             element &&
             element.hidden ===
@@ -7169,7 +8038,7 @@ function isAnyModalOpen() {
 
 
 /* =========================================================
-   NAV
+   NAVIGATION
    ========================================================= */
 
 function bindSectionNavigation() {
@@ -7180,6 +8049,7 @@ function bindSectionNavigation() {
                 ".main-nav .nav-link[href^='#']"
             )
         );
+
 
     links.forEach(link => {
 
@@ -7195,6 +8065,7 @@ function bindSectionNavigation() {
 
                 });
 
+
                 link.classList.add(
                     "active"
                 );
@@ -7204,6 +8075,7 @@ function bindSectionNavigation() {
 
     });
 
+
     if (
         !(
             "IntersectionObserver"
@@ -7212,6 +8084,7 @@ function bindSectionNavigation() {
     ) {
         return;
     }
+
 
     const sections = [
         "library",
@@ -7225,6 +8098,7 @@ function bindSectionNavigation() {
                 )
         )
         .filter(Boolean);
+
 
     const observer =
         new IntersectionObserver(
@@ -7242,9 +8116,11 @@ function bindSectionNavigation() {
                                 a.intersectionRatio
                         )[0];
 
+
                 if (!visible) {
                     return;
                 }
+
 
                 links.forEach(link => {
 
@@ -7267,12 +8143,13 @@ function bindSectionNavigation() {
                 threshold:
                     [
                         0,
-                        .1,
-                        .25,
-                        .5
+                        0.1,
+                        0.25,
+                        0.5
                     ]
             }
         );
+
 
     sections.forEach(section => {
 
@@ -7308,6 +8185,7 @@ function getBookById(id) {
 
 }
 
+
 function getShelfById(id) {
 
     return (
@@ -7327,6 +8205,7 @@ function getShelfById(id) {
 
 }
 
+
 function getThemeDecorations() {
 
     return (
@@ -7345,13 +8224,14 @@ function getThemeDecorations() {
 
 
 /* =========================================================
-   DATE HELPERS
+   DATE
    ========================================================= */
 
 function todayISO() {
 
     const date =
         new Date();
+
 
     return [
         date.getFullYear(),
@@ -7374,11 +8254,13 @@ function todayISO() {
 
 }
 
+
 function parseDate(value) {
 
     if (!value) {
         return null;
     }
+
 
     const date =
         new Date(
@@ -7386,6 +8268,7 @@ function parseDate(value) {
                 ? value
                 : `${value}T12:00:00`
         );
+
 
     if (
         Number.isNaN(
@@ -7395,9 +8278,11 @@ function parseDate(value) {
         return null;
     }
 
+
     return date;
 
 }
+
 
 function formatDate(value) {
 
@@ -7406,9 +8291,11 @@ function formatDate(value) {
             value
         );
 
+
     if (!date) {
         return "—";
     }
+
 
     return date.toLocaleDateString(
         "en-US",
@@ -7425,6 +8312,7 @@ function formatDate(value) {
     );
 
 }
+
 
 function formatDateTime(value) {
 
@@ -7433,9 +8321,11 @@ function formatDateTime(value) {
             value
         );
 
+
     if (!date) {
         return "";
     }
+
 
     return date.toLocaleDateString(
         "en-US",
@@ -7453,12 +8343,14 @@ function formatDateTime(value) {
 
 }
 
+
 function dateValue(value) {
 
     const date =
         parseDate(
             value
         );
+
 
     return date
         ? date.getTime()
@@ -7476,6 +8368,7 @@ function normalizeNumber(value) {
     const number =
         Number(value);
 
+
     if (
         Number.isNaN(
             number
@@ -7483,6 +8376,7 @@ function normalizeNumber(value) {
     ) {
         return 0;
     }
+
 
     return Math.max(
         0,
@@ -7493,6 +8387,7 @@ function normalizeNumber(value) {
 
 }
 
+
 function normalizePercent(
     value,
     fallback
@@ -7500,6 +8395,7 @@ function normalizePercent(
 
     const number =
         Number(value);
+
 
     if (
         Number.isNaN(
@@ -7509,6 +8405,7 @@ function normalizePercent(
         return fallback;
     }
 
+
     return clamp(
         number,
         0,
@@ -7517,10 +8414,12 @@ function normalizePercent(
 
 }
 
+
 function normalizeScale(value) {
 
     const number =
         Number(value);
+
 
     if (
         Number.isNaN(
@@ -7530,13 +8429,15 @@ function normalizeScale(value) {
         return 1;
     }
 
+
     return clamp(
         number,
-        .5,
+        0.5,
         2
     );
 
 }
+
 
 function clamp(
     value,
@@ -7571,6 +8472,7 @@ function generateId() {
 
     }
 
+
     return (
         Date.now()
         +
@@ -7604,6 +8506,7 @@ function bindClick(
 
 }
 
+
 function getValue(id) {
 
     const element =
@@ -7611,9 +8514,11 @@ function getValue(id) {
             id
         );
 
+
     if (!element) {
         return "";
     }
+
 
     return String(
         element.value ??
@@ -7621,6 +8526,7 @@ function getValue(id) {
     ).trim();
 
 }
+
 
 function setValue(
     id,
@@ -7632,6 +8538,7 @@ function setValue(
             id
         );
 
+
     if (element) {
 
         element.value =
@@ -7641,6 +8548,7 @@ function setValue(
     }
 
 }
+
 
 function setText(
     id,
@@ -7652,6 +8560,7 @@ function setText(
             id
         );
 
+
     if (element) {
 
         element.textContent =
@@ -7662,6 +8571,7 @@ function setText(
 
 }
 
+
 function setChecked(
     id,
     checked
@@ -7671,6 +8581,7 @@ function setChecked(
         document.getElementById(
             id
         );
+
 
     if (element) {
 
@@ -7685,7 +8596,7 @@ function setChecked(
 
 
 /* =========================================================
-   URL SAFETY
+   SAFE STYLE URL
    ========================================================= */
 
 function safeStyleURL(value) {
@@ -7707,7 +8618,7 @@ function safeStyleURL(value) {
 
 
 /* =========================================================
-   HTML SAFETY
+   ESCAPE HTML
    ========================================================= */
 
 function escapeHTML(value) {
