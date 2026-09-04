@@ -1,64 +1,59 @@
 /* =========================================================
    SHELFMARK
-   WHIMSICAL FOREST DESIGN SYSTEM
+   ROMANTIC GOTHIC / HAUNTED LIBRARY
    ========================================================= */
 
 :root {
-    --cream: #fbf2df;
-    --cream-deep: #efe1c5;
+    --ink: #171312;
+    --ink-soft: #2a2321;
 
-    --paper: #fffaf0;
-    --paper-soft: #f6eddc;
+    --charcoal: #201b1b;
+    --charcoal-2: #2a2325;
 
-    --plum: #5b365e;
-    --plum-dark: #3d2744;
-    --plum-soft: #d9c7dc;
+    --paper: #eadfca;
+    --paper-soft: #f2e9da;
+    --paper-dark: #d8c8af;
 
-    --forest: #45604c;
-    --forest-dark: #2f4637;
-    --forest-deep: #23352a;
+    --oxblood: #6c2633;
+    --wine: #4c1f2d;
+    --plum: #3f2b43;
+    --plum-soft: #765d78;
 
-    --moss: #788b5f;
-    --moss-soft: #c7d2ad;
+    --forest: #36463b;
+    --forest-dark: #223128;
+    --moss: #68755d;
 
-    --sage: #aebd9a;
-    --sage-light: #dce4ca;
+    --brass: #b28a4a;
+    --brass-light: #d1b374;
+    --brass-dark: #806034;
 
-    --moon: #c7bdd7;
-    --moon-light: #e5deed;
+    --ember: #b75d35;
+    --ember-light: #e29a5f;
 
-    --gold: #d2aa52;
-    --gold-light: #f0d99a;
+    --wood: #4d3023;
+    --wood-mid: #65402c;
+    --wood-light: #81563c;
+    --wood-dark: #2d1c16;
 
-    --rose: #b87583;
-    --rose-soft: #e7bbc3;
+    --cream: #efe5d2;
+    --muted: #8d8177;
+    --muted-light: #b6a89c;
 
-    --wood: #7c5238;
-    --wood-light: #a9754f;
-    --wood-dark: #503424;
+    --line: rgba(190, 160, 120, .18);
+    --line-soft: rgba(190, 160, 120, .09);
 
-    --ink: #433b35;
-    --ink-soft: #5f554e;
-
-    --muted: #81746b;
-    --muted-light: #aa9d91;
-
-    --line: rgba(91, 66, 52, .18);
-    --line-soft: rgba(91, 66, 52, .1);
-
-    --white: #ffffff;
-
-    --sidebar-width: 230px;
+    --sidebar-width: 232px;
 
     --shadow-soft:
-        0 14px 35px rgba(49, 43, 34, .12);
+        0 14px 40px rgba(0,0,0,.26);
 
-    --shadow-magic:
-        0 18px 42px rgba(65, 46, 71, .14),
-        0 0 35px rgba(213, 185, 116, .07);
+    --shadow-deep:
+        0 24px 65px rgba(0,0,0,.42);
 
-    --radius: 18px;
-    --radius-small: 10px;
+    --glow:
+        0 0 28px rgba(210, 151, 88, .13);
+
+    --radius: 16px;
 }
 
 
@@ -84,22 +79,23 @@ body {
 
     background:
         radial-gradient(
-            circle at 80% 12%,
-            rgba(211, 199, 225, .3),
+            circle at 78% 18%,
+            rgba(108,38,51,.17),
             transparent 28%
         ),
         radial-gradient(
-            circle at 18% 40%,
-            rgba(160, 185, 137, .2),
-            transparent 35%
+            circle at 22% 75%,
+            rgba(54,70,59,.13),
+            transparent 30%
         ),
         linear-gradient(
             180deg,
-            #fbf3e3 0%,
-            #f2e7d3 100%
+            #191516 0%,
+            #21191b 48%,
+            #171313 100%
         );
 
-    color: var(--ink);
+    color: var(--paper);
 
     font-family:
         "Trebuchet MS",
@@ -117,22 +113,22 @@ body::before {
 
     pointer-events: none;
 
-    opacity: .26;
+    opacity: .22;
 
-    background-image:
-        radial-gradient(
-            circle,
-            rgba(70, 57, 46, .15) 1px,
-            transparent 1px
-        );
-
-    background-size: 28px 28px;
-
-    mask-image:
-        linear-gradient(
-            to bottom,
-            rgba(0,0,0,.45),
-            transparent 85%
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.018) 0,
+            rgba(255,255,255,.018) 1px,
+            transparent 1px,
+            transparent 24px
+        ),
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,.012) 0,
+            rgba(255,255,255,.012) 1px,
+            transparent 1px,
+            transparent 24px
         );
 }
 
@@ -205,10 +201,7 @@ textarea {
 
 .sidebar {
     position: fixed;
-
-    top: 0;
-    left: 0;
-    bottom: 0;
+    inset: 0 auto 0 0;
 
     z-index: 1000;
 
@@ -224,41 +217,39 @@ textarea {
     background:
         linear-gradient(
             180deg,
-            #354a3b 0%,
-            #293b31 60%,
-            #24342b 100%
+            #22191d 0%,
+            #171313 100%
         );
-
-    color: #f4ead8;
 
     border-right:
         1px solid
-        rgba(255,255,255,.08);
+        rgba(210,179,116,.12);
 
     box-shadow:
-        8px 0 24px
-        rgba(48,42,36,.08);
+        8px 0 30px
+        rgba(0,0,0,.24);
 }
 
 .sidebar::before {
     content: "";
 
     position: absolute;
+    inset: 0;
 
-    width: 180px;
-    height: 180px;
+    opacity: .14;
 
-    left: -90px;
-    top: 30%;
-
-    border:
-        1px solid
-        rgba(191,211,164,.18);
-
-    border-radius:
-        48% 52% 63% 37%;
-
-    transform: rotate(32deg);
+    background:
+        radial-gradient(
+            circle at 50% 14%,
+            rgba(178,138,74,.28),
+            transparent 19%
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent 0,
+            transparent 28px,
+            rgba(255,255,255,.02) 29px
+        );
 }
 
 .sidebar::after {
@@ -267,10 +258,10 @@ textarea {
     position: absolute;
 
     right: 20px;
-    bottom: 115px;
+    bottom: 120px;
 
     color:
-        rgba(240,217,154,.35);
+        rgba(209,179,116,.25);
 
     font-size: .8rem;
 }
@@ -285,19 +276,16 @@ textarea {
     z-index: 2;
 
     padding:
-        3px 3px
-        25px;
+        2px 2px 26px;
 
     border-bottom:
         1px solid
-        rgba(255,255,255,.1);
+        rgba(210,179,116,.12);
 }
 
 .brand-link {
     display: flex;
-
     align-items: center;
-
     gap: 12px;
 }
 
@@ -310,39 +298,40 @@ textarea {
 
     border:
         1px solid
-        rgba(240,217,154,.5);
+        rgba(209,179,116,.45);
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         radial-gradient(
             circle,
-            #6f5a73,
-            #47344e
+            #5c3c47,
+            #32232a
         );
 
     color:
-        var(--gold-light);
+        var(--brass-light);
 
     box-shadow:
         0 0 18px
-        rgba(240,217,154,.13);
+        rgba(178,138,74,.13);
 }
 
 .brand strong {
     display: block;
 
+    color:
+        #f2e6cf;
+
     font-family:
         Georgia,
         serif;
 
-    font-size: .92rem;
+    font-size:
+        .92rem;
 
-    letter-spacing: .11em;
-
-    color:
-        #fff6e8;
+    letter-spacing:
+        .1em;
 }
 
 .brand span {
@@ -351,20 +340,21 @@ textarea {
     margin-top: 3px;
 
     color:
-        #b9c6ae;
+        #9b8d83;
 
     font-family:
         Georgia,
         serif;
 
-    font-size: .58rem;
+    font-size:
+        .58rem;
 
     font-style: italic;
 }
 
 
 /* =========================================================
-   NAVIGATION
+   NAV
    ========================================================= */
 
 .main-nav {
@@ -380,7 +370,7 @@ textarea {
 }
 
 .nav-link {
-    min-height: 43px;
+    min-height: 44px;
 
     display: flex;
     align-items: center;
@@ -393,17 +383,17 @@ textarea {
     border:
         1px solid transparent;
 
-    border-radius:
-        11px;
+    border-radius: 10px;
 
     color:
-        #d7dfcf;
+        #b9ada2;
 
     font-family:
         Georgia,
         serif;
 
-    font-size: .67rem;
+    font-size:
+        .68rem;
 
     transition:
         .18s ease;
@@ -412,53 +402,48 @@ textarea {
 .nav-link:hover {
     padding-left: 14px;
 
-    background:
-        rgba(255,255,255,.05);
-
-    border-color:
-        rgba(255,255,255,.05);
-
     color:
-        #fff7e9;
+        #f1e5d2;
+
+    background:
+        rgba(255,255,255,.035);
 }
 
 .nav-link.active {
+    color:
+        #f0dfc3;
+
     background:
         linear-gradient(
             90deg,
-            rgba(201,186,220,.2),
-            rgba(255,255,255,.05)
+            rgba(108,38,51,.26),
+            rgba(255,255,255,.02)
         );
 
     border-color:
-        rgba(201,186,220,.22);
-
-    color:
-        #f4e8ff;
+        rgba(178,138,74,.12);
 
     box-shadow:
         inset 3px 0
-        var(--moon);
+        var(--brass);
 }
 
 .nav-mark {
     width: 23px;
 
     color:
-        #9fb091;
+        #77685f;
 
-    font-family:
-        "Trebuchet MS",
-        sans-serif;
+    font-size:
+        .46rem;
 
-    font-size: .46rem;
-
-    letter-spacing: .06em;
+    letter-spacing:
+        .06em;
 }
 
 
 /* =========================================================
-   SIDEBAR BUTTONS
+   SIDEBAR ACTIONS
    ========================================================= */
 
 .sidebar-actions {
@@ -470,7 +455,7 @@ textarea {
 
     gap: 8px;
 
-    margin-top: 27px;
+    margin-top: 28px;
 }
 
 .sidebar-button {
@@ -478,50 +463,44 @@ textarea {
 
     border:
         1px solid
-        rgba(255,255,255,.12);
+        rgba(209,179,116,.14);
 
-    border-radius:
-        11px;
+    border-radius: 10px;
 
     background:
-        rgba(255,255,255,.05);
+        rgba(255,255,255,.025);
 
     color:
-        #e8e4d5;
+        #c9b8a7;
 
     cursor: pointer;
 
-    font-size: .59rem;
-
-    transition:
-        .18s ease;
+    font-size:
+        .6rem;
 }
 
 .sidebar-button:hover {
-    transform:
-        translateY(-2px);
-
     background:
-        rgba(255,255,255,.1);
+        rgba(255,255,255,.055);
 }
 
 .sidebar-button.primary {
     border-color:
-        rgba(240,217,154,.38);
+        rgba(178,138,74,.34);
 
     background:
         linear-gradient(
             135deg,
-            #705273,
-            #59425e
+            #672d3a,
+            #4b2631
         );
 
     color:
-        #fff2d1;
+        #f2dfbd;
 
     box-shadow:
-        0 5px 16px
-        rgba(24,17,26,.15);
+        0 8px 18px
+        rgba(0,0,0,.2);
 }
 
 
@@ -537,11 +516,11 @@ textarea {
 
     padding:
         18px 4px
-        3px;
+        2px;
 
     border-top:
         1px solid
-        rgba(255,255,255,.1);
+        rgba(209,179,116,.1);
 }
 
 .sidebar-footer p {
@@ -549,7 +528,7 @@ textarea {
         10px 0 0;
 
     color:
-        #9cae94;
+        #84766d;
 
     font-family:
         Georgia,
@@ -575,25 +554,28 @@ textarea {
 .tiny-book-stack span {
     height: 5px;
 
-    border-radius: 3px;
+    border-radius: 2px;
 }
 
 .tiny-book-stack span:nth-child(1) {
     width: 42px;
 
-    background: #9b7184;
+    background:
+        #7b3a47;
 }
 
 .tiny-book-stack span:nth-child(2) {
     width: 50px;
 
-    background: #819368;
+    background:
+        #50604f;
 }
 
 .tiny-book-stack span:nth-child(3) {
     width: 38px;
 
-    background: #c8a55e;
+    background:
+        #a47d43;
 }
 
 
@@ -634,10 +616,10 @@ textarea {
 
     border-bottom:
         1px solid
-        rgba(104,83,67,.14);
+        rgba(209,179,116,.12);
 
     background:
-        rgba(251,242,223,.8);
+        rgba(28,22,23,.82);
 
     backdrop-filter:
         blur(16px);
@@ -645,13 +627,13 @@ textarea {
 
 .topbar-copy {
     color:
-        var(--muted);
+        #8c7e74;
 
     font-size:
         .5rem;
 
     letter-spacing:
-        .16em;
+        .15em;
 }
 
 .topbar-actions {
@@ -668,23 +650,22 @@ textarea {
     padding:
         0 13px;
 
-    border:
-        none;
+    border: none;
 
-    background:
-        transparent;
+    background: transparent;
 
     cursor: pointer;
 
     color:
-        var(--forest);
+        #a79586;
 
-    font-size: .6rem;
+    font-size:
+        .6rem;
 }
 
 .text-button:hover {
     color:
-        var(--plum);
+        var(--brass-light);
 }
 
 .top-add-book {
@@ -695,20 +676,19 @@ textarea {
 
     border:
         1px solid
-        rgba(75,53,80,.25);
+        rgba(178,138,74,.3);
 
-    border-radius:
-        12px;
+    border-radius: 10px;
 
     background:
         linear-gradient(
             135deg,
-            var(--plum),
-            #735176
+            #6d2a39,
+            #4d2330
         );
 
     color:
-        #fff5dd;
+        #f1dfbf;
 
     cursor: pointer;
 
@@ -716,24 +696,17 @@ textarea {
         Georgia,
         serif;
 
-    font-size: .62rem;
+    font-size:
+        .63rem;
 
     box-shadow:
-        0 6px 18px
-        rgba(74,49,78,.14);
-
-    transition:
-        transform .16s ease;
-}
-
-.top-add-book:hover {
-    transform:
-        translateY(-2px);
+        0 8px 20px
+        rgba(0,0,0,.2);
 }
 
 
 /* =========================================================
-   GENERIC BUTTONS
+   BUTTONS
    ========================================================= */
 
 .soft-button,
@@ -741,7 +714,7 @@ textarea {
 .primary-button {
     min-height: 44px;
 
-    border-radius: 11px;
+    border-radius: 10px;
 
     cursor: pointer;
 
@@ -754,41 +727,41 @@ textarea {
 
     border:
         1px solid
-        var(--line);
+        rgba(209,179,116,.16);
 
     background:
-        var(--paper);
+        #2a2222;
 
     color:
-        var(--forest);
+        #cabbac;
 }
 
 .soft-button:hover {
     background:
-        var(--sage-light);
+        #34292a;
 }
 
 .soft-button.accent {
     border-color:
-        rgba(91,54,94,.25);
+        rgba(178,138,74,.3);
 
     background:
-        var(--plum-soft);
+        var(--wine);
 
     color:
-        var(--plum-dark);
+        #ead9b7;
 }
 
 .secondary-button {
     border:
         1px solid
-        var(--line);
+        rgba(209,179,116,.16);
 
     background:
-        var(--paper);
+        rgba(255,255,255,.03);
 
     color:
-        var(--muted);
+        #a99a8e;
 }
 
 .primary-button {
@@ -806,17 +779,17 @@ textarea {
 
     border:
         1px solid
-        rgba(91,54,94,.3);
+        rgba(178,138,74,.32);
 
     background:
         linear-gradient(
             135deg,
-            #ccb9d2,
-            #dccbe0
+            #6a394a,
+            #4a2b36
         );
 
     color:
-        var(--plum-dark);
+        #f0ddbd;
 }
 
 
@@ -832,7 +805,7 @@ textarea {
     z-index: 1500;
 
     background:
-        rgba(30,37,31,.48);
+        rgba(6,5,5,.72);
 
     backdrop-filter:
         blur(6px);
@@ -868,18 +841,18 @@ textarea {
 
     border-left:
         1px solid
-        var(--line);
+        rgba(209,179,116,.16);
 
     background:
         linear-gradient(
             180deg,
-            #fbf3e3,
-            #f3e6d0
+            #261e1f,
+            #1c1718
         );
 
     box-shadow:
-        -20px 0 55px
-        rgba(45,36,33,.19);
+        -22px 0 60px
+        rgba(0,0,0,.48);
 
     transform:
         translateX(100%);
@@ -919,15 +892,15 @@ body.modal-open {
 
     border-bottom:
         1px solid
-        var(--line);
+        rgba(209,179,116,.13);
 
     background:
-        rgba(255,250,240,.85);
+        rgba(35,27,29,.92);
 }
 
 .drawer-header > div > span {
     color:
-        var(--forest);
+        var(--brass);
 
     font-size:
         .47rem;
@@ -941,7 +914,7 @@ body.modal-open {
         7px 0 0;
 
     color:
-        var(--plum-dark);
+        #eadbc4;
 
     font-size:
         1.5rem;
@@ -956,18 +929,17 @@ body.modal-open {
 
     border:
         1px solid
-        var(--line);
+        rgba(209,179,116,.17);
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
-        var(--paper);
+        rgba(255,255,255,.03);
 
     cursor: pointer;
 
     color:
-        var(--forest);
+        #b6a695;
 
     font-size:
         1.25rem;
@@ -1007,7 +979,7 @@ body.modal-open {
 .form-group label,
 .decoration-fieldset legend {
     color:
-        var(--forest-dark);
+        #b8a68e;
 
     font-size:
         .52rem;
@@ -1028,18 +1000,17 @@ body.modal-open {
 
     border:
         1px solid
-        rgba(95,76,63,.2);
+        rgba(209,179,116,.14);
 
-    border-radius:
-        10px;
+    border-radius: 9px;
 
     outline: none;
 
     background:
-        rgba(255,250,240,.88);
+        rgba(10,8,8,.28);
 
     color:
-        var(--ink);
+        #eee1cf;
 }
 
 .form-group input,
@@ -1072,16 +1043,16 @@ body.modal-open {
 .form-group select:focus,
 .form-group textarea:focus {
     border-color:
-        var(--plum);
+        var(--brass);
 
     box-shadow:
         0 0 0 3px
-        rgba(91,54,94,.1);
+        rgba(178,138,74,.08);
 }
 
 .form-hint {
     color:
-        var(--muted-light);
+        #7f7268;
 
     font-family:
         Georgia,
@@ -1090,10 +1061,7 @@ body.modal-open {
     font-size:
         .55rem;
 
-    font-style:
-        italic;
-
-    line-height: 1.4;
+    font-style: italic;
 }
 
 .form-section-title {
@@ -1104,10 +1072,10 @@ body.modal-open {
 
     border-bottom:
         1px solid
-        var(--line);
+        rgba(209,179,116,.12);
 
     color:
-        var(--plum);
+        var(--brass-light);
 
     font-family:
         Georgia,
@@ -1146,7 +1114,6 @@ body.modal-open {
     min-height: 43px;
 
     display: flex;
-
     align-items: center;
 
     gap: 7px;
@@ -1156,27 +1123,27 @@ body.modal-open {
 
     border:
         1px solid
-        var(--line);
+        rgba(209,179,116,.12);
 
-    border-radius:
-        10px;
+    border-radius: 9px;
 
     background:
-        rgba(255,250,240,.75);
+        rgba(255,255,255,.025);
 
     cursor: pointer;
 
     color:
-        var(--ink-soft);
+        #b9ab9e;
 
-    font-size: .57rem;
+    font-size:
+        .57rem;
 
     text-transform: none;
 }
 
 .decoration-options label:hover {
     background:
-        var(--sage-light);
+        rgba(255,255,255,.045);
 }
 
 .decoration-options input {
@@ -1205,15 +1172,8 @@ body.modal-open {
    ========================================================= */
 
 @media (max-width: 850px) {
-
     :root {
-        --sidebar-width:
-            180px;
-    }
-
-    .sidebar {
-        padding:
-            18px 12px;
+        --sidebar-width: 180px;
     }
 
     .brand span,
@@ -1222,12 +1182,9 @@ body.modal-open {
     }
 }
 
-
 @media (max-width: 650px) {
-
     :root {
-        --sidebar-width:
-            0px;
+        --sidebar-width: 0px;
     }
 
     .sidebar {
@@ -1238,37 +1195,17 @@ body.modal-open {
         margin-left: 0;
     }
 
-    .topbar {
-        padding:
-            0 17px;
-    }
-
-    .topbar-copy {
-        display: none;
-    }
-
     .drawer-form {
-        grid-template-columns:
-            1fr;
-
-        padding:
-            22px 17px;
+        grid-template-columns: 1fr;
     }
 
     .form-group.full,
     .form-section-title.full,
     .drawer-actions.full {
-        grid-column:
-            auto;
+        grid-column: auto;
     }
 
     .drawer-actions {
-        grid-template-columns:
-            1fr;
-    }
-
-    .decoration-options {
-        grid-template-columns:
-            1fr 1fr;
+        grid-template-columns: 1fr;
     }
 }
