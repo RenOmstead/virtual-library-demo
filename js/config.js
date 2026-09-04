@@ -2,17 +2,23 @@
    SHELFMARK CONFIG
    ========================================================= */
 
-
 window.SHELFMARK_CONFIG = {
 
-    productName:
-        "Shelfmark",
+    productName: "Shelfmark",
 
-    tagline:
-        "my little library",
+    tagline: "my little library",
 
-    environment:
-        "Portfolio Demo"
+    defaultTheme: "haunted",
+
+    storageKeys: {
+
+        shelves: "shelfmark_shelves",
+
+        books: "shelfmark_books",
+
+        settings: "shelfmark_settings"
+
+    }
 
 };
 
@@ -21,13 +27,10 @@ window.SHELFMARK_CONFIG = {
    EMPTY STARTER DATA
    ========================================================= */
 
-
 window.SHELFMARK_DATA = {
 
-    shelves:
-        [],
+    shelves: [],
 
-    books:
-        []
+    books: []
 
 };
