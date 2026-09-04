@@ -5404,3 +5404,1482 @@ function escapeHTML(
     );
 
 }
+/* =========================================================
+   SHELFMARK
+   IMMERSIVE THEME EXPANSION
+   ADD TO BOTTOM OF library.css
+   ========================================================= */
+
+
+/* =========================================================
+   MORE ILLUSTRATED / STORYBOOK FEEL
+   ========================================================= */
+
+.library-page {
+    isolation: isolate;
+}
+
+.library-page::before {
+    z-index: -2;
+}
+
+.library-page::after {
+    z-index: -1;
+}
+
+
+/* =========================================================
+   THEME SCENE BACKGROUNDS
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   HAUNTED LIBRARY
+   --------------------------------------------------------- */
+
+body.theme-haunted .library-page {
+    background:
+        radial-gradient(
+            circle at 83% 12%,
+            rgba(214, 160, 91, .10),
+            transparent 18%
+        ),
+        radial-gradient(
+            circle at 12% 45%,
+            rgba(92, 39, 53, .18),
+            transparent 24%
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent 0,
+            transparent 68px,
+            rgba(255,255,255,.012) 69px,
+            transparent 70px
+        );
+}
+
+body.theme-haunted .library-page::after {
+    content: "☾       ✦       ✧";
+
+    top: 72px;
+    right: 6%;
+
+    color: #b28a4a;
+
+    opacity: .26;
+
+    font-size: 1rem;
+
+    letter-spacing: .65rem;
+}
+
+
+/* ---------------------------------------------------------
+   AUTUMN BOOKSHOP
+   --------------------------------------------------------- */
+
+body.theme-autumn .library-page {
+    background:
+        radial-gradient(
+            circle at 76% 14%,
+            rgba(241, 159, 80, .16),
+            transparent 18%
+        ),
+        radial-gradient(
+            circle at 15% 40%,
+            rgba(112, 126, 82, .12),
+            transparent 23%
+        ),
+        repeating-linear-gradient(
+            20deg,
+            transparent 0,
+            transparent 74px,
+            rgba(255, 222, 181, .018) 75px,
+            transparent 76px
+        );
+}
+
+body.theme-autumn .library-page::after {
+    content: "❦   ✦   ❧";
+
+    color: #e3a060;
+
+    opacity: .35;
+}
+
+
+/* ---------------------------------------------------------
+   ENCHANTED FOREST
+   --------------------------------------------------------- */
+
+body.theme-forest .library-page {
+    background:
+        radial-gradient(
+            circle at 80% 10%,
+            rgba(209, 218, 151, .09),
+            transparent 16%
+        ),
+        radial-gradient(
+            circle at 20% 55%,
+            rgba(91, 126, 85, .18),
+            transparent 25%
+        ),
+        repeating-radial-gradient(
+            circle at 20% 40%,
+            rgba(255,255,255,.012) 0 1px,
+            transparent 1px 34px
+        );
+}
+
+body.theme-forest .library-page::after {
+    content: "✦   ❧   ☾";
+
+    color: #c8d79a;
+
+    opacity: .34;
+}
+
+
+/* ---------------------------------------------------------
+   RETRO HORROR
+   --------------------------------------------------------- */
+
+body.theme-retro .library-page {
+    background:
+        linear-gradient(
+            rgba(140, 165, 59, .025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(140, 165, 59, .025) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        34px 34px;
+}
+
+body.theme-retro .library-page::after {
+    content: "● REC";
+
+    color: #a9c24d;
+
+    opacity: .38;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: .64rem;
+
+    letter-spacing: .08em;
+}
+
+
+/* ---------------------------------------------------------
+   PASTEL GHOSTS
+   --------------------------------------------------------- */
+
+body.theme-ghosts .library-page {
+    background:
+        radial-gradient(
+            circle at 86% 18%,
+            rgba(255, 229, 207, .16),
+            transparent 20%
+        ),
+        radial-gradient(
+            circle at 15% 48%,
+            rgba(98, 123, 93, .14),
+            transparent 20%
+        ),
+        repeating-linear-gradient(
+            -20deg,
+            transparent 0,
+            transparent 68px,
+            rgba(255,255,255,.025) 69px,
+            transparent 70px
+        );
+}
+
+body.theme-ghosts .library-page::after {
+    content: "✦   ♡   ✧";
+
+    color: #ffe0d2;
+
+    opacity: .42;
+}
+
+
+/* =========================================================
+   MORE STYLIZED SHELF CABINET
+   ========================================================= */
+
+.shelf-cabinet {
+    overflow: visible;
+
+    border-width: 3px;
+
+    border-style: solid;
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--wood-dark) 80%,
+            black
+        );
+
+    outline:
+        1px solid
+        rgba(255,255,255,.035);
+
+    outline-offset: -10px;
+}
+
+
+/* thick illustrated wooden edge */
+
+.shelf-cabinet::before {
+    opacity: .28;
+
+    background:
+        repeating-linear-gradient(
+            5deg,
+            transparent 0 18px,
+            rgba(0,0,0,.18) 19px,
+            transparent 20px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.015) 0 1px,
+            transparent 1px 44px
+        );
+}
+
+
+/* =========================================================
+   THEME-SPECIFIC SHELF BACKGROUNDS
+   ========================================================= */
+
+body.theme-haunted .shelf-back {
+    background:
+        radial-gradient(
+            circle at 70% 28%,
+            rgba(221, 159, 87, .08),
+            transparent 25%
+        ),
+        linear-gradient(
+            180deg,
+            #2b2022,
+            #181314
+        );
+}
+
+body.theme-autumn .shelf-back {
+    background:
+        radial-gradient(
+            circle at 75% 30%,
+            rgba(247, 162, 87, .11),
+            transparent 28%
+        ),
+        linear-gradient(
+            180deg,
+            #6c4936,
+            #4a3027
+        );
+}
+
+body.theme-forest .shelf-back {
+    background:
+        radial-gradient(
+            circle at 74% 22%,
+            rgba(207, 220, 157, .08),
+            transparent 24%
+        ),
+        linear-gradient(
+            180deg,
+            #2c4032,
+            #19261e
+        );
+}
+
+body.theme-retro .shelf-back {
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(145, 169, 65, .025) 0 2px,
+            transparent 2px 5px
+        ),
+        #171812;
+}
+
+body.theme-ghosts .shelf-back {
+    background:
+        radial-gradient(
+            circle at 75% 25%,
+            rgba(255, 229, 214, .12),
+            transparent 25%
+        ),
+        linear-gradient(
+            180deg,
+            #925f50,
+            #70473d
+        );
+}
+
+
+/* =========================================================
+   LITTLE AUTOMATIC THEME DETAILS
+   These make each shelf feel like a scene even before
+   the user adds decorations.
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   HAUNTED - bats
+   --------------------------------------------------------- */
+
+body.theme-haunted .shelf-cabinet::after {
+    content: "⌁      ⌁";
+
+    position: absolute;
+
+    top: 20px;
+    right: 45px;
+
+    height: auto;
+
+    pointer-events: none;
+
+    background: none;
+
+    color: #120e0f;
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size: 1.3rem;
+
+    letter-spacing: .9rem;
+
+    opacity: .7;
+
+    transform:
+        rotate(-7deg);
+}
+
+
+/* ---------------------------------------------------------
+   AUTUMN - falling leaves
+   --------------------------------------------------------- */
+
+body.theme-autumn .shelf-cabinet::after {
+    content: "❧       ❦";
+
+    position: absolute;
+
+    top: 18px;
+    right: 38px;
+
+    height: auto;
+
+    background: none;
+
+    color: #c87941;
+
+    opacity: .55;
+
+    font-size: 1rem;
+
+    transform:
+        rotate(10deg);
+}
+
+
+/* ---------------------------------------------------------
+   FOREST - hanging vines
+   --------------------------------------------------------- */
+
+body.theme-forest .shelf-cabinet::after {
+    content: "❧\A ❧\A   ❧";
+
+    white-space: pre;
+
+    position: absolute;
+
+    top: 2px;
+    right: 22px;
+
+    height: auto;
+
+    background: none;
+
+    color: #6f8b65;
+
+    opacity: .7;
+
+    font-size: 1rem;
+
+    line-height: 1.1;
+}
+
+
+/* ---------------------------------------------------------
+   RETRO - scan line
+   --------------------------------------------------------- */
+
+body.theme-retro .shelf-cabinet::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    height: auto;
+
+    pointer-events: none;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(151, 177, 64, .025) 0 1px,
+            transparent 1px 4px
+        );
+
+    opacity: .8;
+}
+
+
+/* ---------------------------------------------------------
+   GHOSTS - tiny spectral marks
+   --------------------------------------------------------- */
+
+body.theme-ghosts .shelf-cabinet::after {
+    content: "✧      ·      ✦";
+
+    position: absolute;
+
+    top: 18px;
+    right: 30px;
+
+    height: auto;
+
+    background: none;
+
+    color: #ffe0d5;
+
+    opacity: .45;
+
+    font-size: .8rem;
+}
+
+
+/* =========================================================
+   FREE-PLACEMENT DECORATION SYSTEM
+   JS WILL EVENTUALLY SET:
+   --decor-x
+   --decor-y
+   --decor-scale
+   --decor-rotate
+   ========================================================= */
+
+.shelf-decoration.free-position {
+    position: absolute;
+
+    left:
+        var(--decor-x, 50%);
+
+    top:
+        var(--decor-y, 50%);
+
+    z-index: 20;
+
+    margin: 0;
+
+    transform:
+        translate(-50%, -50%)
+        rotate(
+            var(--decor-rotate, 0deg)
+        )
+        scale(
+            var(--decor-scale, 1)
+        );
+
+    cursor: grab;
+
+    user-select: none;
+
+    transition:
+        filter .16s ease,
+        transform .16s ease;
+}
+
+.shelf-decoration.free-position:hover {
+    filter:
+        brightness(1.12)
+        drop-shadow(
+            0 5px 8px
+            rgba(0,0,0,.35)
+        );
+}
+
+.shelf-decoration.free-position:active {
+    cursor: grabbing;
+}
+
+
+/* =========================================================
+   DECORATION BASE
+   ========================================================= */
+
+.shelf-decoration {
+    position: relative;
+
+    flex:
+        0 0 auto;
+
+    align-self:
+        flex-end;
+
+    pointer-events: auto;
+}
+
+
+/* =========================================================
+   CAT
+   ========================================================= */
+
+.decor-cat {
+    width: 56px;
+    height: 72px;
+}
+
+.decor-cat::before {
+    content: "";
+
+    position: absolute;
+
+    left: 12px;
+    bottom: 0;
+
+    width: 34px;
+    height: 44px;
+
+    border-radius:
+        52% 52% 34% 34%;
+
+    background:
+        var(--creature-dark, #1d1717);
+
+    box-shadow:
+        inset 6px 0
+        rgba(255,255,255,.025);
+}
+
+.decor-cat::after {
+    content: "◉   ◉";
+
+    position: absolute;
+
+    top: 15px;
+    left: 9px;
+
+    width: 40px;
+
+    color:
+        var(--creature-eye, #d7b85b);
+
+    font-size: .37rem;
+
+    letter-spacing: .25rem;
+
+    text-align: center;
+
+    clip-path:
+        polygon(
+            0 20%,
+            17% 0,
+            32% 18%,
+            68% 18%,
+            83% 0,
+            100% 20%,
+            93% 100%,
+            7% 100%
+        );
+
+    background:
+        var(--creature-dark, #1d1717);
+
+    padding:
+        13px 3px 16px;
+
+    border-radius:
+        45% 45% 50% 50%;
+}
+
+
+/* =========================================================
+   GHOST
+   ========================================================= */
+
+.decor-ghost {
+    width: 55px;
+    height: 72px;
+
+    filter:
+        drop-shadow(
+            0 6px 9px
+            rgba(0,0,0,.18)
+        );
+}
+
+.decor-ghost::before {
+    content: "";
+
+    position: absolute;
+
+    left: 7px;
+    top: 7px;
+
+    width: 42px;
+    height: 55px;
+
+    border-radius:
+        55% 55% 15% 15%;
+
+    background:
+        var(--ghost-color, #e7ded1);
+
+    clip-path:
+        polygon(
+            0 0,
+            100% 0,
+            100% 82%,
+            83% 100%,
+            66% 83%,
+            50% 100%,
+            33% 83%,
+            16% 100%,
+            0 82%
+        );
+}
+
+.decor-ghost::after {
+    content: "•  •";
+
+    position: absolute;
+
+    top: 25px;
+    left: 16px;
+
+    color: #403433;
+
+    font-size: .75rem;
+
+    letter-spacing: .23rem;
+}
+
+
+/* =========================================================
+   BAT
+   ========================================================= */
+
+.decor-bat {
+    width: 70px;
+    height: 38px;
+}
+
+.decor-bat::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 7px 5px 4px;
+
+    background:
+        var(--creature-dark, #171212);
+
+    clip-path:
+        polygon(
+            0 45%,
+            17% 20%,
+            35% 38%,
+            45% 10%,
+            50% 34%,
+            55% 10%,
+            65% 38%,
+            83% 20%,
+            100% 45%,
+            80% 88%,
+            61% 58%,
+            50% 92%,
+            39% 58%,
+            20% 88%
+        );
+}
+
+
+/* =========================================================
+   LITTLE GOBLIN
+   ========================================================= */
+
+.decor-goblin {
+    width: 62px;
+    height: 72px;
+}
+
+.decor-goblin::before {
+    content: "";
+
+    position: absolute;
+
+    left: 10px;
+    top: 14px;
+
+    width: 42px;
+    height: 47px;
+
+    background:
+        var(--goblin-color, #65744e);
+
+    clip-path:
+        polygon(
+            0 28%,
+            23% 18%,
+            30% 0,
+            43% 17%,
+            57% 17%,
+            70% 0,
+            77% 18%,
+            100% 28%,
+            87% 82%,
+            50% 100%,
+            13% 82%
+        );
+
+    border-radius:
+        45%;
+}
+
+.decor-goblin::after {
+    content: "•   •";
+
+    position: absolute;
+
+    top: 29px;
+    left: 19px;
+
+    color:
+        #d8c776;
+
+    font-size: .58rem;
+
+    letter-spacing: .17rem;
+}
+
+
+/* =========================================================
+   MOSS
+   ========================================================= */
+
+.decor-moss {
+    width: 82px;
+    height: 30px;
+}
+
+.decor-moss::before {
+    content: "";
+
+    position: absolute;
+
+    inset: auto 0 0;
+
+    height: 23px;
+
+    border-radius:
+        60% 45% 50% 45%;
+
+    background:
+        radial-gradient(
+            circle at 15% 45%,
+            #71815d 0 7px,
+            transparent 8px
+        ),
+        radial-gradient(
+            circle at 32% 35%,
+            #556e4e 0 10px,
+            transparent 11px
+        ),
+        radial-gradient(
+            circle at 52% 48%,
+            #7b8c64 0 9px,
+            transparent 10px
+        ),
+        radial-gradient(
+            circle at 73% 40%,
+            #4f6748 0 11px,
+            transparent 12px
+        ),
+        radial-gradient(
+            circle at 88% 55%,
+            #75895f 0 8px,
+            transparent 9px
+        );
+}
+
+
+/* =========================================================
+   MUSHROOM
+   ========================================================= */
+
+.decor-mushroom {
+    width: 42px;
+    height: 62px;
+}
+
+.decor-mushroom::before {
+    content: "";
+
+    position: absolute;
+
+    bottom: 0;
+    left: 16px;
+
+    width: 11px;
+    height: 37px;
+
+    border-radius:
+        7px 7px 4px 4px;
+
+    background:
+        #cdbb91;
+}
+
+.decor-mushroom::after {
+    content: "";
+
+    position: absolute;
+
+    top: 3px;
+    left: 3px;
+
+    width: 37px;
+    height: 25px;
+
+    border-radius:
+        50% 50% 38% 38%;
+
+    background:
+        radial-gradient(
+            circle at 28% 38%,
+            #eee0c0 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 65% 28%,
+            #eee0c0 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 75% 65%,
+            #eee0c0 0 2px,
+            transparent 3px
+        ),
+        #984837;
+}
+
+
+/* =========================================================
+   POTION BOTTLE
+   ========================================================= */
+
+.decor-potion {
+    width: 38px;
+    height: 66px;
+}
+
+.decor-potion::before {
+    content: "";
+
+    position: absolute;
+
+    left: 7px;
+    bottom: 0;
+
+    width: 25px;
+    height: 43px;
+
+    border:
+        2px solid
+        rgba(255,255,255,.26);
+
+    border-radius:
+        5px 5px 11px 11px;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent 0 28%,
+            var(--potion-color, #694c73) 29% 100%
+        );
+
+    box-shadow:
+        inset 4px 0 5px
+        rgba(255,255,255,.08);
+}
+
+.decor-potion::after {
+    content: "";
+
+    position: absolute;
+
+    top: 6px;
+    left: 14px;
+
+    width: 11px;
+    height: 20px;
+
+    border-radius:
+        3px 3px 0 0;
+
+    background:
+        #76533f;
+}
+
+
+/* =========================================================
+   CRYSTAL
+   ========================================================= */
+
+.decor-crystal {
+    width: 48px;
+    height: 60px;
+}
+
+.decor-crystal::before {
+    content: "";
+
+    position: absolute;
+
+    left: 8px;
+    bottom: 0;
+
+    width: 32px;
+    height: 52px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #b79ac4,
+            #725b83
+        );
+
+    clip-path:
+        polygon(
+            50% 0,
+            85% 26%,
+            78% 100%,
+            20% 100%,
+            14% 27%
+        );
+
+    opacity: .84;
+
+    box-shadow:
+        0 0 16px
+        rgba(182, 151, 201, .22);
+}
+
+
+/* =========================================================
+   RAVEN
+   ========================================================= */
+
+.decor-raven {
+    width: 62px;
+    height: 74px;
+}
+
+.decor-raven::before {
+    content: "";
+
+    position: absolute;
+
+    left: 10px;
+    bottom: 0;
+
+    width: 43px;
+    height: 57px;
+
+    background:
+        #171719;
+
+    clip-path:
+        polygon(
+            18% 20%,
+            45% 10%,
+            61% 0,
+            56% 22%,
+            94% 34%,
+            58% 45%,
+            68% 100%,
+            39% 78%,
+            20% 100%,
+            27% 48%,
+            0 34%
+        );
+}
+
+.decor-raven::after {
+    content: "";
+
+    position: absolute;
+
+    top: 25px;
+    left: 31px;
+
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+
+    background:
+        #d2b861;
+}
+
+
+/* =========================================================
+   TINY PUMPKIN
+   ========================================================= */
+
+.decor-pumpkin {
+    width: 54px;
+    height: 45px;
+}
+
+.decor-pumpkin::before {
+    content: "";
+
+    position: absolute;
+
+    left: 5px;
+    bottom: 0;
+
+    width: 45px;
+    height: 35px;
+
+    border-radius: 48%;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 0 25%,
+            rgba(105,48,28,.22) 26% 30%,
+            transparent 31%
+        ),
+        #c96d36;
+}
+
+.decor-pumpkin::after {
+    content: "";
+
+    position: absolute;
+
+    left: 26px;
+    top: 0;
+
+    width: 7px;
+    height: 13px;
+
+    border-radius: 4px;
+
+    background:
+        #526044;
+}
+
+
+/* =========================================================
+   THEME-SPECIFIC CREATURE COLORS
+   ========================================================= */
+
+body.theme-haunted {
+    --creature-dark: #171313;
+    --creature-eye: #c4a65d;
+    --ghost-color: #cfc8b8;
+    --goblin-color: #56604a;
+    --potion-color: #563b63;
+}
+
+body.theme-autumn {
+    --creature-dark: #463128;
+    --creature-eye: #e4ac58;
+    --ghost-color: #f0d8bd;
+    --goblin-color: #788258;
+    --potion-color: #a85d3d;
+}
+
+body.theme-forest {
+    --creature-dark: #172219;
+    --creature-eye: #c7d488;
+    --ghost-color: #d5ddc2;
+    --goblin-color: #607556;
+    --potion-color: #617653;
+}
+
+body.theme-retro {
+    --creature-dark: #171810;
+    --creature-eye: #a8bd44;
+    --ghost-color: #c7c79e;
+    --goblin-color: #758838;
+    --potion-color: #bd5b36;
+}
+
+body.theme-ghosts {
+    --creature-dark: #6c5148;
+    --creature-eye: #ffd7b6;
+    --ghost-color: #ffe5dc;
+    --goblin-color: #7b8d6c;
+    --potion-color: #aa7085;
+}
+
+
+/* =========================================================
+   THEME-BASED DECORATION STYLING
+   ========================================================= */
+
+
+/* Haunted */
+
+body.theme-haunted .decor-ghost {
+    filter:
+        opacity(.78)
+        drop-shadow(
+            0 0 8px
+            rgba(218, 210, 192, .18)
+        );
+}
+
+body.theme-haunted .decor-bat {
+    transform:
+        rotate(-8deg);
+}
+
+body.theme-haunted .decor-cat {
+    filter:
+        drop-shadow(
+            0 6px 8px
+            rgba(0,0,0,.4)
+        );
+}
+
+
+/* Autumn */
+
+body.theme-autumn .decor-pumpkin {
+    filter:
+        drop-shadow(
+            0 6px 7px
+            rgba(67,34,19,.25)
+        );
+}
+
+body.theme-autumn .decor-cat {
+    --creature-dark: #6b4834;
+}
+
+
+/* Forest */
+
+body.theme-forest .decor-moss {
+    filter:
+        saturate(1.15);
+}
+
+body.theme-forest .decor-mushroom {
+    filter:
+        drop-shadow(
+            0 4px 6px
+            rgba(0,0,0,.2)
+        );
+}
+
+body.theme-forest .decor-goblin {
+    transform:
+        rotate(2deg);
+}
+
+
+/* Retro */
+
+body.theme-retro .decor-ghost,
+body.theme-retro .decor-cat,
+body.theme-retro .decor-bat {
+    filter:
+        contrast(1.15)
+        saturate(.7);
+}
+
+
+/* Ghosts */
+
+body.theme-ghosts .decor-ghost {
+    filter:
+        drop-shadow(
+            0 5px 8px
+            rgba(76,54,48,.14)
+        );
+}
+
+body.theme-ghosts .decor-cat {
+    --creature-dark: #73574e;
+}
+
+
+/* =========================================================
+   LITTLE MOVEMENTS
+   ========================================================= */
+
+@keyframes shelfFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-3px);
+    }
+
+}
+
+
+@keyframes ghostFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            rotate(-2deg);
+    }
+
+    50% {
+        transform:
+            translateY(-5px)
+            rotate(2deg);
+    }
+
+}
+
+
+@keyframes batDrift {
+
+    0%,
+    100% {
+        transform:
+            translateX(0)
+            rotate(-7deg);
+    }
+
+    50% {
+        transform:
+            translateX(5px)
+            rotate(4deg);
+    }
+
+}
+
+
+@keyframes candleFlicker {
+
+    0%,
+    100% {
+        filter:
+            brightness(1);
+    }
+
+    50% {
+        filter:
+            brightness(1.16);
+    }
+
+}
+
+
+body:not(.reduce-motion)
+.decor-ghost {
+    animation:
+        ghostFloat 3.8s
+        ease-in-out
+        infinite;
+}
+
+body:not(.reduce-motion)
+.decor-bat {
+    animation:
+        batDrift 4.3s
+        ease-in-out
+        infinite;
+}
+
+body:not(.reduce-motion)
+.decor-candle::after {
+    animation:
+        candleFlicker 1.25s
+        ease-in-out
+        infinite;
+}
+
+
+/* =========================================================
+   MORE ILLUSTRATED BOOKS
+   ========================================================= */
+
+.book-spine {
+    border-width: 2px;
+
+    box-shadow:
+        inset -8px 0 0
+        rgba(0,0,0,.08),
+
+        inset 3px 0 0
+        rgba(255,255,255,.08),
+
+        4px 5px 0
+        rgba(0,0,0,.15);
+}
+
+
+.book-spine::before {
+    content: "";
+
+    position: absolute;
+
+    left: 3px;
+    right: 3px;
+    top: 8px;
+
+    height: 1px;
+
+    background:
+        rgba(255,255,255,.16);
+
+    box-shadow:
+        0 3px 0
+        rgba(0,0,0,.08);
+}
+
+
+.book-style-gothic .book-spine {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.20),
+            transparent 16%,
+            transparent 84%,
+            rgba(0,0,0,.16)
+        ),
+        var(--book-color);
+}
+
+
+.book-style-botanical .book-spine {
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(255,255,255,.09) 0 2px,
+            transparent 3px
+        ),
+        var(--book-color);
+}
+
+
+.book-style-celestial .book-spine {
+    background:
+        radial-gradient(
+            circle at 35% 12%,
+            rgba(255,255,255,.25) 0 1px,
+            transparent 2px
+        ),
+        radial-gradient(
+            circle at 70% 28%,
+            rgba(255,255,255,.18) 0 1px,
+            transparent 2px
+        ),
+        var(--book-color);
+}
+
+
+/* =========================================================
+   SHELF MOODS NOW HAVE MORE PERSONALITY
+   ========================================================= */
+
+.library-shelf[data-mood="gothic"]
+.shelf-cabinet {
+    outline:
+        3px double
+        color-mix(
+            in srgb,
+            var(--accent) 25%,
+            transparent
+        );
+
+    outline-offset: -12px;
+}
+
+
+.library-shelf[data-mood="botanical"]
+.shelf-back {
+    background-image:
+        radial-gradient(
+            circle at 10% 90%,
+            rgba(87, 114, 78, .18),
+            transparent 28%
+        );
+}
+
+
+.library-shelf[data-mood="celestial"]
+.shelf-back {
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(255,255,255,.10) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        31px 31px;
+}
+
+
+.library-shelf[data-mood="cottage"]
+.shelf-back {
+    background-image:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.018) 0 1px,
+            transparent 1px 30px
+        );
+}
+
+
+/* =========================================================
+   IMPORTANT:
+   Once we add drag + drop JS, decorations using this class
+   can literally be saved anywhere on a shelf.
+
+   Example generated HTML later:
+
+   <div
+       class="shelf-decoration decor-cat free-position"
+       style="
+           --decor-x:72%;
+           --decor-y:68%;
+           --decor-scale:.9;
+           --decor-rotate:4deg;
+       ">
+   </div>
+   ========================================================= */
