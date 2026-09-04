@@ -1,6 +1,11 @@
 /* =========================================================
    SHELFMARK
-   GLOBAL THEME SYSTEM
+   GLOBAL.CSS
+   ========================================================= */
+
+
+/* =========================================================
+   ROOT VARIABLES
    ========================================================= */
 
 :root {
@@ -49,7 +54,9 @@
    ========================================================= */
 
 
-/* HAUNTED LIBRARY */
+/* ---------------------------------------------------------
+   HAUNTED LIBRARY
+   --------------------------------------------------------- */
 
 body.theme-haunted {
     --bg: #171313;
@@ -79,7 +86,9 @@ body.theme-haunted {
 }
 
 
-/* AUTUMN BOOKSHOP */
+/* ---------------------------------------------------------
+   AUTUMN BOOKSHOP
+   --------------------------------------------------------- */
 
 body.theme-autumn {
     --bg: #3d2924;
@@ -109,7 +118,9 @@ body.theme-autumn {
 }
 
 
-/* ENCHANTED FOREST */
+/* ---------------------------------------------------------
+   ENCHANTED FOREST
+   --------------------------------------------------------- */
 
 body.theme-forest {
     --bg: #17241c;
@@ -139,7 +150,9 @@ body.theme-forest {
 }
 
 
-/* RETRO HORROR */
+/* ---------------------------------------------------------
+   RETRO HORROR
+   --------------------------------------------------------- */
 
 body.theme-retro {
     --bg: #11120f;
@@ -169,7 +182,9 @@ body.theme-retro {
 }
 
 
-/* PASTEL GHOSTS */
+/* ---------------------------------------------------------
+   PASTEL GHOSTS
+   --------------------------------------------------------- */
 
 body.theme-ghosts {
     --bg: #53645c;
@@ -231,7 +246,8 @@ body {
             var(--bg-2)
         );
 
-    color: var(--text);
+    color:
+        var(--text);
 
     font-family:
         "Trebuchet MS",
@@ -250,9 +266,9 @@ body::before {
 
     inset: 0;
 
-    pointer-events: none;
-
     z-index: -1;
+
+    pointer-events: none;
 
     opacity: .14;
 
@@ -287,10 +303,6 @@ img {
     max-width: 100%;
 }
 
-[hidden] {
-    display: none !important;
-}
-
 h1,
 h2,
 h3,
@@ -303,9 +315,13 @@ h4 {
     font-weight: 400;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 
 /* =========================================================
-   APP
+   APP SHELL
    ========================================================= */
 
 .app-shell {
@@ -384,6 +400,7 @@ h4 {
 
 .brand {
     position: relative;
+
     z-index: 2;
 
     padding-bottom: 26px;
@@ -473,6 +490,7 @@ h4 {
 
 .main-nav {
     position: relative;
+
     z-index: 2;
 
     display: flex;
@@ -1133,8 +1151,7 @@ body.modal-open {
     color:
         var(--text);
 
-    font-size:
-        1.5rem;
+    font-size: 1.5rem;
 }
 
 .close-button {
@@ -1770,7 +1787,7 @@ body.modal-open {
 
 
 /* =========================================================
-   SETTING LIST
+   SETTINGS LIST
    ========================================================= */
 
 .setting-list {
@@ -1928,7 +1945,7 @@ body.modal-open {
 
 
 /* =========================================================
-   STANDARD FORMS
+   FORMS
    ========================================================= */
 
 .drawer-form {
@@ -2124,6 +2141,237 @@ body.modal-open {
 
 
 /* =========================================================
+   SPINE DESIGNER PREVIEW
+   ========================================================= */
+
+.spine-preview-group {
+    margin-top: 8px;
+}
+
+.spine-designer-preview {
+    display: grid;
+
+    grid-template-columns:
+        100px 1fr;
+
+    gap: 24px;
+
+    align-items: center;
+
+    padding: 20px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 12px;
+
+    background:
+        rgba(0,0,0,.12);
+}
+
+.spine-preview-book {
+    position: relative;
+
+    width: 72px;
+    height: 190px;
+
+    margin:
+        0 auto;
+
+    overflow: hidden;
+
+    border:
+        2px solid
+        rgba(0,0,0,.36);
+
+    border-radius:
+        5px 5px 2px 2px;
+
+    background:
+        #6c2633;
+
+    color:
+        #eadfca;
+
+    box-shadow:
+        inset -9px 0 12px
+        rgba(0,0,0,.16),
+
+        inset 4px 0 7px
+        rgba(255,255,255,.08),
+
+        6px 8px 14px
+        rgba(0,0,0,.28);
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        height .2s ease,
+        width .2s ease;
+}
+
+.spine-preview-book::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.08),
+            transparent 18%,
+            transparent 82%,
+            rgba(0,0,0,.12)
+        );
+}
+
+.spine-preview-inner {
+    position: absolute;
+
+    inset: 7px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(255,255,255,.2);
+}
+
+.spine-preview-title {
+    max-height:
+        calc(100% - 40px);
+
+    writing-mode:
+        vertical-rl;
+
+    transform:
+        rotate(180deg);
+
+    overflow: hidden;
+
+    color: inherit;
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size: .72rem;
+
+    line-height: 1.1;
+
+    text-align: center;
+}
+
+.spine-preview-ornament {
+    position: absolute;
+
+    bottom: 8px;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    color: inherit;
+
+    font-size: .7rem;
+}
+
+.spine-preview-copy strong {
+    display: block;
+
+    color:
+        var(--text);
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size: .72rem;
+
+    font-weight: 400;
+}
+
+.spine-preview-copy p {
+    max-width: 340px;
+
+    margin:
+        8px 0 0;
+
+    color:
+        var(--muted);
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size: .58rem;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   SPINE PREVIEW FONT OPTIONS
+   ========================================================= */
+
+.spine-font-serif
+.spine-preview-title {
+    font-family:
+        Georgia,
+        serif;
+}
+
+.spine-font-roman
+.spine-preview-title {
+    font-family:
+        "Times New Roman",
+        serif;
+
+    letter-spacing: .08em;
+
+    text-transform: uppercase;
+}
+
+.spine-font-typewriter
+.spine-preview-title {
+    font-family:
+        "Courier New",
+        monospace;
+
+    letter-spacing: .04em;
+}
+
+.spine-font-storybook
+.spine-preview-title {
+    font-family:
+        Georgia,
+        serif;
+
+    font-style: italic;
+}
+
+.spine-font-clean
+.spine-preview-title {
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size: .64rem;
+
+    letter-spacing: .04em;
+}
+
+
+/* =========================================================
    DRAWER ACTIONS
    ========================================================= */
 
@@ -2169,6 +2417,7 @@ body.reduce-motion *::after {
     .density-options {
         grid-template-columns: 1fr;
     }
+
 }
 
 
@@ -2183,6 +2432,7 @@ body.reduce-motion *::after {
     .reading-room-button small {
         display: none;
     }
+
 }
 
 
@@ -2227,12 +2477,23 @@ body.reduce-motion *::after {
         grid-template-columns:
             1fr 1fr;
     }
+
+    .spine-designer-preview {
+        grid-template-columns: 1fr;
+
+        text-align: center;
+    }
+
+    .spine-preview-copy p {
+        margin:
+            8px auto 0;
+    }
+
 }
 
 
 /* =========================================================
    SAFETY
-   KEEP ALL HIDDEN MODALS / DRAWERS HIDDEN
    ========================================================= */
 
 [hidden] {
