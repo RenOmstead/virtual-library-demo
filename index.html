@@ -15,12 +15,12 @@
 
     <link
         rel="stylesheet"
-        href="css/global.css?v=5"
+        href="css/global.css?v=6"
     >
 
     <link
         rel="stylesheet"
-        href="css/library.css?v=5"
+        href="css/library.css?v=6"
     >
 </head>
 
@@ -40,7 +40,7 @@
             <div class="brand">
 
                 <a
-                    href="index.html"
+                    href="#library"
                     class="brand-link"
                 >
 
@@ -84,34 +84,10 @@
                 </a>
 
                 <a
-                    href="#journal"
-                    class="nav-link"
-                >
-                    <span class="nav-mark">03</span>
-                    <span>my journal</span>
-                </a>
-
-                <a
-                    href="#words"
-                    class="nav-link"
-                >
-                    <span class="nav-mark">04</span>
-                    <span>little words</span>
-                </a>
-
-                <a
-                    href="#quotes"
-                    class="nav-link"
-                >
-                    <span class="nav-mark">05</span>
-                    <span>saved quotes</span>
-                </a>
-
-                <a
                     href="#stats"
                     class="nav-link"
                 >
-                    <span class="nav-mark">06</span>
+                    <span class="nav-mark">03</span>
                     <span>reading stats</span>
                 </a>
 
@@ -239,7 +215,7 @@
 
 
             <!-- =================================================
-                 LIBRARY
+                 MY LIBRARY
                  ================================================= -->
 
             <section
@@ -368,6 +344,607 @@
                     </div>
 
                 </button>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 READING NOW
+                 ================================================= -->
+
+            <section
+                id="reading"
+                class="reading-now-section"
+            >
+
+                <div class="reading-now-intro">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            CURRENTLY READING
+                        </span>
+
+                        <h2>
+                            Books still
+                            <em>
+                                open on the table.
+                            </em>
+                        </h2>
+
+                        <p>
+                            The books I am spending time with right now,
+                            how far I've wandered into them, and what
+                            still waits ahead.
+                        </p>
+
+                    </div>
+
+
+                    <div class="reading-now-summary">
+
+                        <div>
+
+                            <strong id="currentReadingCount">
+                                0
+                            </strong>
+
+                            <span>
+                                open books
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong id="averageProgress">
+                                0%
+                            </strong>
+
+                            <span>
+                                average progress
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong id="pagesRemaining">
+                                0
+                            </strong>
+
+                            <span>
+                                pages left
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- FEATURED CURRENT BOOK -->
+
+                <div
+                    id="featuredReadingSection"
+                    class="featured-reading-section"
+                    hidden
+                >
+
+                    <div class="reading-section-heading">
+
+                        <span>
+                            ON THE NIGHTSTAND
+                        </span>
+
+                        <h3>
+                            The book I'm closest to right now
+                        </h3>
+
+                    </div>
+
+
+                    <article class="featured-reading-card">
+
+
+                        <div class="featured-book-stage">
+
+                            <div
+                                id="featuredBookCover"
+                                class="featured-book-cover"
+                            >
+                            </div>
+
+                            <div class="featured-book-shadow">
+                            </div>
+
+                        </div>
+
+
+                        <div class="featured-book-copy">
+
+                            <span
+                                id="featuredBookShelf"
+                                class="featured-book-shelf"
+                            >
+                            </span>
+
+
+                            <h3 id="featuredBookTitle">
+                            </h3>
+
+
+                            <p
+                                id="featuredBookAuthor"
+                                class="featured-book-author"
+                            >
+                            </p>
+
+
+                            <div class="featured-book-details">
+
+                                <div>
+
+                                    <span>
+                                        STARTED
+                                    </span>
+
+                                    <strong id="featuredBookStarted">
+                                        —
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        CURRENT PAGE
+                                    </span>
+
+                                    <strong id="featuredBookPages">
+                                        0 / 0
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        PROGRESS
+                                    </span>
+
+                                    <strong id="featuredBookPercent">
+                                        0%
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="featured-progress">
+
+                                <div class="featured-progress-track">
+
+                                    <div
+                                        id="featuredProgressFill"
+                                        class="featured-progress-fill"
+                                    >
+                                    </div>
+
+                                    <span
+                                        id="featuredProgressBookmark"
+                                        class="featured-progress-bookmark"
+                                    >
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="featured-actions">
+
+                                <button
+                                    id="featuredOpenBook"
+                                    class="reading-primary-button"
+                                    type="button"
+                                >
+                                    open book
+                                </button>
+
+                                <button
+                                    id="featuredEditProgress"
+                                    class="reading-secondary-button"
+                                    type="button"
+                                >
+                                    update progress
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+
+                <!-- ALL CURRENT BOOKS -->
+
+                <div
+                    id="readingListSection"
+                    class="reading-list-section"
+                    hidden
+                >
+
+                    <div class="reading-section-heading-row">
+
+                        <div class="reading-section-heading">
+
+                            <span>
+                                STILL BETWEEN THE PAGES
+                            </span>
+
+                            <h3>
+                                Everything I'm reading
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="readingGrid"
+                        class="reading-grid"
+                    >
+                    </div>
+
+                </div>
+
+
+
+                <!-- EMPTY READING STATE -->
+
+                <div
+                    id="readingEmpty"
+                    class="reading-empty"
+                    hidden
+                >
+
+                    <div class="reading-empty-art">
+
+                        <div class="empty-open-book">
+
+                            <span></span>
+                            <span></span>
+
+                        </div>
+
+                        <div class="empty-reading-moon">
+                            ☾
+                        </div>
+
+                        <div class="empty-reading-star star-one">
+                            ✦
+                        </div>
+
+                        <div class="empty-reading-star star-two">
+                            ✧
+                        </div>
+
+                    </div>
+
+
+                    <span class="eyebrow">
+                        THE NIGHTSTAND IS EMPTY
+                    </span>
+
+                    <h3>
+                        Nothing is being read right now.
+                    </h3>
+
+                    <p>
+                        Mark one of your books as Currently Reading
+                        and it will appear here.
+                    </p>
+
+                    <button
+                        id="readingEmptyAddBook"
+                        class="soft-button accent"
+                        type="button"
+                    >
+                        choose a book
+                    </button>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 READING STATS
+                 ================================================= -->
+
+            <section
+                id="stats"
+                class="reading-stats-section"
+            >
+
+                <div class="stats-intro">
+
+                    <span class="eyebrow">
+                        MY READING LIFE
+                    </span>
+
+                    <h2>
+                        A little record of
+                        <em>
+                            where I've been.
+                        </em>
+                    </h2>
+
+                    <p>
+                        A quiet collection of numbers from the books,
+                        pages, genres, and reading habits building up
+                        inside my library.
+                    </p>
+
+                </div>
+
+
+                <!-- PRIMARY STATS -->
+
+                <div class="stats-grid">
+
+                    <article class="stat-card">
+
+                        <span class="stat-number">
+                            01
+                        </span>
+
+                        <strong id="statsTotalBooks">
+                            0
+                        </strong>
+
+                        <span>
+                            books in my library
+                        </span>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <span class="stat-number">
+                            02
+                        </span>
+
+                        <strong id="statsFinishedBooks">
+                            0
+                        </strong>
+
+                        <span>
+                            books finished
+                        </span>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <span class="stat-number">
+                            03
+                        </span>
+
+                        <strong id="statsPagesRead">
+                            0
+                        </strong>
+
+                        <span>
+                            pages read
+                        </span>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <span class="stat-number">
+                            04
+                        </span>
+
+                        <strong id="statsAverageRating">
+                            —
+                        </strong>
+
+                        <span>
+                            average rating
+                        </span>
+
+                    </article>
+
+                </div>
+
+
+
+                <!-- READING INSIGHTS -->
+
+                <div class="stats-insight-grid">
+
+
+                    <article class="stats-panel">
+
+                        <div class="stats-panel-heading">
+
+                            <span>
+                                FAVORITE CORNER
+                            </span>
+
+                            <h3>
+                                Genres I keep returning to
+                            </h3>
+
+                        </div>
+
+
+                        <div
+                            id="genreStats"
+                            class="genre-stats"
+                        >
+
+                            <div class="stats-empty-line">
+                                Add more books and your favorite genres
+                                will begin appearing here.
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <article class="stats-panel">
+
+                        <div class="stats-panel-heading">
+
+                            <span>
+                                READING RHYTHM
+                            </span>
+
+                            <h3>
+                                Books finished over time
+                            </h3>
+
+                        </div>
+
+
+                        <div
+                            id="monthlyReadingStats"
+                            class="monthly-reading-stats"
+                        >
+
+                            <div class="stats-empty-line">
+                                Finished books will build your reading
+                                history here.
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <article class="stats-panel stats-panel-wide">
+
+                        <div class="stats-panel-heading">
+
+                            <span>
+                                LITTLE DETAILS
+                            </span>
+
+                            <h3>
+                                The shape of my library
+                            </h3>
+
+                        </div>
+
+
+                        <div class="library-detail-stats">
+
+
+                            <div>
+
+                                <span>
+                                    currently reading
+                                </span>
+
+                                <strong id="statsCurrentlyReading">
+                                    0
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    want to read
+                                </span>
+
+                                <strong id="statsWantToRead">
+                                    0
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    paused
+                                </span>
+
+                                <strong id="statsPaused">
+                                    0
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    did not finish
+                                </span>
+
+                                <strong id="statsDNF">
+                                    0
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    reference books
+                                </span>
+
+                                <strong id="statsReference">
+                                    0
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    rereads
+                                </span>
+
+                                <strong id="statsRereads">
+                                    0
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
 
             </section>
 
@@ -658,10 +1235,6 @@
 
 
 
-            <!-- =================================================
-                 AMBIENT DETAILS
-                 ================================================= -->
-
             <div class="theme-settings-section">
 
                 <div class="theme-section-heading">
@@ -797,10 +1370,6 @@
             </div>
 
 
-
-            <!-- =================================================
-                 AMBIENT CLUTTER
-                 ================================================= -->
 
             <div class="theme-settings-section">
 
@@ -1110,11 +1679,6 @@
             </div>
 
 
-
-            <!-- =================================================
-                 PLACED DECORATIONS
-                 ================================================= -->
-
             <fieldset
                 class="form-group full decoration-fieldset"
             >
@@ -1215,9 +1779,6 @@
                 type="hidden"
             >
 
-
-
-            <!-- BOOK -->
 
             <div class="form-section-title full">
                 THE BOOK
@@ -1331,9 +1892,6 @@
 
             </div>
 
-
-
-            <!-- READING -->
 
             <div class="form-section-title full">
                 READING
@@ -1485,9 +2043,6 @@
             </div>
 
 
-
-            <!-- COVER -->
-
             <div class="form-section-title full">
                 COVER
             </div>
@@ -1512,9 +2067,6 @@
 
             </div>
 
-
-
-            <!-- SPINE DESIGN -->
 
             <div class="form-section-title full">
                 DESIGN THE SPINE
@@ -1664,9 +2216,6 @@
             </div>
 
 
-
-            <!-- TYPOGRAPHY -->
-
             <div class="form-section-title full">
                 SPINE TYPOGRAPHY
             </div>
@@ -1749,10 +2298,7 @@
                         Small
                     </option>
 
-                    <option
-                        value="medium"
-                        selected
-                    >
+                    <option value="medium" selected>
                         Medium
                     </option>
 
@@ -1781,10 +2327,7 @@
                         Light
                     </option>
 
-                    <option
-                        value="regular"
-                        selected
-                    >
+                    <option value="regular" selected>
                         Regular
                     </option>
 
@@ -1813,10 +2356,7 @@
                         Tight
                     </option>
 
-                    <option
-                        value="normal"
-                        selected
-                    >
+                    <option value="normal" selected>
                         Normal
                     </option>
 
@@ -1841,10 +2381,7 @@
 
                 <select id="bookSpineCase">
 
-                    <option
-                        value="typed"
-                        selected
-                    >
+                    <option value="typed" selected>
                         As Typed
                     </option>
 
@@ -1869,10 +2406,7 @@
 
                 <select id="bookSpineFontStyle">
 
-                    <option
-                        value="normal"
-                        selected
-                    >
+                    <option value="normal" selected>
                         Normal
                     </option>
 
@@ -1897,10 +2431,7 @@
                         Toward top
                     </option>
 
-                    <option
-                        value="center"
-                        selected
-                    >
+                    <option value="center" selected>
                         Center
                     </option>
 
@@ -1921,10 +2452,7 @@
 
                 <select id="bookSpineTitlePanel">
 
-                    <option
-                        value="none"
-                        selected
-                    >
+                    <option value="none" selected>
                         No panel
                     </option>
 
@@ -1953,9 +2481,6 @@
             </div>
 
 
-
-            <!-- BOOK SIZE -->
-
             <div class="form-section-title full">
                 BOOK SIZE
             </div>
@@ -1973,10 +2498,7 @@
                         Small
                     </option>
 
-                    <option
-                        value="medium"
-                        selected
-                    >
+                    <option value="medium" selected>
                         Medium
                     </option>
 
@@ -2001,10 +2523,7 @@
                         Slim
                     </option>
 
-                    <option
-                        value="medium"
-                        selected
-                    >
+                    <option value="medium" selected>
                         Medium
                     </option>
 
@@ -2016,9 +2535,6 @@
 
             </div>
 
-
-
-            <!-- LIVE PREVIEW -->
 
             <div class="form-group full spine-preview-group">
 
@@ -2143,6 +2659,7 @@
         >
             ×
         </button>
+
 
         <div class="reveal-stars">
             ✦ ✧ ·
@@ -2279,7 +2796,7 @@
 
 
     <!-- =====================================================
-         OPEN BOOK
+         OPEN BOOK / JOURNAL
          ===================================================== -->
 
     <section
@@ -2594,11 +3111,156 @@
 
 
     <!-- =====================================================
+         READING PROGRESS MODAL
+         ===================================================== -->
+
+    <section
+        id="progressModal"
+        class="progress-modal"
+        hidden
+    >
+
+        <div class="progress-card">
+
+            <div class="progress-card-header">
+
+                <div>
+
+                    <span>
+                        READING CHECK-IN
+                    </span>
+
+                    <h3>
+                        Where are you now?
+                    </h3>
+
+                </div>
+
+
+                <button
+                    id="closeProgressModal"
+                    class="close-button"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="progressForm">
+
+                <input
+                    id="progressBookId"
+                    type="hidden"
+                >
+
+
+                <div class="progress-book-copy">
+
+                    <strong id="progressBookTitle">
+                    </strong>
+
+                    <span id="progressBookTotal">
+                    </span>
+
+                </div>
+
+
+                <div class="progress-field">
+
+                    <label for="progressCurrentPage">
+                        Current page
+                    </label>
+
+                    <input
+                        id="progressCurrentPage"
+                        type="number"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+                <div
+                    id="progressPreview"
+                    class="progress-preview"
+                >
+
+                    <div
+                        id="progressPreviewFill"
+                        class="progress-preview-fill"
+                    >
+                    </div>
+
+                </div>
+
+
+                <div class="progress-preview-copy">
+
+                    <span id="progressPreviewPercent">
+                        0%
+                    </span>
+
+                </div>
+
+
+                <label class="finished-reading-check">
+
+                    <input
+                        id="markBookFinished"
+                        type="checkbox"
+                    >
+
+                    <span>
+
+                        <strong>
+                            I finished this book
+                        </strong>
+
+                        <small>
+                            move it out of Reading Now
+                        </small>
+
+                    </span>
+
+                </label>
+
+
+                <div class="progress-actions">
+
+                    <button
+                        id="cancelProgressUpdate"
+                        class="reading-secondary-button"
+                        type="button"
+                    >
+                        never mind
+                    </button>
+
+                    <button
+                        class="reading-primary-button"
+                        type="submit"
+                    >
+                        save progress
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
          SCRIPTS
          ===================================================== -->
 
-    <script src="js/config.js?v=5"></script>
-    <script src="js/library.js?v=5"></script>
+    <script src="js/config.js?v=6"></script>
+    <script src="js/library.js?v=6"></script>
 
 </body>
 
