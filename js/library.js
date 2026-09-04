@@ -1,6 +1,6 @@
 /* =========================================================
    SHELFMARK
-   LIBRARY APPLICATION
+   MAIN LIBRARY APPLICATION
    ========================================================= */
 
 
@@ -8,12 +8,9 @@
    CONFIG
    ========================================================= */
 
-const CONFIG =
-    window.SHELFMARK_CONFIG || {};
-
+const CONFIG = window.SHELFMARK_CONFIG || {};
 
 const STORAGE_KEYS = {
-
     shelves:
         CONFIG.storageKeys?.shelves ||
         "shelfmark_shelves",
@@ -25,7 +22,6 @@ const STORAGE_KEYS = {
     settings:
         CONFIG.storageKeys?.settings ||
         "shelfmark_settings"
-
 };
 
 
@@ -34,47 +30,48 @@ const STORAGE_KEYS = {
    ========================================================= */
 
 let shelves = [];
-
 let books = [];
 
 let selectedBookId = null;
-
 let selectedJournalSection = null;
 
 let pendingCoverData = "";
-
 let pendingSpineData = "";
 
-
 let settings = {
-
     theme:
+        CONFIG.defaultSettings?.theme ||
         CONFIG.defaultTheme ||
         "haunted",
 
     candleGlow:
+        CONFIG.defaultSettings?.candleGlow ??
         true,
 
     dust:
+        CONFIG.defaultSettings?.dust ??
         true,
 
     rain:
+        CONFIG.defaultSettings?.rain ??
         true,
 
     oddities:
+        CONFIG.defaultSettings?.oddities ??
         true,
 
     reducedMotion:
+        CONFIG.defaultSettings?.reducedMotion ??
         false,
 
     decorationDensity:
+        CONFIG.defaultSettings?.decorationDensity ||
         "cozy"
-
 };
 
 
 /* =========================================================
-   START
+   STARTUP
    ========================================================= */
 
 document.addEventListener(
@@ -82,18 +79,83 @@ document.addEventListener(
     initializeShelfmark
 );
 
-
 function initializeShelfmark() {
 
+    resetInitialUI();
+
     loadSettings();
+    loadData();
 
     applySettings();
-
-    loadData();
 
     bindControls();
 
     renderLibrary();
+
+}
+
+
+/* =========================================================
+   RESET INITIAL UI
+   ========================================================= */
+
+function resetInitialUI() {
+
+    const overlay =
+        document.getElementById("overlay");
+
+    const themeDrawer =
+        document.getElementById("themeDrawer");
+
+    const shelfDrawer =
+        document.getElementById("shelfDrawer");
+
+    const bookDrawer =
+        document.getElementById("bookDrawer");
+
+    const bookReveal =
+        document.getElementById("bookReveal");
+
+    const readingBook =
+        document.getElementById("readingBook");
+
+    const entryModal =
+        document.getElementById("entryModal");
+
+
+    if (overlay) {
+        overlay.hidden = true;
+        overlay.classList.remove("open");
+    }
+
+    [
+        themeDrawer,
+        shelfDrawer,
+        bookDrawer
+    ]
+        .filter(Boolean)
+        .forEach(
+            drawer => {
+                drawer.hidden = true;
+                drawer.classList.remove("open");
+            }
+        );
+
+    if (bookReveal) {
+        bookReveal.hidden = true;
+    }
+
+    if (readingBook) {
+        readingBook.hidden = true;
+    }
+
+    if (entryModal) {
+        entryModal.hidden = true;
+    }
+
+    document.body.classList.remove(
+        "modal-open"
+    );
 
 }
 
@@ -113,7 +175,6 @@ function loadData() {
             normalizeShelf
         );
 
-
     books =
         loadCollection(
             STORAGE_KEYS.books,
@@ -127,7 +188,7 @@ function loadData() {
 
 
 /* =========================================================
-   GENERIC COLLECTION LOAD
+   LOAD COLLECTION
    ========================================================= */
 
 function loadCollection(
@@ -138,33 +199,22 @@ function loadCollection(
     try {
 
         const saved =
-            localStorage.getItem(
-                key
-            );
-
+            localStorage.getItem(key);
 
         if (saved) {
 
             const parsed =
-                JSON.parse(
-                    saved
-                );
-
+                JSON.parse(saved);
 
             if (
-                Array.isArray(
-                    parsed
-                )
+                Array.isArray(parsed)
             ) {
-
                 return parsed;
-
             }
 
         }
 
     }
-
     catch (error) {
 
         console.error(
@@ -174,14 +224,9 @@ function loadCollection(
 
     }
 
-
-    return Array.isArray(
-        fallback
-    )
-        ?
-        [...fallback]
-        :
-        [];
+    return Array.isArray(fallback)
+        ? [...fallback]
+        : [];
 
 }
 
@@ -199,30 +244,19 @@ function loadSettings() {
                 STORAGE_KEYS.settings
             );
 
-
         if (!saved) {
-
             return;
-
         }
 
-
         const parsed =
-            JSON.parse(
-                saved
-            );
-
+            JSON.parse(saved);
 
         settings = {
-
             ...settings,
-
             ...parsed
-
         };
 
     }
-
     catch (error) {
 
         console.error(
@@ -235,17 +269,11 @@ function loadSettings() {
 }
 
 
-/* =========================================================
-   SAVE SETTINGS
-   ========================================================= */
-
 function saveSettings() {
 
     localStorage.setItem(
         STORAGE_KEYS.settings,
-        JSON.stringify(
-            settings
-        )
+        JSON.stringify(settings)
     );
 
 }
@@ -262,40 +290,33 @@ function applySettings() {
         false
     );
 
-
     document.body.classList.toggle(
         "reduce-motion",
         settings.reducedMotion
     );
-
 
     document.body.classList.toggle(
         "ambient-candle",
         settings.candleGlow
     );
 
-
     document.body.classList.toggle(
         "ambient-dust",
         settings.dust
     );
-
 
     document.body.classList.toggle(
         "ambient-rain",
         settings.rain
     );
 
-
     document.body.classList.toggle(
         "ambient-oddities",
         settings.oddities
     );
 
-
     document.body.dataset.decorationDensity =
         settings.decorationDensity;
-
 
     syncSettingsControls();
 
@@ -311,29 +332,26 @@ function applyTheme(
     shouldSave = true
 ) {
 
-    const allowedThemes = [
-
-        "haunted",
-        "autumn",
-        "forest",
-        "retro",
-        "ghosts"
-
-    ];
-
+    const allowedThemes =
+        CONFIG.themes?.map(
+            item => item.id
+        )
+        ||
+        [
+            "haunted",
+            "autumn",
+            "forest",
+            "retro",
+            "ghosts"
+        ];
 
     if (
-        !allowedThemes.includes(
-            theme
-        )
+        !allowedThemes.includes(theme)
     ) {
-
         theme =
             CONFIG.defaultTheme ||
             "haunted";
-
     }
-
 
     allowedThemes.forEach(
         item => {
@@ -345,15 +363,11 @@ function applyTheme(
         }
     );
 
-
     document.body.classList.add(
         `theme-${theme}`
     );
 
-
-    settings.theme =
-        theme;
-
+    settings.theme = theme;
 
     document
         .querySelectorAll(
@@ -364,22 +378,15 @@ function applyTheme(
 
                 card.classList.toggle(
                     "active",
-                    card.dataset.theme ===
-                    theme
+                    card.dataset.theme === theme
                 );
 
             }
         );
 
-
     if (shouldSave) {
-
         saveSettings();
-
     }
-
-
-    renderLibrary();
 
 }
 
@@ -395,44 +402,34 @@ function syncSettingsControls() {
         settings.candleGlow
     );
 
-
     setChecked(
         "settingDust",
         settings.dust
     );
-
 
     setChecked(
         "settingRain",
         settings.rain
     );
 
-
     setChecked(
         "settingOddities",
         settings.oddities
     );
-
 
     setChecked(
         "settingReducedMotion",
         settings.reducedMotion
     );
 
-
     const density =
         document.querySelector(
             `input[name="decorationDensity"][value="${settings.decorationDensity}"]`
         );
 
-
     if (density) {
-
-        density.checked =
-            true;
-
+        density.checked = true;
     }
-
 
     document
         .querySelectorAll(
@@ -495,15 +492,12 @@ function normalizeShelf(
             Array.isArray(
                 shelf.decorations
             )
-                ?
-                shelf.decorations
-                :
-                [],
+                ? shelf.decorations
+                : [],
 
         created_at:
             shelf.created_at ||
-            new Date()
-                .toISOString(),
+            new Date().toISOString(),
 
         updated_at:
             shelf.updated_at ||
@@ -603,7 +597,7 @@ function normalizeBook(
 
         text_color:
             book.text_color ||
-            "#eadfca",
+            getThemeBookTextColor(),
 
         height:
             book.height ||
@@ -624,8 +618,7 @@ function normalizeBook(
 
         created_at:
             book.created_at ||
-            new Date()
-                .toISOString(),
+            new Date().toISOString(),
 
         updated_at:
             book.updated_at ||
@@ -650,73 +643,57 @@ function normalizeJournal(
             Array.isArray(
                 journal.notes
             )
-                ?
-                journal.notes
-                :
-                [],
+                ? journal.notes
+                : [],
 
         thoughts:
             Array.isArray(
                 journal.thoughts
             )
-                ?
-                journal.thoughts
-                :
-                [],
+                ? journal.thoughts
+                : [],
 
         words:
             Array.isArray(
                 journal.words
             )
-                ?
-                journal.words
-                :
-                [],
+                ? journal.words
+                : [],
 
         quotes:
             Array.isArray(
                 journal.quotes
             )
-                ?
-                journal.quotes
-                :
-                [],
+                ? journal.quotes
+                : [],
 
         characters:
             Array.isArray(
                 journal.characters
             )
-                ?
-                journal.characters
-                :
-                [],
+                ? journal.characters
+                : [],
 
         themes:
             Array.isArray(
                 journal.themes
             )
-                ?
-                journal.themes
-                :
-                [],
+                ? journal.themes
+                : [],
 
         questions:
             Array.isArray(
                 journal.questions
             )
-                ?
-                journal.questions
-                :
-                [],
+                ? journal.questions
+                : [],
 
         review:
             Array.isArray(
                 journal.review
             )
-                ?
-                journal.review
-                :
-                []
+                ? journal.review
+                : []
 
     };
 
@@ -730,41 +707,32 @@ function normalizeJournal(
 function bindControls() {
 
     bindShelfControls();
-
     bindBookControls();
-
     bindThemeControls();
-
     bindRevealControls();
-
     bindJournalControls();
-
     bindKeyboardControls();
 
 }
 
 
 /* =========================================================
-   SHELF CONTROL BINDINGS
+   SHELF CONTROLS
    ========================================================= */
 
 function bindShelfControls() {
 
     [
-
         "sidebarAddShelf",
         "topAddShelf",
         "bottomAddShelf",
         "emptyAddShelf"
-
     ]
         .forEach(
             id => {
 
                 document
-                    .getElementById(
-                        id
-                    )
+                    .getElementById(id)
                     ?.addEventListener(
                         "click",
                         () =>
@@ -773,7 +741,6 @@ function bindShelfControls() {
 
             }
         );
-
 
     document
         .getElementById(
@@ -784,7 +751,6 @@ function bindShelfControls() {
             closeDrawers
         );
 
-
     document
         .getElementById(
             "cancelShelf"
@@ -793,7 +759,6 @@ function bindShelfControls() {
             "click",
             closeDrawers
         );
-
 
     document
         .getElementById(
@@ -808,25 +773,21 @@ function bindShelfControls() {
 
 
 /* =========================================================
-   BOOK CONTROL BINDINGS
+   BOOK CONTROLS
    ========================================================= */
 
 function bindBookControls() {
 
     [
-
         "sidebarAddBook",
         "topAddBook",
         "emptyAddBook"
-
     ]
         .forEach(
             id => {
 
                 document
-                    .getElementById(
-                        id
-                    )
+                    .getElementById(id)
                     ?.addEventListener(
                         "click",
                         () =>
@@ -835,7 +796,6 @@ function bindBookControls() {
 
             }
         );
-
 
     document
         .getElementById(
@@ -846,7 +806,6 @@ function bindBookControls() {
             closeDrawers
         );
 
-
     document
         .getElementById(
             "cancelBook"
@@ -855,7 +814,6 @@ function bindBookControls() {
             "click",
             closeDrawers
         );
-
 
     document
         .getElementById(
@@ -866,7 +824,6 @@ function bindBookControls() {
             saveBookFromForm
         );
 
-
     document
         .getElementById(
             "bookCoverUpload"
@@ -875,7 +832,6 @@ function bindBookControls() {
             "change",
             handleCoverUpload
         );
-
 
     document
         .getElementById(
@@ -890,24 +846,20 @@ function bindBookControls() {
 
 
 /* =========================================================
-   THEME BINDINGS
+   THEME CONTROLS
    ========================================================= */
 
 function bindThemeControls() {
 
     [
-
         "openThemeSettings",
         "topThemeSettings"
-
     ]
         .forEach(
             id => {
 
                 document
-                    .getElementById(
-                        id
-                    )
+                    .getElementById(id)
                     ?.addEventListener(
                         "click",
                         openThemeDrawer
@@ -915,7 +867,6 @@ function bindThemeControls() {
 
             }
         );
-
 
     document
         .getElementById(
@@ -925,7 +876,6 @@ function bindThemeControls() {
             "click",
             closeDrawers
         );
-
 
     document
         .querySelectorAll(
@@ -942,12 +892,13 @@ function bindThemeControls() {
                             card.dataset.theme
                         );
 
+                        syncSettingsControls();
+
                     }
                 );
 
             }
         );
-
 
     bindSettingCheckbox(
         "settingCandleGlow",
@@ -955,13 +906,11 @@ function bindThemeControls() {
         "ambient-candle"
     );
 
-
     bindSettingCheckbox(
         "settingDust",
         "dust",
         "ambient-dust"
     );
-
 
     bindSettingCheckbox(
         "settingRain",
@@ -969,13 +918,11 @@ function bindThemeControls() {
         "ambient-rain"
     );
 
-
     bindSettingCheckbox(
         "settingOddities",
         "oddities",
         "ambient-oddities"
     );
-
 
     document
         .getElementById(
@@ -988,18 +935,15 @@ function bindThemeControls() {
                 settings.reducedMotion =
                     event.target.checked;
 
-
                 document.body.classList.toggle(
                     "reduce-motion",
                     settings.reducedMotion
                 );
 
-
                 saveSettings();
 
             }
         );
-
 
     document
         .querySelectorAll(
@@ -1012,22 +956,15 @@ function bindThemeControls() {
                     "change",
                     () => {
 
-                        if (
-                            !radio.checked
-                        ) {
-
+                        if (!radio.checked) {
                             return;
-
                         }
-
 
                         settings.decorationDensity =
                             radio.value;
 
-
                         document.body.dataset.decorationDensity =
                             radio.value;
-
 
                         saveSettings();
 
@@ -1038,7 +975,6 @@ function bindThemeControls() {
 
             }
         );
-
 
     document
         .getElementById(
@@ -1070,17 +1006,13 @@ function bindSettingCheckbox(
             "change",
             event => {
 
-                settings[
-                    settingKey
-                ] =
+                settings[settingKey] =
                     event.target.checked;
-
 
                 document.body.classList.toggle(
                     bodyClass,
                     event.target.checked
                 );
-
 
                 saveSettings();
 
@@ -1107,7 +1039,6 @@ function bindRevealControls() {
             closeBookReveal
         );
 
-
     document
         .getElementById(
             "editSelectedBook"
@@ -1116,7 +1047,6 @@ function bindRevealControls() {
             "click",
             editSelectedBook
         );
-
 
     document
         .getElementById(
@@ -1145,7 +1075,6 @@ function bindJournalControls() {
             closeReadingBook
         );
 
-
     document
         .getElementById(
             "backToContents"
@@ -1154,7 +1083,6 @@ function bindJournalControls() {
             "click",
             showJournalContents
         );
-
 
     document
         .querySelectorAll(
@@ -1177,7 +1105,6 @@ function bindJournalControls() {
             }
         );
 
-
     document
         .getElementById(
             "addJournalEntry"
@@ -1186,7 +1113,6 @@ function bindJournalControls() {
             "click",
             openEntryModal
         );
-
 
     document
         .getElementById(
@@ -1197,7 +1123,6 @@ function bindJournalControls() {
             closeEntryModal
         );
 
-
     document
         .getElementById(
             "cancelEntry"
@@ -1206,7 +1131,6 @@ function bindJournalControls() {
             "click",
             closeEntryModal
         );
-
 
     document
         .getElementById(
@@ -1234,18 +1158,12 @@ function bindKeyboardControls() {
                 event.key !==
                 "Escape"
             ) {
-
                 return;
-
             }
 
-
             closeEntryModal();
-
             closeReadingBook();
-
             closeBookReveal();
-
             closeDrawers();
 
         }
@@ -1276,9 +1194,7 @@ function openThemeDrawer() {
 function renderLibrary() {
 
     renderShelfSelect();
-
     renderShelves();
-
     updateLibraryMetrics();
 
 }
@@ -1295,70 +1211,43 @@ function renderShelves() {
             "shelfContainer"
         );
 
-
     const empty =
         document.getElementById(
             "libraryEmpty"
         );
-
 
     const bottomButton =
         document.getElementById(
             "bottomAddShelf"
         );
 
-
     if (!container) {
-
         return;
-
     }
 
+    container.innerHTML = "";
 
-    container.innerHTML =
-        "";
-
-
-    if (
-        !shelves.length
-    ) {
+    if (!shelves.length) {
 
         if (empty) {
-
-            empty.hidden =
-                false;
-
+            empty.hidden = false;
         }
-
 
         if (bottomButton) {
-
-            bottomButton.hidden =
-                true;
-
+            bottomButton.hidden = true;
         }
-
 
         return;
 
     }
 
-
     if (empty) {
-
-        empty.hidden =
-            true;
-
+        empty.hidden = true;
     }
-
 
     if (bottomButton) {
-
-        bottomButton.hidden =
-            false;
-
+        bottomButton.hidden = false;
     }
-
 
     shelves.forEach(
         shelf => {
@@ -1388,34 +1277,24 @@ function createShelfElement(
             "section"
         );
 
-
     section.className =
         "library-shelf";
-
 
     section.dataset.material =
         shelf.material;
 
-
     section.dataset.mood =
         shelf.mood;
-
 
     const shelfBooks =
         sortShelfBooks(
             books.filter(
                 book =>
-                    String(
-                        book.shelf_id
-                    )
-                    ===
-                    String(
-                        shelf.id
-                    )
+                    String(book.shelf_id) ===
+                    String(shelf.id)
             ),
             shelf.sort
         );
-
 
     section.innerHTML = `
 
@@ -1429,17 +1308,13 @@ function createShelfElement(
 
                 ${
                     shelf.description
-
                         ?
-
                         `
                             <p>
                                 ${escapeHTML(shelf.description)}
                             </p>
                         `
-
                         :
-
                         ""
                 }
 
@@ -1485,16 +1360,12 @@ function createShelfElement(
 
     `;
 
-
     const row =
         section.querySelector(
             ".book-row"
         );
 
-
-    if (
-        shelfBooks.length
-    ) {
+    if (shelfBooks.length) {
 
         shelfBooks.forEach(
             book => {
@@ -1509,7 +1380,6 @@ function createShelfElement(
         );
 
     }
-
     else {
 
         const emptyMessage =
@@ -1517,10 +1387,8 @@ function createShelfElement(
                 "div"
             );
 
-
         emptyMessage.className =
             "empty-shelf-message";
-
 
         emptyMessage.innerHTML = `
 
@@ -1531,7 +1399,6 @@ function createShelfElement(
             </button>
 
         `;
-
 
         emptyMessage
             .querySelector(
@@ -1546,13 +1413,11 @@ function createShelfElement(
                     )
             );
 
-
         row.appendChild(
             emptyMessage
         );
 
     }
-
 
     getVisibleDecorations(
         shelf.decorations
@@ -1569,7 +1434,6 @@ function createShelfElement(
             }
         );
 
-
     section
         .querySelector(
             '[data-action="add-book"]'
@@ -1583,7 +1447,6 @@ function createShelfElement(
                 )
         );
 
-
     section
         .querySelector(
             '[data-action="edit-shelf"]'
@@ -1595,7 +1458,6 @@ function createShelfElement(
                     shelf.id
                 )
         );
-
 
     return section;
 
@@ -1610,58 +1472,33 @@ function getVisibleDecorations(
     decorations
 ) {
 
-    if (
-        !settings.oddities
-    ) {
-
+    if (!settings.oddities) {
         return [];
-
     }
 
-
     const list =
-        Array.isArray(
-            decorations
-        )
-            ?
-            decorations
-            :
-            [];
-
+        Array.isArray(decorations)
+            ? decorations
+            : [];
 
     if (
         settings.decorationDensity ===
         "minimal"
     ) {
-
-        return list.slice(
-            0,
-            1
-        );
-
+        return list.slice(0,1);
     }
-
 
     if (
         settings.decorationDensity ===
         "maximal"
     ) {
-
         return [
-
             ...list,
-
             ...getThemeOddities()
-
         ];
-
     }
 
-
-    return list.slice(
-        0,
-        3
-    );
+    return list.slice(0,3);
 
 }
 
@@ -1700,12 +1537,9 @@ function getThemeOddities() {
 
     };
 
-
     return options[
         settings.theme
-    ]
-        ||
-        [];
+    ] || [];
 
 }
 
@@ -1723,7 +1557,6 @@ function createBookElement(
             "div"
         );
 
-
     element.className = [
 
         "shelf-book",
@@ -1737,38 +1570,27 @@ function createBookElement(
     ]
         .join(" ");
 
-
     element.dataset.status =
         book.status;
-
 
     element.style.setProperty(
         "--book-color",
         book.spine_color
     );
 
-
     element.style.setProperty(
         "--book-text",
         book.text_color
     );
 
-
     element.title =
         book.author
-
             ?
-
             `${book.title} — ${book.author}`
-
             :
-
             book.title;
 
-
-    if (
-        book.spine_image
-    ) {
+    if (book.spine_image) {
 
         element.innerHTML = `
 
@@ -1781,7 +1603,6 @@ function createBookElement(
         `;
 
     }
-
     else {
 
         element.innerHTML = `
@@ -1806,7 +1627,6 @@ function createBookElement(
 
     }
 
-
     element.addEventListener(
         "click",
         () => {
@@ -1825,19 +1645,14 @@ function createBookElement(
                     }
                 );
 
-
             element.classList.add(
                 "selected"
             );
 
-
             const delay =
                 settings.reducedMotion
-                    ?
-                    0
-                    :
-                    170;
-
+                    ? 0
+                    : 170;
 
             setTimeout(
                 () => {
@@ -1853,14 +1668,13 @@ function createBookElement(
         }
     );
 
-
     return element;
 
 }
 
 
 /* =========================================================
-   DECORATION
+   CREATE DECORATION
    ========================================================= */
 
 function createDecoration(
@@ -1872,16 +1686,13 @@ function createDecoration(
             "div"
         );
 
-
     decoration.className =
         `shelf-decoration decor-${type}`;
-
 
     decoration.setAttribute(
         "aria-hidden",
         "true"
     );
-
 
     return decoration;
 
@@ -1889,7 +1700,7 @@ function createDecoration(
 
 
 /* =========================================================
-   SORT SHELF BOOKS
+   SORT BOOKS
    ========================================================= */
 
 function sortShelfBooks(
@@ -1899,7 +1710,6 @@ function sortShelfBooks(
 
     const copy =
         [...list];
-
 
     switch (sort) {
 
@@ -1937,13 +1747,11 @@ function sortShelfBooks(
             return copy.sort(
                 (a,b) =>
                     String(
-                        b.finished ||
-                        ""
+                        b.finished || ""
                     )
                     .localeCompare(
                         String(
-                            a.finished ||
-                            ""
+                            a.finished || ""
                         )
                     )
             );
@@ -1968,7 +1776,7 @@ function sortShelfBooks(
 
 
 /* =========================================================
-   LIBRARY METRICS
+   METRICS
    ========================================================= */
 
 function updateLibraryMetrics() {
@@ -1978,7 +1786,6 @@ function updateLibraryMetrics() {
         books.length
     );
 
-
     setText(
         "readingCount",
         books.filter(
@@ -1987,7 +1794,6 @@ function updateLibraryMetrics() {
                 "reading"
         ).length
     );
-
 
     setText(
         "finishedCount",
@@ -2012,49 +1818,34 @@ function renderShelfSelect() {
             "bookShelf"
         );
 
-
     if (!select) {
-
         return;
-
     }
-
 
     const previousValue =
         select.value;
 
+    select.innerHTML = "";
 
-    select.innerHTML =
-        "";
-
-
-    if (
-        !shelves.length
-    ) {
+    if (!shelves.length) {
 
         const option =
             document.createElement(
                 "option"
             );
 
-
-        option.value =
-            "";
-
+        option.value = "";
 
         option.textContent =
             "Create a shelf first";
-
 
         select.appendChild(
             option
         );
 
-
         return;
 
     }
-
 
     shelves.forEach(
         shelf => {
@@ -2064,14 +1855,11 @@ function renderShelfSelect() {
                     "option"
                 );
 
-
             option.value =
                 shelf.id;
 
-
             option.textContent =
                 shelf.name;
-
 
             select.appendChild(
                 option
@@ -2080,23 +1868,15 @@ function renderShelfSelect() {
         }
     );
 
-
     if (
         shelves.some(
             shelf =>
-                String(
-                    shelf.id
-                )
-                ===
-                String(
-                    previousValue
-                )
+                String(shelf.id) ===
+                String(previousValue)
         )
     ) {
-
         select.value =
             previousValue;
-
     }
 
 }
@@ -2112,15 +1892,11 @@ function openShelfDrawer(
 
     resetShelfForm();
 
-
     if (shelfId) {
-
         loadShelfIntoForm(
             shelfId
         );
-
     }
-
 
     showDrawer(
         "shelfDrawer"
@@ -2141,42 +1917,35 @@ function resetShelfForm() {
         )
         ?.reset();
 
-
     setValue(
         "editingShelfId",
         ""
     );
-
 
     setValue(
         "shelfMaterial",
         "walnut"
     );
 
-
     setValue(
         "shelfMood",
         "cozy"
     );
-
 
     setValue(
         "shelfLayout",
         "mixed"
     );
 
-
     setValue(
         "shelfSort",
         "manual"
     );
 
-
     setText(
         "shelfDrawerTitle",
         "Create a shelf"
     );
-
 
     setText(
         "saveShelfLabel",
@@ -2187,7 +1956,7 @@ function resetShelfForm() {
 
 
 /* =========================================================
-   LOAD SHELF FORM
+   LOAD SHELF INTO FORM
    ========================================================= */
 
 function loadShelfIntoForm(
@@ -2195,59 +1964,46 @@ function loadShelfIntoForm(
 ) {
 
     const shelf =
-        getShelfById(
-            id
-        );
-
+        getShelfById(id);
 
     if (!shelf) {
-
         return;
-
     }
-
 
     setValue(
         "editingShelfId",
         shelf.id
     );
 
-
     setValue(
         "shelfName",
         shelf.name
     );
-
 
     setValue(
         "shelfDescription",
         shelf.description
     );
 
-
     setValue(
         "shelfMaterial",
         shelf.material
     );
-
 
     setValue(
         "shelfMood",
         shelf.mood
     );
 
-
     setValue(
         "shelfLayout",
         shelf.layout
     );
 
-
     setValue(
         "shelfSort",
         shelf.sort
     );
-
 
     document
         .querySelectorAll(
@@ -2264,12 +2020,10 @@ function loadShelfIntoForm(
             }
         );
 
-
     setText(
         "shelfDrawerTitle",
         "Edit shelf"
     );
-
 
     setText(
         "saveShelfLabel",
@@ -2289,25 +2043,19 @@ function saveShelfFromForm(
 
     event.preventDefault();
 
-
     const name =
         getValue(
             "shelfName"
         );
 
-
     if (!name) {
-
         return;
-
     }
-
 
     const editingId =
         getValue(
             "editingShelfId"
         );
-
 
     const existing =
         editingId
@@ -2317,7 +2065,6 @@ function saveShelfFromForm(
             )
             :
             null;
-
 
     const record = {
 
@@ -2374,43 +2121,28 @@ function saveShelfFromForm(
         created_at:
             existing?.created_at
             ||
-            new Date()
-                .toISOString(),
+            new Date().toISOString(),
 
         updated_at:
-            new Date()
-                .toISOString()
+            new Date().toISOString()
 
     };
-
 
     if (editingId) {
 
         const index =
             shelves.findIndex(
                 shelf =>
-                    String(
-                        shelf.id
-                    )
-                    ===
-                    String(
-                        editingId
-                    )
+                    String(shelf.id) ===
+                    String(editingId)
             );
 
-
-        if (
-            index >=
-            0
-        ) {
-
+        if (index >= 0) {
             shelves[index] =
                 record;
-
         }
 
     }
-
     else {
 
         shelves.push(
@@ -2418,7 +2150,6 @@ function saveShelfFromForm(
         );
 
     }
-
 
     saveShelves();
 
@@ -2450,9 +2181,7 @@ function openBookDrawer(
 
     }
 
-
     resetBookForm();
-
 
     if (bookId) {
 
@@ -2461,7 +2190,6 @@ function openBookDrawer(
         );
 
     }
-
     else if (shelfId) {
 
         setValue(
@@ -2470,7 +2198,6 @@ function openBookDrawer(
         );
 
     }
-
 
     showDrawer(
         "bookDrawer"
@@ -2491,83 +2218,65 @@ function resetBookForm() {
         )
         ?.reset();
 
-
-    pendingCoverData =
-        "";
-
-
-    pendingSpineData =
-        "";
-
+    pendingCoverData = "";
+    pendingSpineData = "";
 
     setValue(
         "editingBookId",
         ""
     );
 
-
     setValue(
         "bookStatus",
         "want"
     );
-
 
     setValue(
         "bookRating",
         "0"
     );
 
-
     setValue(
         "bookCurrentPage",
         "0"
     );
-
 
     setValue(
         "bookTimesRead",
         "0"
     );
 
-
     setValue(
         "bookSpineColor",
         getThemeBookColor()
     );
-
 
     setValue(
         "bookTextColor",
         getThemeBookTextColor()
     );
 
-
     setValue(
         "bookHeight",
         "medium"
     );
-
 
     setValue(
         "bookThickness",
         "medium"
     );
 
-
     setValue(
         "bookStyle",
         "classic"
     );
 
-
     renderShelfSelect();
-
 
     setText(
         "bookDrawerTitle",
         "Add a book"
     );
-
 
     setText(
         "saveBookLabel",
@@ -2578,7 +2287,7 @@ function resetBookForm() {
 
 
 /* =========================================================
-   THEME BOOK COLOR
+   THEME BOOK COLORS
    ========================================================= */
 
 function getThemeBookColor() {
@@ -2602,12 +2311,11 @@ function getThemeBookColor() {
 
     };
 
-
     return colors[
         settings.theme
     ]
-        ||
-        "#6c2633";
+    ||
+    "#6c2633";
 
 }
 
@@ -2633,12 +2341,11 @@ function getThemeBookTextColor() {
 
     };
 
-
     return colors[
         settings.theme
     ]
-        ||
-        "#eadfca";
+    ||
+    "#eadfca";
 
 }
 
@@ -2652,151 +2359,122 @@ function loadBookIntoForm(
 ) {
 
     const book =
-        getBookById(
-            id
-        );
-
+        getBookById(id);
 
     if (!book) {
-
         return;
-
     }
-
 
     pendingCoverData =
         book.cover_image;
 
-
     pendingSpineData =
         book.spine_image;
-
 
     setValue(
         "editingBookId",
         book.id
     );
 
-
     setValue(
         "bookTitle",
         book.title
     );
-
 
     setValue(
         "bookAuthor",
         book.author
     );
 
-
     setValue(
         "bookGenre",
         book.genre
     );
-
 
     setValue(
         "bookYear",
         book.publication_year
     );
 
-
     setValue(
         "bookPages",
         book.pages
     );
-
 
     setValue(
         "bookISBN",
         book.isbn
     );
 
-
     setValue(
         "bookSeries",
         book.series
     );
-
 
     setValue(
         "bookShelf",
         book.shelf_id
     );
 
-
     setValue(
         "bookStatus",
         book.status
     );
-
 
     setValue(
         "bookRating",
         book.rating
     );
 
-
     setValue(
         "bookStarted",
         book.started
     );
-
 
     setValue(
         "bookFinished",
         book.finished
     );
 
-
     setValue(
         "bookCurrentPage",
         book.current_page
     );
-
 
     setValue(
         "bookTimesRead",
         book.times_read
     );
 
-
     setValue(
         "bookSpineColor",
         book.spine_color
     );
-
 
     setValue(
         "bookTextColor",
         book.text_color
     );
 
-
     setValue(
         "bookHeight",
         book.height
     );
-
 
     setValue(
         "bookThickness",
         book.thickness
     );
 
-
     setValue(
         "bookStyle",
         book.style
     );
 
-
     setText(
         "bookDrawerTitle",
         "Edit book"
     );
-
 
     setText(
         "saveBookLabel",
@@ -2816,34 +2494,27 @@ function saveBookFromForm(
 
     event.preventDefault();
 
-
     const title =
         getValue(
             "bookTitle"
         );
-
 
     const shelfId =
         getValue(
             "bookShelf"
         );
 
-
     if (
         !title ||
         !shelfId
     ) {
-
         return;
-
     }
-
 
     const editingId =
         getValue(
             "editingBookId"
         );
-
 
     const existing =
         editingId
@@ -2854,14 +2525,12 @@ function saveBookFromForm(
             :
             null;
 
-
     const pages =
         normalizeNumber(
             getValue(
                 "bookPages"
             )
         );
-
 
     let currentPage =
         normalizeNumber(
@@ -2870,10 +2539,7 @@ function saveBookFromForm(
             )
         );
 
-
-    if (
-        pages > 0
-    ) {
+    if (pages > 0) {
 
         currentPage =
             Math.min(
@@ -2882,7 +2548,6 @@ function saveBookFromForm(
             );
 
     }
-
 
     const record = {
 
@@ -3005,43 +2670,28 @@ function saveBookFromForm(
         created_at:
             existing?.created_at
             ||
-            new Date()
-                .toISOString(),
+            new Date().toISOString(),
 
         updated_at:
-            new Date()
-                .toISOString()
+            new Date().toISOString()
 
     };
-
 
     if (editingId) {
 
         const index =
             books.findIndex(
                 book =>
-                    String(
-                        book.id
-                    )
-                    ===
-                    String(
-                        editingId
-                    )
+                    String(book.id) ===
+                    String(editingId)
             );
 
-
-        if (
-            index >=
-            0
-        ) {
-
+        if (index >= 0) {
             books[index] =
                 record;
-
         }
 
     }
-
     else {
 
         books.push(
@@ -3049,7 +2699,6 @@ function saveBookFromForm(
         );
 
     }
-
 
     saveBooks();
 
@@ -3071,13 +2720,9 @@ async function handleCoverUpload(
     const file =
         event.target.files?.[0];
 
-
     if (!file) {
-
         return;
-
     }
-
 
     pendingCoverData =
         await fileToDataURL(
@@ -3094,13 +2739,9 @@ async function handleSpineUpload(
     const file =
         event.target.files?.[0];
 
-
     if (!file) {
-
         return;
-
     }
-
 
     pendingSpineData =
         await fileToDataURL(
@@ -3127,20 +2768,15 @@ function fileToDataURL(
             const reader =
                 new FileReader();
 
-
             reader.onload =
                 () => {
-
                     resolve(
                         reader.result
                     );
-
                 };
-
 
             reader.onerror =
                 reject;
-
 
             reader.readAsDataURL(
                 file
@@ -3160,40 +2796,27 @@ function showDrawer(
     drawerId
 ) {
 
-    closeDrawers(
-        false
-    );
-
+    hideAllDrawersImmediately();
 
     const drawer =
         document.getElementById(
             drawerId
         );
 
-
     const overlay =
         document.getElementById(
             "overlay"
         );
 
-
     if (
         !drawer ||
         !overlay
     ) {
-
         return;
-
     }
 
-
-    overlay.hidden =
-        false;
-
-
-    drawer.hidden =
-        false;
-
+    overlay.hidden = false;
+    drawer.hidden = false;
 
     requestAnimationFrame(
         () => {
@@ -3202,14 +2825,12 @@ function showDrawer(
                 "open"
             );
 
-
             drawer.classList.add(
                 "open"
             );
 
         }
     );
-
 
     document.body.classList.add(
         "modal-open"
@@ -3219,29 +2840,64 @@ function showDrawer(
 
 
 /* =========================================================
-   CLOSE DRAWERS
+   HIDE DRAWERS IMMEDIATELY
    ========================================================= */
 
-function closeDrawers(
-    animate = true
-) {
+function hideAllDrawersImmediately() {
 
     const overlay =
         document.getElementById(
             "overlay"
         );
 
+    const drawers =
+        document.querySelectorAll(
+            ".form-drawer"
+        );
+
+    if (overlay) {
+        overlay.classList.remove(
+            "open"
+        );
+        overlay.hidden = true;
+    }
+
+    drawers.forEach(
+        drawer => {
+
+            drawer.classList.remove(
+                "open"
+            );
+
+            drawer.hidden = true;
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE DRAWERS
+   ========================================================= */
+
+function closeDrawers() {
+
+    const overlay =
+        document.getElementById(
+            "overlay"
+        );
 
     const drawers =
         document.querySelectorAll(
             ".form-drawer"
         );
 
-
-    overlay?.classList.remove(
-        "open"
-    );
-
+    if (overlay) {
+        overlay.classList.remove(
+            "open"
+        );
+    }
 
     drawers.forEach(
         drawer => {
@@ -3253,31 +2909,22 @@ function closeDrawers(
         }
     );
 
-
     const delay =
-        animate
-            ?
-            250
-            :
-            0;
-
+        settings.reducedMotion
+            ? 0
+            : 250;
 
     setTimeout(
         () => {
 
             if (overlay) {
-
-                overlay.hidden =
-                    true;
-
+                overlay.hidden = true;
             }
-
 
             drawers.forEach(
                 drawer => {
 
-                    drawer.hidden =
-                        true;
+                    drawer.hidden = true;
 
                 }
             );
@@ -3285,7 +2932,6 @@ function closeDrawers(
         },
         delay
     );
-
 
     document.body.classList.remove(
         "modal-open"
@@ -3303,27 +2949,19 @@ function openBookReveal(
 ) {
 
     const book =
-        getBookById(
-            id
-        );
-
+        getBookById(id);
 
     if (!book) {
-
         return;
-
     }
-
 
     selectedBookId =
         book.id;
-
 
     renderCoverInto(
         "revealCover",
         book
     );
-
 
     setText(
         "revealStatus",
@@ -3332,19 +2970,16 @@ function openBookReveal(
         )
     );
 
-
     setText(
         "revealTitle",
         book.title
     );
-
 
     setText(
         "revealAuthor",
         book.author ||
         "Author not recorded"
     );
-
 
     setText(
         "revealStarted",
@@ -3353,7 +2988,6 @@ function openBookReveal(
         )
     );
 
-
     setText(
         "revealFinished",
         formatDate(
@@ -3361,71 +2995,53 @@ function openBookReveal(
         )
     );
 
-
     setText(
         "revealPageCount",
         `${book.current_page} / ${book.pages || 0} pages`
     );
-
 
     const percentage =
         getProgressPercent(
             book
         );
 
-
     setText(
         "revealPercent",
         `${percentage}%`
     );
-
 
     const bar =
         document.getElementById(
             "revealProgressBar"
         );
 
-
     if (bar) {
-
         bar.style.width =
             `${percentage}%`;
-
     }
-
 
     const bookmark =
         document.getElementById(
             "progressBookmark"
         );
 
-
     if (bookmark) {
-
         bookmark.style.left =
             `${percentage}%`;
-
     }
-
 
     renderRating(
         book.rating
     );
-
 
     const reveal =
         document.getElementById(
             "bookReveal"
         );
 
-
     if (reveal) {
-
-        reveal.hidden =
-            false;
-
+        reveal.hidden = false;
     }
-
 
     document.body.classList.add(
         "modal-open"
@@ -3445,14 +3061,9 @@ function closeBookReveal() {
             "bookReveal"
         );
 
-
     if (reveal) {
-
-        reveal.hidden =
-            true;
-
+        reveal.hidden = true;
     }
-
 
     document
         .querySelectorAll(
@@ -3467,7 +3078,6 @@ function closeBookReveal() {
 
             }
         );
-
 
     document.body.classList.remove(
         "modal-open"
@@ -3485,16 +3095,11 @@ function editSelectedBook() {
     const id =
         selectedBookId;
 
-
     closeBookReveal();
 
-
     if (!id) {
-
         return;
-
     }
-
 
     setTimeout(
         () => {
@@ -3524,38 +3129,26 @@ function renderCoverInto(
             elementId
         );
 
-
     if (!element) {
-
         return;
-
     }
 
-
-    element.innerHTML =
-        "";
-
+    element.innerHTML = "";
 
     element.style.backgroundImage =
         "";
 
-
     element.style.backgroundColor =
         book.spine_color;
 
-
-    if (
-        book.cover_image
-    ) {
+    if (book.cover_image) {
 
         element.style.backgroundImage =
             `url("${safeStyleURL(book.cover_image)}")`;
 
-
         return;
 
     }
-
 
     element.innerHTML = `
 
@@ -3593,13 +3186,9 @@ function renderRating(
             "revealRating"
         );
 
-
     if (!element) {
-
         return;
-
     }
-
 
     if (!rating) {
 
@@ -3609,7 +3198,6 @@ function renderRating(
         return;
 
     }
-
 
     element.textContent =
         "★".repeat(
@@ -3640,29 +3228,22 @@ function openReadingBook() {
             selectedBookId
         );
 
-
     if (!book) {
-
         return;
-
     }
 
-
     closeBookReveal();
-
 
     setText(
         "journalBookTitle",
         book.title
     );
 
-
     setText(
         "journalBookAuthor",
         book.author ||
         "Author not recorded"
     );
-
 
     setText(
         "journalStatus",
@@ -3671,14 +3252,12 @@ function openReadingBook() {
         )
     );
 
-
     setText(
         "journalStarted",
         formatDate(
             book.started
         )
     );
-
 
     setText(
         "journalFinished",
@@ -3687,35 +3266,26 @@ function openReadingBook() {
         )
     );
 
-
     setText(
         "journalPages",
         `${book.current_page} / ${book.pages || 0}`
     );
-
 
     renderCoverInto(
         "journalCover",
         book
     );
 
-
     showJournalContents();
-
 
     const readingBook =
         document.getElementById(
             "readingBook"
         );
 
-
     if (readingBook) {
-
-        readingBook.hidden =
-            false;
-
+        readingBook.hidden = false;
     }
-
 
     document.body.classList.add(
         "modal-open"
@@ -3735,14 +3305,9 @@ function closeReadingBook() {
             "readingBook"
         );
 
-
     if (element) {
-
-        element.hidden =
-            true;
-
+        element.hidden = true;
     }
-
 
     document.body.classList.remove(
         "modal-open"
@@ -3752,7 +3317,7 @@ function closeReadingBook() {
 
 
 /* =========================================================
-   SHOW CONTENTS
+   JOURNAL CONTENTS
    ========================================================= */
 
 function showJournalContents() {
@@ -3760,32 +3325,22 @@ function showJournalContents() {
     selectedJournalSection =
         null;
 
-
     const contents =
         document.getElementById(
             "journalContents"
         );
-
 
     const section =
         document.getElementById(
             "journalSection"
         );
 
-
     if (contents) {
-
-        contents.hidden =
-            false;
-
+        contents.hidden = false;
     }
 
-
     if (section) {
-
-        section.hidden =
-            true;
-
+        section.hidden = true;
     }
 
 }
@@ -3802,34 +3357,23 @@ function openJournalSection(
     selectedJournalSection =
         section;
 
-
     const contents =
         document.getElementById(
             "journalContents"
         );
-
 
     const journalSection =
         document.getElementById(
             "journalSection"
         );
 
-
     if (contents) {
-
-        contents.hidden =
-            true;
-
+        contents.hidden = true;
     }
-
 
     if (journalSection) {
-
-        journalSection.hidden =
-            false;
-
+        journalSection.hidden = false;
     }
-
 
     setText(
         "journalSectionLabel",
@@ -3838,14 +3382,12 @@ function openJournalSection(
         )
     );
 
-
     setText(
         "journalSectionTitle",
         getSectionTitle(
             section
         )
     );
-
 
     renderJournalEntries();
 
@@ -3891,12 +3433,9 @@ function getSectionLabel(
 
     };
 
-
     return labels[
         section
-    ]
-        ||
-        "";
+    ] || "";
 
 }
 
@@ -3940,12 +3479,9 @@ function getSectionTitle(
 
     };
 
-
     return titles[
         section
-    ]
-        ||
-        section;
+    ] || section;
 
 }
 
@@ -3961,32 +3497,24 @@ function renderJournalEntries() {
             "journalEntries"
         );
 
-
     const addButton =
         document.getElementById(
             "addJournalEntry"
         );
-
 
     const book =
         getBookById(
             selectedBookId
         );
 
-
     if (
         !container ||
         !book
     ) {
-
         return;
-
     }
 
-
-    container.innerHTML =
-        "";
-
+    container.innerHTML = "";
 
     if (
         selectedJournalSection ===
@@ -3994,43 +3522,28 @@ function renderJournalEntries() {
     ) {
 
         if (addButton) {
-
-            addButton.hidden =
-                true;
-
+            addButton.hidden = true;
         }
-
 
         renderOverview(
             container,
             book
         );
 
-
         return;
 
     }
 
-
     if (addButton) {
-
-        addButton.hidden =
-            false;
-
+        addButton.hidden = false;
     }
-
 
     const entries =
         book.journal[
             selectedJournalSection
-        ]
-        ||
-        [];
+        ] || [];
 
-
-    if (
-        !entries.length
-    ) {
+    if (!entries.length) {
 
         container.innerHTML = `
 
@@ -4051,11 +3564,9 @@ function renderJournalEntries() {
 
         `;
 
-
         return;
 
     }
-
 
     entries
         .slice()
@@ -4089,7 +3600,6 @@ function renderOverview(
         getProgressPercent(
             book
         );
-
 
     container.innerHTML = `
 
@@ -4165,10 +3675,8 @@ function createJournalEntry(
             "article"
         );
 
-
     card.className =
         "journal-entry";
-
 
     card.innerHTML = `
 
@@ -4209,9 +3717,7 @@ function createJournalEntry(
                 entry,
                 section
             )
-
                 ?
-
                 `
                     <div class="journal-entry-meta">
                         ${escapeHTML(
@@ -4222,14 +3728,11 @@ function createJournalEntry(
                         )}
                     </div>
                 `
-
                 :
-
                 ""
         }
 
     `;
-
 
     return card;
 
@@ -4237,7 +3740,7 @@ function createJournalEntry(
 
 
 /* =========================================================
-   JOURNAL ENTRY CONTENT
+   ENTRY HEADING
    ========================================================= */
 
 function getEntryHeading(
@@ -4249,50 +3752,36 @@ function getEntryHeading(
         section ===
         "words"
     ) {
-
         return entry.word ||
         "New word";
-
     }
-
 
     if (
         section ===
         "characters"
     ) {
-
         return entry.name ||
         "Character";
-
     }
-
 
     if (
         section ===
         "themes"
     ) {
-
         return entry.theme ||
         "Theme";
-
     }
-
 
     if (
         section ===
         "review"
     ) {
-
         return entry.title ||
         "My review";
-
     }
 
-
     return entry.title ||
-    getSectionTitle(
-        section
-    );
+    getSectionTitle(section);
 
 }
 
@@ -4363,8 +3852,7 @@ function getEntryBody(
 
         case "themes":
 
-            return entry.notes ||
-            "";
+            return entry.notes || "";
 
 
         case "questions":
@@ -4409,8 +3897,7 @@ function getEntryBody(
 
         default:
 
-            return entry.body ||
-            "";
+            return entry.body || "";
 
     }
 
@@ -4426,36 +3913,25 @@ function getEntryMeta(
     section
 ) {
 
-    const parts =
-        [];
-
+    const parts = [];
 
     if (entry.page) {
-
         parts.push(
             `page ${entry.page}`
         );
-
     }
 
-
     if (entry.chapter) {
-
         parts.push(
             entry.chapter
         );
-
     }
 
-
     if (entry.tags) {
-
         parts.push(
             entry.tags
         );
-
     }
-
 
     if (
         section ===
@@ -4463,13 +3939,10 @@ function getEntryMeta(
         &&
         entry.status
     ) {
-
         parts.push(
             entry.status
         );
-
     }
-
 
     if (
         section ===
@@ -4477,13 +3950,10 @@ function getEntryMeta(
         &&
         entry.rating
     ) {
-
         parts.push(
             `${entry.rating}/5`
         );
-
     }
-
 
     return parts.join(
         " · "
@@ -4504,47 +3974,37 @@ function openEntryModal() {
         selectedJournalSection ===
         "overview"
     ) {
-
         return;
-
     }
-
 
     setValue(
         "entrySection",
         selectedJournalSection
     );
 
-
     setText(
         "entryModalTitle",
         `Add ${getSingularEntryName(selectedJournalSection)}`
     );
 
-
     renderEntryFields(
         selectedJournalSection
     );
-
 
     const modal =
         document.getElementById(
             "entryModal"
         );
 
-
     if (modal) {
-
-        modal.hidden =
-            false;
-
+        modal.hidden = false;
     }
 
 }
 
 
 /* =========================================================
-   CLOSE ENTRY
+   CLOSE ENTRY MODAL
    ========================================================= */
 
 function closeEntryModal() {
@@ -4554,19 +4014,15 @@ function closeEntryModal() {
             "entryModal"
         );
 
-
     if (modal) {
-
-        modal.hidden =
-            true;
-
+        modal.hidden = true;
     }
 
 }
 
 
 /* =========================================================
-   DYNAMIC ENTRY FIELDS
+   ENTRY FIELDS
    ========================================================= */
 
 function renderEntryFields(
@@ -4578,13 +4034,9 @@ function renderEntryFields(
             "entryDynamicFields"
         );
 
-
     if (!container) {
-
         return;
-
     }
-
 
     const dateField = `
 
@@ -4604,13 +4056,10 @@ function renderEntryFields(
 
     `;
 
-
     if (
-        section ===
-        "notes"
+        section === "notes"
         ||
-        section ===
-        "thoughts"
+        section === "thoughts"
     ) {
 
         container.innerHTML = `
@@ -4662,8 +4111,7 @@ function renderEntryFields(
 
                 <label>
                     ${
-                        section ===
-                        "notes"
+                        section === "notes"
                             ?
                             "Note"
                             :
@@ -4698,15 +4146,12 @@ function renderEntryFields(
 
         `;
 
-
         return;
 
     }
 
-
     if (
-        section ===
-        "words"
+        section === "words"
     ) {
 
         container.innerHTML = `
@@ -4786,15 +4231,12 @@ function renderEntryFields(
 
         `;
 
-
         return;
 
     }
 
-
     if (
-        section ===
-        "quotes"
+        section === "quotes"
     ) {
 
         container.innerHTML = `
@@ -4860,15 +4302,12 @@ function renderEntryFields(
 
         `;
 
-
         return;
 
     }
 
-
     if (
-        section ===
-        "characters"
+        section === "characters"
     ) {
 
         container.innerHTML = `
@@ -4934,15 +4373,12 @@ function renderEntryFields(
 
         `;
 
-
         return;
 
     }
 
-
     if (
-        section ===
-        "themes"
+        section === "themes"
     ) {
 
         container.innerHTML = `
@@ -4980,15 +4416,12 @@ function renderEntryFields(
 
         `;
 
-
         return;
 
     }
 
-
     if (
-        section ===
-        "questions"
+        section === "questions"
     ) {
 
         container.innerHTML = `
@@ -5051,15 +4484,12 @@ function renderEntryFields(
 
         `;
 
-
         return;
 
     }
 
-
     if (
-        section ===
-        "review"
+        section === "review"
     ) {
 
         container.innerHTML = `
@@ -5173,34 +4603,27 @@ function saveJournalEntry(
 
     event.preventDefault();
 
-
     const book =
         getBookById(
             selectedBookId
         );
-
 
     const section =
         getValue(
             "entrySection"
         );
 
-
     if (
         !book ||
         !section
     ) {
-
         return;
-
     }
-
 
     const entry =
         buildEntryFromForm(
             section
         );
-
 
     book.journal[
         section
@@ -5209,11 +4632,8 @@ function saveJournalEntry(
             entry
         );
 
-
     book.updated_at =
-        new Date()
-            .toISOString();
-
+        new Date().toISOString();
 
     saveBooks();
 
@@ -5245,18 +4665,14 @@ function buildEntryFromForm(
             todayISO(),
 
         created_at:
-            new Date()
-                .toISOString()
+            new Date().toISOString()
 
     };
 
-
     if (
-        section ===
-        "notes"
+        section === "notes"
         ||
-        section ===
-        "thoughts"
+        section === "thoughts"
     ) {
 
         return {
@@ -5292,10 +4708,8 @@ function buildEntryFromForm(
 
     }
 
-
     if (
-        section ===
-        "words"
+        section === "words"
     ) {
 
         return {
@@ -5331,10 +4745,8 @@ function buildEntryFromForm(
 
     }
 
-
     if (
-        section ===
-        "quotes"
+        section === "quotes"
     ) {
 
         return {
@@ -5365,10 +4777,8 @@ function buildEntryFromForm(
 
     }
 
-
     if (
-        section ===
-        "characters"
+        section === "characters"
     ) {
 
         return {
@@ -5399,10 +4809,8 @@ function buildEntryFromForm(
 
     }
 
-
     if (
-        section ===
-        "themes"
+        section === "themes"
     ) {
 
         return {
@@ -5423,10 +4831,8 @@ function buildEntryFromForm(
 
     }
 
-
     if (
-        section ===
-        "questions"
+        section === "questions"
     ) {
 
         return {
@@ -5452,10 +4858,8 @@ function buildEntryFromForm(
 
     }
 
-
     if (
-        section ===
-        "review"
+        section === "review"
     ) {
 
         return {
@@ -5491,14 +4895,13 @@ function buildEntryFromForm(
 
     }
 
-
     return base;
 
 }
 
 
 /* =========================================================
-   SINGULAR ENTRY NAME
+   ENTRY NAME
    ========================================================= */
 
 function getSingularEntryName(
@@ -5533,12 +4936,9 @@ function getSingularEntryName(
 
     };
 
-
     return names[
         section
-    ]
-        ||
-        "entry";
+    ] || "entry";
 
 }
 
@@ -5576,12 +4976,9 @@ function getBookOrnament(
 
     };
 
-
     return ornaments[
         style
-    ]
-        ||
-        "◇";
+    ] || "◇";
 
 }
 
@@ -5616,12 +5013,9 @@ function getStatusLabel(
 
     };
 
-
     return labels[
         status
-    ]
-        ||
-        status;
+    ] || status;
 
 }
 
@@ -5635,24 +5029,19 @@ function normalizeBookStatus(
 ) {
 
     const allowed = [
-
         "want",
         "reading",
         "paused",
         "finished",
         "dnf",
         "reference"
-
     ];
-
 
     return allowed.includes(
         status
     )
-        ?
-        status
-        :
-        "want";
+        ? status
+        : "want";
 
 }
 
@@ -5665,14 +5054,9 @@ function getProgressPercent(
     book
 ) {
 
-    if (
-        !book.pages
-    ) {
-
+    if (!book.pages) {
         return 0;
-
     }
-
 
     return Math.min(
         100,
@@ -5730,13 +5114,8 @@ function getShelfById(
 
     return shelves.find(
         shelf =>
-            String(
-                shelf.id
-            )
-            ===
-            String(
-                id
-            )
+            String(shelf.id) ===
+            String(id)
     )
     ||
     null;
@@ -5750,13 +5129,8 @@ function getBookById(
 
     return books.find(
         book =>
-            String(
-                book.id
-            )
-            ===
-            String(
-                id
-            )
+            String(book.id) ===
+            String(id)
     )
     ||
     null;
@@ -5765,7 +5139,7 @@ function getBookById(
 
 
 /* =========================================================
-   DATE
+   TODAY
    ========================================================= */
 
 function todayISO() {
@@ -5773,9 +5147,7 @@ function todayISO() {
     const date =
         new Date();
 
-
     return [
-
         date.getFullYear(),
 
         String(
@@ -5793,7 +5165,6 @@ function todayISO() {
             2,
             "0"
         )
-
     ]
     .join("-");
 
@@ -5809,33 +5180,25 @@ function formatDate(
 ) {
 
     if (!value) {
-
         return "—";
-
     }
-
 
     const date =
         new Date(
             `${value}T12:00:00`
         );
 
-
     if (
         Number.isNaN(
             date.getTime()
         )
     ) {
-
         return value;
-
     }
-
 
     return date.toLocaleDateString(
         "en-US",
         {
-
             month:
                 "short",
 
@@ -5844,7 +5207,6 @@ function formatDate(
 
             year:
                 "numeric"
-
         }
     );
 
@@ -5860,27 +5222,17 @@ function normalizeNumber(
 ) {
 
     const number =
-        Number(
-            value
-        );
-
+        Number(value);
 
     if (
-        Number.isNaN(
-            number
-        )
+        Number.isNaN(number)
     ) {
-
         return 0;
-
     }
-
 
     return Math.max(
         0,
-        Math.round(
-            number
-        )
+        Math.round(number)
     );
 
 }
@@ -5902,7 +5254,6 @@ function generateId() {
         return window.crypto.randomUUID();
 
     }
-
 
     return (
         Date.now()
@@ -5930,13 +5281,9 @@ function getValue(
             id
         );
 
-
     if (!element) {
-
         return "";
-
     }
-
 
     return String(
         element.value ??
@@ -5957,13 +5304,9 @@ function setValue(
             id
         );
 
-
     if (element) {
-
         element.value =
-            value ??
-            "";
-
+            value ?? "";
     }
 
 }
@@ -5979,13 +5322,9 @@ function setText(
             id
         );
 
-
     if (element) {
-
         element.textContent =
-            value ??
-            "";
-
+            value ?? "";
     }
 
 }
@@ -6001,21 +5340,16 @@ function setChecked(
             id
         );
 
-
     if (element) {
-
         element.checked =
-            Boolean(
-                checked
-            );
-
+            Boolean(checked);
     }
 
 }
 
 
 /* =========================================================
-   SAFE IMAGE URL
+   SAFE STYLE URL
    ========================================================= */
 
 function safeStyleURL(
@@ -6023,8 +5357,7 @@ function safeStyleURL(
 ) {
 
     return String(
-        value ||
-        ""
+        value || ""
     )
     .replace(
         /"/g,
@@ -6047,8 +5380,7 @@ function escapeHTML(
 ) {
 
     return String(
-        value ??
-        ""
+        value ?? ""
     )
     .replace(
         /&/g,
