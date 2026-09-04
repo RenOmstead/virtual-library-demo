@@ -1,7 +1,7 @@
 /* =========================================================
    SHELFMARK
    LIBRARY.JS
-   v5
+   v6
    ========================================================= */
 
 
@@ -9,9 +9,11 @@
    CONFIG
    ========================================================= */
 
-const CONFIG = window.SHELFMARK_CONFIG || {};
+const CONFIG =
+    window.SHELFMARK_CONFIG || {};
 
 const STORAGE_KEYS = {
+
     shelves:
         CONFIG.storageKeys?.shelves ||
         "shelfmark_shelves",
@@ -23,6 +25,7 @@ const STORAGE_KEYS = {
     settings:
         CONFIG.storageKeys?.settings ||
         "shelfmark_settings"
+
 };
 
 
@@ -42,6 +45,7 @@ let activeDrag = null;
 
 
 let settings = {
+
     theme:
         CONFIG.defaultSettings?.theme ||
         CONFIG.defaultTheme ||
@@ -70,11 +74,12 @@ let settings = {
     decorationDensity:
         CONFIG.defaultSettings?.decorationDensity ||
         "cozy"
+
 };
 
 
 /* =========================================================
-   START
+   INITIALIZE
    ========================================================= */
 
 document.addEventListener(
@@ -97,40 +102,26 @@ function initializeShelfmark() {
 
     bindControls();
 
-    renderLibrary();
+    renderAll();
 
 }
 
 
 /* =========================================================
-   INITIAL UI
+   INITIAL UI SAFETY
    ========================================================= */
 
 function resetInitialUI() {
 
-    const overlay =
-        document.getElementById("overlay");
-
-    if (overlay) {
-        overlay.hidden = true;
-        overlay.classList.remove("open");
-    }
-
-
-    document
-        .querySelectorAll(".form-drawer")
-        .forEach(drawer => {
-
-            drawer.hidden = true;
-            drawer.classList.remove("open");
-
-        });
-
-
     [
+        "themeDrawer",
+        "shelfDrawer",
+        "bookDrawer",
+        "overlay",
         "bookReveal",
         "readingBook",
-        "entryModal"
+        "entryModal",
+        "progressModal"
     ]
         .forEach(id => {
 
@@ -143,11 +134,6 @@ function resetInitialUI() {
 
         });
 
-
-    document.body.classList.remove(
-        "modal-open"
-    );
-
 }
 
 
@@ -159,42 +145,43 @@ function loadData() {
 
     shelves =
         loadCollection(
-            STORAGE_KEYS.shelves,
-            window.SHELFMARK_DATA?.shelves
+            STORAGE_KEYS.shelves
         )
             .map(normalizeShelf);
 
 
     books =
         loadCollection(
-            STORAGE_KEYS.books,
-            window.SHELFMARK_DATA?.books
+            STORAGE_KEYS.books
         )
             .map(normalizeBook);
+
+
+    window.SHELFMARK_DATA = {
+        shelves,
+        books
+    };
 
 }
 
 
-function loadCollection(
-    key,
-    fallback = []
-) {
+function loadCollection(key) {
 
     try {
 
         const saved =
             localStorage.getItem(key);
 
-        if (saved) {
-
-            const parsed =
-                JSON.parse(saved);
-
-            if (Array.isArray(parsed)) {
-                return parsed;
-            }
-
+        if (!saved) {
+            return [];
         }
+
+        const parsed =
+            JSON.parse(saved);
+
+        return Array.isArray(parsed)
+            ? parsed
+            : [];
 
     }
 
@@ -205,89 +192,37 @@ function loadCollection(
             error
         );
 
-    }
+        return [];
 
-
-    return Array.isArray(fallback)
-        ? [...fallback]
-        : [];
-
-}
-
-
-/* =========================================================
-   LEGACY MIGRATION
-   ========================================================= */
-
-function migrateLegacyBooks() {
-
-    let changed = false;
-
-
-    books =
-        books.map(book => {
-
-            if (
-                Object.prototype.hasOwnProperty.call(
-                    book,
-                    "spine_image"
-                )
-            ) {
-
-                delete book.spine_image;
-                changed = true;
-
-            }
-
-            return book;
-
-        });
-
-
-    if (changed) {
-        saveBooks();
     }
 
 }
 
 
 /* =========================================================
-   SETTINGS
+   SAVE DATA
    ========================================================= */
 
-function loadSettings() {
+function saveShelves() {
 
-    try {
+    localStorage.setItem(
+        STORAGE_KEYS.shelves,
+        JSON.stringify(shelves)
+    );
 
-        const saved =
-            localStorage.getItem(
-                STORAGE_KEYS.settings
-            );
+    syncSharedData();
 
-        if (!saved) {
-            return;
-        }
+}
 
 
-        const parsed =
-            JSON.parse(saved);
+function saveBooks() {
 
+    localStorage.setItem(
+        STORAGE_KEYS.books,
+        JSON.stringify(books)
+    );
 
-        settings = {
-            ...settings,
-            ...parsed
-        };
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Could not load Shelfmark settings.",
-            error
-        );
-
-    }
+    syncSharedData();
 
 }
 
@@ -302,213 +237,31 @@ function saveSettings() {
 }
 
 
-/* =========================================================
-   APPLY SETTINGS
-   ========================================================= */
+function syncSharedData() {
 
-function applySettings() {
-
-    applyTheme(
-        settings.theme,
-        false
-    );
-
-
-    document.body.classList.toggle(
-        "reduce-motion",
-        settings.reducedMotion
-    );
-
-
-    document.body.classList.toggle(
-        "ambient-candle",
-        settings.candleGlow
-    );
-
-
-    document.body.classList.toggle(
-        "ambient-dust",
-        settings.dust
-    );
-
-
-    document.body.classList.toggle(
-        "ambient-rain",
-        settings.rain
-    );
-
-
-    document.body.classList.toggle(
-        "ambient-oddities",
-        settings.oddities
-    );
-
-
-    document.body.dataset.decorationDensity =
-        settings.decorationDensity;
-
-
-    syncSettingsControls();
+    window.SHELFMARK_DATA = {
+        shelves,
+        books
+    };
 
 }
 
 
 /* =========================================================
-   THEMES
-   ========================================================= */
-
-function getAllowedThemes() {
-
-    if (Array.isArray(CONFIG.themes)) {
-
-        return CONFIG.themes.map(
-            theme => theme.id
-        );
-
-    }
-
-
-    return [
-        "haunted",
-        "autumn",
-        "forest",
-        "retro",
-        "ghosts"
-    ];
-
-}
-
-
-function applyTheme(
-    theme,
-    shouldSave = true
-) {
-
-    const allowedThemes =
-        getAllowedThemes();
-
-
-    if (!allowedThemes.includes(theme)) {
-
-        theme =
-            CONFIG.defaultTheme ||
-            "haunted";
-
-    }
-
-
-    allowedThemes.forEach(item => {
-
-        document.body.classList.remove(
-            `theme-${item}`
-        );
-
-    });
-
-
-    document.body.classList.add(
-        `theme-${theme}`
-    );
-
-
-    settings.theme =
-        theme;
-
-
-    document
-        .querySelectorAll(".theme-card")
-        .forEach(card => {
-
-            card.classList.toggle(
-                "active",
-                card.dataset.theme === theme
-            );
-
-        });
-
-
-    if (shouldSave) {
-        saveSettings();
-    }
-
-
-    updateOpenShelfDecorationChoices();
-
-}
-
-
-/* =========================================================
-   SETTINGS UI
-   ========================================================= */
-
-function syncSettingsControls() {
-
-    setChecked(
-        "settingCandleGlow",
-        settings.candleGlow
-    );
-
-    setChecked(
-        "settingDust",
-        settings.dust
-    );
-
-    setChecked(
-        "settingRain",
-        settings.rain
-    );
-
-    setChecked(
-        "settingOddities",
-        settings.oddities
-    );
-
-    setChecked(
-        "settingReducedMotion",
-        settings.reducedMotion
-    );
-
-
-    const density =
-        document.querySelector(
-            `input[name="decorationDensity"][value="${settings.decorationDensity}"]`
-        );
-
-
-    if (density) {
-        density.checked = true;
-    }
-
-
-    document
-        .querySelectorAll(".theme-card")
-        .forEach(card => {
-
-            card.classList.toggle(
-                "active",
-                card.dataset.theme ===
-                settings.theme
-            );
-
-        });
-
-}
-
-
-/* =========================================================
-   SHELVES
+   NORMALIZE SHELVES
    ========================================================= */
 
 function normalizeShelf(shelf) {
 
     return {
+
         id:
             shelf.id ||
             generateId(),
 
         name:
             shelf.name ||
-            "Untitled Shelf",
+            "My Shelf",
 
         description:
             shelf.description ||
@@ -537,198 +290,90 @@ function normalizeShelf(shelf) {
 
         created_at:
             shelf.created_at ||
-            new Date().toISOString(),
+            new Date().toISOString()
 
-        updated_at:
-            shelf.updated_at ||
-            ""
     };
 
 }
 
 
 /* =========================================================
-   DECORATIONS
+   NORMALIZE DECORATIONS
    ========================================================= */
 
-function normalizeDecorations(
-    decorations
-) {
+function normalizeDecorations(value) {
 
-    if (!Array.isArray(decorations)) {
+    if (!Array.isArray(value)) {
         return [];
     }
 
 
-    return decorations.map(
-        (
-            decoration,
-            index
-        ) => {
+    return value
+        .map(item => {
 
             if (
-                typeof decoration ===
+                typeof item ===
                 "string"
             ) {
 
                 return createDecorationRecord(
-                    decoration,
-                    getDefaultDecorationPosition(
-                        index
-                    )
+                    item
                 );
 
             }
 
 
             return {
+
                 id:
-                    decoration.id ||
+                    item.id ||
                     generateId(),
 
                 type:
-                    decoration.type ||
-                    "plant",
+                    item.type ||
+                    "stars",
 
                 x:
                     normalizePercent(
-                        decoration.x,
-                        15 + index * 10
+                        item.x,
+                        CONFIG.decorationDefaults?.x ??
+                        50
                     ),
 
                 y:
                     normalizePercent(
-                        decoration.y,
+                        item.y,
+                        CONFIG.decorationDefaults?.y ??
                         72
                     ),
 
                 scale:
                     normalizeScale(
-                        decoration.scale
+                        item.scale
                     ),
 
                 rotate:
-                    normalizeRotation(
-                        decoration.rotate
+                    Number(
+                        item.rotate ??
+                        0
                     )
+
             };
 
-        }
-    );
-
-}
-
-
-function createDecorationRecord(
-    type,
-    position = {}
-) {
-
-    return {
-        id:
-            generateId(),
-
-        type,
-
-        x:
-            normalizePercent(
-                position.x,
-                CONFIG.decorationDefaults?.x ??
-                50
-            ),
-
-        y:
-            normalizePercent(
-                position.y,
-                CONFIG.decorationDefaults?.y ??
-                72
-            ),
-
-        scale:
-            normalizeScale(
-                position.scale ??
-                CONFIG.decorationDefaults?.scale ??
-                1
-            ),
-
-        rotate:
-            normalizeRotation(
-                position.rotate ??
-                CONFIG.decorationDefaults?.rotate ??
-                0
-            )
-    };
-
-}
-
-
-function getDefaultDecorationPosition(
-    index = 0
-) {
-
-    const positions = [
-
-        {
-            x: 10,
-            y: 72
-        },
-
-        {
-            x: 86,
-            y: 72
-        },
-
-        {
-            x: 64,
-            y: 68
-        },
-
-        {
-            x: 28,
-            y: 70
-        },
-
-        {
-            x: 48,
-            y: 67
-        },
-
-        {
-            x: 76,
-            y: 40
-        },
-
-        {
-            x: 18,
-            y: 38
-        },
-
-        {
-            x: 92,
-            y: 55
-        },
-
-        {
-            x: 38,
-            y: 34
-        }
-
-    ];
-
-
-    return positions[
-        index %
-        positions.length
-    ];
+        })
+        .filter(
+            decoration =>
+                decoration.type
+        );
 
 }
 
 
 /* =========================================================
-   BOOK DEFAULTS
+   NORMALIZE BOOKS
    ========================================================= */
 
-function getDefaultBookDesign() {
+function normalizeBook(book) {
 
     const defaults =
         CONFIG.defaultBookDesign ||
@@ -736,88 +381,10 @@ function getDefaultBookDesign() {
 
 
     return {
-        style:
-            defaults.style ||
-            "classic",
 
-        spineColor:
-            defaults.spineColor ||
-            getThemeBookColor(),
-
-        textColor:
-            defaults.textColor ||
-            getThemeBookTextColor(),
-
-        accentColor:
-            defaults.accentColor ||
-            getThemeAccentColor(),
-
-        spineFont:
-            defaults.spineFont ||
-            "serif",
-
-        fontSize:
-            defaults.fontSize ||
-            "medium",
-
-        fontWeight:
-            defaults.fontWeight ||
-            "regular",
-
-        letterSpacing:
-            defaults.letterSpacing ||
-            "normal",
-
-        textCase:
-            defaults.textCase ||
-            "typed",
-
-        fontStyle:
-            defaults.fontStyle ||
-            "normal",
-
-        textAlign:
-            defaults.textAlign ||
-            "center",
-
-        titlePanel:
-            defaults.titlePanel ||
-            "none",
-
-        ornament:
-            defaults.ornament ||
-            "auto",
-
-        height:
-            defaults.height ||
-            "medium",
-
-        thickness:
-            defaults.thickness ||
-            "medium"
-    };
-
-}
-
-
-/* =========================================================
-   BOOK NORMALIZATION
-   ========================================================= */
-
-function normalizeBook(book) {
-
-    const defaults =
-        getDefaultBookDesign();
-
-
-    return {
         id:
             book.id ||
             generateId(),
-
-        shelf_id:
-            book.shelf_id ||
-            "",
 
         title:
             book.title ||
@@ -831,9 +398,10 @@ function normalizeBook(book) {
             book.genre ||
             "",
 
-        publication_year:
-            book.publication_year ||
-            "",
+        year:
+            normalizeNumber(
+                book.year
+            ),
 
         pages:
             normalizeNumber(
@@ -848,10 +416,13 @@ function normalizeBook(book) {
             book.series ||
             "",
 
+        shelf_id:
+            book.shelf_id ||
+            "",
+
         status:
-            normalizeBookStatus(
-                book.status
-            ),
+            book.status ||
+            "want",
 
         rating:
             normalizeNumber(
@@ -880,89 +451,80 @@ function normalizeBook(book) {
             book.cover_image ||
             "",
 
+        style:
+            book.style ||
+            defaults.style ||
+            "classic",
+
         spine_color:
             book.spine_color ||
-            defaults.spineColor,
+            defaults.spineColor ||
+            "#6c2633",
 
         text_color:
             book.text_color ||
-            defaults.textColor,
+            defaults.textColor ||
+            "#eadfca",
 
         accent_color:
             book.accent_color ||
-            defaults.accentColor,
-
-        style:
-            normalizeSpineStyle(
-                book.style ||
-                defaults.style
-            ),
+            defaults.accentColor ||
+            "#b28a4a",
 
         spine_font:
-            normalizeSpineFont(
-                book.spine_font ||
-                defaults.spineFont
-            ),
+            book.spine_font ||
+            defaults.spineFont ||
+            "serif",
 
         spine_font_size:
-            normalizeFontSize(
-                book.spine_font_size ||
-                defaults.fontSize
-            ),
+            book.spine_font_size ||
+            defaults.fontSize ||
+            "medium",
 
         spine_font_weight:
-            normalizeFontWeight(
-                book.spine_font_weight ||
-                defaults.fontWeight
-            ),
+            book.spine_font_weight ||
+            defaults.fontWeight ||
+            "regular",
 
         spine_letter_spacing:
-            normalizeLetterSpacing(
-                book.spine_letter_spacing ||
-                defaults.letterSpacing
-            ),
+            book.spine_letter_spacing ||
+            defaults.letterSpacing ||
+            "normal",
 
         spine_case:
-            normalizeTextCase(
-                book.spine_case ||
-                defaults.textCase
-            ),
+            book.spine_case ||
+            defaults.textCase ||
+            "typed",
 
         spine_font_style:
-            normalizeFontStyle(
-                book.spine_font_style ||
-                defaults.fontStyle
-            ),
+            book.spine_font_style ||
+            defaults.fontStyle ||
+            "normal",
 
         spine_text_align:
-            normalizeTextAlign(
-                book.spine_text_align ||
-                defaults.textAlign
-            ),
+            book.spine_text_align ||
+            defaults.textAlign ||
+            "center",
 
         spine_title_panel:
-            normalizeTitlePanel(
-                book.spine_title_panel ||
-                defaults.titlePanel
-            ),
+            book.spine_title_panel ||
+            defaults.titlePanel ||
+            "none",
 
         spine_ornament:
-            normalizeSpineOrnament(
-                book.spine_ornament ||
-                defaults.ornament
-            ),
+            book.spine_ornament ||
+            defaults.ornament ||
+            "auto",
 
         height:
-            normalizeBookHeight(
-                book.height ||
-                defaults.height
-            ),
+            book.height ||
+            defaults.height ||
+            "medium",
 
         thickness:
-            normalizeBookThickness(
-                book.thickness ||
-                defaults.thickness
-            ),
+            book.thickness ||
+            defaults.thickness ||
+            "medium",
 
         journal:
             normalizeJournal(
@@ -975,585 +537,409 @@ function normalizeBook(book) {
 
         updated_at:
             book.updated_at ||
-            ""
+            new Date().toISOString()
+
     };
 
 }
 
 
 /* =========================================================
-   JOURNAL NORMALIZATION
+   NORMALIZE JOURNAL
    ========================================================= */
 
-function normalizeJournal(
-    journal = {}
-) {
+function normalizeJournal(journal) {
 
-    return {
-        notes:
-            Array.isArray(journal.notes)
-                ? journal.notes
-                : [],
-
-        thoughts:
-            Array.isArray(journal.thoughts)
-                ? journal.thoughts
-                : [],
-
-        words:
-            Array.isArray(journal.words)
-                ? journal.words
-                : [],
-
-        quotes:
-            Array.isArray(journal.quotes)
-                ? journal.quotes
-                : [],
-
-        characters:
-            Array.isArray(journal.characters)
-                ? journal.characters
-                : [],
-
-        themes:
-            Array.isArray(journal.themes)
-                ? journal.themes
-                : [],
-
-        questions:
-            Array.isArray(journal.questions)
-                ? journal.questions
-                : [],
-
-        review:
-            Array.isArray(journal.review)
-                ? journal.review
-                : []
-    };
-
-}
-
-
-/* =========================================================
-   BIND CONTROLS
-   ========================================================= */
-
-function bindControls() {
-
-    bindShelfControls();
-
-    bindBookControls();
-
-    bindThemeControls();
-
-    bindRevealControls();
-
-    bindJournalControls();
-
-    bindKeyboardControls();
-
-}
-
-
-/* =========================================================
-   SHELF CONTROLS
-   ========================================================= */
-
-function bindShelfControls() {
+    const result = {};
 
     [
-        "sidebarAddShelf",
-        "topAddShelf",
-        "bottomAddShelf",
-        "emptyAddShelf"
+        "notes",
+        "thoughts",
+        "words",
+        "quotes",
+        "characters",
+        "themes",
+        "questions",
+        "review"
     ]
-        .forEach(id => {
+        .forEach(section => {
 
-            document
-                .getElementById(id)
-                ?.addEventListener(
-                    "click",
-                    () => openShelfDrawer()
-                );
+            result[section] =
+                Array.isArray(
+                    journal?.[section]
+                )
+                    ?
+                    journal[section]
+                    :
+                    [];
 
         });
 
 
-    document
-        .getElementById(
-            "closeShelfDrawer"
-        )
-        ?.addEventListener(
-            "click",
-            closeDrawers
-        );
-
-
-    document
-        .getElementById(
-            "cancelShelf"
-        )
-        ?.addEventListener(
-            "click",
-            closeDrawers
-        );
-
-
-    document
-        .getElementById(
-            "shelfForm"
-        )
-        ?.addEventListener(
-            "submit",
-            saveShelfFromForm
-        );
+    return result;
 
 }
 
 
 /* =========================================================
-   BOOK CONTROLS
+   LEGACY MIGRATION
    ========================================================= */
 
-function bindBookControls() {
+function migrateLegacyBooks() {
 
-    [
-        "sidebarAddBook",
-        "topAddBook",
-        "emptyAddBook"
-    ]
-        .forEach(id => {
-
-            document
-                .getElementById(id)
-                ?.addEventListener(
-                    "click",
-                    () => openBookDrawer()
-                );
-
-        });
+    let changed = false;
 
 
-    document
-        .getElementById(
-            "closeBookDrawer"
-        )
-        ?.addEventListener(
-            "click",
-            closeDrawers
-        );
+    books.forEach(book => {
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                book,
+                "spine_image"
+            )
+        ) {
+
+            delete book.spine_image;
+
+            changed = true;
+
+        }
+
+    });
 
 
-    document
-        .getElementById(
-            "cancelBook"
-        )
-        ?.addEventListener(
-            "click",
-            closeDrawers
-        );
-
-
-    document
-        .getElementById(
-            "bookForm"
-        )
-        ?.addEventListener(
-            "submit",
-            saveBookFromForm
-        );
-
-
-    document
-        .getElementById(
-            "bookCoverUpload"
-        )
-        ?.addEventListener(
-            "change",
-            handleCoverUpload
-        );
-
-
-    bindSpineDesignerControls();
+    if (changed) {
+        saveBooks();
+    }
 
 }
 
 
 /* =========================================================
-   SPINE DESIGNER CONTROLS
+   SETTINGS
    ========================================================= */
 
-function bindSpineDesignerControls() {
+function loadSettings() {
 
-    const ids = [
+    try {
 
-        "bookTitle",
+        const saved =
+            localStorage.getItem(
+                STORAGE_KEYS.settings
+            );
 
-        "bookStyle",
-
-        "bookSpineColor",
-
-        "bookTextColor",
-
-        "bookAccentColor",
-
-        "bookSpineFont",
-
-        "bookSpineFontSize",
-
-        "bookSpineFontWeight",
-
-        "bookSpineLetterSpacing",
-
-        "bookSpineCase",
-
-        "bookSpineFontStyle",
-
-        "bookSpineTextAlign",
-
-        "bookSpineTitlePanel",
-
-        "bookSpineOrnament",
-
-        "bookHeight",
-
-        "bookThickness"
-
-    ];
-
-
-    ids.forEach(id => {
-
-        const element =
-            document.getElementById(id);
-
-
-        if (!element) {
+        if (!saved) {
             return;
         }
 
 
-        element.addEventListener(
-            "input",
-            updateSpinePreview
+        settings = {
+            ...settings,
+            ...JSON.parse(saved)
+        };
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Could not load Shelfmark settings.",
+            error
         );
 
+    }
 
-        element.addEventListener(
-            "change",
-            updateSpinePreview
+}
+
+
+function applySettings() {
+
+    applyTheme(
+        settings.theme,
+        false
+    );
+
+
+    document.body.classList.toggle(
+        "ambient-candle",
+        Boolean(
+            settings.candleGlow
+        )
+    );
+
+
+    document.body.classList.toggle(
+        "ambient-dust",
+        Boolean(
+            settings.dust
+        )
+    );
+
+
+    document.body.classList.toggle(
+        "ambient-rain",
+        Boolean(
+            settings.rain
+        )
+    );
+
+
+    document.body.classList.toggle(
+        "ambient-oddities",
+        Boolean(
+            settings.oddities
+        )
+    );
+
+
+    document.body.classList.toggle(
+        "reduce-motion",
+        Boolean(
+            settings.reducedMotion
+        )
+    );
+
+
+    document.body.dataset.decorationDensity =
+        settings.decorationDensity ||
+        "cozy";
+
+
+    setChecked(
+        "settingCandleGlow",
+        settings.candleGlow
+    );
+
+    setChecked(
+        "settingDust",
+        settings.dust
+    );
+
+    setChecked(
+        "settingRain",
+        settings.rain
+    );
+
+    setChecked(
+        "settingOddities",
+        settings.oddities
+    );
+
+    setChecked(
+        "settingReducedMotion",
+        settings.reducedMotion
+    );
+
+
+    document
+        .querySelectorAll(
+            'input[name="decorationDensity"]'
+        )
+        .forEach(input => {
+
+            input.checked =
+                input.value ===
+                settings.decorationDensity;
+
+        });
+
+
+    updateThemeCardState();
+
+}
+
+
+/* =========================================================
+   APPLY THEME
+   ========================================================= */
+
+function applyTheme(
+    themeId,
+    shouldSave = true
+) {
+
+    const allowed =
+        (
+            CONFIG.themes ||
+            []
+        )
+            .map(
+                theme =>
+                    theme.id
+            );
+
+
+    const nextTheme =
+        allowed.includes(themeId)
+            ?
+            themeId
+            :
+            CONFIG.defaultTheme ||
+            "haunted";
+
+
+    allowed.forEach(theme => {
+
+        document.body.classList.remove(
+            `theme-${theme}`
         );
 
     });
 
 
+    document.body.classList.add(
+        `theme-${nextTheme}`
+    );
+
+
+    settings.theme =
+        nextTheme;
+
+
+    updateThemeCardState();
+
+    updateOpenShelfDecorationChoices();
+
+
+    if (shouldSave) {
+        saveSettings();
+    }
+
+}
+
+
+/* =========================================================
+   THEME CARDS
+   ========================================================= */
+
+function updateThemeCardState() {
+
     document
-        .getElementById(
-            "bookStyle"
+        .querySelectorAll(
+            ".theme-card"
         )
-        ?.addEventListener(
-            "change",
-            handleSpineStyleChange
-        );
-
-}
-
-
-/* =========================================================
-   STYLE CHANGE
-   ========================================================= */
-
-function handleSpineStyleChange() {
-
-    const style =
-        normalizeSpineStyle(
-            getValue("bookStyle")
-        );
-
-
-    const styleConfig =
-        getSpineStyleConfig(style);
-
-
-    const editingId =
-        getValue("editingBookId");
-
-
-    if (
-        !editingId &&
-        styleConfig?.defaultFont
-    ) {
-
-        setValue(
-            "bookSpineFont",
-            styleConfig.defaultFont
-        );
-
-    }
-
-
-    updateSpinePreview();
-
-}
-
-
-/* =========================================================
-   LIVE SPINE PREVIEW
-   ========================================================= */
-
-function updateSpinePreview() {
-
-    const preview =
-        document.getElementById(
-            "bookSpinePreview"
-        );
-
-
-    const previewTitle =
-        document.getElementById(
-            "bookSpinePreviewTitle"
-        );
-
-
-    const previewOrnament =
-        document.getElementById(
-            "bookSpinePreviewOrnament"
-        );
-
-
-    if (
-        !preview ||
-        !previewTitle ||
-        !previewOrnament
-    ) {
-        return;
-    }
-
-
-    const title =
-        getValue("bookTitle")
-        ||
-        "Your Book Title";
-
-
-    const style =
-        normalizeSpineStyle(
-            getValue("bookStyle")
-        );
-
-
-    const font =
-        normalizeSpineFont(
-            getValue("bookSpineFont")
-        );
-
-
-    const fontSize =
-        normalizeFontSize(
-            getValue("bookSpineFontSize")
-        );
-
-
-    const fontWeight =
-        normalizeFontWeight(
-            getValue("bookSpineFontWeight")
-        );
-
-
-    const spacing =
-        normalizeLetterSpacing(
-            getValue("bookSpineLetterSpacing")
-        );
-
-
-    const textCase =
-        normalizeTextCase(
-            getValue("bookSpineCase")
-        );
-
-
-    const fontStyle =
-        normalizeFontStyle(
-            getValue("bookSpineFontStyle")
-        );
-
-
-    const textAlign =
-        normalizeTextAlign(
-            getValue("bookSpineTextAlign")
-        );
-
-
-    const titlePanel =
-        normalizeTitlePanel(
-            getValue("bookSpineTitlePanel")
-        );
-
-
-    const ornament =
-        normalizeSpineOrnament(
-            getValue("bookSpineOrnament")
-        );
-
-
-    const spineColor =
-        getValue("bookSpineColor")
-        ||
-        getThemeBookColor();
-
-
-    const textColor =
-        getValue("bookTextColor")
-        ||
-        getThemeBookTextColor();
-
-
-    const accentColor =
-        getValue("bookAccentColor")
-        ||
-        getThemeAccentColor();
-
-
-    const height =
-        normalizeBookHeight(
-            getValue("bookHeight")
-        );
-
-
-    const thickness =
-        normalizeBookThickness(
-            getValue("bookThickness")
-        );
-
-
-    preview.className = [
-
-        "spine-preview-book",
-
-        `book-style-${style}`,
-
-        `spine-font-${font}`,
-
-        `spine-size-${fontSize}`,
-
-        `spine-weight-${fontWeight}`,
-
-        `spine-spacing-${spacing}`,
-
-        `spine-case-${textCase}`,
-
-        `spine-text-${fontStyle}`,
-
-        `spine-align-${textAlign}`,
-
-        `spine-panel-${titlePanel}`
-
-    ]
-        .join(" ");
-
-
-    preview.style.setProperty(
-        "--book-color",
-        spineColor
-    );
-
-
-    preview.style.setProperty(
-        "--book-text",
-        textColor
-    );
-
-
-    preview.style.setProperty(
-        "--book-accent",
-        accentColor
-    );
-
-
-    preview.style.backgroundColor =
-        spineColor;
-
-
-    preview.style.color =
-        textColor;
-
-
-    previewTitle.textContent =
-        title;
-
-
-    previewOrnament.textContent =
-        getSpineOrnamentSymbol(
-            ornament,
-            style
-        );
-
-
-    const heightMap = {
-        small:
-            155,
-
-        medium:
-            190,
-
-        tall:
-            225
-    };
-
-
-    const widthMap = {
-        slim:
-            48,
-
-        medium:
-            72,
-
-        chunky:
-            95
-    };
-
-
-    preview.style.height =
-        `${heightMap[height]}px`;
-
-
-    preview.style.width =
-        `${widthMap[thickness]}px`;
-
-}
-
-
-/* =========================================================
-   THEME CONTROLS
-   ========================================================= */
-
-function bindThemeControls() {
-
-    [
-        "openThemeSettings",
-        "topThemeSettings"
-    ]
-        .forEach(id => {
-
-            document
-                .getElementById(id)
-                ?.addEventListener(
-                    "click",
-                    openThemeDrawer
-                );
+        .forEach(card => {
+
+            card.classList.toggle(
+                "active",
+                card.dataset.theme ===
+                settings.theme
+            );
 
         });
 
+}
 
-    document
-        .getElementById(
-            "closeThemeDrawer"
-        )
-        ?.addEventListener(
-            "click",
-            closeDrawers
-        );
 
+/* =========================================================
+   CONTROL BINDING
+   ========================================================= */
+
+function bindControls() {
+
+    /* -------------------------------
+       sidebar / top buttons
+       ------------------------------- */
+
+    bindClick(
+        "sidebarAddBook",
+        () =>
+            openBookDrawer()
+    );
+
+    bindClick(
+        "topAddBook",
+        () =>
+            openBookDrawer()
+    );
+
+    bindClick(
+        "emptyAddBook",
+        () =>
+            openBookDrawer()
+    );
+
+    bindClick(
+        "readingEmptyAddBook",
+        () =>
+            openBookDrawer()
+    );
+
+
+    bindClick(
+        "sidebarAddShelf",
+        () =>
+            openShelfDrawer()
+    );
+
+    bindClick(
+        "topAddShelf",
+        () =>
+            openShelfDrawer()
+    );
+
+    bindClick(
+        "emptyAddShelf",
+        () =>
+            openShelfDrawer()
+    );
+
+    bindClick(
+        "bottomAddShelf",
+        () =>
+            openShelfDrawer()
+    );
+
+
+    bindClick(
+        "openThemeSettings",
+        openThemeDrawer
+    );
+
+    bindClick(
+        "topThemeSettings",
+        openThemeDrawer
+    );
+
+
+    /* -------------------------------
+       close drawers
+       ------------------------------- */
+
+    bindClick(
+        "closeThemeDrawer",
+        closeAllDrawers
+    );
+
+    bindClick(
+        "closeShelfDrawer",
+        closeAllDrawers
+    );
+
+    bindClick(
+        "closeBookDrawer",
+        closeAllDrawers
+    );
+
+    bindClick(
+        "cancelShelf",
+        closeAllDrawers
+    );
+
+    bindClick(
+        "cancelBook",
+        closeAllDrawers
+    );
+
+    bindClick(
+        "overlay",
+        closeAllDrawers
+    );
+
+
+    /* -------------------------------
+       theme cards
+       ------------------------------- */
 
     document
         .querySelectorAll(
@@ -1569,15 +955,15 @@ function bindThemeControls() {
                         card.dataset.theme
                     );
 
-                    syncSettingsControls();
-
-                    renderLibrary();
-
                 }
             );
 
         });
 
+
+    /* -------------------------------
+       ambient settings
+       ------------------------------- */
 
     bindSettingCheckbox(
         "settingCandleGlow",
@@ -1585,20 +971,17 @@ function bindThemeControls() {
         "ambient-candle"
     );
 
-
     bindSettingCheckbox(
         "settingDust",
         "dust",
         "ambient-dust"
     );
 
-
     bindSettingCheckbox(
         "settingRain",
         "rain",
         "ambient-rain"
     );
-
 
     bindSettingCheckbox(
         "settingOddities",
@@ -1618,12 +1001,10 @@ function bindThemeControls() {
                 settings.reducedMotion =
                     event.target.checked;
 
-
                 document.body.classList.toggle(
                     "reduce-motion",
                     settings.reducedMotion
                 );
-
 
                 saveSettings();
 
@@ -1635,23 +1016,25 @@ function bindThemeControls() {
         .querySelectorAll(
             'input[name="decorationDensity"]'
         )
-        .forEach(radio => {
+        .forEach(input => {
 
-            radio.addEventListener(
+            input.addEventListener(
                 "change",
-                () => {
+                event => {
 
-                    if (!radio.checked) {
+                    if (
+                        !event.target.checked
+                    ) {
                         return;
                     }
 
 
                     settings.decorationDensity =
-                        radio.value;
+                        event.target.value;
 
 
                     document.body.dataset.decorationDensity =
-                        radio.value;
+                        settings.decorationDensity;
 
 
                     saveSettings();
@@ -1662,114 +1045,135 @@ function bindThemeControls() {
         });
 
 
+    /* -------------------------------
+       shelf form
+       ------------------------------- */
+
     document
         .getElementById(
-            "overlay"
+            "shelfForm"
         )
         ?.addEventListener(
-            "click",
-            closeDrawers
+            "submit",
+            saveShelfFromForm
         );
 
-}
 
-
-/* =========================================================
-   SETTING CHECKBOX
-   ========================================================= */
-
-function bindSettingCheckbox(
-    elementId,
-    settingKey,
-    bodyClass
-) {
+    /* -------------------------------
+       book form
+       ------------------------------- */
 
     document
-        .getElementById(elementId)
+        .getElementById(
+            "bookForm"
+        )
+        ?.addEventListener(
+            "submit",
+            saveBookFromForm
+        );
+
+
+    /* -------------------------------
+       cover upload
+       ------------------------------- */
+
+    document
+        .getElementById(
+            "bookCoverUpload"
+        )
         ?.addEventListener(
             "change",
-            event => {
-
-                settings[settingKey] =
-                    event.target.checked;
-
-
-                document.body.classList.toggle(
-                    bodyClass,
-                    event.target.checked
-                );
-
-
-                saveSettings();
-
-            }
-        );
-
-}
-
-
-/* =========================================================
-   REVEAL CONTROLS
-   ========================================================= */
-
-function bindRevealControls() {
-
-    document
-        .getElementById(
-            "closeBookReveal"
-        )
-        ?.addEventListener(
-            "click",
-            closeBookReveal
+            handleCoverUpload
         );
 
 
-    document
-        .getElementById(
-            "editSelectedBook"
-        )
-        ?.addEventListener(
-            "click",
-            editSelectedBook
+    /* -------------------------------
+       spine preview
+       ------------------------------- */
+
+    const spineControlIds = [
+
+        "bookTitle",
+        "bookStyle",
+        "bookSpineColor",
+        "bookTextColor",
+        "bookAccentColor",
+        "bookSpineOrnament",
+        "bookSpineFont",
+        "bookSpineFontSize",
+        "bookSpineFontWeight",
+        "bookSpineLetterSpacing",
+        "bookSpineCase",
+        "bookSpineFontStyle",
+        "bookSpineTextAlign",
+        "bookSpineTitlePanel",
+        "bookHeight",
+        "bookThickness"
+
+    ];
+
+
+    spineControlIds.forEach(id => {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) {
+            return;
+        }
+
+
+        element.addEventListener(
+            "input",
+            updateSpinePreview
         );
 
-
-    document
-        .getElementById(
-            "openSelectedBook"
-        )
-        ?.addEventListener(
-            "click",
-            openReadingBook
+        element.addEventListener(
+            "change",
+            updateSpinePreview
         );
 
-}
-
-
-/* =========================================================
-   JOURNAL CONTROLS
-   ========================================================= */
-
-function bindJournalControls() {
-
-    document
-        .getElementById(
-            "closeReadingBook"
-        )
-        ?.addEventListener(
-            "click",
-            closeReadingBook
-        );
+    });
 
 
     document
         .getElementById(
-            "backToContents"
+            "bookStyle"
         )
         ?.addEventListener(
-            "click",
-            showJournalContents
+            "change",
+            handleSpineStyleChange
         );
+
+
+    /* -------------------------------
+       book reveal
+       ------------------------------- */
+
+    bindClick(
+        "closeBookReveal",
+        closeBookReveal
+    );
+
+    bindClick(
+        "editSelectedBook",
+        editSelectedBook
+    );
+
+    bindClick(
+        "openSelectedBook",
+        openSelectedBookJournal
+    );
+
+
+    /* -------------------------------
+       journal
+       ------------------------------- */
+
+    bindClick(
+        "closeReadingBook",
+        closeReadingBook
+    );
 
 
     document
@@ -1792,34 +1196,26 @@ function bindJournalControls() {
         });
 
 
-    document
-        .getElementById(
-            "addJournalEntry"
-        )
-        ?.addEventListener(
-            "click",
-            openEntryModal
-        );
+    bindClick(
+        "backToContents",
+        showJournalContents
+    );
+
+    bindClick(
+        "addJournalEntry",
+        openJournalEntryModal
+    );
 
 
-    document
-        .getElementById(
-            "closeEntryModal"
-        )
-        ?.addEventListener(
-            "click",
-            closeEntryModal
-        );
+    bindClick(
+        "closeEntryModal",
+        closeEntryModal
+    );
 
-
-    document
-        .getElementById(
-            "cancelEntry"
-        )
-        ?.addEventListener(
-            "click",
-            closeEntryModal
-        );
+    bindClick(
+        "cancelEntry",
+        closeEntryModal
+    );
 
 
     document
@@ -1831,49 +1227,178 @@ function bindJournalControls() {
             saveJournalEntry
         );
 
-}
+
+    /* -------------------------------
+       Reading Now
+       ------------------------------- */
+
+    bindClick(
+        "featuredOpenBook",
+        () => {
+
+            const id =
+                document
+                    .getElementById(
+                        "featuredOpenBook"
+                    )
+                    ?.dataset.bookId;
+
+            if (id) {
+                openBookReveal(id);
+            }
+
+        }
+    );
 
 
-/* =========================================================
-   KEYBOARD
-   ========================================================= */
+    bindClick(
+        "featuredEditProgress",
+        () => {
 
-function bindKeyboardControls() {
+            const id =
+                document
+                    .getElementById(
+                        "featuredEditProgress"
+                    )
+                    ?.dataset.bookId;
+
+            if (id) {
+                openProgressModal(id);
+            }
+
+        }
+    );
+
+
+    /* -------------------------------
+       progress modal
+       ------------------------------- */
+
+    bindClick(
+        "closeProgressModal",
+        closeProgressModal
+    );
+
+    bindClick(
+        "cancelProgressUpdate",
+        closeProgressModal
+    );
+
+
+    document
+        .getElementById(
+            "progressCurrentPage"
+        )
+        ?.addEventListener(
+            "input",
+            updateProgressPreview
+        );
+
+
+    document
+        .getElementById(
+            "markBookFinished"
+        )
+        ?.addEventListener(
+            "change",
+            handleFinishedToggle
+        );
+
+
+    document
+        .getElementById(
+            "progressForm"
+        )
+        ?.addEventListener(
+            "submit",
+            saveProgressUpdate
+        );
+
+
+    /* -------------------------------
+       escape key
+       ------------------------------- */
 
     document.addEventListener(
         "keydown",
         event => {
 
-            if (event.key !== "Escape") {
+            if (
+                event.key !==
+                "Escape"
+            ) {
                 return;
             }
 
 
             closeEntryModal();
 
+            closeProgressModal();
+
             closeReadingBook();
 
             closeBookReveal();
 
-            closeDrawers();
+            closeAllDrawers();
 
         }
     );
+
+
+    /* -------------------------------
+       nav active state
+       ------------------------------- */
+
+    bindSectionNavigation();
 
 }
 
 
 /* =========================================================
-   THEME DRAWER
+   SETTING CHECKBOX
    ========================================================= */
 
-function openThemeDrawer() {
+function bindSettingCheckbox(
+    id,
+    settingKey,
+    bodyClass
+) {
 
-    syncSettingsControls();
+    document
+        .getElementById(id)
+        ?.addEventListener(
+            "change",
+            event => {
 
-    showDrawer(
-        "themeDrawer"
-    );
+                settings[settingKey] =
+                    event.target.checked;
+
+
+                document.body.classList.toggle(
+                    bodyClass,
+                    settings[settingKey]
+                );
+
+
+                saveSettings();
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   RENDER EVERYTHING
+   ========================================================= */
+
+function renderAll() {
+
+    renderLibrary();
+
+    renderReadingNow();
+
+    renderReadingStats();
 
 }
 
@@ -1884,34 +1409,22 @@ function openThemeDrawer() {
 
 function renderLibrary() {
 
-    renderShelfSelect();
+    updateLibrarySummary();
 
-    renderShelves();
+    populateBookShelfSelect();
 
-    updateLibraryMetrics();
-
-}
-
-
-/* =========================================================
-   RENDER SHELVES
-   ========================================================= */
-
-function renderShelves() {
 
     const container =
         document.getElementById(
             "shelfContainer"
         );
 
-
     const empty =
         document.getElementById(
             "libraryEmpty"
         );
 
-
-    const bottomButton =
+    const addShelf =
         document.getElementById(
             "bottomAddShelf"
         );
@@ -1931,11 +1444,9 @@ function renderShelves() {
             empty.hidden = false;
         }
 
-
-        if (bottomButton) {
-            bottomButton.hidden = true;
+        if (addShelf) {
+            addShelf.hidden = true;
         }
-
 
         return;
 
@@ -1946,16 +1457,17 @@ function renderShelves() {
         empty.hidden = true;
     }
 
-
-    if (bottomButton) {
-        bottomButton.hidden = false;
+    if (addShelf) {
+        addShelf.hidden = false;
     }
 
 
     shelves.forEach(shelf => {
 
         container.appendChild(
-            createShelfElement(shelf)
+            createShelfElement(
+                shelf
+            )
         );
 
     });
@@ -1964,969 +1476,10 @@ function renderShelves() {
 
 
 /* =========================================================
-   CREATE SHELF
+   LIBRARY SUMMARY
    ========================================================= */
 
-function createShelfElement(
-    shelf
-) {
-
-    const section =
-        document.createElement(
-            "section"
-        );
-
-
-    section.className =
-        "library-shelf";
-
-
-    section.dataset.material =
-        shelf.material;
-
-
-    section.dataset.mood =
-        shelf.mood;
-
-
-    const shelfBooks =
-        sortShelfBooks(
-            books.filter(
-                book =>
-                    String(book.shelf_id) ===
-                    String(shelf.id)
-            ),
-            shelf.sort
-        );
-
-
-    section.innerHTML = `
-
-        <div class="shelf-heading">
-
-            <div>
-
-                <h2>
-                    ${escapeHTML(shelf.name)}
-                </h2>
-
-                ${
-                    shelf.description
-                        ?
-                        `
-                            <p>
-                                ${escapeHTML(
-                                    shelf.description
-                                )}
-                            </p>
-                        `
-                        :
-                        ""
-                }
-
-            </div>
-
-
-            <div class="shelf-tools">
-
-                <button
-                    class="shelf-tool"
-                    type="button"
-                    data-action="add-book"
-                >
-                    + book
-                </button>
-
-                <button
-                    class="shelf-tool"
-                    type="button"
-                    data-action="edit-shelf"
-                >
-                    edit shelf
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div
-            class="shelf-cabinet"
-            data-shelf-id="${escapeHTML(shelf.id)}"
-        >
-
-            <div class="shelf-back"></div>
-
-            <div
-                class="book-row ${escapeHTML(shelf.layout)}"
-            ></div>
-
-            <div class="decoration-layer"></div>
-
-            <div class="shelf-board"></div>
-
-        </div>
-
-    `;
-
-
-    const row =
-        section.querySelector(
-            ".book-row"
-        );
-
-
-    const decorationLayer =
-        section.querySelector(
-            ".decoration-layer"
-        );
-
-
-    if (shelfBooks.length) {
-
-        shelfBooks.forEach(book => {
-
-            row.appendChild(
-                createBookElement(book)
-            );
-
-        });
-
-    }
-
-    else {
-
-        const emptyMessage =
-            document.createElement(
-                "div"
-            );
-
-
-        emptyMessage.className =
-            "empty-shelf-message";
-
-
-        emptyMessage.innerHTML = `
-
-            This shelf is waiting for a story.
-
-            <button type="button">
-                tuck in a book
-            </button>
-
-        `;
-
-
-        emptyMessage
-            .querySelector("button")
-            ?.addEventListener(
-                "click",
-                () => {
-
-                    openBookDrawer(
-                        null,
-                        shelf.id
-                    );
-
-                }
-            );
-
-
-        row.appendChild(
-            emptyMessage
-        );
-
-    }
-
-
-    /*
-     * IMPORTANT:
-     * User-selected decorations always render.
-     *
-     * The global "oddities" and clutter settings
-     * do NOT suppress them.
-     */
-
-    if (decorationLayer) {
-
-        shelf.decorations.forEach(
-            decoration => {
-
-                decorationLayer.appendChild(
-                    createDecorationElement(
-                        shelf,
-                        decoration
-                    )
-                );
-
-            }
-        );
-
-    }
-
-
-    section
-        .querySelector(
-            '[data-action="add-book"]'
-        )
-        ?.addEventListener(
-            "click",
-            () => {
-
-                openBookDrawer(
-                    null,
-                    shelf.id
-                );
-
-            }
-        );
-
-
-    section
-        .querySelector(
-            '[data-action="edit-shelf"]'
-        )
-        ?.addEventListener(
-            "click",
-            () => {
-
-                openShelfDrawer(
-                    shelf.id
-                );
-
-            }
-        );
-
-
-    return section;
-
-}
-
-
-/* =========================================================
-   CREATE BOOK
-   ========================================================= */
-
-function createBookElement(
-    book
-) {
-
-    const element =
-        document.createElement(
-            "div"
-        );
-
-
-    element.className = [
-
-        "shelf-book",
-
-        `height-${book.height}`,
-
-        `thickness-${book.thickness}`,
-
-        `book-style-${book.style}`,
-
-        `spine-font-${book.spine_font}`,
-
-        `spine-size-${book.spine_font_size}`,
-
-        `spine-weight-${book.spine_font_weight}`,
-
-        `spine-spacing-${book.spine_letter_spacing}`,
-
-        `spine-case-${book.spine_case}`,
-
-        `spine-text-${book.spine_font_style}`,
-
-        `spine-align-${book.spine_text_align}`,
-
-        `spine-panel-${book.spine_title_panel}`
-
-    ]
-        .join(" ");
-
-
-    element.dataset.status =
-        book.status;
-
-
-    element.style.setProperty(
-        "--book-color",
-        book.spine_color
-    );
-
-
-    element.style.setProperty(
-        "--book-text",
-        book.text_color
-    );
-
-
-    element.style.setProperty(
-        "--book-accent",
-        book.accent_color
-    );
-
-
-    element.title =
-        book.author
-            ?
-            `${book.title} — ${book.author}`
-            :
-            book.title;
-
-
-    element.innerHTML = `
-
-        <div class="book-spine">
-
-            <div class="spine-inner">
-
-                <div class="spine-title-panel">
-
-                    <span class="spine-title">
-                        ${escapeHTML(book.title)}
-                    </span>
-
-                </div>
-
-                <span class="spine-ornament">
-                    ${escapeHTML(
-                        getSpineOrnamentSymbol(
-                            book.spine_ornament,
-                            book.style
-                        )
-                    )}
-                </span>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    element.addEventListener(
-        "click",
-        () => {
-
-            document
-                .querySelectorAll(
-                    ".shelf-book"
-                )
-                .forEach(item => {
-
-                    item.classList.remove(
-                        "selected"
-                    );
-
-                });
-
-
-            element.classList.add(
-                "selected"
-            );
-
-
-            const delay =
-                settings.reducedMotion
-                    ?
-                    0
-                    :
-                    170;
-
-
-            setTimeout(
-                () => {
-
-                    openBookReveal(
-                        book.id
-                    );
-
-                },
-                delay
-            );
-
-        }
-    );
-
-
-    return element;
-
-}
-
-
-/* =========================================================
-   DECORATION ELEMENT
-   ========================================================= */
-
-function createDecorationElement(
-    shelf,
-    decoration
-) {
-
-    const element =
-        document.createElement(
-            "div"
-        );
-
-
-    element.className =
-        `shelf-decoration decor-${decoration.type} draggable-decoration`;
-
-
-    element.dataset.decorationId =
-        decoration.id;
-
-
-    element.dataset.shelfId =
-        shelf.id;
-
-
-    element.title =
-        `${getDecorationLabel(
-            decoration.type
-        )} — drag to move, double-click to resize`;
-
-
-    element.style.position =
-        "absolute";
-
-
-    element.style.left =
-        `${decoration.x}%`;
-
-
-    element.style.top =
-        `${decoration.y}%`;
-
-
-    applyDecorationTransform(
-        element,
-        decoration
-    );
-
-
-    /*
-     * CSS now draws the illustrated objects.
-     *
-     * This hidden fallback symbol is retained
-     * for any future decoration that doesn't
-     * yet have dedicated CSS artwork.
-     */
-
-    const symbol =
-        document.createElement(
-            "span"
-        );
-
-
-    symbol.className =
-        "decoration-symbol";
-
-
-    symbol.textContent =
-        getDecorationFallbackSymbol(
-            decoration.type
-        );
-
-
-    element.appendChild(symbol);
-
-
-    element.addEventListener(
-        "pointerdown",
-        startDecorationDrag
-    );
-
-
-    element.addEventListener(
-        "dblclick",
-        event => {
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-
-            cycleDecorationScale(
-                shelf.id,
-                decoration.id
-            );
-
-        }
-    );
-
-
-    return element;
-
-}
-
-
-/* =========================================================
-   DECORATION FALLBACK
-   ========================================================= */
-
-function getDecorationFallbackSymbol(
-    type
-) {
-
-    const symbols = {
-
-        plant:
-            "❧",
-
-        candle:
-            "✦",
-
-        flowers:
-            "✿",
-
-        stars:
-            "✦",
-
-        mug:
-            "◡",
-
-        cat:
-            "•",
-
-        ghost:
-            "◌",
-
-        bat:
-            "⌁",
-
-        goblin:
-            "•",
-
-        moss:
-            "❦",
-
-        mushroom:
-            "♠",
-
-        potion:
-            "⚗",
-
-        crystal:
-            "♦",
-
-        raven:
-            "◆",
-
-        pumpkin:
-            "●"
-
-    };
-
-
-    return symbols[type] || "✦";
-
-}
-
-
-function getDecorationLabel(
-    type
-) {
-
-    return (
-        CONFIG.decorations?.[type]?.label
-        ||
-        type
-    );
-
-}
-
-
-/* =========================================================
-   DECORATION TRANSFORM
-   ========================================================= */
-
-function applyDecorationTransform(
-    element,
-    decoration
-) {
-
-    element.style.transform = `
-        translate(-50%, -50%)
-        rotate(${decoration.rotate}deg)
-        scale(${decoration.scale})
-    `;
-
-}
-
-
-/* =========================================================
-   DRAG DECORATION
-   ========================================================= */
-
-function startDecorationDrag(
-    event
-) {
-
-    event.preventDefault();
-
-    event.stopPropagation();
-
-
-    const element =
-        event.currentTarget;
-
-
-    const shelf =
-        getShelfById(
-            element.dataset.shelfId
-        );
-
-
-    if (!shelf) {
-        return;
-    }
-
-
-    const decoration =
-        shelf.decorations.find(
-            item =>
-                String(item.id) ===
-                String(
-                    element.dataset.decorationId
-                )
-        );
-
-
-    if (!decoration) {
-        return;
-    }
-
-
-    const layer =
-        element.parentElement;
-
-
-    if (!layer) {
-        return;
-    }
-
-
-    activeDrag = {
-        element,
-        shelf,
-        decoration,
-        layer,
-        pointerId:
-            event.pointerId
-    };
-
-
-    element.style.cursor =
-        "grabbing";
-
-
-    element.setPointerCapture?.(
-        event.pointerId
-    );
-
-
-    document.addEventListener(
-        "pointermove",
-        moveDecoration
-    );
-
-
-    document.addEventListener(
-        "pointerup",
-        finishDecorationDrag,
-        {
-            once: true
-        }
-    );
-
-}
-
-
-/* =========================================================
-   MOVE DECORATION
-   ========================================================= */
-
-function moveDecoration(
-    event
-) {
-
-    if (!activeDrag) {
-        return;
-    }
-
-
-    const rect =
-        activeDrag.layer
-            .getBoundingClientRect();
-
-
-    if (
-        rect.width <= 0 ||
-        rect.height <= 0
-    ) {
-        return;
-    }
-
-
-    let x =
-        (
-            (
-                event.clientX -
-                rect.left
-            )
-            /
-            rect.width
-        )
-        *
-        100;
-
-
-    let y =
-        (
-            (
-                event.clientY -
-                rect.top
-            )
-            /
-            rect.height
-        )
-        *
-        100;
-
-
-    x =
-        clamp(
-            x,
-            3,
-            97
-        );
-
-
-    y =
-        clamp(
-            y,
-            8,
-            94
-        );
-
-
-    activeDrag.decoration.x =
-        Number(
-            x.toFixed(2)
-        );
-
-
-    activeDrag.decoration.y =
-        Number(
-            y.toFixed(2)
-        );
-
-
-    activeDrag.element.style.left =
-        `${activeDrag.decoration.x}%`;
-
-
-    activeDrag.element.style.top =
-        `${activeDrag.decoration.y}%`;
-
-}
-
-
-/* =========================================================
-   FINISH DRAG
-   ========================================================= */
-
-function finishDecorationDrag() {
-
-    if (!activeDrag) {
-        return;
-    }
-
-
-    activeDrag.element.style.cursor =
-        "grab";
-
-
-    activeDrag.shelf.updated_at =
-        new Date().toISOString();
-
-
-    saveShelves();
-
-
-    document.removeEventListener(
-        "pointermove",
-        moveDecoration
-    );
-
-
-    activeDrag = null;
-
-}
-
-
-/* =========================================================
-   RESIZE DECORATION
-   ========================================================= */
-
-function cycleDecorationScale(
-    shelfId,
-    decorationId
-) {
-
-    const shelf =
-        getShelfById(
-            shelfId
-        );
-
-
-    if (!shelf) {
-        return;
-    }
-
-
-    const decoration =
-        shelf.decorations.find(
-            item =>
-                String(item.id) ===
-                String(decorationId)
-        );
-
-
-    if (!decoration) {
-        return;
-    }
-
-
-    const sizes = [
-        .75,
-        1,
-        1.25,
-        1.5
-    ];
-
-
-    const currentIndex =
-        sizes.findIndex(
-            size =>
-                Math.abs(
-                    size -
-                    decoration.scale
-                )
-                <
-                .05
-        );
-
-
-    decoration.scale =
-        sizes[
-            (
-                currentIndex + 1
-            )
-            %
-            sizes.length
-        ];
-
-
-    shelf.updated_at =
-        new Date().toISOString();
-
-
-    saveShelves();
-
-    renderLibrary();
-
-}
-
-
-/* =========================================================
-   SORT BOOKS
-   ========================================================= */
-
-function sortShelfBooks(
-    list,
-    sort
-) {
-
-    const copy =
-        [...list];
-
-
-    switch (sort) {
-
-        case "title":
-
-            return copy.sort(
-                (a, b) =>
-                    a.title.localeCompare(
-                        b.title
-                    )
-            );
-
-
-        case "author":
-
-            return copy.sort(
-                (a, b) =>
-                    a.author.localeCompare(
-                        b.author
-                    )
-            );
-
-
-        case "rating":
-
-            return copy.sort(
-                (a, b) =>
-                    b.rating -
-                    a.rating
-            );
-
-
-        case "finished":
-
-            return copy.sort(
-                (a, b) =>
-                    String(
-                        b.finished ||
-                        ""
-                    )
-                        .localeCompare(
-                            String(
-                                a.finished ||
-                                ""
-                            )
-                        )
-            );
-
-
-        default:
-
-            return copy.sort(
-                (a, b) =>
-                    new Date(
-                        a.created_at
-                    )
-                    -
-                    new Date(
-                        b.created_at
-                    )
-            );
-
-    }
-
-}
-
-
-/* =========================================================
-   METRICS
-   ========================================================= */
-
-function updateLibraryMetrics() {
+function updateLibrarySummary() {
 
     setText(
         "bookCount",
@@ -2957,83 +1510,950 @@ function updateLibraryMetrics() {
 
 
 /* =========================================================
-   SHELF SELECT
+   CREATE SHELF
    ========================================================= */
 
-function renderShelfSelect() {
+function createShelfElement(
+    shelf
+) {
 
-    const select =
-        document.getElementById(
-            "bookShelf"
+    const article =
+        document.createElement(
+            "article"
         );
 
 
-    if (!select) {
-        return;
-    }
+    article.className = [
+        "library-shelf",
+        `shelf-${shelf.material}`,
+        `shelf-mood-${shelf.mood}`
+    ]
+        .join(" ");
 
 
-    const previousValue =
-        select.value;
+    article.dataset.shelfId =
+        shelf.id;
 
 
-    select.innerHTML = "";
+    article.innerHTML = `
+
+        <div class="shelf-header">
+
+            <div class="shelf-header-copy">
+
+                <h2>
+                    ${escapeHTML(
+                        shelf.name
+                    )}
+                </h2>
+
+                ${
+                    shelf.description
+                        ?
+                        `
+                        <p>
+                            ${escapeHTML(
+                                shelf.description
+                            )}
+                        </p>
+                        `
+                        :
+                        ""
+                }
+
+            </div>
 
 
-    if (!shelves.length) {
+            <div class="shelf-actions">
 
-        const option =
+                <button
+                    class="shelf-action-button"
+                    type="button"
+                    data-add-book
+                >
+                    + book
+                </button>
+
+                <button
+                    class="shelf-action-button"
+                    type="button"
+                    data-edit-shelf
+                >
+                    edit
+                </button>
+
+                <button
+                    class="shelf-action-button"
+                    type="button"
+                    data-delete-shelf
+                >
+                    remove
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="shelf-body">
+
+            <div class="shelf-books-row">
+            </div>
+
+            <div class="shelf-board">
+            </div>
+
+        </div>
+
+    `;
+
+
+    const body =
+        article.querySelector(
+            ".shelf-body"
+        );
+
+
+    const bookRow =
+        article.querySelector(
+            ".shelf-books-row"
+        );
+
+
+    const shelfBooks =
+        getBooksForShelf(
+            shelf
+        );
+
+
+    if (!shelfBooks.length) {
+
+        const empty =
             document.createElement(
-                "option"
+                "div"
             );
 
 
-        option.value = "";
-
-        option.textContent =
-            "Create a shelf first";
+        empty.className =
+            "empty-shelf-message";
 
 
-        select.appendChild(option);
+        empty.innerHTML = `
 
-        return;
+            <span>
+                this shelf is waiting for a book.
+            </span>
+
+            <button type="button">
+                tuck one in
+            </button>
+
+        `;
+
+
+        empty
+            .querySelector("button")
+            ?.addEventListener(
+                "click",
+                () =>
+                    openBookDrawer(
+                        null,
+                        shelf.id
+                    )
+            );
+
+
+        bookRow.appendChild(
+            empty
+        );
+
+    }
+
+    else {
+
+        shelfBooks.forEach(book => {
+
+            bookRow.appendChild(
+                createBookElement(
+                    book
+                )
+            );
+
+        });
 
     }
 
 
-    shelves.forEach(shelf => {
+    /*
+     * IMPORTANT:
+     * Every decoration chosen by the user is rendered.
+     * Density / ambient oddities never suppress these.
+     */
 
-        const option =
-            document.createElement(
-                "option"
+    shelf.decorations
+        .forEach(decoration => {
+
+            body.appendChild(
+                createDecorationElement(
+                    shelf,
+                    decoration
+                )
+            );
+
+        });
+
+
+    article
+        .querySelector(
+            "[data-add-book]"
+        )
+        ?.addEventListener(
+            "click",
+            () =>
+                openBookDrawer(
+                    null,
+                    shelf.id
+                )
+        );
+
+
+    article
+        .querySelector(
+            "[data-edit-shelf]"
+        )
+        ?.addEventListener(
+            "click",
+            () =>
+                openShelfDrawer(
+                    shelf.id
+                )
+        );
+
+
+    article
+        .querySelector(
+            "[data-delete-shelf]"
+        )
+        ?.addEventListener(
+            "click",
+            () =>
+                deleteShelf(
+                    shelf.id
+                )
+        );
+
+
+    return article;
+
+}
+
+
+/* =========================================================
+   BOOKS FOR SHELF
+   ========================================================= */
+
+function getBooksForShelf(
+    shelf
+) {
+
+    const result =
+        books.filter(
+            book =>
+                String(
+                    book.shelf_id
+                ) ===
+                String(
+                    shelf.id
+                )
+        );
+
+
+    switch (
+        shelf.sort
+    ) {
+
+        case "title":
+
+            return result.sort(
+                (a, b) =>
+                    a.title.localeCompare(
+                        b.title
+                    )
             );
 
 
-        option.value =
-            shelf.id;
+        case "author":
+
+            return result.sort(
+                (a, b) =>
+                    a.author.localeCompare(
+                        b.author
+                    )
+            );
 
 
-        option.textContent =
-            shelf.name;
+        case "rating":
+
+            return result.sort(
+                (a, b) =>
+                    b.rating -
+                    a.rating
+            );
 
 
-        select.appendChild(option);
+        case "finished":
 
-    });
+            return result.sort(
+                (a, b) =>
+                    dateValue(
+                        b.finished
+                    )
+                    -
+                    dateValue(
+                        a.finished
+                    )
+            );
+
+
+        default:
+
+            return result.sort(
+                (a, b) =>
+                    dateValue(
+                        a.created_at
+                    )
+                    -
+                    dateValue(
+                        b.created_at
+                    )
+            );
+
+    }
+
+}
+
+
+/* =========================================================
+   CREATE BOOK SPINE
+   ========================================================= */
+
+function createBookElement(
+    book
+) {
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    wrapper.className = [
+
+        "shelf-book",
+
+        `book-height-${book.height}`,
+
+        `book-thickness-${book.thickness}`,
+
+        `book-style-${book.style}`,
+
+        `spine-font-${book.spine_font}`,
+
+        `spine-size-${book.spine_font_size}`,
+
+        `spine-weight-${book.spine_font_weight}`,
+
+        `spine-spacing-${book.spine_letter_spacing}`,
+
+        `spine-case-${book.spine_case}`,
+
+        `spine-text-${book.spine_font_style}`,
+
+        `spine-align-${book.spine_text_align}`,
+
+        `spine-panel-${book.spine_title_panel}`
+
+    ]
+        .join(" ");
+
+
+    wrapper.dataset.bookId =
+        book.id;
+
+
+    wrapper.style.setProperty(
+        "--book-color",
+        book.spine_color
+    );
+
+    wrapper.style.setProperty(
+        "--book-text",
+        book.text_color
+    );
+
+    wrapper.style.setProperty(
+        "--book-accent",
+        book.accent_color
+    );
+
+
+    wrapper.innerHTML = `
+
+        <div class="book-spine">
+
+            <div class="spine-inner">
+
+                <div class="spine-title-panel">
+
+                    <span class="spine-title">
+                        ${escapeHTML(
+                            book.title
+                        )}
+                    </span>
+
+                </div>
+
+                <span class="spine-ornament">
+                    ${escapeHTML(
+                        getBookOrnament(
+                            book
+                        )
+                    )}
+                </span>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    wrapper.addEventListener(
+        "click",
+        () => {
+
+            window.setTimeout(
+                () =>
+                    openBookReveal(
+                        book.id
+                    ),
+                settings.reducedMotion
+                    ? 0
+                    : 170
+            );
+
+        }
+    );
+
+
+    return wrapper;
+
+}
+
+
+/* =========================================================
+   BOOK ORNAMENT
+   ========================================================= */
+
+function getBookOrnament(
+    book
+) {
+
+    let ornament =
+        book.spine_ornament;
 
 
     if (
-        shelves.some(
-            shelf =>
-                String(shelf.id) ===
-                String(previousValue)
-        )
+        !ornament ||
+        ornament ===
+        "auto"
     ) {
 
-        select.value =
-            previousValue;
+        ornament =
+            CONFIG.spineStyles
+                ?.find(
+                    style =>
+                        style.id ===
+                        book.style
+                )
+                ?.defaultOrnament
+            ||
+            "diamond";
 
     }
+
+
+    return (
+        CONFIG.spineOrnaments
+            ?.[ornament]
+            ?.symbol
+        ||
+        ""
+    );
+
+}
+
+
+/* =========================================================
+   DECORATION ELEMENT
+   ========================================================= */
+
+function createDecorationElement(
+    shelf,
+    decoration
+) {
+
+    const element =
+        document.createElement(
+            "div"
+        );
+
+
+    element.className = [
+
+        "shelf-decoration",
+
+        `decor-${decoration.type}`,
+
+        "draggable-decoration"
+
+    ]
+        .join(" ");
+
+
+    element.dataset.decorationId =
+        decoration.id;
+
+
+    element.dataset.shelfId =
+        shelf.id;
+
+
+    element.style.left =
+        `${decoration.x}%`;
+
+    element.style.top =
+        `${decoration.y}%`;
+
+
+    applyDecorationTransform(
+        element,
+        decoration
+    );
+
+
+    element.innerHTML = `
+
+        <span class="decoration-symbol">
+            ${escapeHTML(
+                getDecorationSymbol(
+                    decoration.type
+                )
+            )}
+        </span>
+
+    `;
+
+
+    element.addEventListener(
+        "pointerdown",
+        event =>
+            startDecorationDrag(
+                event,
+                shelf.id,
+                decoration.id
+            )
+    );
+
+
+    element.addEventListener(
+        "dblclick",
+        event => {
+
+            event.stopPropagation();
+
+            cycleDecorationScale(
+                shelf.id,
+                decoration.id
+            );
+
+        }
+    );
+
+
+    return element;
+
+}
+
+
+/* =========================================================
+   DECORATION FALLBACK SYMBOL
+   ========================================================= */
+
+function getDecorationSymbol(type) {
+
+    const symbols = {
+
+        cat: "◕",
+        ghost: "◌",
+        bat: "⌁",
+        goblin: "◉",
+        raven: "◆",
+        moss: "≈",
+        mushroom: "♠",
+        plant: "♣",
+        flowers: "✿",
+        pumpkin: "●",
+        potion: "◇",
+        crystal: "♦",
+        candle: "│",
+        mug: "◡",
+        stars: "✦"
+
+    };
+
+
+    return symbols[type] || "✦";
+
+}
+
+
+/* =========================================================
+   DECORATION DRAG
+   ========================================================= */
+
+function startDecorationDrag(
+    event,
+    shelfId,
+    decorationId
+) {
+
+    if (
+        event.button !==
+        undefined &&
+        event.button !==
+        0
+    ) {
+        return;
+    }
+
+
+    const element =
+        event.currentTarget;
+
+
+    const shelfBody =
+        element.closest(
+            ".shelf-body"
+        );
+
+
+    if (!shelfBody) {
+        return;
+    }
+
+
+    activeDrag = {
+
+        shelfId,
+        decorationId,
+        element,
+        shelfBody
+
+    };
+
+
+    element.setPointerCapture?.(
+        event.pointerId
+    );
+
+
+    element.addEventListener(
+        "pointermove",
+        handleDecorationDrag
+    );
+
+
+    element.addEventListener(
+        "pointerup",
+        endDecorationDrag
+    );
+
+
+    element.addEventListener(
+        "pointercancel",
+        endDecorationDrag
+    );
+
+
+    event.preventDefault();
+
+}
+
+
+/* =========================================================
+   HANDLE DECORATION DRAG
+   ========================================================= */
+
+function handleDecorationDrag(
+    event
+) {
+
+    if (!activeDrag) {
+        return;
+    }
+
+
+    const rect =
+        activeDrag.shelfBody
+            .getBoundingClientRect();
+
+
+    const x =
+        clamp(
+            (
+                (
+                    event.clientX -
+                    rect.left
+                )
+                /
+                rect.width
+            )
+            *
+            100,
+            0,
+            100
+        );
+
+
+    const y =
+        clamp(
+            (
+                (
+                    event.clientY -
+                    rect.top
+                )
+                /
+                rect.height
+            )
+            *
+            100,
+            0,
+            100
+        );
+
+
+    activeDrag.element.style.left =
+        `${x}%`;
+
+    activeDrag.element.style.top =
+        `${y}%`;
+
+
+    const shelf =
+        getShelfById(
+            activeDrag.shelfId
+        );
+
+
+    const decoration =
+        shelf?.decorations
+            .find(
+                item =>
+                    String(item.id) ===
+                    String(
+                        activeDrag.decorationId
+                    )
+            );
+
+
+    if (decoration) {
+
+        decoration.x =
+            Number(
+                x.toFixed(2)
+            );
+
+        decoration.y =
+            Number(
+                y.toFixed(2)
+            );
+
+    }
+
+}
+
+
+/* =========================================================
+   END DECORATION DRAG
+   ========================================================= */
+
+function endDecorationDrag(
+    event
+) {
+
+    if (!activeDrag) {
+        return;
+    }
+
+
+    activeDrag.element
+        .releasePointerCapture?.(
+            event.pointerId
+        );
+
+
+    activeDrag.element
+        .removeEventListener(
+            "pointermove",
+            handleDecorationDrag
+        );
+
+
+    activeDrag.element
+        .removeEventListener(
+            "pointerup",
+            endDecorationDrag
+        );
+
+
+    activeDrag.element
+        .removeEventListener(
+            "pointercancel",
+            endDecorationDrag
+        );
+
+
+    saveShelves();
+
+
+    activeDrag = null;
+
+}
+
+
+/* =========================================================
+   DECORATION SCALE
+   ========================================================= */
+
+function cycleDecorationScale(
+    shelfId,
+    decorationId
+) {
+
+    const shelf =
+        getShelfById(
+            shelfId
+        );
+
+
+    const decoration =
+        shelf?.decorations
+            .find(
+                item =>
+                    String(item.id) ===
+                    String(decorationId)
+            );
+
+
+    if (!decoration) {
+        return;
+    }
+
+
+    const scales = [
+        .75,
+        1,
+        1.25,
+        1.5
+    ];
+
+
+    const currentIndex =
+        scales.findIndex(
+            scale =>
+                Math.abs(
+                    scale -
+                    decoration.scale
+                )
+                <
+                .01
+        );
+
+
+    const nextIndex =
+        currentIndex ===
+        -1
+            ?
+            1
+            :
+            (
+                currentIndex + 1
+            )
+            %
+            scales.length;
+
+
+    decoration.scale =
+        scales[nextIndex];
+
+
+    saveShelves();
+
+    renderLibrary();
+
+}
+
+
+/* =========================================================
+   DECORATION TRANSFORM
+   ========================================================= */
+
+function applyDecorationTransform(
+    element,
+    decoration
+) {
+
+    element.style.transform =
+        `
+        translate(-50%, -50%)
+        scale(${decoration.scale})
+        rotate(${decoration.rotate}deg)
+        `;
+
+}
+
+
+/* =========================================================
+   CREATE DECORATION RECORD
+   ========================================================= */
+
+function createDecorationRecord(type) {
+
+    return {
+
+        id:
+            generateId(),
+
+        type,
+
+        x:
+            CONFIG.decorationDefaults?.x ??
+            50,
+
+        y:
+            CONFIG.decorationDefaults?.y ??
+            72,
+
+        scale:
+            CONFIG.decorationDefaults?.scale ??
+            1,
+
+        rotate:
+            CONFIG.decorationDefaults?.rotate ??
+            0
+
+    };
 
 }
 
@@ -3046,27 +2466,105 @@ function openShelfDrawer(
     shelfId = null
 ) {
 
-    resetShelfForm();
+    hideAllDrawersImmediately();
 
 
-    renderDecorationOptions(
-        shelfId
+    const form =
+        document.getElementById(
+            "shelfForm"
+        );
+
+
+    if (!form) {
+        return;
+    }
+
+
+    form.reset();
+
+
+    setValue(
+        "editingShelfId",
+        ""
     );
+
+
+    setText(
+        "shelfDrawerTitle",
+        shelfId
+            ?
+            "Edit shelf"
+            :
+            "Create a shelf"
+    );
+
+
+    setText(
+        "saveShelfLabel",
+        shelfId
+            ?
+            "save shelf"
+            :
+            "create shelf"
+    );
+
+
+    let shelf = null;
 
 
     if (shelfId) {
 
-        loadShelfIntoForm(
-            shelfId
-        );
+        shelf =
+            getShelfById(
+                shelfId
+            );
+
+
+        if (shelf) {
+
+            setValue(
+                "editingShelfId",
+                shelf.id
+            );
+
+            setValue(
+                "shelfName",
+                shelf.name
+            );
+
+            setValue(
+                "shelfDescription",
+                shelf.description
+            );
+
+            setValue(
+                "shelfMaterial",
+                shelf.material
+            );
+
+            setValue(
+                "shelfMood",
+                shelf.mood
+            );
+
+            setValue(
+                "shelfLayout",
+                shelf.layout
+            );
+
+            setValue(
+                "shelfSort",
+                shelf.sort
+            );
+
+        }
 
     }
 
-    else {
 
-        applyNewShelfDecorationDefaults();
-
-    }
+    renderDecorationOptions(
+        shelf
+    );
 
 
     showDrawer(
@@ -3077,85 +2575,11 @@ function openShelfDrawer(
 
 
 /* =========================================================
-   RESET SHELF FORM
-   ========================================================= */
-
-function resetShelfForm() {
-
-    document
-        .getElementById(
-            "shelfForm"
-        )
-        ?.reset();
-
-
-    setValue(
-        "editingShelfId",
-        ""
-    );
-
-
-    setValue(
-        "shelfMaterial",
-        "walnut"
-    );
-
-
-    setValue(
-        "shelfMood",
-        "cozy"
-    );
-
-
-    setValue(
-        "shelfLayout",
-        "mixed"
-    );
-
-
-    setValue(
-        "shelfSort",
-        "manual"
-    );
-
-
-    setText(
-        "shelfDrawerTitle",
-        "Create a shelf"
-    );
-
-
-    setText(
-        "saveShelfLabel",
-        "create shelf"
-    );
-
-}
-
-
-/* =========================================================
-   CURRENT THEME
-   ========================================================= */
-
-function getCurrentThemeConfig() {
-
-    return CONFIG.themes?.find(
-        theme =>
-            theme.id ===
-            settings.theme
-    )
-    ||
-    null;
-
-}
-
-
-/* =========================================================
    DECORATION OPTIONS
    ========================================================= */
 
 function renderDecorationOptions(
-    shelfId = null
+    shelf = null
 ) {
 
     const container =
@@ -3169,126 +2593,98 @@ function renderDecorationOptions(
     }
 
 
-    const theme =
-        getCurrentThemeConfig();
-
-
-    const themeTypes =
-        Array.isArray(
-            theme?.defaultDecorations
-        )
-            ?
-            theme.defaultDecorations
-            :
-            [];
-
-
-    const currentShelf =
-        shelfId
-            ?
-            getShelfById(shelfId)
-            :
-            null;
-
-
-    const currentTypes =
-        currentShelf
-            ?
-            currentShelf.decorations.map(
-                decoration =>
-                    decoration.type
-            )
-            :
-            [];
-
-
-    /*
-     * Union current shelf choices and theme choices.
-     * This prevents decorations disappearing from
-     * the edit drawer if the user changes theme.
-     */
-
-    const types = [
-        ...new Set([
-            ...currentTypes,
-            ...themeTypes
-        ])
-    ];
-
-
-    if (!types.length) {
-
-        types.push(
-            ...Object.keys(
-                CONFIG.decorations ||
-                {}
-            )
-        );
-
-    }
-
-
     container.innerHTML = "";
 
 
-    types.forEach(type => {
-
-        const info =
-            CONFIG.decorations?.[type];
-
-
-        const label =
-            document.createElement(
-                "label"
-            );
+    const currentTypes =
+        shelf?.decorations
+            ?.map(
+                item =>
+                    item.type
+            )
+        ||
+        [];
 
 
-        label.innerHTML = `
-
-            <input
-                type="checkbox"
-                name="shelfDecoration"
-                value="${escapeHTML(type)}"
-            >
-
-            <span>
-                ${escapeHTML(
-                    info?.label ||
-                    type
-                )}
-            </span>
-
-        `;
+    const themeTypes =
+        getThemeDecorations();
 
 
-        container.appendChild(label);
-
-    });
-
-}
-
-
-/* =========================================================
-   DEFAULT NEW SHELF DECORATIONS
-   ========================================================= */
-
-function applyNewShelfDecorationDefaults() {
-
-    const checkboxes = [
-        ...document.querySelectorAll(
-            '[name="shelfDecoration"]'
-        )
-    ];
+    const optionTypes =
+        [
+            ...new Set(
+                [
+                    ...currentTypes,
+                    ...themeTypes
+                ]
+            )
+        ];
 
 
-    checkboxes.forEach(
+    optionTypes.forEach(
         (
-            checkbox,
+            type,
             index
         ) => {
 
-            checkbox.checked =
-                index < 3;
+            const definition =
+                CONFIG.decorations
+                    ?.find(
+                        item =>
+                            item.id ===
+                            type
+                    );
+
+
+            if (!definition) {
+                return;
+            }
+
+
+            const label =
+                document.createElement(
+                    "label"
+                );
+
+
+            const checked =
+                shelf
+                    ?
+                    currentTypes.includes(
+                        type
+                    )
+                    :
+                    index < 3;
+
+
+            label.innerHTML = `
+
+                <input
+                    type="checkbox"
+                    value="${escapeHTML(
+                        type
+                    )}"
+                    ${
+                        checked
+                            ?
+                            "checked"
+                            :
+                            ""
+                    }
+                >
+
+                <span>
+                    ${escapeHTML(
+                        definition.label
+                    )}
+                </span>
+
+            `;
+
+
+            container.appendChild(
+                label
+            );
 
         }
     );
@@ -3297,7 +2693,7 @@ function applyNewShelfDecorationDefaults() {
 
 
 /* =========================================================
-   THEME CHANGED WHILE SHELF OPEN
+   UPDATE DECORATION CHOICES
    ========================================================= */
 
 function updateOpenShelfDecorationChoices() {
@@ -3316,137 +2712,16 @@ function updateOpenShelfDecorationChoices() {
     }
 
 
-    const editingId =
-        getValue(
-            "editingShelfId"
+    const shelf =
+        getShelfById(
+            getValue(
+                "editingShelfId"
+            )
         );
 
 
     renderDecorationOptions(
-        editingId || null
-    );
-
-
-    if (editingId) {
-
-        const shelf =
-            getShelfById(editingId);
-
-
-        const selected =
-            shelf?.decorations.map(
-                decoration =>
-                    decoration.type
-            )
-            ||
-            [];
-
-
-        document
-            .querySelectorAll(
-                '[name="shelfDecoration"]'
-            )
-            .forEach(checkbox => {
-
-                checkbox.checked =
-                    selected.includes(
-                        checkbox.value
-                    );
-
-            });
-
-    }
-
-}
-
-
-/* =========================================================
-   LOAD SHELF FORM
-   ========================================================= */
-
-function loadShelfIntoForm(id) {
-
-    const shelf =
-        getShelfById(id);
-
-
-    if (!shelf) {
-        return;
-    }
-
-
-    setValue(
-        "editingShelfId",
-        shelf.id
-    );
-
-
-    setValue(
-        "shelfName",
-        shelf.name
-    );
-
-
-    setValue(
-        "shelfDescription",
-        shelf.description
-    );
-
-
-    setValue(
-        "shelfMaterial",
-        shelf.material
-    );
-
-
-    setValue(
-        "shelfMood",
-        shelf.mood
-    );
-
-
-    setValue(
-        "shelfLayout",
-        shelf.layout
-    );
-
-
-    setValue(
-        "shelfSort",
-        shelf.sort
-    );
-
-
-    const selectedTypes =
-        shelf.decorations.map(
-            decoration =>
-                decoration.type
-        );
-
-
-    document
-        .querySelectorAll(
-            '[name="shelfDecoration"]'
-        )
-        .forEach(checkbox => {
-
-            checkbox.checked =
-                selectedTypes.includes(
-                    checkbox.value
-                );
-
-        });
-
-
-    setText(
-        "shelfDrawerTitle",
-        "Edit shelf"
-    );
-
-
-    setText(
-        "saveShelfLabel",
-        "save shelf"
+        shelf
     );
 
 }
@@ -3456,167 +2731,274 @@ function loadShelfIntoForm(id) {
    SAVE SHELF
    ========================================================= */
 
-function saveShelfFromForm(event) {
+function saveShelfFromForm(
+    event
+) {
 
     event.preventDefault();
 
 
-    const name =
-        getValue(
-            "shelfName"
-        );
-
-
-    if (!name) {
-        return;
-    }
-
-
-    const editingId =
+    const id =
         getValue(
             "editingShelfId"
         );
 
 
-    const existing =
-        editingId
-            ?
-            getShelfById(
-                editingId
+    const selectedTypes =
+        Array
+            .from(
+                document.querySelectorAll(
+                    ".decoration-options input:checked"
+                )
             )
-            :
-            null;
+            .map(
+                input =>
+                    input.value
+            );
 
 
-    const selectedTypes = [
-        ...document.querySelectorAll(
-            '[name="shelfDecoration"]:checked'
-        )
-    ]
-        .map(
-            input =>
-                input.value
-        );
+    if (id) {
+
+        const shelf =
+            getShelfById(id);
+
+        if (!shelf) {
+            return;
+        }
 
 
-    const existingDecorations =
-        existing?.decorations ||
-        [];
+        const existing =
+            shelf.decorations;
 
 
-    const decorations =
-        selectedTypes.map(
-            (
-                type,
-                index
-            ) => {
-
-                const existingDecoration =
-                    existingDecorations.find(
-                        decoration =>
-                            decoration.type ===
-                            type
-                    );
+        shelf.name =
+            getValue(
+                "shelfName"
+            )
+            ||
+            "My Shelf";
 
 
-                if (existingDecoration) {
-                    return existingDecoration;
-                }
-
-
-                return createDecorationRecord(
-                    type,
-                    getDefaultDecorationPosition(
-                        index
-                    )
-                );
-
-            }
-        );
-
-
-    const record = {
-
-        id:
-            editingId ||
-            generateId(),
-
-        name,
-
-        description:
+        shelf.description =
             getValue(
                 "shelfDescription"
-            ),
+            );
 
-        material:
+
+        shelf.material =
             getValue(
                 "shelfMaterial"
             )
             ||
-            "walnut",
+            "walnut";
 
-        mood:
+
+        shelf.mood =
             getValue(
                 "shelfMood"
             )
             ||
-            "cozy",
+            "cozy";
 
-        layout:
+
+        shelf.layout =
             getValue(
                 "shelfLayout"
             )
             ||
-            "mixed",
+            "mixed";
 
-        sort:
+
+        shelf.sort =
             getValue(
                 "shelfSort"
             )
             ||
-            "manual",
-
-        decorations,
-
-        created_at:
-            existing?.created_at
-            ||
-            new Date().toISOString(),
-
-        updated_at:
-            new Date().toISOString()
-
-    };
+            "manual";
 
 
-    if (editingId) {
+        /*
+         * One instance per decoration type for now.
+         * Existing positions/scales are preserved.
+         */
 
-        const index =
-            shelves.findIndex(
-                shelf =>
-                    String(shelf.id) ===
-                    String(editingId)
+        shelf.decorations =
+            selectedTypes.map(
+                type =>
+                    existing.find(
+                        item =>
+                            item.type ===
+                            type
+                    )
+                    ||
+                    createDecorationRecord(
+                        type
+                    )
             );
-
-
-        if (index >= 0) {
-            shelves[index] = record;
-        }
 
     }
 
     else {
 
-        shelves.push(record);
+        shelves.push({
+
+            id:
+                generateId(),
+
+            name:
+                getValue(
+                    "shelfName"
+                )
+                ||
+                "My Shelf",
+
+            description:
+                getValue(
+                    "shelfDescription"
+                ),
+
+            material:
+                getValue(
+                    "shelfMaterial"
+                )
+                ||
+                "walnut",
+
+            mood:
+                getValue(
+                    "shelfMood"
+                )
+                ||
+                "cozy",
+
+            layout:
+                getValue(
+                    "shelfLayout"
+                )
+                ||
+                "mixed",
+
+            sort:
+                getValue(
+                    "shelfSort"
+                )
+                ||
+                "manual",
+
+            decorations:
+                selectedTypes.map(
+                    createDecorationRecord
+                ),
+
+            created_at:
+                new Date().toISOString()
+
+        });
 
     }
 
 
     saveShelves();
 
-    closeDrawers();
+    closeAllDrawers();
 
-    renderLibrary();
+    renderAll();
+
+}
+
+
+/* =========================================================
+   DELETE SHELF
+   ========================================================= */
+
+function deleteShelf(
+    shelfId
+) {
+
+    const shelf =
+        getShelfById(
+            shelfId
+        );
+
+
+    if (!shelf) {
+        return;
+    }
+
+
+    const booksOnShelf =
+        books.filter(
+            book =>
+                String(
+                    book.shelf_id
+                ) ===
+                String(
+                    shelfId
+                )
+        );
+
+
+    if (
+        booksOnShelf.length
+    ) {
+
+        const confirmed =
+            window.confirm(
+                `"${shelf.name}" contains ${booksOnShelf.length} book(s). Remove the shelf and those books?`
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        books =
+            books.filter(
+                book =>
+                    String(
+                        book.shelf_id
+                    ) !==
+                    String(
+                        shelfId
+                    )
+            );
+
+
+        saveBooks();
+
+    }
+
+    else {
+
+        const confirmed =
+            window.confirm(
+                `Remove "${shelf.name}"?`
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+    }
+
+
+    shelves =
+        shelves.filter(
+            item =>
+                String(
+                    item.id
+                ) !==
+                String(
+                    shelfId
+                )
+        );
+
+
+    saveShelves();
+
+    renderAll();
 
 }
 
@@ -3630,10 +3012,7 @@ function openBookDrawer(
     shelfId = null
 ) {
 
-    if (
-        !shelves.length &&
-        !bookId
-    ) {
+    if (!shelves.length) {
 
         openShelfDrawer();
 
@@ -3642,20 +3021,100 @@ function openBookDrawer(
     }
 
 
+    hideAllDrawersImmediately();
+
+
+    const form =
+        document.getElementById(
+            "bookForm"
+        );
+
+
+    if (!form) {
+        return;
+    }
+
+
+    form.reset();
+
+    pendingCoverData = "";
+
+
     resetBookForm();
 
 
-    if (bookId) {
+    populateBookShelfSelect();
 
-        loadBookIntoForm(bookId);
 
-    }
-
-    else if (shelfId) {
+    if (shelfId) {
 
         setValue(
             "bookShelf",
             shelfId
+        );
+
+    }
+
+
+    if (bookId) {
+
+        const book =
+            getBookById(
+                bookId
+            );
+
+
+        if (!book) {
+            return;
+        }
+
+
+        setValue(
+            "editingBookId",
+            book.id
+        );
+
+
+        setText(
+            "bookDrawerTitle",
+            "Edit book"
+        );
+
+
+        setText(
+            "saveBookLabel",
+            "save book"
+        );
+
+
+        populateBookForm(
+            book
+        );
+
+
+        pendingCoverData =
+            book.cover_image ||
+            "";
+
+    }
+
+    else {
+
+        setValue(
+            "editingBookId",
+            ""
+        );
+
+
+        setText(
+            "bookDrawerTitle",
+            "Add a book"
+        );
+
+
+        setText(
+            "saveBookLabel",
+            "tuck it in"
         );
 
     }
@@ -3677,18 +3136,9 @@ function openBookDrawer(
 
 function resetBookForm() {
 
-    document
-        .getElementById(
-            "bookForm"
-        )
-        ?.reset();
-
-
-    pendingCoverData = "";
-
-
     const defaults =
-        getDefaultBookDesign();
+        CONFIG.defaultBookDesign ||
+        {};
 
 
     setValue(
@@ -3702,18 +3152,15 @@ function resetBookForm() {
         "want"
     );
 
-
     setValue(
         "bookRating",
         "0"
     );
 
-
     setValue(
         "bookCurrentPage",
         "0"
     );
-
 
     setValue(
         "bookTimesRead",
@@ -3723,110 +3170,96 @@ function resetBookForm() {
 
     setValue(
         "bookStyle",
-        defaults.style
+        defaults.style ||
+        "classic"
     );
+
+
+    const themeColors =
+        getThemeBookColors();
 
 
     setValue(
         "bookSpineColor",
-        getThemeBookColor()
+        themeColors.spine
     );
-
 
     setValue(
         "bookTextColor",
-        getThemeBookTextColor()
+        themeColors.text
     );
-
 
     setValue(
         "bookAccentColor",
-        getThemeAccentColor()
+        themeColors.accent
     );
 
 
     setValue(
         "bookSpineFont",
-        defaults.spineFont
+        defaults.spineFont ||
+        "serif"
     );
-
 
     setValue(
         "bookSpineFontSize",
-        defaults.fontSize
+        defaults.fontSize ||
+        "medium"
     );
-
 
     setValue(
         "bookSpineFontWeight",
-        defaults.fontWeight
+        defaults.fontWeight ||
+        "regular"
     );
-
 
     setValue(
         "bookSpineLetterSpacing",
-        defaults.letterSpacing
+        defaults.letterSpacing ||
+        "normal"
     );
-
 
     setValue(
         "bookSpineCase",
-        defaults.textCase
+        defaults.textCase ||
+        "typed"
     );
-
 
     setValue(
         "bookSpineFontStyle",
-        defaults.fontStyle
+        defaults.fontStyle ||
+        "normal"
     );
-
 
     setValue(
         "bookSpineTextAlign",
-        defaults.textAlign
+        defaults.textAlign ||
+        "center"
     );
-
 
     setValue(
         "bookSpineTitlePanel",
-        defaults.titlePanel
+        defaults.titlePanel ||
+        "none"
     );
-
 
     setValue(
         "bookSpineOrnament",
-        defaults.ornament
+        defaults.ornament ||
+        "auto"
     );
-
 
     setValue(
         "bookHeight",
-        defaults.height
+        defaults.height ||
+        "medium"
     );
-
 
     setValue(
         "bookThickness",
-        defaults.thickness
+        defaults.thickness ||
+        "medium"
     );
-
-
-    renderShelfSelect();
-
-
-    setText(
-        "bookDrawerTitle",
-        "Add a book"
-    );
-
-
-    setText(
-        "saveBookLabel",
-        "tuck it in"
-    );
-
-
-    updateSpinePreview();
 
 }
 
@@ -3835,311 +3268,262 @@ function resetBookForm() {
    THEME BOOK COLORS
    ========================================================= */
 
-function getThemeBookColor() {
+function getThemeBookColors() {
 
-    const colors = {
+    const palettes = {
 
-        haunted:
-            "#6c2633",
+        haunted: {
+            spine: "#6c2633",
+            text: "#eadfca",
+            accent: "#b28a4a"
+        },
 
-        autumn:
-            "#ad5b37",
+        autumn: {
+            spine: "#9a5134",
+            text: "#f3dcc6",
+            accent: "#dc8a43"
+        },
 
-        forest:
-            "#536848",
+        forest: {
+            spine: "#526746",
+            text: "#e4dec4",
+            accent: "#9ba86d"
+        },
 
-        retro:
-            "#738637",
+        retro: {
+            spine: "#343126",
+            text: "#d6ca9f",
+            accent: "#94ad3f"
+        },
 
-        ghosts:
-            "#b86b5a"
-
-    };
-
-
-    return colors[
-        settings.theme
-    ]
-    ||
-    "#6c2633";
-
-}
-
-
-function getThemeBookTextColor() {
-
-    const colors = {
-
-        haunted:
-            "#eadfca",
-
-        autumn:
-            "#fff0df",
-
-        forest:
-            "#e6e5ce",
-
-        retro:
-            "#e2ddaa",
-
-        ghosts:
-            "#fff0e7"
+        ghosts: {
+            spine: "#b4654f",
+            text: "#f4d8c8",
+            accent: "#667a5d"
+        }
 
     };
 
 
-    return colors[
-        settings.theme
-    ]
-    ||
-    "#eadfca";
-
-}
-
-
-function getThemeAccentColor() {
-
-    const colors = {
-
-        haunted:
-            "#b28a4a",
-
-        autumn:
-            "#dc8a43",
-
-        forest:
-            "#9ba86d",
-
-        retro:
-            "#94ad3f",
-
-        ghosts:
-            "#f2c5ad"
-
-    };
-
-
-    return colors[
-        settings.theme
-    ]
-    ||
-    "#b28a4a";
+    return (
+        palettes[settings.theme]
+        ||
+        palettes.haunted
+    );
 
 }
 
 
 /* =========================================================
-   LOAD BOOK INTO FORM
+   POPULATE BOOK FORM
    ========================================================= */
 
-function loadBookIntoForm(id) {
-
-    const book =
-        getBookById(id);
-
-
-    if (!book) {
-        return;
-    }
-
-
-    pendingCoverData =
-        book.cover_image;
-
-
-    setValue(
-        "editingBookId",
-        book.id
-    );
-
+function populateBookForm(
+    book
+) {
 
     setValue(
         "bookTitle",
         book.title
     );
 
-
     setValue(
         "bookAuthor",
         book.author
     );
-
 
     setValue(
         "bookGenre",
         book.genre
     );
 
-
     setValue(
         "bookYear",
-        book.publication_year
+        book.year || ""
     );
-
 
     setValue(
         "bookPages",
-        book.pages
+        book.pages || ""
     );
-
 
     setValue(
         "bookISBN",
         book.isbn
     );
 
-
     setValue(
         "bookSeries",
         book.series
     );
-
 
     setValue(
         "bookShelf",
         book.shelf_id
     );
 
-
     setValue(
         "bookStatus",
         book.status
     );
-
 
     setValue(
         "bookRating",
         book.rating
     );
 
-
     setValue(
         "bookStarted",
         book.started
     );
-
 
     setValue(
         "bookFinished",
         book.finished
     );
 
-
     setValue(
         "bookCurrentPage",
         book.current_page
     );
-
 
     setValue(
         "bookTimesRead",
         book.times_read
     );
 
-
     setValue(
         "bookStyle",
         book.style
     );
-
 
     setValue(
         "bookSpineColor",
         book.spine_color
     );
 
-
     setValue(
         "bookTextColor",
         book.text_color
     );
-
 
     setValue(
         "bookAccentColor",
         book.accent_color
     );
 
+    setValue(
+        "bookSpineOrnament",
+        book.spine_ornament
+    );
 
     setValue(
         "bookSpineFont",
         book.spine_font
     );
 
-
     setValue(
         "bookSpineFontSize",
         book.spine_font_size
     );
-
 
     setValue(
         "bookSpineFontWeight",
         book.spine_font_weight
     );
 
-
     setValue(
         "bookSpineLetterSpacing",
         book.spine_letter_spacing
     );
-
 
     setValue(
         "bookSpineCase",
         book.spine_case
     );
 
-
     setValue(
         "bookSpineFontStyle",
         book.spine_font_style
     );
-
 
     setValue(
         "bookSpineTextAlign",
         book.spine_text_align
     );
 
-
     setValue(
         "bookSpineTitlePanel",
         book.spine_title_panel
     );
-
-
-    setValue(
-        "bookSpineOrnament",
-        book.spine_ornament
-    );
-
 
     setValue(
         "bookHeight",
         book.height
     );
 
-
     setValue(
         "bookThickness",
         book.thickness
     );
 
-
-    setText(
-        "bookDrawerTitle",
-        "Edit book"
-    );
+}
 
 
-    setText(
-        "saveBookLabel",
-        "save changes"
-    );
+/* =========================================================
+   POPULATE SHELF SELECT
+   ========================================================= */
+
+function populateBookShelfSelect() {
+
+    const select =
+        document.getElementById(
+            "bookShelf"
+        );
 
 
-    updateSpinePreview();
+    if (!select) {
+        return;
+    }
+
+
+    const current =
+        select.value;
+
+
+    select.innerHTML =
+        shelves
+            .map(
+                shelf => `
+
+                    <option
+                        value="${escapeHTML(
+                            shelf.id
+                        )}"
+                    >
+                        ${escapeHTML(
+                            shelf.name
+                        )}
+                    </option>
+
+                `
+            )
+            .join("");
+
+
+    if (
+        current &&
+        shelves.some(
+            shelf =>
+                String(shelf.id) ===
+                String(current)
+        )
+    ) {
+
+        select.value =
+            current;
+
+    }
 
 }
 
@@ -4148,84 +3532,35 @@ function loadBookIntoForm(id) {
    SAVE BOOK
    ========================================================= */
 
-function saveBookFromForm(event) {
+function saveBookFromForm(
+    event
+) {
 
     event.preventDefault();
 
 
-    const title =
-        getValue(
-            "bookTitle"
-        );
-
-
-    const shelfId =
-        getValue(
-            "bookShelf"
-        );
-
-
-    if (
-        !title ||
-        !shelfId
-    ) {
-        return;
-    }
-
-
-    const editingId =
+    const id =
         getValue(
             "editingBookId"
         );
 
 
     const existing =
-        editingId
+        id
             ?
-            getBookById(
-                editingId
-            )
+            getBookById(id)
             :
             null;
 
 
-    const pages =
-        normalizeNumber(
+    const bookData = {
+
+        title:
             getValue(
-                "bookPages"
+                "bookTitle"
             )
-        );
-
-
-    let currentPage =
-        normalizeNumber(
-            getValue(
-                "bookCurrentPage"
-            )
-        );
-
-
-    if (pages > 0) {
-
-        currentPage =
-            Math.min(
-                currentPage,
-                pages
-            );
-
-    }
-
-
-    const record = {
-
-        id:
-            editingId ||
-            generateId(),
-
-        shelf_id:
-            shelfId,
-
-        title,
+            ||
+            "Untitled Book",
 
         author:
             getValue(
@@ -4237,12 +3572,19 @@ function saveBookFromForm(event) {
                 "bookGenre"
             ),
 
-        publication_year:
-            getValue(
-                "bookYear"
+        year:
+            normalizeNumber(
+                getValue(
+                    "bookYear"
+                )
             ),
 
-        pages,
+        pages:
+            normalizeNumber(
+                getValue(
+                    "bookPages"
+                )
+            ),
 
         isbn:
             getValue(
@@ -4254,12 +3596,17 @@ function saveBookFromForm(event) {
                 "bookSeries"
             ),
 
-        status:
-            normalizeBookStatus(
-                getValue(
-                    "bookStatus"
-                )
+        shelf_id:
+            getValue(
+                "bookShelf"
             ),
+
+        status:
+            getValue(
+                "bookStatus"
+            )
+            ||
+            "want",
 
         rating:
             normalizeNumber(
@@ -4279,7 +3626,11 @@ function saveBookFromForm(event) {
             ),
 
         current_page:
-            currentPage,
+            normalizeNumber(
+                getValue(
+                    "bookCurrentPage"
+                )
+            ),
 
         times_read:
             normalizeNumber(
@@ -4289,157 +3640,214 @@ function saveBookFromForm(event) {
             ),
 
         cover_image:
-            pendingCoverData,
+            pendingCoverData
+            ||
+            existing?.cover_image
+            ||
+            "",
 
         style:
-            normalizeSpineStyle(
-                getValue(
-                    "bookStyle"
-                )
-            ),
+            getValue(
+                "bookStyle"
+            )
+            ||
+            "classic",
 
         spine_color:
             getValue(
                 "bookSpineColor"
             )
             ||
-            getThemeBookColor(),
+            "#6c2633",
 
         text_color:
             getValue(
                 "bookTextColor"
             )
             ||
-            getThemeBookTextColor(),
+            "#eadfca",
 
         accent_color:
             getValue(
                 "bookAccentColor"
             )
             ||
-            getThemeAccentColor(),
-
-        spine_font:
-            normalizeSpineFont(
-                getValue(
-                    "bookSpineFont"
-                )
-            ),
-
-        spine_font_size:
-            normalizeFontSize(
-                getValue(
-                    "bookSpineFontSize"
-                )
-            ),
-
-        spine_font_weight:
-            normalizeFontWeight(
-                getValue(
-                    "bookSpineFontWeight"
-                )
-            ),
-
-        spine_letter_spacing:
-            normalizeLetterSpacing(
-                getValue(
-                    "bookSpineLetterSpacing"
-                )
-            ),
-
-        spine_case:
-            normalizeTextCase(
-                getValue(
-                    "bookSpineCase"
-                )
-            ),
-
-        spine_font_style:
-            normalizeFontStyle(
-                getValue(
-                    "bookSpineFontStyle"
-                )
-            ),
-
-        spine_text_align:
-            normalizeTextAlign(
-                getValue(
-                    "bookSpineTextAlign"
-                )
-            ),
-
-        spine_title_panel:
-            normalizeTitlePanel(
-                getValue(
-                    "bookSpineTitlePanel"
-                )
-            ),
+            "#b28a4a",
 
         spine_ornament:
-            normalizeSpineOrnament(
-                getValue(
-                    "bookSpineOrnament"
-                )
-            ),
+            getValue(
+                "bookSpineOrnament"
+            )
+            ||
+            "auto",
+
+        spine_font:
+            getValue(
+                "bookSpineFont"
+            )
+            ||
+            "serif",
+
+        spine_font_size:
+            getValue(
+                "bookSpineFontSize"
+            )
+            ||
+            "medium",
+
+        spine_font_weight:
+            getValue(
+                "bookSpineFontWeight"
+            )
+            ||
+            "regular",
+
+        spine_letter_spacing:
+            getValue(
+                "bookSpineLetterSpacing"
+            )
+            ||
+            "normal",
+
+        spine_case:
+            getValue(
+                "bookSpineCase"
+            )
+            ||
+            "typed",
+
+        spine_font_style:
+            getValue(
+                "bookSpineFontStyle"
+            )
+            ||
+            "normal",
+
+        spine_text_align:
+            getValue(
+                "bookSpineTextAlign"
+            )
+            ||
+            "center",
+
+        spine_title_panel:
+            getValue(
+                "bookSpineTitlePanel"
+            )
+            ||
+            "none",
 
         height:
-            normalizeBookHeight(
-                getValue(
-                    "bookHeight"
-                )
-            ),
+            getValue(
+                "bookHeight"
+            )
+            ||
+            "medium",
 
         thickness:
-            normalizeBookThickness(
-                getValue(
-                    "bookThickness"
-                )
-            ),
-
-        journal:
-            existing?.journal
+            getValue(
+                "bookThickness"
+            )
             ||
-            normalizeJournal(),
-
-        created_at:
-            existing?.created_at
-            ||
-            new Date().toISOString(),
-
-        updated_at:
-            new Date().toISOString()
+            "medium"
 
     };
 
 
-    if (editingId) {
+    if (
+        bookData.pages &&
+        bookData.current_page >
+        bookData.pages
+    ) {
 
-        const index =
-            books.findIndex(
-                book =>
-                    String(book.id) ===
-                    String(editingId)
-            );
+        bookData.current_page =
+            bookData.pages;
+
+    }
 
 
-        if (index >= 0) {
-            books[index] = record;
+    if (
+        bookData.status ===
+        "finished"
+    ) {
+
+        if (!bookData.finished) {
+            bookData.finished =
+                todayISO();
         }
+
+
+        if (
+            bookData.pages &&
+            !bookData.current_page
+        ) {
+
+            bookData.current_page =
+                bookData.pages;
+
+        }
+
+    }
+
+
+    if (
+        bookData.status ===
+        "reading" &&
+        !bookData.started
+    ) {
+
+        bookData.started =
+            todayISO();
+
+    }
+
+
+    if (existing) {
+
+        Object.assign(
+            existing,
+            bookData,
+            {
+                updated_at:
+                    new Date()
+                        .toISOString()
+            }
+        );
 
     }
 
     else {
 
-        books.push(record);
+        books.push({
+
+            id:
+                generateId(),
+
+            ...bookData,
+
+            journal:
+                normalizeJournal(),
+
+            created_at:
+                new Date()
+                    .toISOString(),
+
+            updated_at:
+                new Date()
+                    .toISOString()
+
+        });
 
     }
 
 
     saveBooks();
 
-    closeDrawers();
+    pendingCoverData = "";
 
-    renderLibrary();
+    closeAllDrawers();
+
+    renderAll();
 
 }
 
@@ -4448,7 +3856,7 @@ function saveBookFromForm(event) {
    COVER UPLOAD
    ========================================================= */
 
-async function handleCoverUpload(
+function handleCoverUpload(
     event
 ) {
 
@@ -4461,491 +3869,338 @@ async function handleCoverUpload(
     }
 
 
-    pendingCoverData =
-        await fileToDataURL(file);
-
-}
-
-
-function fileToDataURL(file) {
-
-    return new Promise(
-        (
-            resolve,
-            reject
-        ) => {
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload =
-                () =>
-                    resolve(
-                        reader.result
-                    );
-
-
-            reader.onerror =
-                reject;
-
-
-            reader.readAsDataURL(file);
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   SPINE STYLE CONFIG
-   ========================================================= */
-
-function getSpineStyleConfig(style) {
-
-    return CONFIG.spineStyles?.find(
-        item =>
-            item.id === style
-    )
-    ||
-    null;
-
-}
-
-
-/* =========================================================
-   ORNAMENT
-   ========================================================= */
-
-function getSpineOrnamentSymbol(
-    ornament,
-    style
-) {
-
-    let resolved =
-        ornament;
-
-
     if (
-        !resolved ||
-        resolved === "auto"
+        !file.type.startsWith(
+            "image/"
+        )
     ) {
 
-        resolved =
-            getSpineStyleConfig(
-                style
-            )?.defaultOrnament
-            ||
-            "diamond";
+        window.alert(
+            "Please choose an image file."
+        );
+
+        event.target.value = "";
+
+        return;
 
     }
 
 
-    return (
-        CONFIG.spineOrnaments?.[
-            resolved
-        ]?.symbol
-        ??
-        ""
-    );
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        () => {
+
+            pendingCoverData =
+                String(
+                    reader.result ||
+                    ""
+                );
+
+        };
+
+
+    reader.readAsDataURL(file);
 
 }
 
 
 /* =========================================================
-   NORMALIZERS
+   SPINE STYLE CHANGE
    ========================================================= */
 
-function normalizeSpineStyle(value) {
+function handleSpineStyleChange() {
 
-    const allowed =
-        CONFIG.spineStyles?.map(
-            item => item.id
-        )
-        ||
-        [
-            "classic",
-            "gothic",
-            "botanical",
-            "celestial",
-            "floral",
-            "pastel",
-            "minimal",
-            "leather",
-            "academia",
-            "storybook"
-        ];
-
-
-    return allowed.includes(value)
-        ?
-        value
-        :
-        "classic";
-
-}
-
-
-function normalizeSpineFont(value) {
-
-    const allowed =
-        CONFIG.spineFonts?.map(
-            item => item.id
-        )
-        ||
-        [
-            "serif",
-            "roman",
-            "bookish",
-            "elegant",
-            "typewriter",
-            "clean",
-            "condensed",
-            "heavy",
-            "storybook",
-            "handwritten",
-            "gothic",
-            "deco",
-            "retro"
-        ];
-
-
-    return allowed.includes(value)
-        ?
-        value
-        :
-        "serif";
-
-}
-
-
-function normalizeFontSize(value) {
-
-    return [
-        "small",
-        "medium",
-        "large",
-        "xlarge"
-    ]
-        .includes(value)
-        ?
-        value
-        :
-        "medium";
-
-}
-
-
-function normalizeFontWeight(value) {
-
-    return [
-        "light",
-        "regular",
-        "bold",
-        "heavy"
-    ]
-        .includes(value)
-        ?
-        value
-        :
-        "regular";
-
-}
-
-
-function normalizeLetterSpacing(value) {
-
-    return [
-        "tight",
-        "normal",
-        "wide",
-        "extra-wide"
-    ]
-        .includes(value)
-        ?
-        value
-        :
-        "normal";
-
-}
-
-
-function normalizeTextCase(value) {
-
-    return [
-        "typed",
-        "uppercase",
-        "lowercase"
-    ]
-        .includes(value)
-        ?
-        value
-        :
-        "typed";
-
-}
-
-
-function normalizeFontStyle(value) {
-
-    return [
-        "normal",
-        "italic"
-    ]
-        .includes(value)
-        ?
-        value
-        :
-        "normal";
-
-}
-
-
-function normalizeTextAlign(value) {
-
-    return [
-        "top",
-        "center",
-        "bottom"
-    ]
-        .includes(value)
-        ?
-        value
-        :
-        "center";
-
-}
-
-
-function normalizeTitlePanel(value) {
-
-    return [
-        "none",
-        "simple",
-        "bordered",
-        "ornate",
-        "dark",
-        "light"
-    ]
-        .includes(value)
-        ?
-        value
-        :
-        "none";
-
-}
-
-
-function normalizeSpineOrnament(value) {
-
-    const allowed =
-        Object.keys(
-            CONFIG.spineOrnaments ||
-            {
-                auto: {},
-                star: {},
-                moon: {},
-                flower: {},
-                leaf: {},
-                diamond: {},
-                heart: {},
-                none: {}
-            }
+    const editing =
+        getValue(
+            "editingBookId"
         );
 
 
-    return allowed.includes(value)
-        ?
-        value
-        :
-        "auto";
+    if (!editing) {
 
-}
-
-
-function normalizeBookHeight(value) {
-
-    return [
-        "small",
-        "medium",
-        "tall"
-    ]
-        .includes(value)
-        ?
-        value
-        :
-        "medium";
-
-}
+        const style =
+            CONFIG.spineStyles
+                ?.find(
+                    item =>
+                        item.id ===
+                        getValue(
+                            "bookStyle"
+                        )
+                );
 
 
-function normalizeBookThickness(value) {
+        if (
+            style?.defaultFont
+        ) {
 
-    return [
-        "slim",
-        "medium",
-        "chunky"
-    ]
-        .includes(value)
-        ?
-        value
-        :
-        "medium";
+            setValue(
+                "bookSpineFont",
+                style.defaultFont
+            );
+
+        }
+
+    }
+
+
+    updateSpinePreview();
 
 }
 
 
 /* =========================================================
-   DRAWERS
+   SPINE PREVIEW
    ========================================================= */
 
-function showDrawer(drawerId) {
+function updateSpinePreview() {
 
-    hideAllDrawersImmediately();
-
-
-    const drawer =
+    const preview =
         document.getElementById(
-            drawerId
+            "bookSpinePreview"
         );
 
 
-    const overlay =
-        document.getElementById(
-            "overlay"
-        );
-
-
-    if (
-        !drawer ||
-        !overlay
-    ) {
+    if (!preview) {
         return;
     }
 
 
-    drawer.hidden = false;
-
-    overlay.hidden = false;
-
-
-    requestAnimationFrame(
-        () => {
-
-            drawer.classList.add(
-                "open"
-            );
+    const style =
+        getValue(
+            "bookStyle"
+        )
+        ||
+        "classic";
 
 
-            overlay.classList.add(
-                "open"
-            );
+    const font =
+        getValue(
+            "bookSpineFont"
+        )
+        ||
+        "serif";
 
-        }
+
+    const size =
+        getValue(
+            "bookSpineFontSize"
+        )
+        ||
+        "medium";
+
+
+    const weight =
+        getValue(
+            "bookSpineFontWeight"
+        )
+        ||
+        "regular";
+
+
+    const spacing =
+        getValue(
+            "bookSpineLetterSpacing"
+        )
+        ||
+        "normal";
+
+
+    const textCase =
+        getValue(
+            "bookSpineCase"
+        )
+        ||
+        "typed";
+
+
+    const fontStyle =
+        getValue(
+            "bookSpineFontStyle"
+        )
+        ||
+        "normal";
+
+
+    const alignment =
+        getValue(
+            "bookSpineTextAlign"
+        )
+        ||
+        "center";
+
+
+    const panel =
+        getValue(
+            "bookSpineTitlePanel"
+        )
+        ||
+        "none";
+
+
+    preview.className = [
+
+        "spine-preview-book",
+
+        `book-style-${style}`,
+
+        `spine-font-${font}`,
+
+        `spine-size-${size}`,
+
+        `spine-weight-${weight}`,
+
+        `spine-spacing-${spacing}`,
+
+        `spine-case-${textCase}`,
+
+        `spine-text-${fontStyle}`,
+
+        `spine-align-${alignment}`,
+
+        `spine-panel-${panel}`
+
+    ]
+        .join(" ");
+
+
+    preview.style.setProperty(
+        "--book-color",
+        getValue(
+            "bookSpineColor"
+        )
+        ||
+        "#6c2633"
     );
 
 
-    document.body.classList.add(
-        "modal-open"
+    preview.style.setProperty(
+        "--book-text",
+        getValue(
+            "bookTextColor"
+        )
+        ||
+        "#eadfca"
     );
+
+
+    preview.style.setProperty(
+        "--book-accent",
+        getValue(
+            "bookAccentColor"
+        )
+        ||
+        "#b28a4a"
+    );
+
+
+    setText(
+        "bookSpinePreviewTitle",
+        getValue(
+            "bookTitle"
+        )
+        ||
+        "Your Book Title"
+    );
+
+
+    setText(
+        "bookSpinePreviewOrnament",
+        getPreviewOrnament()
+    );
+
+
+    const heightMap = {
+        small: 155,
+        medium: 190,
+        tall: 225
+    };
+
+
+    const widthMap = {
+        slim: 48,
+        medium: 72,
+        chunky: 95
+    };
+
+
+    preview.style.height =
+        `${
+            heightMap[
+                getValue(
+                    "bookHeight"
+                )
+            ]
+            ||
+            190
+        }px`;
+
+
+    preview.style.width =
+        `${
+            widthMap[
+                getValue(
+                    "bookThickness"
+                )
+            ]
+            ||
+            72
+        }px`;
 
 }
 
 
-function hideAllDrawersImmediately() {
+/* =========================================================
+   PREVIEW ORNAMENT
+   ========================================================= */
 
-    const overlay =
-        document.getElementById(
-            "overlay"
+function getPreviewOrnament() {
+
+    const selected =
+        getValue(
+            "bookSpineOrnament"
         );
 
 
-    if (overlay) {
+    if (
+        selected &&
+        selected !==
+        "auto"
+    ) {
 
-        overlay.hidden = true;
-
-        overlay.classList.remove(
-            "open"
+        return (
+            CONFIG.spineOrnaments
+                ?.[selected]
+                ?.symbol
+            ||
+            ""
         );
 
     }
 
 
-    document
-        .querySelectorAll(
-            ".form-drawer"
-        )
-        .forEach(drawer => {
-
-            drawer.hidden = true;
-
-            drawer.classList.remove(
-                "open"
+    const style =
+        CONFIG.spineStyles
+            ?.find(
+                item =>
+                    item.id ===
+                    getValue(
+                        "bookStyle"
+                    )
             );
 
-        });
 
-}
-
-
-function closeDrawers() {
-
-    const overlay =
-        document.getElementById(
-            "overlay"
-        );
-
-
-    const drawers =
-        document.querySelectorAll(
-            ".form-drawer"
-        );
-
-
-    overlay?.classList.remove(
-        "open"
-    );
-
-
-    drawers.forEach(drawer => {
-
-        drawer.classList.remove(
-            "open"
-        );
-
-    });
-
-
-    const delay =
-        settings.reducedMotion
-            ?
-            0
-            :
-            250;
-
-
-    setTimeout(
-        () => {
-
-            if (overlay) {
-                overlay.hidden = true;
-            }
-
-
-            drawers.forEach(drawer => {
-
-                drawer.hidden = true;
-
-            });
-
-        },
-        delay
-    );
-
-
-    document.body.classList.remove(
-        "modal-open"
+    return (
+        CONFIG.spineOrnaments
+            ?.[
+                style?.defaultOrnament ||
+                "diamond"
+            ]
+            ?.symbol
+        ||
+        ""
     );
 
 }
@@ -4955,10 +4210,14 @@ function closeDrawers() {
    BOOK REVEAL
    ========================================================= */
 
-function openBookReveal(id) {
+function openBookReveal(
+    bookId
+) {
 
     const book =
-        getBookById(id);
+        getBookById(
+            bookId
+        );
 
 
     if (!book) {
@@ -4970,7 +4229,7 @@ function openBookReveal(id) {
         book.id;
 
 
-    renderCoverInto(
+    renderCover(
         "revealCover",
         book
     );
@@ -5019,25 +4278,29 @@ function openBookReveal(id) {
     );
 
 
-    const percentage =
-        getProgressPercent(book);
+    const percent =
+        getProgressPercent(
+            book
+        );
 
 
     setText(
         "revealPercent",
-        `${percentage}%`
+        `${percent}%`
     );
 
 
-    const bar =
+    const progress =
         document.getElementById(
             "revealProgressBar"
         );
 
 
-    if (bar) {
-        bar.style.width =
-            `${percentage}%`;
+    if (progress) {
+
+        progress.style.width =
+            `${percent}%`;
+
     }
 
 
@@ -5048,13 +4311,18 @@ function openBookReveal(id) {
 
 
     if (bookmark) {
+
         bookmark.style.left =
-            `${percentage}%`;
+            `${percent}%`;
+
     }
 
 
-    renderRating(
-        book.rating
+    setText(
+        "revealRating",
+        getRatingText(
+            book.rating
+        )
     );
 
 
@@ -5065,7 +4333,9 @@ function openBookReveal(id) {
 
 
     if (reveal) {
+
         reveal.hidden = false;
+
     }
 
 
@@ -5075,6 +4345,10 @@ function openBookReveal(id) {
 
 }
 
+
+/* =========================================================
+   CLOSE BOOK REVEAL
+   ========================================================= */
 
 function closeBookReveal() {
 
@@ -5089,22 +4363,15 @@ function closeBookReveal() {
     }
 
 
-    document
-        .querySelectorAll(
-            ".shelf-book"
-        )
-        .forEach(item => {
+    if (
+        !isAnyModalOpen()
+    ) {
 
-            item.classList.remove(
-                "selected"
-            );
+        document.body.classList.remove(
+            "modal-open"
+        );
 
-        });
-
-
-    document.body.classList.remove(
-        "modal-open"
-    );
+    }
 
 }
 
@@ -5115,160 +4382,34 @@ function closeBookReveal() {
 
 function editSelectedBook() {
 
-    const id =
-        selectedBookId;
-
-
-    closeBookReveal();
-
-
-    if (!id) {
+    if (!selectedBookId) {
         return;
     }
 
 
-    setTimeout(
-        () => {
+    closeBookReveal();
 
-            openBookDrawer(id);
-
-        },
-        20
+    openBookDrawer(
+        selectedBookId
     );
 
 }
 
 
 /* =========================================================
-   GENERATED COVER
+   OPEN SELECTED BOOK JOURNAL
    ========================================================= */
 
-function renderCoverInto(
-    elementId,
-    book
-) {
+function openSelectedBookJournal() {
 
-    const element =
-        document.getElementById(
-            elementId
-        );
-
-
-    if (!element) {
+    if (!selectedBookId) {
         return;
     }
 
 
-    element.innerHTML = "";
-
-    element.style.backgroundImage = "";
-
-    element.style.backgroundColor =
-        book.spine_color;
-
-
-    if (book.cover_image) {
-
-        element.style.backgroundImage =
-            `url("${safeStyleURL(
-                book.cover_image
-            )}")`;
-
-
-        return;
-
-    }
-
-
-    element.innerHTML = `
-
-        <div
-            class="
-                generated-cover
-                book-style-${escapeHTML(book.style)}
-                spine-font-${escapeHTML(book.spine_font)}
-            "
-            style="
-                --book-color:${escapeHTML(book.spine_color)};
-                --book-text:${escapeHTML(book.text_color)};
-                --book-accent:${escapeHTML(book.accent_color)};
-                background-color:${escapeHTML(book.spine_color)};
-                color:${escapeHTML(book.text_color)};
-            "
-        >
-
-            <span class="cover-ornament">
-
-                ${escapeHTML(
-                    getSpineOrnamentSymbol(
-                        book.spine_ornament,
-                        book.style
-                    )
-                )}
-
-            </span>
-
-
-            <strong>
-                ${escapeHTML(book.title)}
-            </strong>
-
-
-            <span>
-                ${escapeHTML(
-                    book.author ||
-                    ""
-                )}
-            </span>
-
-        </div>
-
-    `;
-
-}
-
-
-/* =========================================================
-   RATING
-   ========================================================= */
-
-function renderRating(rating) {
-
-    const element =
-        document.getElementById(
-            "revealRating"
-        );
-
-
-    if (!element) {
-        return;
-    }
-
-
-    if (!rating) {
-
-        element.textContent =
-            "not rated yet";
-
-        return;
-
-    }
-
-
-    element.textContent =
-        "★".repeat(
-            Math.min(
-                5,
-                rating
-            )
-        )
-        +
-        "☆".repeat(
-            Math.max(
-                0,
-                5 - rating
-            )
-        );
+    openReadingBook(
+        selectedBookId
+    );
 
 }
 
@@ -5277,11 +4418,13 @@ function renderRating(rating) {
    OPEN READING BOOK
    ========================================================= */
 
-function openReadingBook() {
+function openReadingBook(
+    bookId
+) {
 
     const book =
         getBookById(
-            selectedBookId
+            bookId
         );
 
 
@@ -5290,8 +4433,73 @@ function openReadingBook() {
     }
 
 
-    closeBookReveal();
+    selectedBookId =
+        book.id;
 
+
+    renderJournalBookDetails(
+        book
+    );
+
+
+    showJournalContents();
+
+
+    const readingBook =
+        document.getElementById(
+            "readingBook"
+        );
+
+
+    if (readingBook) {
+        readingBook.hidden = false;
+    }
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE READING BOOK
+   ========================================================= */
+
+function closeReadingBook() {
+
+    const readingBook =
+        document.getElementById(
+            "readingBook"
+        );
+
+
+    if (readingBook) {
+        readingBook.hidden = true;
+    }
+
+
+    if (
+        !isAnyModalOpen()
+    ) {
+
+        document.body.classList.remove(
+            "modal-open"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   JOURNAL BOOK DETAILS
+   ========================================================= */
+
+function renderJournalBookDetails(
+    book
+) {
 
     setText(
         "journalBookTitle",
@@ -5332,52 +4540,19 @@ function openReadingBook() {
 
     setText(
         "journalPages",
-        `${book.current_page} / ${book.pages || 0}`
+        book.pages
+            ?
+            String(
+                book.pages
+            )
+            :
+            "—"
     );
 
 
-    renderCoverInto(
+    renderCover(
         "journalCover",
         book
-    );
-
-
-    showJournalContents();
-
-
-    const readingBook =
-        document.getElementById(
-            "readingBook"
-        );
-
-
-    if (readingBook) {
-        readingBook.hidden = false;
-    }
-
-
-    document.body.classList.add(
-        "modal-open"
-    );
-
-}
-
-
-function closeReadingBook() {
-
-    const element =
-        document.getElementById(
-            "readingBook"
-        );
-
-
-    if (element) {
-        element.hidden = true;
-    }
-
-
-    document.body.classList.remove(
-        "modal-open"
     );
 
 }
@@ -5389,7 +4564,8 @@ function closeReadingBook() {
 
 function showJournalContents() {
 
-    selectedJournalSection = null;
+    selectedJournalSection =
+        null;
 
 
     const contents =
@@ -5417,13 +4593,20 @@ function showJournalContents() {
 
 
 /* =========================================================
-   JOURNAL SECTION
+   OPEN JOURNAL SECTION
    ========================================================= */
 
-function openJournalSection(section) {
+function openJournalSection(
+    sectionName
+) {
+
+    if (!selectedBookId) {
+        return;
+    }
+
 
     selectedJournalSection =
-        section;
+        sectionName;
 
 
     const contents =
@@ -5432,7 +4615,7 @@ function openJournalSection(section) {
         );
 
 
-    const journalSection =
+    const section =
         document.getElementById(
             "journalSection"
         );
@@ -5443,106 +4626,37 @@ function openJournalSection(section) {
     }
 
 
-    if (journalSection) {
-        journalSection.hidden = false;
+    if (section) {
+        section.hidden = false;
     }
+
+
+    const definition =
+        CONFIG.journalSections
+            ?.[sectionName]
+        ||
+        {
+            label:
+                sectionName.toUpperCase(),
+
+            title:
+                sectionName
+        };
 
 
     setText(
         "journalSectionLabel",
-        getSectionLabel(section)
+        definition.label
     );
 
 
     setText(
         "journalSectionTitle",
-        getSectionTitle(section)
+        definition.title
     );
 
 
     renderJournalEntries();
-
-}
-
-
-/* =========================================================
-   JOURNAL LABELS
-   ========================================================= */
-
-function getSectionLabel(section) {
-
-    const labels = {
-
-        overview:
-            "ABOUT THIS BOOK",
-
-        notes:
-            "MARGINAL NOTES",
-
-        thoughts:
-            "THINGS I'M THINKING",
-
-        words:
-            "LITTLE WORDS",
-
-        quotes:
-            "WORDS WORTH KEEPING",
-
-        characters:
-            "PEOPLE IN THESE PAGES",
-
-        themes:
-            "THREADS & THEMES",
-
-        questions:
-            "THINGS I'M WONDERING",
-
-        review:
-            "WHEN THE BOOK IS DONE"
-
-    };
-
-
-    return labels[section] || "";
-
-}
-
-
-function getSectionTitle(section) {
-
-    const titles = {
-
-        overview:
-            "Overview",
-
-        notes:
-            "My notes",
-
-        thoughts:
-            "My thoughts",
-
-        words:
-            "Word study",
-
-        quotes:
-            "Saved quotes",
-
-        characters:
-            "Characters",
-
-        themes:
-            "Themes",
-
-        questions:
-            "Questions",
-
-        review:
-            "My review"
-
-    };
-
-
-    return titles[section] || section;
 
 }
 
@@ -5559,10 +4673,12 @@ function renderJournalEntries() {
         );
 
 
-    const addButton =
-        document.getElementById(
-            "addJournalEntry"
-        );
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML = "";
 
 
     const book =
@@ -5571,15 +4687,9 @@ function renderJournalEntries() {
         );
 
 
-    if (
-        !container ||
-        !book
-    ) {
+    if (!book) {
         return;
     }
-
-
-    container.innerHTML = "";
 
 
     if (
@@ -5587,20 +4697,32 @@ function renderJournalEntries() {
         "overview"
     ) {
 
-        if (addButton) {
-            addButton.hidden = true;
-        }
-
-
         renderOverview(
             container,
             book
         );
 
 
+        const addButton =
+            document.getElementById(
+                "addJournalEntry"
+            );
+
+
+        if (addButton) {
+            addButton.hidden = true;
+        }
+
+
         return;
 
     }
+
+
+    const addButton =
+        document.getElementById(
+            "addJournalEntry"
+        );
 
 
     if (addButton) {
@@ -5609,9 +4731,10 @@ function renderJournalEntries() {
 
 
     const entries =
-        book.journal[
-            selectedJournalSection
-        ]
+        book.journal
+            ?.[
+                selectedJournalSection
+            ]
         ||
         [];
 
@@ -5620,19 +4743,9 @@ function renderJournalEntries() {
 
         container.innerHTML = `
 
-            <div class="empty-journal-section">
-
-                Nothing has been written here yet.
-
-                <br><br>
-
-                Add your first
-                ${escapeHTML(
-                    getSingularEntryName(
-                        selectedJournalSection
-                    )
-                )}.
-
+            <div class="journal-empty">
+                Nothing here yet.
+                This page is waiting for you.
             </div>
 
         `;
@@ -5649,7 +4762,7 @@ function renderJournalEntries() {
         .forEach(entry => {
 
             container.appendChild(
-                createJournalEntry(
+                createJournalEntryElement(
                     entry,
                     selectedJournalSection
                 )
@@ -5661,7 +4774,7 @@ function renderJournalEntries() {
 
 
 /* =========================================================
-   OVERVIEW
+   JOURNAL OVERVIEW
    ========================================================= */
 
 function renderOverview(
@@ -5669,53 +4782,84 @@ function renderOverview(
     book
 ) {
 
+    const progress =
+        getProgressPercent(
+            book
+        );
+
+
     container.innerHTML = `
 
-        <article class="journal-entry">
+        <div class="journal-entry">
 
-            <div class="journal-entry-header">
-
-                <strong>
-                    ${escapeHTML(book.title)}
-                </strong>
-
-                <small>
-                    ${getProgressPercent(book)}% read
-                </small>
-
-            </div>
-
+            <h4>
+                Reading progress
+            </h4>
 
             <p>
-Author: ${escapeHTML(book.author || "—")}
-Genre: ${escapeHTML(book.genre || "—")}
-Publication year: ${escapeHTML(book.publication_year || "—")}
-Pages: ${book.pages || "—"}
-Series: ${escapeHTML(book.series || "—")}
-Times read: ${book.times_read || 0}
+                ${book.current_page}
+                of
+                ${book.pages || 0}
+                pages ·
+                ${progress}% complete
             </p>
 
-        </article>
+        </div>
 
 
-        <article class="journal-entry">
+        <div class="journal-entry">
 
-            <div class="journal-entry-header">
-
-                <strong>
-                    Reading timeline
-                </strong>
-
-            </div>
-
+            <h4>
+                Genre
+            </h4>
 
             <p>
-Started: ${escapeHTML(formatDate(book.started))}
-Finished: ${escapeHTML(formatDate(book.finished))}
-Current page: ${book.current_page || 0}
+                ${
+                    escapeHTML(
+                        book.genre
+                    )
+                    ||
+                    "Not recorded"
+                }
             </p>
 
-        </article>
+        </div>
+
+
+        <div class="journal-entry">
+
+            <h4>
+                Rating
+            </h4>
+
+            <p>
+                ${
+                    escapeHTML(
+                        getRatingText(
+                            book.rating
+                        )
+                    )
+                }
+            </p>
+
+        </div>
+
+
+        <div class="journal-entry">
+
+            <h4>
+                Read count
+            </h4>
+
+            <p>
+                ${
+                    book.times_read
+                    ||
+                    0
+                }
+            </p>
+
+        </div>
 
     `;
 
@@ -5723,143 +4867,78 @@ Current page: ${book.current_page || 0}
 
 
 /* =========================================================
-   JOURNAL ENTRY CARD
+   CREATE JOURNAL ENTRY
    ========================================================= */
 
-function createJournalEntry(
+function createJournalEntryElement(
     entry,
     section
 ) {
 
-    const card =
+    const element =
         document.createElement(
             "article"
         );
 
 
-    card.className =
+    element.className =
         "journal-entry";
 
 
-    const meta =
-        getEntryMeta(
+    const presentation =
+        getJournalEntryPresentation(
             entry,
             section
         );
 
 
-    card.innerHTML = `
-
-        <div class="journal-entry-header">
-
-            <strong>
-                ${escapeHTML(
-                    getEntryHeading(
-                        entry,
-                        section
-                    )
-                )}
-            </strong>
-
-            <small>
-                ${escapeHTML(
-                    formatDate(
-                        entry.date
-                    )
-                )}
-            </small>
-
-        </div>
-
-
-        <p>
-            ${escapeHTML(
-                getEntryBody(
-                    entry,
-                    section
-                )
-            )}
-        </p>
-
+    element.innerHTML = `
 
         ${
-            meta
+            presentation.title
                 ?
                 `
-                    <div class="journal-entry-meta">
-                        ${escapeHTML(meta)}
-                    </div>
+                <h4>
+                    ${escapeHTML(
+                        presentation.title
+                    )}
+                </h4>
                 `
                 :
                 ""
         }
 
+
+        <p>
+            ${escapeHTML(
+                presentation.body
+            )}
+        </p>
+
+
+        <span class="journal-entry-meta">
+            ${
+                escapeHTML(
+                    formatDateTime(
+                        entry.created_at
+                    )
+                )
+            }
+        </span>
+
     `;
 
 
-    return card;
+    return element;
 
 }
 
 
 /* =========================================================
-   ENTRY CONTENT
+   JOURNAL ENTRY PRESENTATION
    ========================================================= */
 
-function getEntryHeading(
-    entry,
-    section
-) {
-
-    if (section === "words") {
-
-        return (
-            entry.word ||
-            "New word"
-        );
-
-    }
-
-
-    if (section === "characters") {
-
-        return (
-            entry.name ||
-            "Character"
-        );
-
-    }
-
-
-    if (section === "themes") {
-
-        return (
-            entry.theme ||
-            "Theme"
-        );
-
-    }
-
-
-    if (section === "review") {
-
-        return (
-            entry.title ||
-            "My review"
-        );
-
-    }
-
-
-    return (
-        entry.title ||
-        getSectionTitle(section)
-    );
-
-}
-
-
-function getEntryBody(
+function getJournalEntryPresentation(
     entry,
     section
 ) {
@@ -5868,177 +4947,135 @@ function getEntryBody(
 
         case "words":
 
-            return [
-                entry.definition,
+            return {
 
-                entry.context
-                    ?
-                    `Context: ${entry.context}`
-                    :
-                    "",
+                title:
+                    entry.word ||
+                    "Word",
 
-                entry.sentence
-                    ?
-                    `My sentence: ${entry.sentence}`
-                    :
-                    ""
-            ]
-                .filter(Boolean)
-                .join("\n\n");
+                body:
+                    [
+                        entry.definition,
+                        entry.context
+                    ]
+                        .filter(Boolean)
+                        .join(
+                            "\n\n"
+                        )
+
+            };
 
 
         case "quotes":
 
-            return [
-                entry.quote,
+            return {
 
-                entry.reason
-                    ?
-                    `Why I saved it: ${entry.reason}`
-                    :
+                title:
+                    entry.page
+                        ?
+                        `Page ${entry.page}`
+                        :
+                        "Saved quote",
+
+                body:
+                    entry.quote ||
+                    entry.text ||
                     ""
-            ]
-                .filter(Boolean)
-                .join("\n\n");
+
+            };
 
 
         case "characters":
 
-            return [
-                entry.role,
-                entry.notes
-            ]
-                .filter(Boolean)
-                .join("\n\n");
+            return {
+
+                title:
+                    entry.name ||
+                    "Character",
+
+                body:
+                    entry.notes ||
+                    entry.text ||
+                    ""
+
+            };
 
 
         case "themes":
 
-            return (
-                entry.notes ||
-                ""
-            );
+            return {
+
+                title:
+                    entry.theme ||
+                    "Theme",
+
+                body:
+                    entry.notes ||
+                    entry.text ||
+                    ""
+
+            };
 
 
         case "questions":
 
-            return [
-                entry.question,
+            return {
 
-                entry.answer
-                    ?
-                    `Answer: ${entry.answer}`
-                    :
+                title:
+                    entry.question ||
+                    "Question",
+
+                body:
+                    entry.notes ||
                     ""
-            ]
-                .filter(Boolean)
-                .join("\n\n");
+
+            };
 
 
         case "review":
 
-            return [
-                entry.review,
+            return {
 
-                entry.learned
-                    ?
-                    `What I learned: ${entry.learned}`
-                    :
-                    "",
+                title:
+                    entry.title ||
+                    "Review",
 
-                entry.stayed
-                    ?
-                    `What stayed with me: ${entry.stayed}`
-                    :
+                body:
+                    entry.review ||
+                    entry.text ||
                     ""
-            ]
-                .filter(Boolean)
-                .join("\n\n");
+
+            };
 
 
         default:
 
-            return (
-                entry.body ||
-                ""
-            );
+            return {
+
+                title:
+                    entry.title ||
+                    "",
+
+                body:
+                    entry.text ||
+                    entry.notes ||
+                    ""
+
+            };
 
     }
-
-}
-
-
-function getEntryMeta(
-    entry,
-    section
-) {
-
-    const parts = [];
-
-
-    if (entry.page) {
-
-        parts.push(
-            `page ${entry.page}`
-        );
-
-    }
-
-
-    if (entry.chapter) {
-
-        parts.push(
-            entry.chapter
-        );
-
-    }
-
-
-    if (entry.tags) {
-
-        parts.push(
-            entry.tags
-        );
-
-    }
-
-
-    if (
-        section === "questions" &&
-        entry.status
-    ) {
-
-        parts.push(
-            entry.status
-        );
-
-    }
-
-
-    if (
-        section === "review" &&
-        entry.rating
-    ) {
-
-        parts.push(
-            `${entry.rating}/5`
-        );
-
-    }
-
-
-    return parts.join(" · ");
 
 }
 
 
 /* =========================================================
-   ENTRY MODAL
+   OPEN JOURNAL ENTRY MODAL
    ========================================================= */
 
-function openEntryModal() {
+function openJournalEntryModal() {
 
     if (
+        !selectedBookId ||
         !selectedJournalSection ||
         selectedJournalSection ===
         "overview"
@@ -6053,11 +5090,17 @@ function openEntryModal() {
     );
 
 
+    const definition =
+        CONFIG.journalSections
+            ?.[
+                selectedJournalSection
+            ];
+
+
     setText(
         "entryModalTitle",
-        `Add ${getSingularEntryName(
-            selectedJournalSection
-        )}`
+        definition?.title ||
+        "Add entry"
     );
 
 
@@ -6076,29 +5119,21 @@ function openEntryModal() {
         modal.hidden = false;
     }
 
-}
 
-
-function closeEntryModal() {
-
-    const modal =
-        document.getElementById(
-            "entryModal"
-        );
-
-
-    if (modal) {
-        modal.hidden = true;
-    }
+    document.body.classList.add(
+        "modal-open"
+    );
 
 }
 
 
 /* =========================================================
-   ENTRY FORM FIELDS
+   DYNAMIC ENTRY FIELDS
    ========================================================= */
 
-function renderEntryFields(section) {
+function renderEntryFields(
+    section
+) {
 
     const container =
         document.getElementById(
@@ -6111,549 +5146,237 @@ function renderEntryFields(section) {
     }
 
 
-    const dateField = `
+    switch (section) {
 
-        <div class="entry-field">
+        case "words":
 
-            <label>
-                Date
-            </label>
-
-            <input
-                id="entryDate"
-                type="date"
-                value="${todayISO()}"
-            >
-
-        </div>
-
-    `;
-
-
-    if (
-        section === "notes" ||
-        section === "thoughts"
-    ) {
-
-        container.innerHTML = `
-
-            <div class="entry-field full">
+            container.innerHTML = `
 
                 <label>
-                    Heading
-                </label>
 
-                <input
-                    id="entryTitle"
-                    type="text"
-                >
-
-            </div>
-
-
-            <div class="entry-field">
-
-                <label>
-                    Page
-                </label>
-
-                <input
-                    id="entryPage"
-                    type="number"
-                    min="0"
-                >
-
-            </div>
-
-
-            <div class="entry-field">
-
-                <label>
-                    Chapter
-                </label>
-
-                <input
-                    id="entryChapter"
-                    type="text"
-                >
-
-            </div>
-
-
-            <div class="entry-field full">
-
-                <label>
-                    ${
-                        section === "notes"
-                            ?
-                            "Note"
-                            :
-                            "Thought"
-                    }
-                </label>
-
-                <textarea
-                    id="entryBody"
-                    rows="7"
-                ></textarea>
-
-            </div>
-
-
-            <div class="entry-field full">
-
-                <label>
-                    Tags
-                </label>
-
-                <input
-                    id="entryTags"
-                    type="text"
-                    placeholder="#character #theme"
-                >
-
-            </div>
-
-            ${dateField}
-
-        `;
-
-
-        return;
-
-    }
-
-
-    if (section === "words") {
-
-        container.innerHTML = `
-
-            <div class="entry-field full">
-
-                <label>
                     Word
+
+                    <input
+                        id="entryWord"
+                        type="text"
+                        required
+                    >
+
                 </label>
 
-                <input
-                    id="entryWord"
-                    type="text"
-                    required
-                >
-
-            </div>
-
-
-            <div class="entry-field">
 
                 <label>
-                    Page
-                </label>
 
-                <input
-                    id="entryPage"
-                    type="number"
-                    min="0"
-                >
-
-            </div>
-
-            ${dateField}
-
-
-            <div class="entry-field full">
-
-                <label>
                     Definition
+
+                    <textarea
+                        id="entryDefinition"
+                        required
+                    ></textarea>
+
                 </label>
 
-                <textarea
-                    id="entryDefinition"
-                    rows="4"
-                ></textarea>
-
-            </div>
-
-
-            <div class="entry-field full">
 
                 <label>
-                    Context in book
+
+                    Context / why I saved it
+
+                    <textarea
+                        id="entryContext"
+                    ></textarea>
+
                 </label>
 
-                <textarea
-                    id="entryContext"
-                    rows="3"
-                ></textarea>
+            `;
 
-            </div>
+            break;
 
 
-            <div class="entry-field full">
+        case "quotes":
 
-                <label>
-                    My sentence
-                </label>
-
-                <textarea
-                    id="entrySentence"
-                    rows="3"
-                ></textarea>
-
-            </div>
-
-        `;
-
-
-        return;
-
-    }
-
-
-    if (section === "quotes") {
-
-        container.innerHTML = `
-
-            <div class="entry-field full">
+            container.innerHTML = `
 
                 <label>
+
                     Quote
+
+                    <textarea
+                        id="entryQuote"
+                        required
+                    ></textarea>
+
                 </label>
 
-                <textarea
-                    id="entryQuote"
-                    rows="6"
-                    required
-                ></textarea>
-
-            </div>
-
-
-            <div class="entry-field">
 
                 <label>
+
                     Page
+
+                    <input
+                        id="entryPage"
+                        type="number"
+                        min="0"
+                    >
+
                 </label>
 
-                <input
-                    id="entryPage"
-                    type="number"
-                >
+            `;
 
-            </div>
+            break;
 
 
-            <div class="entry-field">
+        case "characters":
+
+            container.innerHTML = `
 
                 <label>
-                    Chapter
+
+                    Character
+
+                    <input
+                        id="entryCharacter"
+                        type="text"
+                        required
+                    >
+
                 </label>
 
-                <input
-                    id="entryChapter"
-                    type="text"
-                >
-
-            </div>
-
-
-            <div class="entry-field full">
 
                 <label>
-                    Why did I save it?
-                </label>
 
-                <textarea
-                    id="entryReason"
-                    rows="4"
-                ></textarea>
-
-            </div>
-
-            ${dateField}
-
-        `;
-
-
-        return;
-
-    }
-
-
-    if (section === "characters") {
-
-        container.innerHTML = `
-
-            <div class="entry-field full">
-
-                <label>
-                    Character name
-                </label>
-
-                <input
-                    id="entryName"
-                    type="text"
-                    required
-                >
-
-            </div>
-
-
-            <div class="entry-field full">
-
-                <label>
-                    Role / relationship
-                </label>
-
-                <input
-                    id="entryRole"
-                    type="text"
-                >
-
-            </div>
-
-
-            <div class="entry-field">
-
-                <label>
-                    First appearance
-                </label>
-
-                <input
-                    id="entryPage"
-                    type="number"
-                >
-
-            </div>
-
-            ${dateField}
-
-
-            <div class="entry-field full">
-
-                <label>
                     Notes
+
+                    <textarea
+                        id="entryCharacterNotes"
+                        required
+                    ></textarea>
+
                 </label>
 
-                <textarea
-                    id="entryNotes"
-                    rows="6"
-                ></textarea>
+            `;
 
-            </div>
-
-        `;
+            break;
 
 
-        return;
+        case "themes":
 
-    }
-
-
-    if (section === "themes") {
-
-        container.innerHTML = `
-
-            <div class="entry-field full">
+            container.innerHTML = `
 
                 <label>
+
                     Theme
+
+                    <input
+                        id="entryTheme"
+                        type="text"
+                        required
+                    >
+
                 </label>
 
-                <input
-                    id="entryTheme"
-                    type="text"
-                    required
-                >
-
-            </div>
-
-
-            <div class="entry-field full">
 
                 <label>
-                    Notes
+
+                    Thoughts
+
+                    <textarea
+                        id="entryThemeNotes"
+                        required
+                    ></textarea>
+
                 </label>
 
-                <textarea
-                    id="entryNotes"
-                    rows="7"
-                ></textarea>
+            `;
 
-            </div>
-
-            ${dateField}
-
-        `;
+            break;
 
 
-        return;
+        case "questions":
 
-    }
-
-
-    if (section === "questions") {
-
-        container.innerHTML = `
-
-            <div class="entry-field full">
+            container.innerHTML = `
 
                 <label>
+
                     Question
+
+                    <textarea
+                        id="entryQuestion"
+                        required
+                    ></textarea>
+
                 </label>
 
-                <textarea
-                    id="entryQuestion"
-                    rows="4"
-                    required
-                ></textarea>
-
-            </div>
-
-
-            <div class="entry-field">
 
                 <label>
-                    Status
+
+                    Notes
+
+                    <textarea
+                        id="entryQuestionNotes"
+                    ></textarea>
+
                 </label>
 
-                <select id="entryStatus">
+            `;
 
-                    <option value="unanswered">
-                        Unanswered
-                    </option>
-
-                    <option value="answered">
-                        Answered
-                    </option>
-
-                    <option value="research-later">
-                        Research Later
-                    </option>
-
-                </select>
-
-            </div>
-
-            ${dateField}
+            break;
 
 
-            <div class="entry-field full">
+        case "review":
+
+            container.innerHTML = `
 
                 <label>
-                    Answer / thoughts
-                </label>
 
-                <textarea
-                    id="entryAnswer"
-                    rows="5"
-                ></textarea>
-
-            </div>
-
-        `;
-
-
-        return;
-
-    }
-
-
-    if (section === "review") {
-
-        container.innerHTML = `
-
-            <div class="entry-field full">
-
-                <label>
-                    Review title
-                </label>
-
-                <input
-                    id="entryTitle"
-                    type="text"
-                    placeholder="What I thought"
-                >
-
-            </div>
-
-
-            <div class="entry-field">
-
-                <label>
-                    Rating
-                </label>
-
-                <select id="entryRating">
-
-                    <option value="1">
-                        1 / 5
-                    </option>
-
-                    <option value="2">
-                        2 / 5
-                    </option>
-
-                    <option value="3">
-                        3 / 5
-                    </option>
-
-                    <option value="4">
-                        4 / 5
-                    </option>
-
-                    <option value="5">
-                        5 / 5
-                    </option>
-
-                </select>
-
-            </div>
-
-            ${dateField}
-
-
-            <div class="entry-field full">
-
-                <label>
                     Review
+
+                    <textarea
+                        id="entryReview"
+                        required
+                    ></textarea>
+
                 </label>
 
-                <textarea
-                    id="entryReview"
-                    rows="7"
-                ></textarea>
+            `;
 
-            </div>
+            break;
 
 
-            <div class="entry-field full">
+        default:
+
+            container.innerHTML = `
 
                 <label>
-                    What I learned
+
+                    Title
+
+                    <input
+                        id="entryTitle"
+                        type="text"
+                    >
+
                 </label>
 
-                <textarea
-                    id="entryLearned"
-                    rows="4"
-                ></textarea>
-
-            </div>
-
-
-            <div class="entry-field full">
 
                 <label>
-                    What stayed with me
+
+                    ${
+                        section ===
+                        "thoughts"
+                            ?
+                            "Thought"
+                            :
+                            "Note"
+                    }
+
+                    <textarea
+                        id="entryText"
+                        required
+                    ></textarea>
+
                 </label>
 
-                <textarea
-                    id="entryStayed"
-                    rows="4"
-                ></textarea>
-
-            </div>
-
-        `;
+            `;
 
     }
 
@@ -6664,7 +5387,9 @@ function renderEntryFields(section) {
    SAVE JOURNAL ENTRY
    ========================================================= */
 
-function saveJournalEntry(event) {
+function saveJournalEntry(
+    event
+) {
 
     event.preventDefault();
 
@@ -6689,8 +5414,123 @@ function saveJournalEntry(event) {
     }
 
 
-    const entry =
-        buildEntryFromForm(section);
+    const entry = {
+
+        id:
+            generateId(),
+
+        created_at:
+            new Date()
+                .toISOString()
+
+    };
+
+
+    switch (section) {
+
+        case "words":
+
+            entry.word =
+                getValue(
+                    "entryWord"
+                );
+
+            entry.definition =
+                getValue(
+                    "entryDefinition"
+                );
+
+            entry.context =
+                getValue(
+                    "entryContext"
+                );
+
+            break;
+
+
+        case "quotes":
+
+            entry.quote =
+                getValue(
+                    "entryQuote"
+                );
+
+            entry.page =
+                getValue(
+                    "entryPage"
+                );
+
+            break;
+
+
+        case "characters":
+
+            entry.name =
+                getValue(
+                    "entryCharacter"
+                );
+
+            entry.notes =
+                getValue(
+                    "entryCharacterNotes"
+                );
+
+            break;
+
+
+        case "themes":
+
+            entry.theme =
+                getValue(
+                    "entryTheme"
+                );
+
+            entry.notes =
+                getValue(
+                    "entryThemeNotes"
+                );
+
+            break;
+
+
+        case "questions":
+
+            entry.question =
+                getValue(
+                    "entryQuestion"
+                );
+
+            entry.notes =
+                getValue(
+                    "entryQuestionNotes"
+                );
+
+            break;
+
+
+        case "review":
+
+            entry.review =
+                getValue(
+                    "entryReview"
+                );
+
+            break;
+
+
+        default:
+
+            entry.title =
+                getValue(
+                    "entryTitle"
+                );
+
+            entry.text =
+                getValue(
+                    "entryText"
+                );
+
+    }
 
 
     if (
@@ -6704,14 +5544,13 @@ function saveJournalEntry(event) {
     }
 
 
-    book.journal[
-        section
-    ]
+    book.journal[section]
         .push(entry);
 
 
     book.updated_at =
-        new Date().toISOString();
+        new Date()
+            .toISOString();
 
 
     saveBooks();
@@ -6724,354 +5563,1581 @@ function saveJournalEntry(event) {
 
 
 /* =========================================================
-   BUILD ENTRY
+   CLOSE ENTRY MODAL
    ========================================================= */
 
-function buildEntryFromForm(section) {
+function closeEntryModal() {
 
-    const base = {
+    const modal =
+        document.getElementById(
+            "entryModal"
+        );
 
-        id:
-            generateId(),
 
-        date:
-            getValue(
-                "entryDate"
-            )
-            ||
-            todayISO(),
-
-        created_at:
-            new Date().toISOString()
-
-    };
+    if (modal) {
+        modal.hidden = true;
+    }
 
 
     if (
-        section === "notes" ||
-        section === "thoughts"
+        !isAnyModalOpen()
     ) {
 
-        return {
-
-            ...base,
-
-            title:
-                getValue(
-                    "entryTitle"
-                ),
-
-            page:
-                getValue(
-                    "entryPage"
-                ),
-
-            chapter:
-                getValue(
-                    "entryChapter"
-                ),
-
-            body:
-                getValue(
-                    "entryBody"
-                ),
-
-            tags:
-                getValue(
-                    "entryTags"
-                )
-
-        };
+        document.body.classList.remove(
+            "modal-open"
+        );
 
     }
-
-
-    if (section === "words") {
-
-        return {
-
-            ...base,
-
-            word:
-                getValue(
-                    "entryWord"
-                ),
-
-            page:
-                getValue(
-                    "entryPage"
-                ),
-
-            definition:
-                getValue(
-                    "entryDefinition"
-                ),
-
-            context:
-                getValue(
-                    "entryContext"
-                ),
-
-            sentence:
-                getValue(
-                    "entrySentence"
-                )
-
-        };
-
-    }
-
-
-    if (section === "quotes") {
-
-        return {
-
-            ...base,
-
-            quote:
-                getValue(
-                    "entryQuote"
-                ),
-
-            page:
-                getValue(
-                    "entryPage"
-                ),
-
-            chapter:
-                getValue(
-                    "entryChapter"
-                ),
-
-            reason:
-                getValue(
-                    "entryReason"
-                )
-
-        };
-
-    }
-
-
-    if (section === "characters") {
-
-        return {
-
-            ...base,
-
-            name:
-                getValue(
-                    "entryName"
-                ),
-
-            role:
-                getValue(
-                    "entryRole"
-                ),
-
-            page:
-                getValue(
-                    "entryPage"
-                ),
-
-            notes:
-                getValue(
-                    "entryNotes"
-                )
-
-        };
-
-    }
-
-
-    if (section === "themes") {
-
-        return {
-
-            ...base,
-
-            theme:
-                getValue(
-                    "entryTheme"
-                ),
-
-            notes:
-                getValue(
-                    "entryNotes"
-                )
-
-        };
-
-    }
-
-
-    if (section === "questions") {
-
-        return {
-
-            ...base,
-
-            question:
-                getValue(
-                    "entryQuestion"
-                ),
-
-            status:
-                getValue(
-                    "entryStatus"
-                ),
-
-            answer:
-                getValue(
-                    "entryAnswer"
-                )
-
-        };
-
-    }
-
-
-    if (section === "review") {
-
-        return {
-
-            ...base,
-
-            title:
-                getValue(
-                    "entryTitle"
-                ),
-
-            rating:
-                getValue(
-                    "entryRating"
-                ),
-
-            review:
-                getValue(
-                    "entryReview"
-                ),
-
-            learned:
-                getValue(
-                    "entryLearned"
-                ),
-
-            stayed:
-                getValue(
-                    "entryStayed"
-                )
-
-        };
-
-    }
-
-
-    return base;
 
 }
 
 
 /* =========================================================
-   ENTRY NAME
+   READING NOW
    ========================================================= */
 
-function getSingularEntryName(section) {
+function renderReadingNow() {
 
-    const names = {
-
-        notes:
-            "note",
-
-        thoughts:
-            "thought",
-
-        words:
-            "word",
-
-        quotes:
-            "quote",
-
-        characters:
-            "character",
-
-        themes:
-            "theme",
-
-        questions:
-            "question",
-
-        review:
-            "review"
-
-    };
+    const readingBooks =
+        books.filter(
+            book =>
+                book.status ===
+                "reading"
+        );
 
 
-    return names[section] || "entry";
+    updateReadingNowSummary(
+        readingBooks
+    );
+
+
+    const featuredSection =
+        document.getElementById(
+            "featuredReadingSection"
+        );
+
+
+    const listSection =
+        document.getElementById(
+            "readingListSection"
+        );
+
+
+    const empty =
+        document.getElementById(
+            "readingEmpty"
+        );
+
+
+    if (!readingBooks.length) {
+
+        if (featuredSection) {
+            featuredSection.hidden = true;
+        }
+
+        if (listSection) {
+            listSection.hidden = true;
+        }
+
+        if (empty) {
+            empty.hidden = false;
+        }
+
+        return;
+
+    }
+
+
+    if (featuredSection) {
+        featuredSection.hidden = false;
+    }
+
+    if (listSection) {
+        listSection.hidden = false;
+    }
+
+    if (empty) {
+        empty.hidden = true;
+    }
+
+
+    const featured =
+        getFeaturedReadingBook(
+            readingBooks
+        );
+
+
+    renderFeaturedReadingBook(
+        featured
+    );
+
+
+    renderReadingGrid(
+        readingBooks
+    );
 
 }
 
 
 /* =========================================================
-   BOOK STATUS
+   READING SUMMARY
    ========================================================= */
 
-function getStatusLabel(status) {
+function updateReadingNowSummary(
+    readingBooks
+) {
 
-    const labels = {
-
-        want:
-            "want to read",
-
-        reading:
-            "currently reading",
-
-        paused:
-            "paused for now",
-
-        finished:
-            "finished",
-
-        dnf:
-            "did not finish",
-
-        reference:
-            "kept for reference"
-
-    };
+    setText(
+        "currentReadingCount",
+        readingBooks.length
+    );
 
 
-    return labels[status] || status;
+    if (!readingBooks.length) {
+
+        setText(
+            "averageProgress",
+            "0%"
+        );
+
+        setText(
+            "pagesRemaining",
+            "0"
+        );
+
+        return;
+
+    }
+
+
+    const average =
+        Math.round(
+
+            readingBooks.reduce(
+                (
+                    total,
+                    book
+                ) =>
+                    total +
+                    getProgressPercent(
+                        book
+                    ),
+                0
+            )
+            /
+            readingBooks.length
+
+        );
+
+
+    const remaining =
+        readingBooks.reduce(
+            (
+                total,
+                book
+            ) => {
+
+                if (!book.pages) {
+                    return total;
+                }
+
+
+                return (
+                    total +
+                    Math.max(
+                        0,
+                        book.pages -
+                        book.current_page
+                    )
+                );
+
+            },
+            0
+        );
+
+
+    setText(
+        "averageProgress",
+        `${average}%`
+    );
+
+
+    setText(
+        "pagesRemaining",
+        remaining
+    );
 
 }
 
 
-function normalizeBookStatus(status) {
+/* =========================================================
+   FEATURED READING BOOK
+   ========================================================= */
 
-    const allowed = [
-        "want",
-        "reading",
-        "paused",
-        "finished",
-        "dnf",
-        "reference"
-    ];
+function getFeaturedReadingBook(
+    readingBooks
+) {
+
+    return readingBooks
+        .slice()
+        .sort(
+            (a, b) =>
+                getProgressPercent(b)
+                -
+                getProgressPercent(a)
+        )[0];
+
+}
 
 
-    return allowed.includes(status)
-        ?
+/* =========================================================
+   RENDER FEATURED BOOK
+   ========================================================= */
+
+function renderFeaturedReadingBook(
+    book
+) {
+
+    if (!book) {
+        return;
+    }
+
+
+    const shelf =
+        getShelfById(
+            book.shelf_id
+        );
+
+
+    renderCover(
+        "featuredBookCover",
+        book
+    );
+
+
+    setText(
+        "featuredBookShelf",
+        shelf?.name ||
+        "my library"
+    );
+
+
+    setText(
+        "featuredBookTitle",
+        book.title
+    );
+
+
+    setText(
+        "featuredBookAuthor",
+        book.author ||
+        "Author not recorded"
+    );
+
+
+    setText(
+        "featuredBookStarted",
+        formatDate(
+            book.started
+        )
+    );
+
+
+    setText(
+        "featuredBookPages",
+        `${book.current_page} / ${book.pages || 0}`
+    );
+
+
+    const percentage =
+        getProgressPercent(
+            book
+        );
+
+
+    setText(
+        "featuredBookPercent",
+        `${percentage}%`
+    );
+
+
+    const fill =
+        document.getElementById(
+            "featuredProgressFill"
+        );
+
+
+    if (fill) {
+
+        fill.style.width =
+            `${percentage}%`;
+
+    }
+
+
+    const bookmark =
+        document.getElementById(
+            "featuredProgressBookmark"
+        );
+
+
+    if (bookmark) {
+
+        bookmark.style.left =
+            `${percentage}%`;
+
+    }
+
+
+    const openButton =
+        document.getElementById(
+            "featuredOpenBook"
+        );
+
+
+    if (openButton) {
+
+        openButton.dataset.bookId =
+            book.id;
+
+    }
+
+
+    const progressButton =
+        document.getElementById(
+            "featuredEditProgress"
+        );
+
+
+    if (progressButton) {
+
+        progressButton.dataset.bookId =
+            book.id;
+
+    }
+
+}
+
+
+/* =========================================================
+   READING GRID
+   ========================================================= */
+
+function renderReadingGrid(
+    readingBooks
+) {
+
+    const grid =
+        document.getElementById(
+            "readingGrid"
+        );
+
+
+    if (!grid) {
+        return;
+    }
+
+
+    grid.innerHTML = "";
+
+
+    readingBooks
+        .slice()
+        .sort(
+            (a, b) =>
+                dateValue(
+                    b.started ||
+                    b.created_at
+                )
+                -
+                dateValue(
+                    a.started ||
+                    a.created_at
+                )
+        )
+        .forEach(book => {
+
+            grid.appendChild(
+                createReadingCard(
+                    book
+                )
+            );
+
+        });
+
+}
+
+
+/* =========================================================
+   CREATE READING CARD
+   ========================================================= */
+
+function createReadingCard(
+    book
+) {
+
+    const shelf =
+        getShelfById(
+            book.shelf_id
+        );
+
+
+    const percent =
+        getProgressPercent(
+            book
+        );
+
+
+    const card =
+        document.createElement(
+            "article"
+        );
+
+
+    card.className =
+        "reading-card";
+
+
+    card.dataset.bookId =
+        book.id;
+
+
+    card.innerHTML = `
+
+        <div class="reading-card-cover">
+        </div>
+
+
+        <div class="reading-card-copy">
+
+            <span class="reading-card-shelf">
+                ${escapeHTML(
+                    shelf?.name ||
+                    "my library"
+                )}
+            </span>
+
+
+            <h3>
+                ${escapeHTML(
+                    book.title
+                )}
+            </h3>
+
+
+            <p class="reading-card-author">
+                ${escapeHTML(
+                    book.author ||
+                    "Author not recorded"
+                )}
+            </p>
+
+
+            <div class="reading-card-pages">
+
+                <span>
+                    ${book.current_page}
+                    /
+                    ${book.pages || 0}
+                </span>
+
+                <strong>
+                    ${percent}%
+                </strong>
+
+            </div>
+
+
+            <div class="reading-card-progress">
+
+                <span
+                    style="width:${percent}%"
+                ></span>
+
+            </div>
+
+
+            <div class="reading-card-started">
+
+                started
+                ${escapeHTML(
+                    formatDate(
+                        book.started
+                    )
+                )}
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    renderCoverInElement(
+        card.querySelector(
+            ".reading-card-cover"
+        ),
+        book
+    );
+
+
+    card.addEventListener(
+        "click",
+        () =>
+            openBookReveal(
+                book.id
+            )
+    );
+
+
+    return card;
+
+}
+
+
+/* =========================================================
+   PROGRESS MODAL
+   ========================================================= */
+
+function openProgressModal(
+    bookId
+) {
+
+    const book =
+        getBookById(
+            bookId
+        );
+
+
+    if (!book) {
+        return;
+    }
+
+
+    setValue(
+        "progressBookId",
+        book.id
+    );
+
+
+    setText(
+        "progressBookTitle",
+        book.title
+    );
+
+
+    setText(
+        "progressBookTotal",
+        book.pages
+            ?
+            `${book.pages} total pages`
+            :
+            "Page count not recorded"
+    );
+
+
+    setValue(
+        "progressCurrentPage",
+        book.current_page
+    );
+
+
+    setChecked(
+        "markBookFinished",
+        false
+    );
+
+
+    const input =
+        document.getElementById(
+            "progressCurrentPage"
+        );
+
+
+    if (input) {
+
+        input.max =
+            book.pages > 0
+                ?
+                String(
+                    book.pages
+                )
+                :
+                "";
+
+    }
+
+
+    updateProgressPreview();
+
+
+    const modal =
+        document.getElementById(
+            "progressModal"
+        );
+
+
+    if (modal) {
+        modal.hidden = false;
+    }
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE PROGRESS MODAL
+   ========================================================= */
+
+function closeProgressModal() {
+
+    const modal =
+        document.getElementById(
+            "progressModal"
+        );
+
+
+    if (modal) {
+        modal.hidden = true;
+    }
+
+
+    if (
+        !isAnyModalOpen()
+    ) {
+
+        document.body.classList.remove(
+            "modal-open"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   UPDATE PROGRESS PREVIEW
+   ========================================================= */
+
+function updateProgressPreview() {
+
+    const book =
+        getBookById(
+            getValue(
+                "progressBookId"
+            )
+        );
+
+
+    if (!book) {
+        return;
+    }
+
+
+    let current =
+        normalizeNumber(
+            getValue(
+                "progressCurrentPage"
+            )
+        );
+
+
+    if (
+        book.pages >
+        0
+    ) {
+
+        current =
+            Math.min(
+                current,
+                book.pages
+            );
+
+    }
+
+
+    const percentage =
+        book.pages
+            ?
+            Math.round(
+                (
+                    current /
+                    book.pages
+                )
+                *
+                100
+            )
+            :
+            0;
+
+
+    const fill =
+        document.getElementById(
+            "progressPreviewFill"
+        );
+
+
+    if (fill) {
+
+        fill.style.width =
+            `${percentage}%`;
+
+    }
+
+
+    setText(
+        "progressPreviewPercent",
+        `${percentage}%`
+    );
+
+}
+
+
+/* =========================================================
+   FINISHED TOGGLE
+   ========================================================= */
+
+function handleFinishedToggle(
+    event
+) {
+
+    if (
+        !event.target.checked
+    ) {
+        return;
+    }
+
+
+    const book =
+        getBookById(
+            getValue(
+                "progressBookId"
+            )
+        );
+
+
+    if (
+        !book ||
+        !book.pages
+    ) {
+        return;
+    }
+
+
+    setValue(
+        "progressCurrentPage",
+        book.pages
+    );
+
+
+    updateProgressPreview();
+
+}
+
+
+/* =========================================================
+   SAVE PROGRESS
+   ========================================================= */
+
+function saveProgressUpdate(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const book =
+        getBookById(
+            getValue(
+                "progressBookId"
+            )
+        );
+
+
+    if (!book) {
+        return;
+    }
+
+
+    let current =
+        normalizeNumber(
+            getValue(
+                "progressCurrentPage"
+            )
+        );
+
+
+    if (
+        book.pages >
+        0
+    ) {
+
+        current =
+            Math.min(
+                current,
+                book.pages
+            );
+
+    }
+
+
+    book.current_page =
+        current;
+
+
+    if (
+        document
+            .getElementById(
+                "markBookFinished"
+            )
+            ?.checked
+    ) {
+
+        book.status =
+            "finished";
+
+
+        book.finished =
+            todayISO();
+
+
+        if (
+            book.pages
+        ) {
+
+            book.current_page =
+                book.pages;
+
+        }
+
+
+        if (
+            book.times_read <
+            1
+        ) {
+
+            book.times_read =
+                1;
+
+        }
+
+    }
+
+
+    book.updated_at =
+        new Date()
+            .toISOString();
+
+
+    saveBooks();
+
+    closeProgressModal();
+
+    renderAll();
+
+}
+
+
+/* =========================================================
+   READING STATS
+   ========================================================= */
+
+function renderReadingStats() {
+
+    const finished =
+        books.filter(
+            book =>
+                book.status ===
+                "finished"
+        );
+
+
+    setText(
+        "statsTotalBooks",
+        books.length
+    );
+
+
+    setText(
+        "statsFinishedBooks",
+        finished.length
+    );
+
+
+    setText(
+        "statsPagesRead",
+        calculatePagesRead()
+    );
+
+
+    setText(
+        "statsAverageRating",
+        calculateAverageRating()
+    );
+
+
+    setText(
+        "statsCurrentlyReading",
+        countStatus(
+            "reading"
+        )
+    );
+
+
+    setText(
+        "statsWantToRead",
+        countStatus(
+            "want"
+        )
+    );
+
+
+    setText(
+        "statsPaused",
+        countStatus(
+            "paused"
+        )
+    );
+
+
+    setText(
+        "statsDNF",
+        countStatus(
+            "dnf"
+        )
+    );
+
+
+    setText(
+        "statsReference",
+        countStatus(
+            "reference"
+        )
+    );
+
+
+    setText(
+        "statsRereads",
+        calculateRereads()
+    );
+
+
+    renderGenreStats();
+
+    renderMonthlyReadingStats();
+
+}
+
+
+/* =========================================================
+   PAGES READ
+   ========================================================= */
+
+function calculatePagesRead() {
+
+    return books.reduce(
+        (
+            total,
+            book
+        ) => {
+
+            if (
+                book.status ===
+                "finished"
+            ) {
+
+                return (
+                    total +
+                    (
+                        book.pages ||
+                        book.current_page
+                    )
+                );
+
+            }
+
+
+            if (
+                book.status ===
+                "reading"
+            ) {
+
+                return (
+                    total +
+                    book.current_page
+                );
+
+            }
+
+
+            return total;
+
+        },
+        0
+    );
+
+}
+
+
+/* =========================================================
+   AVERAGE RATING
+   ========================================================= */
+
+function calculateAverageRating() {
+
+    const rated =
+        books.filter(
+            book =>
+                Number(book.rating) >
+                0
+        );
+
+
+    if (!rated.length) {
+        return "—";
+    }
+
+
+    const average =
+        rated.reduce(
+            (
+                total,
+                book
+            ) =>
+                total +
+                Number(
+                    book.rating
+                ),
+            0
+        )
+        /
+        rated.length;
+
+
+    return `${average.toFixed(1)} ★`;
+
+}
+
+
+/* =========================================================
+   REREADS
+   ========================================================= */
+
+function calculateRereads() {
+
+    return books.reduce(
+        (
+            total,
+            book
+        ) => {
+
+            return (
+                total +
+                Math.max(
+                    0,
+                    Number(
+                        book.times_read ||
+                        0
+                    )
+                    -
+                    1
+                )
+            );
+
+        },
+        0
+    );
+
+}
+
+
+/* =========================================================
+   STATUS COUNT
+   ========================================================= */
+
+function countStatus(
+    status
+) {
+
+    return books.filter(
+        book =>
+            book.status ===
+            status
+    ).length;
+
+}
+
+
+/* =========================================================
+   GENRE STATS
+   ========================================================= */
+
+function renderGenreStats() {
+
+    const container =
+        document.getElementById(
+            "genreStats"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    const counts = {};
+
+
+    books.forEach(book => {
+
+        const genre =
+            String(
+                book.genre ||
+                ""
+            )
+                .trim();
+
+
+        if (!genre) {
+            return;
+        }
+
+
+        counts[genre] =
+            (
+                counts[genre] ||
+                0
+            )
+            +
+            1;
+
+    });
+
+
+    const entries =
+        Object.entries(
+            counts
+        )
+            .sort(
+                (
+                    a,
+                    b
+                ) =>
+                    b[1] -
+                    a[1]
+            )
+            .slice(
+                0,
+                6
+            );
+
+
+    if (!entries.length) {
+
+        container.innerHTML = `
+
+            <div class="stats-empty-line">
+                Add genres to your books and your favorite
+                corners of the library will appear here.
+            </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+    const highest =
+        entries[0][1];
+
+
+    container.innerHTML =
+        entries
+            .map(
+                (
+                    [
+                        genre,
+                        count
+                    ]
+                ) => {
+
+                    const percent =
+                        Math.round(
+                            (
+                                count /
+                                highest
+                            )
+                            *
+                            100
+                        );
+
+
+                    return `
+
+                        <div class="genre-stat-row">
+
+                            <span class="genre-stat-name">
+                                ${escapeHTML(
+                                    genre
+                                )}
+                            </span>
+
+
+                            <div class="genre-stat-track">
+
+                                <div
+                                    class="genre-stat-fill"
+                                    style="width:${percent}%"
+                                >
+                                </div>
+
+                            </div>
+
+
+                            <span class="genre-stat-count">
+                                ${count}
+                            </span>
+
+                        </div>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+/* =========================================================
+   MONTHLY READING STATS
+   ========================================================= */
+
+function renderMonthlyReadingStats() {
+
+    const container =
+        document.getElementById(
+            "monthlyReadingStats"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    const months =
+        getLastTwelveMonths();
+
+
+    const counts =
+        months.map(month => {
+
+            const count =
+                books.filter(book => {
+
+                    if (
+                        book.status !==
+                        "finished" ||
+                        !book.finished
+                    ) {
+                        return false;
+                    }
+
+
+                    const date =
+                        parseDate(
+                            book.finished
+                        );
+
+
+                    if (!date) {
+                        return false;
+                    }
+
+
+                    return (
+                        date.getFullYear() ===
+                        month.year
+                        &&
+                        date.getMonth() ===
+                        month.month
+                    );
+
+                }).length;
+
+
+            return {
+                ...month,
+                count
+            };
+
+        });
+
+
+    const highest =
+        Math.max(
+            1,
+            ...counts.map(
+                item =>
+                    item.count
+            )
+        );
+
+
+    container.innerHTML =
+        counts
+            .map(item => {
+
+                const percent =
+                    item.count
+                        ?
+                        Math.max(
+                            5,
+                            Math.round(
+                                (
+                                    item.count /
+                                    highest
+                                )
+                                *
+                                100
+                            )
+                        )
+                        :
+                        2;
+
+
+                return `
+
+                    <div class="month-stat">
+
+                        <strong>
+                            ${item.count}
+                        </strong>
+
+
+                        <div class="month-stat-bar-wrap">
+
+                            <div
+                                class="month-stat-bar"
+                                style="height:${percent}%"
+                            >
+                            </div>
+
+                        </div>
+
+
+                        <span>
+                            ${escapeHTML(
+                                item.label
+                            )}
+                        </span>
+
+                    </div>
+
+                `;
+
+            })
+            .join("");
+
+}
+
+
+/* =========================================================
+   LAST TWELVE MONTHS
+   ========================================================= */
+
+function getLastTwelveMonths() {
+
+    const result = [];
+
+    const now =
+        new Date();
+
+
+    for (
+        let index = 11;
+        index >= 0;
+        index--
+    ) {
+
+        const date =
+            new Date(
+                now.getFullYear(),
+                now.getMonth() -
+                index,
+                1
+            );
+
+
+        result.push({
+
+            year:
+                date.getFullYear(),
+
+            month:
+                date.getMonth(),
+
+            label:
+                date.toLocaleDateString(
+                    "en-US",
+                    {
+                        month:
+                            "short"
+                    }
+                )
+
+        });
+
+    }
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   COVER RENDERING
+   ========================================================= */
+
+function renderCover(
+    elementId,
+    book
+) {
+
+    const element =
+        document.getElementById(
+            elementId
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    renderCoverInElement(
+        element,
+        book
+    );
+
+}
+
+
+/* =========================================================
+   COVER IN ELEMENT
+   ========================================================= */
+
+function renderCoverInElement(
+    element,
+    book
+) {
+
+    element.innerHTML = "";
+
+    element.style.backgroundImage =
+        "";
+
+    element.style.backgroundColor =
+        book.spine_color;
+
+
+    if (
+        book.cover_image
+    ) {
+
+        element.style.backgroundImage =
+            `url("${safeStyleURL(
+                book.cover_image
+            )}")`;
+
+        return;
+
+    }
+
+
+    element.innerHTML = `
+
+        <div
+            class="generated-cover"
+            style="
+                --book-color:${escapeHTML(
+                    book.spine_color
+                )};
+                --book-text:${escapeHTML(
+                    book.text_color
+                )};
+                --book-accent:${escapeHTML(
+                    book.accent_color
+                )};
+            "
+        >
+
+            <span>
+                ${escapeHTML(
+                    getBookOrnament(
+                        book
+                    )
+                )}
+            </span>
+
+
+            <strong>
+                ${escapeHTML(
+                    book.title
+                )}
+            </strong>
+
+
+            <span>
+                ${escapeHTML(
+                    book.author ||
+                    ""
+                )}
+            </span>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   STATUS LABEL
+   ========================================================= */
+
+function getStatusLabel(
+    status
+) {
+
+    return (
+        CONFIG.readingStatuses
+            ?.[status]
+            ?.label
+        ||
         status
-        :
-        "want";
+        ||
+        "Unknown"
+    );
 
 }
 
 
 /* =========================================================
-   PROGRESS
+   PROGRESS PERCENT
    ========================================================= */
 
-function getProgressPercent(book) {
+function getProgressPercent(
+    book
+) {
 
     if (!book.pages) {
         return 0;
@@ -7097,24 +7163,348 @@ function getProgressPercent(book) {
 
 
 /* =========================================================
-   SAVE
+   RATING TEXT
    ========================================================= */
 
-function saveShelves() {
+function getRatingText(
+    rating
+) {
 
-    localStorage.setItem(
-        STORAGE_KEYS.shelves,
-        JSON.stringify(shelves)
+    const value =
+        Math.min(
+            5,
+            Math.max(
+                0,
+                Number(
+                    rating ||
+                    0
+                )
+            )
+        );
+
+
+    if (!value) {
+        return "not rated";
+    }
+
+
+    return (
+        "★".repeat(value)
+        +
+        "☆".repeat(
+            5 -
+            value
+        )
     );
 
 }
 
 
-function saveBooks() {
+/* =========================================================
+   DRAWER HELPERS
+   ========================================================= */
 
-    localStorage.setItem(
-        STORAGE_KEYS.books,
-        JSON.stringify(books)
+function openThemeDrawer() {
+
+    hideAllDrawersImmediately();
+
+    showDrawer(
+        "themeDrawer"
+    );
+
+}
+
+
+function showDrawer(
+    drawerId
+) {
+
+    const drawer =
+        document.getElementById(
+            drawerId
+        );
+
+
+    const overlay =
+        document.getElementById(
+            "overlay"
+        );
+
+
+    if (!drawer) {
+        return;
+    }
+
+
+    drawer.hidden = false;
+
+
+    if (overlay) {
+        overlay.hidden = false;
+    }
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
+
+    requestAnimationFrame(
+        () => {
+
+            drawer.classList.add(
+                "open"
+            );
+
+            overlay
+                ?.classList
+                .add(
+                    "open"
+                );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE DRAWERS
+   ========================================================= */
+
+function closeAllDrawers() {
+
+    const delay =
+        settings.reducedMotion
+            ?
+            0
+            :
+            250;
+
+
+    const overlay =
+        document.getElementById(
+            "overlay"
+        );
+
+
+    const drawers =
+        document.querySelectorAll(
+            ".form-drawer"
+        );
+
+
+    drawers.forEach(drawer => {
+
+        drawer.classList.remove(
+            "open"
+        );
+
+    });
+
+
+    overlay
+        ?.classList
+        .remove(
+            "open"
+        );
+
+
+    window.setTimeout(
+        () => {
+
+            drawers.forEach(
+                drawer => {
+
+                    drawer.hidden = true;
+
+                }
+            );
+
+
+            if (overlay) {
+                overlay.hidden = true;
+            }
+
+
+            if (
+                !isAnyModalOpen()
+            ) {
+
+                document.body.classList.remove(
+                    "modal-open"
+                );
+
+            }
+
+        },
+        delay
+    );
+
+}
+
+
+/* =========================================================
+   IMMEDIATE DRAWER HIDE
+   ========================================================= */
+
+function hideAllDrawersImmediately() {
+
+    document
+        .querySelectorAll(
+            ".form-drawer"
+        )
+        .forEach(drawer => {
+
+            drawer.classList.remove(
+                "open"
+            );
+
+            drawer.hidden = true;
+
+        });
+
+
+    const overlay =
+        document.getElementById(
+            "overlay"
+        );
+
+
+    if (overlay) {
+
+        overlay.classList.remove(
+            "open"
+        );
+
+        overlay.hidden = true;
+
+    }
+
+}
+
+
+/* =========================================================
+   ACTIVE NAVIGATION
+   ========================================================= */
+
+function bindSectionNavigation() {
+
+    const links =
+        Array.from(
+            document.querySelectorAll(
+                ".main-nav .nav-link[href^='#']"
+            )
+        );
+
+
+    links.forEach(link => {
+
+        link.addEventListener(
+            "click",
+            () => {
+
+                links.forEach(
+                    item =>
+                        item.classList.remove(
+                            "active"
+                        )
+                );
+
+
+                link.classList.add(
+                    "active"
+                );
+
+            }
+        );
+
+    });
+
+
+    if (
+        !("IntersectionObserver" in window)
+    ) {
+        return;
+    }
+
+
+    const sections =
+        [
+            "library",
+            "reading",
+            "stats"
+        ]
+            .map(
+                id =>
+                    document.getElementById(
+                        id
+                    )
+            )
+            .filter(Boolean);
+
+
+    const observer =
+        new IntersectionObserver(
+            entries => {
+
+                const visible =
+                    entries
+                        .filter(
+                            entry =>
+                                entry.isIntersecting
+                        )
+                        .sort(
+                            (
+                                a,
+                                b
+                            ) =>
+                                b.intersectionRatio -
+                                a.intersectionRatio
+                        )[0];
+
+
+                if (!visible) {
+                    return;
+                }
+
+
+                links.forEach(
+                    link => {
+
+                        link.classList.toggle(
+                            "active",
+                            link.getAttribute(
+                                "href"
+                            )
+                            ===
+                            `#${visible.target.id}`
+                        );
+
+                    }
+                );
+
+            },
+            {
+                rootMargin:
+                    "-25% 0px -55% 0px",
+
+                threshold:
+                    [
+                        0,
+                        .1,
+                        .25,
+                        .5
+                    ]
+            }
+        );
+
+
+    sections.forEach(
+        section =>
+            observer.observe(
+                section
+            )
     );
 
 }
@@ -7124,34 +7514,95 @@ function saveBooks() {
    LOOKUPS
    ========================================================= */
 
-function getShelfById(id) {
+function getBookById(id) {
 
-    return shelves.find(
-        shelf =>
-            String(shelf.id) ===
-            String(id)
-    )
-    ||
-    null;
+    return (
+        books.find(
+            book =>
+                String(
+                    book.id
+                ) ===
+                String(id)
+        )
+        ||
+        null
+    );
 
 }
 
 
-function getBookById(id) {
+function getShelfById(id) {
 
-    return books.find(
-        book =>
-            String(book.id) ===
-            String(id)
-    )
-    ||
-    null;
+    return (
+        shelves.find(
+            shelf =>
+                String(
+                    shelf.id
+                ) ===
+                String(id)
+        )
+        ||
+        null
+    );
 
 }
 
 
 /* =========================================================
-   DATES
+   THEME DECORATIONS
+   ========================================================= */
+
+function getThemeDecorations() {
+
+    return (
+        CONFIG.themes
+            ?.find(
+                theme =>
+                    theme.id ===
+                    settings.theme
+            )
+            ?.defaultDecorations
+        ||
+        []
+    );
+
+}
+
+
+/* =========================================================
+   MODAL STATE
+   ========================================================= */
+
+function isAnyModalOpen() {
+
+    const ids = [
+
+        "bookReveal",
+        "readingBook",
+        "entryModal",
+        "progressModal"
+
+    ];
+
+
+    return ids.some(id => {
+
+        const element =
+            document.getElementById(id);
+
+        return (
+            element &&
+            element.hidden ===
+            false
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   DATE HELPERS
    ========================================================= */
 
 function todayISO() {
@@ -7165,7 +7616,8 @@ function todayISO() {
         date.getFullYear(),
 
         String(
-            date.getMonth() + 1
+            date.getMonth() +
+            1
         )
             .padStart(
                 2,
@@ -7186,16 +7638,20 @@ function todayISO() {
 }
 
 
-function formatDate(value) {
+function parseDate(value) {
 
     if (!value) {
-        return "—";
+        return null;
     }
 
 
     const date =
         new Date(
-            `${value}T12:00:00`
+            value.includes?.("T")
+                ?
+                value
+                :
+                `${value}T12:00:00`
         );
 
 
@@ -7204,7 +7660,25 @@ function formatDate(value) {
             date.getTime()
         )
     ) {
-        return value;
+        return null;
+    }
+
+
+    return date;
+
+}
+
+
+function formatDate(value) {
+
+    const date =
+        parseDate(
+            value
+        );
+
+
+    if (!date) {
+        return "—";
     }
 
 
@@ -7225,8 +7699,55 @@ function formatDate(value) {
 }
 
 
+function formatDateTime(value) {
+
+    const date =
+        parseDate(
+            value
+        );
+
+
+    if (!date) {
+        return "";
+    }
+
+
+    return date.toLocaleDateString(
+        "en-US",
+        {
+            month:
+                "short",
+
+            day:
+                "numeric",
+
+            year:
+                "numeric"
+        }
+    );
+
+}
+
+
+function dateValue(value) {
+
+    const date =
+        parseDate(
+            value
+        );
+
+
+    return date
+        ?
+        date.getTime()
+        :
+        0;
+
+}
+
+
 /* =========================================================
-   NUMBERS
+   BASIC HELPERS
    ========================================================= */
 
 function normalizeNumber(value) {
@@ -7252,7 +7773,7 @@ function normalizeNumber(value) {
 
 function normalizePercent(
     value,
-    fallback = 50
+    fallback
 ) {
 
     const number =
@@ -7297,28 +7818,6 @@ function normalizeScale(value) {
 }
 
 
-function normalizeRotation(value) {
-
-    const number =
-        Number(value);
-
-
-    if (
-        Number.isNaN(number)
-    ) {
-        return 0;
-    }
-
-
-    return clamp(
-        number,
-        -45,
-        45
-    );
-
-}
-
-
 function clamp(
     value,
     minimum,
@@ -7335,10 +7834,6 @@ function clamp(
 
 }
 
-
-/* =========================================================
-   ID
-   ========================================================= */
 
 function generateId() {
 
@@ -7367,8 +7862,23 @@ function generateId() {
 
 
 /* =========================================================
-   FORM HELPERS
+   DOM HELPERS
    ========================================================= */
+
+function bindClick(
+    id,
+    callback
+) {
+
+    document
+        .getElementById(id)
+        ?.addEventListener(
+            "click",
+            callback
+        );
+
+}
+
 
 function getValue(id) {
 
@@ -7402,7 +7912,8 @@ function setValue(
     if (element) {
 
         element.value =
-            value ?? "";
+            value ??
+            "";
 
     }
 
@@ -7421,7 +7932,8 @@ function setText(
     if (element) {
 
         element.textContent =
-            value ?? "";
+            value ??
+            "";
 
     }
 
@@ -7440,7 +7952,9 @@ function setChecked(
     if (element) {
 
         element.checked =
-            Boolean(checked);
+            Boolean(
+                checked
+            );
 
     }
 
@@ -7448,7 +7962,7 @@ function setChecked(
 
 
 /* =========================================================
-   SAFE STYLE URL
+   URL SAFETY
    ========================================================= */
 
 function safeStyleURL(value) {
@@ -7470,7 +7984,7 @@ function safeStyleURL(value) {
 
 
 /* =========================================================
-   ESCAPE HTML
+   HTML SAFETY
    ========================================================= */
 
 function escapeHTML(value) {
