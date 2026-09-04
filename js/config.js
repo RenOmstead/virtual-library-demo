@@ -1,22 +1,25 @@
 /* =========================================================
    SHELFMARK
    CONFIG.JS
-   v5
+   v6
    ========================================================= */
+
 
 window.SHELFMARK_CONFIG = {
 
-    productName:
-        "Shelfmark",
 
-    tagline:
-        "my little library",
+    /* =====================================================
+       PRODUCT
+       ===================================================== */
 
-    environment:
-        "Portfolio Demo",
+    productName: "Shelfmark",
 
-    defaultTheme:
-        "haunted",
+    tagline: "my little library",
+
+    environment: "local",
+
+    defaultTheme: "haunted",
+
 
 
     /* =====================================================
@@ -37,6 +40,7 @@ window.SHELFMARK_CONFIG = {
     },
 
 
+
     /* =====================================================
        THEMES
        ===================================================== */
@@ -44,8 +48,7 @@ window.SHELFMARK_CONFIG = {
     themes: [
 
         {
-            id:
-                "haunted",
+            id: "haunted",
 
             name:
                 "Haunted Library",
@@ -64,9 +67,9 @@ window.SHELFMARK_CONFIG = {
             ]
         },
 
+
         {
-            id:
-                "autumn",
+            id: "autumn",
 
             name:
                 "Autumn Bookshop",
@@ -85,9 +88,9 @@ window.SHELFMARK_CONFIG = {
             ]
         },
 
+
         {
-            id:
-                "forest",
+            id: "forest",
 
             name:
                 "Enchanted Forest",
@@ -106,9 +109,9 @@ window.SHELFMARK_CONFIG = {
             ]
         },
 
+
         {
-            id:
-                "retro",
+            id: "retro",
 
             name:
                 "Retro Horror",
@@ -125,9 +128,9 @@ window.SHELFMARK_CONFIG = {
             ]
         },
 
+
         {
-            id:
-                "ghosts",
+            id: "ghosts",
 
             name:
                 "Pastel Ghosts",
@@ -149,255 +152,183 @@ window.SHELFMARK_CONFIG = {
     ],
 
 
+
     /* =====================================================
-       SHELF DECORATIONS
+       DECORATIONS
        ===================================================== */
 
-    decorations: {
+    decorations: [
 
-        plant: {
-            id:
-                "plant",
-
-            label:
-                "Plant",
-
-            category:
-                "nature"
+        {
+            id: "cat",
+            label: "Little Cat",
+            category: "creature"
         },
 
-        candle: {
-            id:
-                "candle",
-
-            label:
-                "Candle",
-
-            category:
-                "objects"
+        {
+            id: "ghost",
+            label: "Friendly Ghost",
+            category: "creature"
         },
 
-        flowers: {
-            id:
-                "flowers",
-
-            label:
-                "Flowers",
-
-            category:
-                "nature"
+        {
+            id: "bat",
+            label: "Tiny Bat",
+            category: "creature"
         },
 
-        stars: {
-            id:
-                "stars",
-
-            label:
-                "Stars",
-
-            category:
-                "magic"
+        {
+            id: "goblin",
+            label: "Shelf Goblin",
+            category: "creature"
         },
 
-        mug: {
-            id:
-                "mug",
-
-            label:
-                "Tea Mug",
-
-            category:
-                "objects"
+        {
+            id: "raven",
+            label: "Raven",
+            category: "creature"
         },
 
-        cat: {
-            id:
-                "cat",
-
-            label:
-                "Cat",
-
-            category:
-                "creatures"
+        {
+            id: "moss",
+            label: "Moss",
+            category: "nature"
         },
 
-        ghost: {
-            id:
-                "ghost",
-
-            label:
-                "Ghost",
-
-            category:
-                "creatures"
+        {
+            id: "mushroom",
+            label: "Mushroom",
+            category: "nature"
         },
 
-        bat: {
-            id:
-                "bat",
-
-            label:
-                "Bat",
-
-            category:
-                "creatures"
+        {
+            id: "plant",
+            label: "House Plant",
+            category: "nature"
         },
 
-        goblin: {
-            id:
-                "goblin",
-
-            label:
-                "Goblin",
-
-            category:
-                "creatures"
+        {
+            id: "flowers",
+            label: "Flowers",
+            category: "nature"
         },
 
-        moss: {
-            id:
-                "moss",
-
-            label:
-                "Moss",
-
-            category:
-                "nature"
+        {
+            id: "pumpkin",
+            label: "Pumpkin",
+            category: "object"
         },
 
-        mushroom: {
-            id:
-                "mushroom",
-
-            label:
-                "Mushroom",
-
-            category:
-                "nature"
+        {
+            id: "potion",
+            label: "Potion Bottle",
+            category: "object"
         },
 
-        potion: {
-            id:
-                "potion",
-
-            label:
-                "Potion Bottle",
-
-            category:
-                "magic"
+        {
+            id: "crystal",
+            label: "Crystal",
+            category: "object"
         },
 
-        crystal: {
-            id:
-                "crystal",
-
-            label:
-                "Crystal",
-
-            category:
-                "magic"
+        {
+            id: "candle",
+            label: "Candle",
+            category: "object"
         },
 
-        raven: {
-            id:
-                "raven",
-
-            label:
-                "Raven",
-
-            category:
-                "creatures"
+        {
+            id: "mug",
+            label: "Tea Mug",
+            category: "object"
         },
 
-        pumpkin: {
-            id:
-                "pumpkin",
-
-            label:
-                "Pumpkin",
-
-            category:
-                "objects"
+        {
+            id: "stars",
+            label: "Little Stars",
+            category: "magic"
         }
 
-    },
+    ],
+
 
 
     /* =====================================================
-       DECORATION PLACEMENT
+       DEFAULT DECORATION POSITION
        ===================================================== */
 
     decorationDefaults: {
 
-        x:
-            50,
+        x: 50,
 
-        y:
-            72,
+        y: 72,
 
-        scale:
-            1,
+        scale: 1,
 
-        rotate:
-            0
+        rotate: 0
 
     },
 
 
+
     /* =====================================================
-       AMBIENT CLUTTER
-       This does NOT control user-placed decorations.
+       DECORATION DENSITY
+
+       IMPORTANT:
+       This controls AUTOMATIC ambient room details only.
+
+       It must NEVER hide or remove decorations that the
+       user placed on an individual shelf.
        ===================================================== */
 
     decorationDensity: {
 
         minimal: {
-            id:
-                "minimal",
 
             label:
                 "Tidy",
 
             ambientLevel:
                 0
+
         },
 
+
         cozy: {
-            id:
-                "cozy",
 
             label:
                 "Cozy",
 
             ambientLevel:
                 1
+
         },
 
+
         maximal: {
-            id:
-                "maximal",
 
             label:
                 "Curio Cabinet",
 
             ambientLevel:
                 2
+
         }
 
     },
 
 
+
     /* =====================================================
-       SPINE DESIGNS
+       SPINE STYLES
        ===================================================== */
 
     spineStyles: [
 
         {
-            id:
-                "classic",
+            id: "classic",
 
-            name:
+            label:
                 "Classic Cloth",
 
             defaultOrnament:
@@ -407,11 +338,11 @@ window.SHELFMARK_CONFIG = {
                 "serif"
         },
 
-        {
-            id:
-                "gothic",
 
-            name:
+        {
+            id: "gothic",
+
+            label:
                 "Ornate Gothic",
 
             defaultOrnament:
@@ -421,11 +352,11 @@ window.SHELFMARK_CONFIG = {
                 "gothic"
         },
 
-        {
-            id:
-                "botanical",
 
-            name:
+        {
+            id: "botanical",
+
+            label:
                 "Botanical",
 
             defaultOrnament:
@@ -435,11 +366,11 @@ window.SHELFMARK_CONFIG = {
                 "bookish"
         },
 
-        {
-            id:
-                "celestial",
 
-            name:
+        {
+            id: "celestial",
+
+            label:
                 "Celestial",
 
             defaultOrnament:
@@ -449,11 +380,11 @@ window.SHELFMARK_CONFIG = {
                 "elegant"
         },
 
-        {
-            id:
-                "floral",
 
-            name:
+        {
+            id: "floral",
+
+            label:
                 "Vintage Floral",
 
             defaultOrnament:
@@ -463,11 +394,11 @@ window.SHELFMARK_CONFIG = {
                 "storybook"
         },
 
-        {
-            id:
-                "pastel",
 
-            name:
+        {
+            id: "pastel",
+
+            label:
                 "Pastel",
 
             defaultOrnament:
@@ -477,11 +408,11 @@ window.SHELFMARK_CONFIG = {
                 "handwritten"
         },
 
-        {
-            id:
-                "minimal",
 
-            name:
+        {
+            id: "minimal",
+
+            label:
                 "Minimal",
 
             defaultOrnament:
@@ -491,11 +422,11 @@ window.SHELFMARK_CONFIG = {
                 "clean"
         },
 
-        {
-            id:
-                "leather",
 
-            name:
+        {
+            id: "leather",
+
+            label:
                 "Leatherbound",
 
             defaultOrnament:
@@ -505,11 +436,11 @@ window.SHELFMARK_CONFIG = {
                 "roman"
         },
 
-        {
-            id:
-                "academia",
 
-            name:
+        {
+            id: "academia",
+
+            label:
                 "Dark Academia",
 
             defaultOrnament:
@@ -519,11 +450,11 @@ window.SHELFMARK_CONFIG = {
                 "bookish"
         },
 
-        {
-            id:
-                "storybook",
 
-            name:
+        {
+            id: "storybook",
+
+            label:
                 "Storybook",
 
             defaultOrnament:
@@ -536,6 +467,7 @@ window.SHELFMARK_CONFIG = {
     ],
 
 
+
     /* =====================================================
        SPINE FONTS
        ===================================================== */
@@ -543,192 +475,132 @@ window.SHELFMARK_CONFIG = {
     spineFonts: [
 
         {
-            id:
-                "serif",
-
-            name:
-                "Classic Serif"
+            id: "serif",
+            label: "Classic Serif"
         },
 
         {
-            id:
-                "roman",
-
-            name:
-                "Old Roman"
+            id: "roman",
+            label: "Old Roman"
         },
 
         {
-            id:
-                "bookish",
-
-            name:
-                "Bookish Serif"
+            id: "bookish",
+            label: "Bookish Serif"
         },
 
         {
-            id:
-                "elegant",
-
-            name:
-                "Elegant Serif"
+            id: "elegant",
+            label: "Elegant Serif"
         },
 
         {
-            id:
-                "typewriter",
-
-            name:
-                "Typewriter"
+            id: "typewriter",
+            label: "Typewriter"
         },
 
         {
-            id:
-                "clean",
-
-            name:
-                "Clean Sans"
+            id: "clean",
+            label: "Clean Sans"
         },
 
         {
-            id:
-                "condensed",
-
-            name:
-                "Condensed Sans"
+            id: "condensed",
+            label: "Condensed Sans"
         },
 
         {
-            id:
-                "heavy",
-
-            name:
-                "Heavy Sans"
+            id: "heavy",
+            label: "Heavy Sans"
         },
 
         {
-            id:
-                "storybook",
-
-            name:
-                "Storybook"
+            id: "storybook",
+            label: "Storybook"
         },
 
         {
-            id:
-                "handwritten",
-
-            name:
-                "Handwritten"
+            id: "handwritten",
+            label: "Handwritten"
         },
 
         {
-            id:
-                "gothic",
-
-            name:
-                "Gothic Display"
+            id: "gothic",
+            label: "Gothic Display"
         },
 
         {
-            id:
-                "deco",
-
-            name:
-                "Art Deco"
+            id: "deco",
+            label: "Art Deco"
         },
 
         {
-            id:
-                "retro",
-
-            name:
-                "Retro Horror"
+            id: "retro",
+            label: "Retro Horror"
         }
 
     ],
 
 
+
     /* =====================================================
-       SPINE FONT SIZES
+       FONT SIZE
        ===================================================== */
 
     spineFontSizes: [
 
         {
-            id:
-                "small",
-
-            name:
-                "Small"
+            id: "small",
+            label: "Small"
         },
 
         {
-            id:
-                "medium",
-
-            name:
-                "Medium"
+            id: "medium",
+            label: "Medium"
         },
 
         {
-            id:
-                "large",
-
-            name:
-                "Large"
+            id: "large",
+            label: "Large"
         },
 
         {
-            id:
-                "xlarge",
-
-            name:
-                "Extra Large"
+            id: "xlarge",
+            label: "Extra Large"
         }
 
     ],
 
 
+
     /* =====================================================
-       SPINE FONT WEIGHTS
+       FONT WEIGHT
        ===================================================== */
 
     spineFontWeights: [
 
         {
-            id:
-                "light",
-
-            name:
-                "Light"
+            id: "light",
+            label: "Light"
         },
 
         {
-            id:
-                "regular",
-
-            name:
-                "Regular"
+            id: "regular",
+            label: "Regular"
         },
 
         {
-            id:
-                "bold",
-
-            name:
-                "Bold"
+            id: "bold",
+            label: "Bold"
         },
 
         {
-            id:
-                "heavy",
-
-            name:
-                "Heavy"
+            id: "heavy",
+            label: "Heavy"
         }
 
     ],
+
 
 
     /* =====================================================
@@ -738,38 +610,27 @@ window.SHELFMARK_CONFIG = {
     spineLetterSpacing: [
 
         {
-            id:
-                "tight",
-
-            name:
-                "Tight"
+            id: "tight",
+            label: "Tight"
         },
 
         {
-            id:
-                "normal",
-
-            name:
-                "Normal"
+            id: "normal",
+            label: "Normal"
         },
 
         {
-            id:
-                "wide",
-
-            name:
-                "Wide"
+            id: "wide",
+            label: "Wide"
         },
 
         {
-            id:
-                "extra-wide",
-
-            name:
-                "Extra Wide"
+            id: "extra-wide",
+            label: "Extra Wide"
         }
 
     ],
+
 
 
     /* =====================================================
@@ -779,30 +640,22 @@ window.SHELFMARK_CONFIG = {
     spineCases: [
 
         {
-            id:
-                "typed",
-
-            name:
-                "As Typed"
+            id: "typed",
+            label: "As Typed"
         },
 
         {
-            id:
-                "uppercase",
-
-            name:
-                "UPPERCASE"
+            id: "uppercase",
+            label: "UPPERCASE"
         },
 
         {
-            id:
-                "lowercase",
-
-            name:
-                "lowercase"
+            id: "lowercase",
+            label: "lowercase"
         }
 
     ],
+
 
 
     /* =====================================================
@@ -812,22 +665,17 @@ window.SHELFMARK_CONFIG = {
     spineFontStyles: [
 
         {
-            id:
-                "normal",
-
-            name:
-                "Normal"
+            id: "normal",
+            label: "Normal"
         },
 
         {
-            id:
-                "italic",
-
-            name:
-                "Italic"
+            id: "italic",
+            label: "Italic"
         }
 
     ],
+
 
 
     /* =====================================================
@@ -837,30 +685,22 @@ window.SHELFMARK_CONFIG = {
     spineTextAlignments: [
 
         {
-            id:
-                "top",
-
-            name:
-                "Toward Top"
+            id: "top",
+            label: "Toward Top"
         },
 
         {
-            id:
-                "center",
-
-            name:
-                "Center"
+            id: "center",
+            label: "Center"
         },
 
         {
-            id:
-                "bottom",
-
-            name:
-                "Toward Bottom"
+            id: "bottom",
+            label: "Toward Bottom"
         }
 
     ],
+
 
 
     /* =====================================================
@@ -870,54 +710,37 @@ window.SHELFMARK_CONFIG = {
     spineTitlePanels: [
 
         {
-            id:
-                "none",
-
-            name:
-                "No Panel"
+            id: "none",
+            label: "No Panel"
         },
 
         {
-            id:
-                "simple",
-
-            name:
-                "Simple Label"
+            id: "simple",
+            label: "Simple Label"
         },
 
         {
-            id:
-                "bordered",
-
-            name:
-                "Bordered Label"
+            id: "bordered",
+            label: "Bordered Label"
         },
 
         {
-            id:
-                "ornate",
-
-            name:
-                "Ornate Label"
+            id: "ornate",
+            label: "Ornate Label"
         },
 
         {
-            id:
-                "dark",
-
-            name:
-                "Dark Inset Label"
+            id: "dark",
+            label: "Dark Inset Label"
         },
 
         {
-            id:
-                "light",
-
-            name:
-                "Light Paper Label"
+            id: "light",
+            label: "Light Paper Label"
         }
 
     ],
+
 
 
     /* =====================================================
@@ -927,19 +750,16 @@ window.SHELFMARK_CONFIG = {
     spineOrnaments: {
 
         auto: {
-            id:
-                "auto",
 
             label:
-                "Match the design",
+                "Match the Design",
 
             symbol:
                 ""
         },
 
+
         star: {
-            id:
-                "star",
 
             label:
                 "Star",
@@ -948,9 +768,8 @@ window.SHELFMARK_CONFIG = {
                 "✦"
         },
 
+
         moon: {
-            id:
-                "moon",
 
             label:
                 "Moon",
@@ -959,9 +778,8 @@ window.SHELFMARK_CONFIG = {
                 "☾"
         },
 
+
         flower: {
-            id:
-                "flower",
 
             label:
                 "Flower",
@@ -970,9 +788,8 @@ window.SHELFMARK_CONFIG = {
                 "✿"
         },
 
+
         leaf: {
-            id:
-                "leaf",
 
             label:
                 "Leaf",
@@ -981,9 +798,8 @@ window.SHELFMARK_CONFIG = {
                 "❧"
         },
 
+
         diamond: {
-            id:
-                "diamond",
 
             label:
                 "Diamond",
@@ -992,9 +808,8 @@ window.SHELFMARK_CONFIG = {
                 "◇"
         },
 
+
         heart: {
-            id:
-                "heart",
 
             label:
                 "Heart",
@@ -1003,18 +818,235 @@ window.SHELFMARK_CONFIG = {
                 "♡"
         },
 
+
         none: {
-            id:
-                "none",
 
             label:
-                "No ornament",
+                "No Ornament",
 
             symbol:
                 ""
         }
 
     },
+
+
+
+    /* =====================================================
+       BOOK HEIGHTS
+       ===================================================== */
+
+    bookHeights: {
+
+        small: {
+
+            label:
+                "Small",
+
+            pixels:
+                138
+
+        },
+
+
+        medium: {
+
+            label:
+                "Medium",
+
+            pixels:
+                168
+
+        },
+
+
+        tall: {
+
+            label:
+                "Tall",
+
+            pixels:
+                198
+
+        }
+
+    },
+
+
+
+    /* =====================================================
+       BOOK THICKNESS
+       ===================================================== */
+
+    bookThicknesses: {
+
+        slim: {
+
+            label:
+                "Slim",
+
+            pixels:
+                38
+
+        },
+
+
+        medium: {
+
+            label:
+                "Medium",
+
+            pixels:
+                55
+
+        },
+
+
+        chunky: {
+
+            label:
+                "Chunky",
+
+            pixels:
+                74
+
+        }
+
+    },
+
+
+
+    /* =====================================================
+       READING STATUSES
+       ===================================================== */
+
+    readingStatuses: {
+
+        want: {
+            label: "Want to Read"
+        },
+
+        reading: {
+            label: "Currently Reading"
+        },
+
+        paused: {
+            label: "Paused"
+        },
+
+        finished: {
+            label: "Finished"
+        },
+
+        dnf: {
+            label: "Did Not Finish"
+        },
+
+        reference: {
+            label: "Reference"
+        }
+
+    },
+
+
+
+    /* =====================================================
+       JOURNAL SECTIONS
+       ===================================================== */
+
+    journalSections: {
+
+        overview: {
+
+            label:
+                "OVERVIEW",
+
+            title:
+                "A little about this book"
+        },
+
+
+        notes: {
+
+            label:
+                "NOTES",
+
+            title:
+                "Notes from the margins"
+        },
+
+
+        thoughts: {
+
+            label:
+                "THOUGHTS",
+
+            title:
+                "Things I'm thinking about"
+        },
+
+
+        words: {
+
+            label:
+                "WORD STUDY",
+
+            title:
+                "Little words worth keeping"
+        },
+
+
+        quotes: {
+
+            label:
+                "QUOTES",
+
+            title:
+                "Lines I want to remember"
+        },
+
+
+        characters: {
+
+            label:
+                "CHARACTERS",
+
+            title:
+                "People inside the pages"
+        },
+
+
+        themes: {
+
+            label:
+                "THEMES",
+
+            title:
+                "Ideas running underneath"
+        },
+
+
+        questions: {
+
+            label:
+                "QUESTIONS",
+
+            title:
+                "Things I'm still wondering"
+        },
+
+
+        review: {
+
+            label:
+                "REVIEW",
+
+            title:
+                "What I thought in the end"
+        }
+
+    },
+
 
 
     /* =====================================================
@@ -1071,8 +1103,9 @@ window.SHELFMARK_CONFIG = {
     },
 
 
+
     /* =====================================================
-       DEFAULT USER SETTINGS
+       DEFAULT SETTINGS
        ===================================================== */
 
     defaultSettings: {
@@ -1103,8 +1136,12 @@ window.SHELFMARK_CONFIG = {
 };
 
 
+
 /* =========================================================
-   EMPTY STARTER DATA
+   SHARED DATA PLACEHOLDER
+
+   library.js loads the actual saved data from localStorage.
+   This is only a safe initial object.
    ========================================================= */
 
 window.SHELFMARK_DATA = {
