@@ -5,37 +5,72 @@
 
 
 /* =========================================================
-   STORAGE
+   CONFIG
    ========================================================= */
 
-const SHELF_STORAGE_KEY =
-    "shelfmark_shelves";
+const CONFIG =
+    window.SHELFMARK_CONFIG || {};
 
-const BOOK_STORAGE_KEY =
-    "shelfmark_books";
+
+const STORAGE_KEYS = {
+
+    shelves:
+        CONFIG.storageKeys?.shelves ||
+        "shelfmark_shelves",
+
+    books:
+        CONFIG.storageKeys?.books ||
+        "shelfmark_books",
+
+    settings:
+        CONFIG.storageKeys?.settings ||
+        "shelfmark_settings"
+
+};
 
 
 /* =========================================================
    STATE
    ========================================================= */
 
-let shelves =
-    [];
+let shelves = [];
 
-let books =
-    [];
+let books = [];
 
-let selectedBookId =
-    null;
+let selectedBookId = null;
 
-let selectedJournalSection =
-    null;
+let selectedJournalSection = null;
 
-let pendingCoverData =
-    "";
+let pendingCoverData = "";
 
-let pendingSpineData =
-    "";
+let pendingSpineData = "";
+
+
+let settings = {
+
+    theme:
+        CONFIG.defaultTheme ||
+        "haunted",
+
+    candleGlow:
+        true,
+
+    dust:
+        true,
+
+    rain:
+        true,
+
+    oddities:
+        true,
+
+    reducedMotion:
+        false,
+
+    decorationDensity:
+        "cozy"
+
+};
 
 
 /* =========================================================
@@ -44,11 +79,15 @@ let pendingSpineData =
 
 document.addEventListener(
     "DOMContentLoaded",
-    initializeLibrary
+    initializeShelfmark
 );
 
 
-function initializeLibrary() {
+function initializeShelfmark() {
+
+    loadSettings();
+
+    applySettings();
 
     loadData();
 
@@ -60,16 +99,15 @@ function initializeLibrary() {
 
 
 /* =========================================================
-   LOAD
+   LOAD DATA
    ========================================================= */
 
 function loadData() {
 
     shelves =
         loadCollection(
-            SHELF_STORAGE_KEY,
-            window.SHELFMARK_DATA
-                ?.shelves
+            STORAGE_KEYS.shelves,
+            window.SHELFMARK_DATA?.shelves
         )
         .map(
             normalizeShelf
@@ -78,9 +116,8 @@ function loadData() {
 
     books =
         loadCollection(
-            BOOK_STORAGE_KEY,
-            window.SHELFMARK_DATA
-                ?.books
+            STORAGE_KEYS.books,
+            window.SHELFMARK_DATA?.books
         )
         .map(
             normalizeBook
@@ -90,29 +127,39 @@ function loadData() {
 
 
 /* =========================================================
-   COLLECTION LOADER
+   GENERIC COLLECTION LOAD
    ========================================================= */
 
 function loadCollection(
     key,
-    fallback
+    fallback = []
 ) {
 
     try {
 
-        const stored =
+        const saved =
             localStorage.getItem(
                 key
             );
 
 
-        if (
-            stored
-        ) {
+        if (saved) {
 
-            return JSON.parse(
-                stored
-            );
+            const parsed =
+                JSON.parse(
+                    saved
+                );
+
+
+            if (
+                Array.isArray(
+                    parsed
+                )
+            ) {
+
+                return parsed;
+
+            }
 
         }
 
@@ -121,7 +168,7 @@ function loadCollection(
     catch (error) {
 
         console.error(
-            `Could not load ${key}:`,
+            `Could not load ${key}`,
             error
         );
 
@@ -135,6 +182,273 @@ function loadCollection(
         [...fallback]
         :
         [];
+
+}
+
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+
+function loadSettings() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                STORAGE_KEYS.settings
+            );
+
+
+        if (!saved) {
+
+            return;
+
+        }
+
+
+        const parsed =
+            JSON.parse(
+                saved
+            );
+
+
+        settings = {
+
+            ...settings,
+
+            ...parsed
+
+        };
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Could not load Shelfmark settings.",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE SETTINGS
+   ========================================================= */
+
+function saveSettings() {
+
+    localStorage.setItem(
+        STORAGE_KEYS.settings,
+        JSON.stringify(
+            settings
+        )
+    );
+
+}
+
+
+/* =========================================================
+   APPLY SETTINGS
+   ========================================================= */
+
+function applySettings() {
+
+    applyTheme(
+        settings.theme,
+        false
+    );
+
+
+    document.body.classList.toggle(
+        "reduce-motion",
+        settings.reducedMotion
+    );
+
+
+    document.body.classList.toggle(
+        "ambient-candle",
+        settings.candleGlow
+    );
+
+
+    document.body.classList.toggle(
+        "ambient-dust",
+        settings.dust
+    );
+
+
+    document.body.classList.toggle(
+        "ambient-rain",
+        settings.rain
+    );
+
+
+    document.body.classList.toggle(
+        "ambient-oddities",
+        settings.oddities
+    );
+
+
+    document.body.dataset.decorationDensity =
+        settings.decorationDensity;
+
+
+    syncSettingsControls();
+
+}
+
+
+/* =========================================================
+   THEME
+   ========================================================= */
+
+function applyTheme(
+    theme,
+    shouldSave = true
+) {
+
+    const allowedThemes = [
+
+        "haunted",
+        "autumn",
+        "forest",
+        "retro",
+        "ghosts"
+
+    ];
+
+
+    if (
+        !allowedThemes.includes(
+            theme
+        )
+    ) {
+
+        theme =
+            CONFIG.defaultTheme ||
+            "haunted";
+
+    }
+
+
+    allowedThemes.forEach(
+        item => {
+
+            document.body.classList.remove(
+                `theme-${item}`
+            );
+
+        }
+    );
+
+
+    document.body.classList.add(
+        `theme-${theme}`
+    );
+
+
+    settings.theme =
+        theme;
+
+
+    document
+        .querySelectorAll(
+            ".theme-card"
+        )
+        .forEach(
+            card => {
+
+                card.classList.toggle(
+                    "active",
+                    card.dataset.theme ===
+                    theme
+                );
+
+            }
+        );
+
+
+    if (shouldSave) {
+
+        saveSettings();
+
+    }
+
+
+    renderLibrary();
+
+}
+
+
+/* =========================================================
+   SYNC SETTINGS UI
+   ========================================================= */
+
+function syncSettingsControls() {
+
+    setChecked(
+        "settingCandleGlow",
+        settings.candleGlow
+    );
+
+
+    setChecked(
+        "settingDust",
+        settings.dust
+    );
+
+
+    setChecked(
+        "settingRain",
+        settings.rain
+    );
+
+
+    setChecked(
+        "settingOddities",
+        settings.oddities
+    );
+
+
+    setChecked(
+        "settingReducedMotion",
+        settings.reducedMotion
+    );
+
+
+    const density =
+        document.querySelector(
+            `input[name="decorationDensity"][value="${settings.decorationDensity}"]`
+        );
+
+
+    if (density) {
+
+        density.checked =
+            true;
+
+    }
+
+
+    document
+        .querySelectorAll(
+            ".theme-card"
+        )
+        .forEach(
+            card => {
+
+                card.classList.toggle(
+                    "active",
+                    card.dataset.theme ===
+                    settings.theme
+                );
+
+            }
+        );
 
 }
 
@@ -181,10 +495,10 @@ function normalizeShelf(
             Array.isArray(
                 shelf.decorations
             )
-            ?
-            shelf.decorations
-            :
-            [],
+                ?
+                shelf.decorations
+                :
+                [],
 
         created_at:
             shelf.created_at ||
@@ -285,11 +599,11 @@ function normalizeBook(
 
         spine_color:
             book.spine_color ||
-            "#b98f85",
+            getThemeBookColor(),
 
         text_color:
             book.text_color ||
-            "#fff8ee",
+            "#eadfca",
 
         height:
             book.height ||
@@ -323,91 +637,86 @@ function normalizeBook(
 
 
 /* =========================================================
-   JOURNAL
+   NORMALIZE JOURNAL
    ========================================================= */
 
 function normalizeJournal(
-    journal
+    journal = {}
 ) {
-
-    const source =
-        journal ||
-        {};
-
 
     return {
 
         notes:
             Array.isArray(
-                source.notes
+                journal.notes
             )
-            ?
-            source.notes
-            :
-            [],
+                ?
+                journal.notes
+                :
+                [],
 
         thoughts:
             Array.isArray(
-                source.thoughts
+                journal.thoughts
             )
-            ?
-            source.thoughts
-            :
-            [],
+                ?
+                journal.thoughts
+                :
+                [],
 
         words:
             Array.isArray(
-                source.words
+                journal.words
             )
-            ?
-            source.words
-            :
-            [],
+                ?
+                journal.words
+                :
+                [],
 
         quotes:
             Array.isArray(
-                source.quotes
+                journal.quotes
             )
-            ?
-            source.quotes
-            :
-            [],
+                ?
+                journal.quotes
+                :
+                [],
 
         characters:
             Array.isArray(
-                source.characters
+                journal.characters
             )
-            ?
-            source.characters
-            :
-            [],
+                ?
+                journal.characters
+                :
+                [],
 
         themes:
             Array.isArray(
-                source.themes
+                journal.themes
             )
-            ?
-            source.themes
-            :
-            [],
+                ?
+                journal.themes
+                :
+                [],
 
         questions:
             Array.isArray(
-                source.questions
+                journal.questions
             )
-            ?
-            source.questions
-            :
-            [],
+                ?
+                journal.questions
+                :
+                [],
 
         review:
             Array.isArray(
-                source.review
+                journal.review
             )
-            ?
-            source.review
-            :
-            []
+                ?
+                journal.review
+                :
+                []
 
     };
 
@@ -415,16 +724,39 @@ function normalizeJournal(
 
 
 /* =========================================================
-   CONTROLS
+   BIND CONTROLS
    ========================================================= */
 
 function bindControls() {
 
+    bindShelfControls();
+
+    bindBookControls();
+
+    bindThemeControls();
+
+    bindRevealControls();
+
+    bindJournalControls();
+
+    bindKeyboardControls();
+
+}
+
+
+/* =========================================================
+   SHELF CONTROL BINDINGS
+   ========================================================= */
+
+function bindShelfControls() {
+
     [
+
         "sidebarAddShelf",
         "topAddShelf",
         "bottomAddShelf",
         "emptyAddShelf"
+
     ]
         .forEach(
             id => {
@@ -437,28 +769,6 @@ function bindControls() {
                         "click",
                         () =>
                             openShelfDrawer()
-                    );
-
-            }
-        );
-
-
-    [
-        "sidebarAddBook",
-        "topAddBook",
-        "emptyAddBook"
-    ]
-        .forEach(
-            id => {
-
-                document
-                    .getElementById(
-                        id
-                    )
-                    ?.addEventListener(
-                        "click",
-                        () =>
-                            openBookDrawer()
                     );
 
             }
@@ -487,6 +797,48 @@ function bindControls() {
 
     document
         .getElementById(
+            "shelfForm"
+        )
+        ?.addEventListener(
+            "submit",
+            saveShelfFromForm
+        );
+
+}
+
+
+/* =========================================================
+   BOOK CONTROL BINDINGS
+   ========================================================= */
+
+function bindBookControls() {
+
+    [
+
+        "sidebarAddBook",
+        "topAddBook",
+        "emptyAddBook"
+
+    ]
+        .forEach(
+            id => {
+
+                document
+                    .getElementById(
+                        id
+                    )
+                    ?.addEventListener(
+                        "click",
+                        () =>
+                            openBookDrawer()
+                    );
+
+            }
+        );
+
+
+    document
+        .getElementById(
             "closeBookDrawer"
         )
         ?.addEventListener(
@@ -502,26 +854,6 @@ function bindControls() {
         ?.addEventListener(
             "click",
             closeDrawers
-        );
-
-
-    document
-        .getElementById(
-            "overlay"
-        )
-        ?.addEventListener(
-            "click",
-            closeDrawers
-        );
-
-
-    document
-        .getElementById(
-            "shelfForm"
-        )
-        ?.addEventListener(
-            "submit",
-            saveShelfFromForm
         );
 
 
@@ -554,6 +886,217 @@ function bindControls() {
             handleSpineUpload
         );
 
+}
+
+
+/* =========================================================
+   THEME BINDINGS
+   ========================================================= */
+
+function bindThemeControls() {
+
+    [
+
+        "openThemeSettings",
+        "topThemeSettings"
+
+    ]
+        .forEach(
+            id => {
+
+                document
+                    .getElementById(
+                        id
+                    )
+                    ?.addEventListener(
+                        "click",
+                        openThemeDrawer
+                    );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "closeThemeDrawer"
+        )
+        ?.addEventListener(
+            "click",
+            closeDrawers
+        );
+
+
+    document
+        .querySelectorAll(
+            ".theme-card"
+        )
+        .forEach(
+            card => {
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        applyTheme(
+                            card.dataset.theme
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    bindSettingCheckbox(
+        "settingCandleGlow",
+        "candleGlow",
+        "ambient-candle"
+    );
+
+
+    bindSettingCheckbox(
+        "settingDust",
+        "dust",
+        "ambient-dust"
+    );
+
+
+    bindSettingCheckbox(
+        "settingRain",
+        "rain",
+        "ambient-rain"
+    );
+
+
+    bindSettingCheckbox(
+        "settingOddities",
+        "oddities",
+        "ambient-oddities"
+    );
+
+
+    document
+        .getElementById(
+            "settingReducedMotion"
+        )
+        ?.addEventListener(
+            "change",
+            event => {
+
+                settings.reducedMotion =
+                    event.target.checked;
+
+
+                document.body.classList.toggle(
+                    "reduce-motion",
+                    settings.reducedMotion
+                );
+
+
+                saveSettings();
+
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            'input[name="decorationDensity"]'
+        )
+        .forEach(
+            radio => {
+
+                radio.addEventListener(
+                    "change",
+                    () => {
+
+                        if (
+                            !radio.checked
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        settings.decorationDensity =
+                            radio.value;
+
+
+                        document.body.dataset.decorationDensity =
+                            radio.value;
+
+
+                        saveSettings();
+
+                        renderLibrary();
+
+                    }
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "overlay"
+        )
+        ?.addEventListener(
+            "click",
+            closeDrawers
+        );
+
+}
+
+
+/* =========================================================
+   SETTING CHECKBOX
+   ========================================================= */
+
+function bindSettingCheckbox(
+    elementId,
+    settingKey,
+    bodyClass
+) {
+
+    document
+        .getElementById(
+            elementId
+        )
+        ?.addEventListener(
+            "change",
+            event => {
+
+                settings[
+                    settingKey
+                ] =
+                    event.target.checked;
+
+
+                document.body.classList.toggle(
+                    bodyClass,
+                    event.target.checked
+                );
+
+
+                saveSettings();
+
+                renderLibrary();
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   REVEAL CONTROLS
+   ========================================================= */
+
+function bindRevealControls() {
 
     document
         .getElementById(
@@ -584,6 +1127,14 @@ function bindControls() {
             openReadingBook
         );
 
+}
+
+
+/* =========================================================
+   JOURNAL CONTROLS
+   ========================================================= */
+
+function bindJournalControls() {
 
     document
         .getElementById(
@@ -617,8 +1168,7 @@ function bindControls() {
                     () => {
 
                         openJournalSection(
-                            button.dataset
-                                .journalSection
+                            button.dataset.journalSection
                         );
 
                     }
@@ -667,27 +1217,53 @@ function bindControls() {
             saveJournalEntry
         );
 
+}
+
+
+/* =========================================================
+   KEYBOARD
+   ========================================================= */
+
+function bindKeyboardControls() {
 
     document.addEventListener(
         "keydown",
         event => {
 
             if (
-                event.key ===
+                event.key !==
                 "Escape"
             ) {
 
-                closeEntryModal();
-
-                closeReadingBook();
-
-                closeBookReveal();
-
-                closeDrawers();
+                return;
 
             }
 
+
+            closeEntryModal();
+
+            closeReadingBook();
+
+            closeBookReveal();
+
+            closeDrawers();
+
         }
+    );
+
+}
+
+
+/* =========================================================
+   THEME DRAWER
+   ========================================================= */
+
+function openThemeDrawer() {
+
+    syncSettingsControls();
+
+    showDrawer(
+        "themeDrawer"
     );
 
 }
@@ -709,7 +1285,7 @@ function renderLibrary() {
 
 
 /* =========================================================
-   SHELVES
+   RENDER SHELVES
    ========================================================= */
 
 function renderShelves() {
@@ -732,9 +1308,7 @@ function renderShelves() {
         );
 
 
-    if (
-        !container
-    ) {
+    if (!container) {
 
         return;
 
@@ -749,9 +1323,7 @@ function renderShelves() {
         !shelves.length
     ) {
 
-        if (
-            empty
-        ) {
+        if (empty) {
 
             empty.hidden =
                 false;
@@ -759,9 +1331,7 @@ function renderShelves() {
         }
 
 
-        if (
-            bottomButton
-        ) {
+        if (bottomButton) {
 
             bottomButton.hidden =
                 true;
@@ -774,9 +1344,7 @@ function renderShelves() {
     }
 
 
-    if (
-        empty
-    ) {
+    if (empty) {
 
         empty.hidden =
             true;
@@ -784,9 +1352,7 @@ function renderShelves() {
     }
 
 
-    if (
-        bottomButton
-    ) {
+    if (bottomButton) {
 
         bottomButton.hidden =
             false;
@@ -810,7 +1376,7 @@ function renderShelves() {
 
 
 /* =========================================================
-   CREATE SHELF
+   CREATE SHELF ELEMENT
    ========================================================= */
 
 function createShelfElement(
@@ -829,6 +1395,10 @@ function createShelfElement(
 
     section.dataset.material =
         shelf.material;
+
+
+    section.dataset.mood =
+        shelf.mood;
 
 
     const shelfBooks =
@@ -851,7 +1421,6 @@ function createShelfElement(
 
         <div class="shelf-heading">
 
-
             <div>
 
                 <h2>
@@ -861,17 +1430,17 @@ function createShelfElement(
                 ${
                     shelf.description
 
-                    ?
+                        ?
 
-                    `
-                        <p>
-                            ${escapeHTML(shelf.description)}
-                        </p>
-                    `
+                        `
+                            <p>
+                                ${escapeHTML(shelf.description)}
+                            </p>
+                        `
 
-                    :
+                        :
 
-                    ""
+                        ""
                 }
 
             </div>
@@ -882,41 +1451,35 @@ function createShelfElement(
                 <button
                     class="shelf-tool"
                     type="button"
-                    data-action="add"
+                    data-action="add-book"
                 >
                     + book
                 </button>
 
+
                 <button
                     class="shelf-tool"
                     type="button"
-                    data-action="edit"
+                    data-action="edit-shelf"
                 >
                     edit shelf
                 </button>
 
             </div>
 
-
         </div>
 
 
         <div class="shelf-cabinet">
 
-
-            <div class="shelf-back">
-            </div>
-
+            <div class="shelf-back"></div>
 
             <div
                 class="book-row ${escapeHTML(shelf.layout)}"
             >
             </div>
 
-
-            <div class="shelf-board">
-            </div>
-
+            <div class="shelf-board"></div>
 
         </div>
 
@@ -949,19 +1512,19 @@ function createShelfElement(
 
     else {
 
-        const message =
+        const emptyMessage =
             document.createElement(
                 "div"
             );
 
 
-        message.className =
+        emptyMessage.className =
             "empty-shelf-message";
 
 
-        message.innerHTML = `
+        emptyMessage.innerHTML = `
 
-            This shelf looks a little lonely.
+            This shelf is waiting for a story.
 
             <button type="button">
                 tuck in a book
@@ -970,31 +1533,30 @@ function createShelfElement(
         `;
 
 
-        message
+        emptyMessage
             .querySelector(
                 "button"
             )
             ?.addEventListener(
                 "click",
-                () => {
-
+                () =>
                     openBookDrawer(
                         null,
                         shelf.id
-                    );
-
-                }
+                    )
             );
 
 
         row.appendChild(
-            message
+            emptyMessage
         );
 
     }
 
 
-    shelf.decorations
+    getVisibleDecorations(
+        shelf.decorations
+    )
         .forEach(
             decoration => {
 
@@ -1010,34 +1572,28 @@ function createShelfElement(
 
     section
         .querySelector(
-            '[data-action="add"]'
+            '[data-action="add-book"]'
         )
         ?.addEventListener(
             "click",
-            () => {
-
+            () =>
                 openBookDrawer(
                     null,
                     shelf.id
-                );
-
-            }
+                )
         );
 
 
     section
         .querySelector(
-            '[data-action="edit"]'
+            '[data-action="edit-shelf"]'
         )
         ?.addEventListener(
             "click",
-            () => {
-
+            () =>
                 openShelfDrawer(
                     shelf.id
-                );
-
-            }
+                )
         );
 
 
@@ -1047,7 +1603,115 @@ function createShelfElement(
 
 
 /* =========================================================
-   BOOK ELEMENT
+   DECORATION DENSITY
+   ========================================================= */
+
+function getVisibleDecorations(
+    decorations
+) {
+
+    if (
+        !settings.oddities
+    ) {
+
+        return [];
+
+    }
+
+
+    const list =
+        Array.isArray(
+            decorations
+        )
+            ?
+            decorations
+            :
+            [];
+
+
+    if (
+        settings.decorationDensity ===
+        "minimal"
+    ) {
+
+        return list.slice(
+            0,
+            1
+        );
+
+    }
+
+
+    if (
+        settings.decorationDensity ===
+        "maximal"
+    ) {
+
+        return [
+
+            ...list,
+
+            ...getThemeOddities()
+
+        ];
+
+    }
+
+
+    return list.slice(
+        0,
+        3
+    );
+
+}
+
+
+/* =========================================================
+   THEME ODDITIES
+   ========================================================= */
+
+function getThemeOddities() {
+
+    const options = {
+
+        haunted: [
+            "candle",
+            "stars"
+        ],
+
+        autumn: [
+            "mug",
+            "flowers"
+        ],
+
+        forest: [
+            "plant",
+            "stars"
+        ],
+
+        retro: [
+            "stars"
+        ],
+
+        ghosts: [
+            "flowers",
+            "mug"
+        ]
+
+    };
+
+
+    return options[
+        settings.theme
+    ]
+        ||
+        [];
+
+}
+
+
+/* =========================================================
+   CREATE BOOK
    ========================================================= */
 
 function createBookElement(
@@ -1060,22 +1724,22 @@ function createBookElement(
         );
 
 
-    element.className =
-        [
-            "shelf-book",
-            `height-${book.height}`,
-            `thickness-${book.thickness}`,
-            `book-style-${book.style}`
-        ]
-            .join(" ");
+    element.className = [
+
+        "shelf-book",
+
+        `height-${book.height}`,
+
+        `thickness-${book.thickness}`,
+
+        `book-style-${book.style}`
+
+    ]
+        .join(" ");
 
 
     element.dataset.status =
         book.status;
-
-
-    element.title =
-        `${book.title}${book.author ? " — " + book.author : ""}`;
 
 
     element.style.setProperty(
@@ -1088,6 +1752,18 @@ function createBookElement(
         "--book-text",
         book.text_color
     );
+
+
+    element.title =
+        book.author
+
+            ?
+
+            `${book.title} — ${book.author}`
+
+            :
+
+            book.title;
 
 
     if (
@@ -1140,16 +1816,27 @@ function createBookElement(
                     ".shelf-book"
                 )
                 .forEach(
-                    item =>
+                    item => {
+
                         item.classList.remove(
                             "selected"
-                        )
+                        );
+
+                    }
                 );
 
 
             element.classList.add(
                 "selected"
             );
+
+
+            const delay =
+                settings.reducedMotion
+                    ?
+                    0
+                    :
+                    170;
 
 
             setTimeout(
@@ -1160,7 +1847,7 @@ function createBookElement(
                     );
 
                 },
-                180
+                delay
             );
 
         }
@@ -1173,7 +1860,7 @@ function createBookElement(
 
 
 /* =========================================================
-   DECORATIONS
+   DECORATION
    ========================================================= */
 
 function createDecoration(
@@ -1202,7 +1889,7 @@ function createDecoration(
 
 
 /* =========================================================
-   SORT BOOKS
+   SORT SHELF BOOKS
    ========================================================= */
 
 function sortShelfBooks(
@@ -1210,92 +1897,78 @@ function sortShelfBooks(
     sort
 ) {
 
-    const result =
+    const copy =
         [...list];
 
 
-    if (
-        sort ===
-        "title"
-    ) {
+    switch (sort) {
 
-        return result.sort(
-            (a,b) =>
-                a.title.localeCompare(
-                    b.title
-                )
-        );
+        case "title":
 
-    }
+            return copy.sort(
+                (a,b) =>
+                    a.title.localeCompare(
+                        b.title
+                    )
+            );
 
 
-    if (
-        sort ===
-        "author"
-    ) {
+        case "author":
 
-        return result.sort(
-            (a,b) =>
-                a.author.localeCompare(
-                    b.author
-                )
-        );
-
-    }
+            return copy.sort(
+                (a,b) =>
+                    a.author.localeCompare(
+                        b.author
+                    )
+            );
 
 
-    if (
-        sort ===
-        "rating"
-    ) {
+        case "rating":
 
-        return result.sort(
-            (a,b) =>
-                b.rating -
-                a.rating
-        );
-
-    }
+            return copy.sort(
+                (a,b) =>
+                    b.rating -
+                    a.rating
+            );
 
 
-    if (
-        sort ===
-        "finished"
-    ) {
+        case "finished":
 
-        return result.sort(
-            (a,b) =>
-                String(
-                    b.finished ||
-                    ""
-                )
+            return copy.sort(
+                (a,b) =>
+                    String(
+                        b.finished ||
+                        ""
+                    )
                     .localeCompare(
                         String(
                             a.finished ||
                             ""
                         )
                     )
-        );
+            );
+
+
+        default:
+
+            return copy.sort(
+                (a,b) =>
+                    new Date(
+                        a.created_at
+                    )
+                    -
+                    new Date(
+                        b.created_at
+                    )
+            );
 
     }
-
-
-    return result.sort(
-        (a,b) =>
-            new Date(
-                a.created_at
-            )
-            -
-            new Date(
-                b.created_at
-            )
-    );
 
 }
 
 
 /* =========================================================
-   METRICS
+   LIBRARY METRICS
    ========================================================= */
 
 function updateLibraryMetrics() {
@@ -1340,16 +2013,14 @@ function renderShelfSelect() {
         );
 
 
-    if (
-        !select
-    ) {
+    if (!select) {
 
         return;
 
     }
 
 
-    const current =
+    const previousValue =
         select.value;
 
 
@@ -1411,8 +2082,6 @@ function renderShelfSelect() {
 
 
     if (
-        current
-        &&
         shelves.some(
             shelf =>
                 String(
@@ -1420,13 +2089,13 @@ function renderShelfSelect() {
                 )
                 ===
                 String(
-                    current
+                    previousValue
                 )
         )
     ) {
 
         select.value =
-            current;
+            previousValue;
 
     }
 
@@ -1444,9 +2113,7 @@ function openShelfDrawer(
     resetShelfForm();
 
 
-    if (
-        shelfId
-    ) {
+    if (shelfId) {
 
         loadShelfIntoForm(
             shelfId
@@ -1463,7 +2130,7 @@ function openShelfDrawer(
 
 
 /* =========================================================
-   RESET SHELF
+   RESET SHELF FORM
    ========================================================= */
 
 function resetShelfForm() {
@@ -1520,7 +2187,7 @@ function resetShelfForm() {
 
 
 /* =========================================================
-   LOAD SHELF
+   LOAD SHELF FORM
    ========================================================= */
 
 function loadShelfIntoForm(
@@ -1533,9 +2200,7 @@ function loadShelfIntoForm(
         );
 
 
-    if (
-        !shelf
-    ) {
+    if (!shelf) {
 
         return;
 
@@ -1592,10 +2257,9 @@ function loadShelfIntoForm(
             input => {
 
                 input.checked =
-                    shelf.decorations
-                        .includes(
-                            input.value
-                        );
+                    shelf.decorations.includes(
+                        input.value
+                    );
 
             }
         );
@@ -1632,9 +2296,7 @@ function saveShelfFromForm(
         );
 
 
-    if (
-        !name
-    ) {
+    if (!name) {
 
         return;
 
@@ -1649,12 +2311,12 @@ function saveShelfFromForm(
 
     const existing =
         editingId
-        ?
-        getShelfById(
-            editingId
-        )
-        :
-        null;
+            ?
+            getShelfById(
+                editingId
+            )
+            :
+            null;
 
 
     const record = {
@@ -1704,10 +2366,10 @@ function saveShelfFromForm(
                     '[name="shelfDecoration"]:checked'
                 )
             ]
-                .map(
-                    input =>
-                        input.value
-                ),
+            .map(
+                input =>
+                    input.value
+            ),
 
         created_at:
             existing?.created_at
@@ -1722,9 +2384,7 @@ function saveShelfFromForm(
     };
 
 
-    if (
-        editingId
-    ) {
+    if (editingId) {
 
         const index =
             shelves.findIndex(
@@ -1794,9 +2454,7 @@ function openBookDrawer(
     resetBookForm();
 
 
-    if (
-        bookId
-    ) {
+    if (bookId) {
 
         loadBookIntoForm(
             bookId
@@ -1804,9 +2462,7 @@ function openBookDrawer(
 
     }
 
-    else if (
-        shelfId
-    ) {
+    else if (shelfId) {
 
         setValue(
             "bookShelf",
@@ -1824,7 +2480,7 @@ function openBookDrawer(
 
 
 /* =========================================================
-   RESET BOOK
+   RESET BOOK FORM
    ========================================================= */
 
 function resetBookForm() {
@@ -1876,13 +2532,13 @@ function resetBookForm() {
 
     setValue(
         "bookSpineColor",
-        "#b98f85"
+        getThemeBookColor()
     );
 
 
     setValue(
         "bookTextColor",
-        "#fff8ee"
+        getThemeBookTextColor()
     );
 
 
@@ -1922,7 +2578,73 @@ function resetBookForm() {
 
 
 /* =========================================================
-   LOAD BOOK
+   THEME BOOK COLOR
+   ========================================================= */
+
+function getThemeBookColor() {
+
+    const colors = {
+
+        haunted:
+            "#6c2633",
+
+        autumn:
+            "#ad5b37",
+
+        forest:
+            "#536848",
+
+        retro:
+            "#738637",
+
+        ghosts:
+            "#b86b5a"
+
+    };
+
+
+    return colors[
+        settings.theme
+    ]
+        ||
+        "#6c2633";
+
+}
+
+
+function getThemeBookTextColor() {
+
+    const colors = {
+
+        haunted:
+            "#eadfca",
+
+        autumn:
+            "#fff0df",
+
+        forest:
+            "#e6e5ce",
+
+        retro:
+            "#e2ddaa",
+
+        ghosts:
+            "#fff0e7"
+
+    };
+
+
+    return colors[
+        settings.theme
+    ]
+        ||
+        "#eadfca";
+
+}
+
+
+/* =========================================================
+   LOAD BOOK INTO FORM
    ========================================================= */
 
 function loadBookIntoForm(
@@ -1935,9 +2657,7 @@ function loadBookIntoForm(
         );
 
 
-    if (
-        !book
-    ) {
+    if (!book) {
 
         return;
 
@@ -2127,12 +2847,12 @@ function saveBookFromForm(
 
     const existing =
         editingId
-        ?
-        getBookById(
-            editingId
-        )
-        :
-        null;
+            ?
+            getBookById(
+                editingId
+            )
+            :
+            null;
 
 
     const pages =
@@ -2143,16 +2863,25 @@ function saveBookFromForm(
         );
 
 
-    const currentPage =
-        Math.min(
-            pages ||
-            Infinity,
-            normalizeNumber(
-                getValue(
-                    "bookCurrentPage"
-                )
+    let currentPage =
+        normalizeNumber(
+            getValue(
+                "bookCurrentPage"
             )
         );
+
+
+    if (
+        pages > 0
+    ) {
+
+        currentPage =
+            Math.min(
+                currentPage,
+                pages
+            );
+
+    }
 
 
     const record = {
@@ -2218,13 +2947,7 @@ function saveBookFromForm(
             ),
 
         current_page:
-            Number.isFinite(
-                currentPage
-            )
-            ?
-            currentPage
-            :
-            0,
+            currentPage,
 
         times_read:
             normalizeNumber(
@@ -2244,14 +2967,14 @@ function saveBookFromForm(
                 "bookSpineColor"
             )
             ||
-            "#b98f85",
+            getThemeBookColor(),
 
         text_color:
             getValue(
                 "bookTextColor"
             )
             ||
-            "#fff8ee",
+            getThemeBookTextColor(),
 
         height:
             getValue(
@@ -2292,9 +3015,7 @@ function saveBookFromForm(
     };
 
 
-    if (
-        editingId
-    ) {
+    if (editingId) {
 
         const index =
             books.findIndex(
@@ -2340,7 +3061,7 @@ function saveBookFromForm(
 
 
 /* =========================================================
-   FILE UPLOAD
+   IMAGE UPLOADS
    ========================================================= */
 
 async function handleCoverUpload(
@@ -2351,9 +3072,7 @@ async function handleCoverUpload(
         event.target.files?.[0];
 
 
-    if (
-        !file
-    ) {
+    if (!file) {
 
         return;
 
@@ -2376,9 +3095,7 @@ async function handleSpineUpload(
         event.target.files?.[0];
 
 
-    if (
-        !file
-    ) {
+    if (!file) {
 
         return;
 
@@ -2392,6 +3109,10 @@ async function handleSpineUpload(
 
 }
 
+
+/* =========================================================
+   FILE TO DATA URL
+   ========================================================= */
 
 function fileToDataURL(
     file
@@ -2408,10 +3129,13 @@ function fileToDataURL(
 
 
             reader.onload =
-                () =>
+                () => {
+
                     resolve(
                         reader.result
                     );
+
+                };
 
 
             reader.onerror =
@@ -2435,6 +3159,11 @@ function fileToDataURL(
 function showDrawer(
     drawerId
 ) {
+
+    closeDrawers(
+        false
+    );
+
 
     const drawer =
         document.getElementById(
@@ -2493,7 +3222,9 @@ function showDrawer(
    CLOSE DRAWERS
    ========================================================= */
 
-function closeDrawers() {
+function closeDrawers(
+    animate = true
+) {
 
     const overlay =
         document.getElementById(
@@ -2513,19 +3244,28 @@ function closeDrawers() {
 
 
     drawers.forEach(
-        drawer =>
+        drawer => {
+
             drawer.classList.remove(
                 "open"
-            )
+            );
+
+        }
     );
+
+
+    const delay =
+        animate
+            ?
+            250
+            :
+            0;
 
 
     setTimeout(
         () => {
 
-            if (
-                overlay
-            ) {
+            if (overlay) {
 
                 overlay.hidden =
                     true;
@@ -2534,13 +3274,16 @@ function closeDrawers() {
 
 
             drawers.forEach(
-                drawer =>
+                drawer => {
+
                     drawer.hidden =
-                        true
+                        true;
+
+                }
             );
 
         },
-        250
+        delay
     );
 
 
@@ -2565,9 +3308,7 @@ function openBookReveal(
         );
 
 
-    if (
-        !book
-    ) {
+    if (!book) {
 
         return;
 
@@ -2576,21 +3317,6 @@ function openBookReveal(
 
     selectedBookId =
         book.id;
-
-
-    const reveal =
-        document.getElementById(
-            "bookReveal"
-        );
-
-
-    if (
-        !reveal
-    ) {
-
-        return;
-
-    }
 
 
     renderCoverInto(
@@ -2654,17 +3380,15 @@ function openBookReveal(
     );
 
 
-    const progress =
+    const bar =
         document.getElementById(
             "revealProgressBar"
         );
 
 
-    if (
-        progress
-    ) {
+    if (bar) {
 
-        progress.style.width =
+        bar.style.width =
             `${percentage}%`;
 
     }
@@ -2676,9 +3400,7 @@ function openBookReveal(
         );
 
 
-    if (
-        bookmark
-    ) {
+    if (bookmark) {
 
         bookmark.style.left =
             `${percentage}%`;
@@ -2691,8 +3413,18 @@ function openBookReveal(
     );
 
 
-    reveal.hidden =
-        false;
+    const reveal =
+        document.getElementById(
+            "bookReveal"
+        );
+
+
+    if (reveal) {
+
+        reveal.hidden =
+            false;
+
+    }
 
 
     document.body.classList.add(
@@ -2703,7 +3435,7 @@ function openBookReveal(
 
 
 /* =========================================================
-   CLOSE REVEAL
+   CLOSE BOOK REVEAL
    ========================================================= */
 
 function closeBookReveal() {
@@ -2714,9 +3446,7 @@ function closeBookReveal() {
         );
 
 
-    if (
-        reveal
-    ) {
+    if (reveal) {
 
         reveal.hidden =
             true;
@@ -2729,10 +3459,13 @@ function closeBookReveal() {
             ".shelf-book"
         )
         .forEach(
-            book =>
+            book => {
+
                 book.classList.remove(
                     "selected"
-                )
+                );
+
+            }
         );
 
 
@@ -2744,7 +3477,7 @@ function closeBookReveal() {
 
 
 /* =========================================================
-   EDIT SELECTED
+   EDIT SELECTED BOOK
    ========================================================= */
 
 function editSelectedBook() {
@@ -2756,25 +3489,29 @@ function editSelectedBook() {
     closeBookReveal();
 
 
-    if (
-        id
-    ) {
+    if (!id) {
 
-        setTimeout(
-            () =>
-                openBookDrawer(
-                    id
-                ),
-            50
-        );
+        return;
 
     }
+
+
+    setTimeout(
+        () => {
+
+            openBookDrawer(
+                id
+            );
+
+        },
+        20
+    );
 
 }
 
 
 /* =========================================================
-   COVER
+   COVER RENDERING
    ========================================================= */
 
 function renderCoverInto(
@@ -2788,9 +3525,7 @@ function renderCoverInto(
         );
 
 
-    if (
-        !element
-    ) {
+    if (!element) {
 
         return;
 
@@ -2815,6 +3550,7 @@ function renderCoverInto(
 
         element.style.backgroundImage =
             `url("${safeStyleURL(book.cover_image)}")`;
+
 
         return;
 
@@ -2858,18 +3594,14 @@ function renderRating(
         );
 
 
-    if (
-        !element
-    ) {
+    if (!element) {
 
         return;
 
     }
 
 
-    if (
-        !rating
-    ) {
+    if (!rating) {
 
         element.textContent =
             "not rated yet";
@@ -2909,9 +3641,7 @@ function openReadingBook() {
         );
 
 
-    if (
-        !book
-    ) {
+    if (!book) {
 
         return;
 
@@ -2979,9 +3709,7 @@ function openReadingBook() {
         );
 
 
-    if (
-        readingBook
-    ) {
+    if (readingBook) {
 
         readingBook.hidden =
             false;
@@ -3008,9 +3736,7 @@ function closeReadingBook() {
         );
 
 
-    if (
-        element
-    ) {
+    if (element) {
 
         element.hidden =
             true;
@@ -3026,7 +3752,7 @@ function closeReadingBook() {
 
 
 /* =========================================================
-   JOURNAL CONTENTS
+   SHOW CONTENTS
    ========================================================= */
 
 function showJournalContents() {
@@ -3047,9 +3773,7 @@ function showJournalContents() {
         );
 
 
-    if (
-        contents
-    ) {
+    if (contents) {
 
         contents.hidden =
             false;
@@ -3057,9 +3781,7 @@ function showJournalContents() {
     }
 
 
-    if (
-        section
-    ) {
+    if (section) {
 
         section.hidden =
             true;
@@ -3070,7 +3792,7 @@ function showJournalContents() {
 
 
 /* =========================================================
-   OPEN JOURNAL SECTION
+   JOURNAL SECTION
    ========================================================= */
 
 function openJournalSection(
@@ -3093,9 +3815,7 @@ function openJournalSection(
         );
 
 
-    if (
-        contents
-    ) {
+    if (contents) {
 
         contents.hidden =
             true;
@@ -3103,9 +3823,7 @@ function openJournalSection(
     }
 
 
-    if (
-        journalSection
-    ) {
+    if (journalSection) {
 
         journalSection.hidden =
             false;
@@ -3135,7 +3853,7 @@ function openJournalSection(
 
 
 /* =========================================================
-   SECTION LABELS
+   SECTION LABEL
    ========================================================= */
 
 function getSectionLabel(
@@ -3177,14 +3895,14 @@ function getSectionLabel(
     return labels[
         section
     ]
-    ||
-    "";
+        ||
+        "";
 
 }
 
 
 /* =========================================================
-   SECTION TITLES
+   SECTION TITLE
    ========================================================= */
 
 function getSectionTitle(
@@ -3226,14 +3944,14 @@ function getSectionTitle(
     return titles[
         section
     ]
-    ||
-    section;
+        ||
+        section;
 
 }
 
 
 /* =========================================================
-   RENDER JOURNAL
+   JOURNAL ENTRIES
    ========================================================= */
 
 function renderJournalEntries() {
@@ -3275,9 +3993,7 @@ function renderJournalEntries() {
         "overview"
     ) {
 
-        if (
-            addButton
-        ) {
+        if (addButton) {
 
             addButton.hidden =
                 true;
@@ -3290,14 +4006,13 @@ function renderJournalEntries() {
             book
         );
 
+
         return;
 
     }
 
 
-    if (
-        addButton
-    ) {
+    if (addButton) {
 
         addButton.hidden =
             false;
@@ -3321,12 +4036,16 @@ function renderJournalEntries() {
 
             <div class="empty-journal-section">
 
-                Nothing lives on this page yet.
+                Nothing has been written here yet.
 
                 <br><br>
 
                 Add your first
-                ${escapeHTML(getSingularEntryName(selectedJournalSection))}.
+                ${escapeHTML(
+                    getSingularEntryName(
+                        selectedJournalSection
+                    )
+                )}.
 
             </div>
 
@@ -3374,7 +4093,7 @@ function renderOverview(
 
     container.innerHTML = `
 
-        <div class="journal-entry">
+        <article class="journal-entry">
 
             <div class="journal-entry-header">
 
@@ -3387,6 +4106,7 @@ function renderOverview(
                 </small>
 
             </div>
+
 
             <p>
                 Author: ${escapeHTML(book.author || "—")}
@@ -3402,10 +4122,10 @@ function renderOverview(
                 Times read: ${book.times_read || 0}
             </p>
 
-        </div>
+        </article>
 
 
-        <div class="journal-entry">
+        <article class="journal-entry">
 
             <div class="journal-entry-header">
 
@@ -3415,6 +4135,7 @@ function renderOverview(
 
             </div>
 
+
             <p>
                 Started: ${escapeHTML(formatDate(book.started))}
                 <br>
@@ -3423,7 +4144,7 @@ function renderOverview(
                 Current page: ${book.current_page || 0}
             </p>
 
-        </div>
+        </article>
 
     `;
 
@@ -3454,35 +4175,57 @@ function createJournalEntry(
         <div class="journal-entry-header">
 
             <strong>
-                ${escapeHTML(getEntryHeading(entry,section))}
+                ${escapeHTML(
+                    getEntryHeading(
+                        entry,
+                        section
+                    )
+                )}
             </strong>
 
             <small>
-                ${escapeHTML(formatDate(entry.date))}
+                ${escapeHTML(
+                    formatDate(
+                        entry.date
+                    )
+                )}
             </small>
 
         </div>
 
 
         <p>
-            ${escapeHTML(getEntryBody(entry,section))}
+            ${escapeHTML(
+                getEntryBody(
+                    entry,
+                    section
+                )
+            )}
         </p>
 
 
         ${
-            getEntryMeta(entry,section)
+            getEntryMeta(
+                entry,
+                section
+            )
 
-            ?
+                ?
 
-            `
-                <div class="journal-entry-meta">
-                    ${escapeHTML(getEntryMeta(entry,section))}
-                </div>
-            `
+                `
+                    <div class="journal-entry-meta">
+                        ${escapeHTML(
+                            getEntryMeta(
+                                entry,
+                                section
+                            )
+                        )}
+                    </div>
+                `
 
-            :
+                :
 
-            ""
+                ""
         }
 
     `;
@@ -3494,7 +4237,7 @@ function createJournalEntry(
 
 
 /* =========================================================
-   ENTRY HEADING
+   JOURNAL ENTRY CONTENT
    ========================================================= */
 
 function getEntryHeading(
@@ -3563,120 +4306,113 @@ function getEntryBody(
     section
 ) {
 
-    if (
-        section ===
-        "words"
-    ) {
+    switch (section) {
 
-        return [
-            entry.definition,
-            entry.context
-                ?
-                `Context: ${entry.context}`
-                :
-                "",
-            entry.sentence
-                ?
-                `My sentence: ${entry.sentence}`
-                :
-                ""
-        ]
+        case "words":
+
+            return [
+
+                entry.definition,
+
+                entry.context
+                    ?
+                    `Context: ${entry.context}`
+                    :
+                    "",
+
+                entry.sentence
+                    ?
+                    `My sentence: ${entry.sentence}`
+                    :
+                    ""
+
+            ]
             .filter(Boolean)
             .join("\n\n");
 
-    }
 
+        case "quotes":
 
-    if (
-        section ===
-        "quotes"
-    ) {
+            return [
 
-        return [
-            entry.quote,
-            entry.reason
-                ?
-                `Why I kept it: ${entry.reason}`
-                :
-                ""
-        ]
+                entry.quote,
+
+                entry.reason
+                    ?
+                    `Why I saved it: ${entry.reason}`
+                    :
+                    ""
+
+            ]
             .filter(Boolean)
             .join("\n\n");
 
-    }
 
+        case "characters":
 
-    if (
-        section ===
-        "characters"
-    ) {
+            return [
 
-        return [
-            entry.role,
-            entry.notes
-        ]
+                entry.role,
+
+                entry.notes
+
+            ]
             .filter(Boolean)
             .join("\n\n");
 
-    }
+
+        case "themes":
+
+            return entry.notes ||
+            "";
 
 
-    if (
-        section ===
-        "themes"
-    ) {
+        case "questions":
 
-        return entry.notes ||
-        "";
+            return [
 
-    }
+                entry.question,
 
+                entry.answer
+                    ?
+                    `Answer: ${entry.answer}`
+                    :
+                    ""
 
-    if (
-        section ===
-        "questions"
-    ) {
-
-        return [
-            entry.question,
-            entry.answer
-                ?
-                `Answer: ${entry.answer}`
-                :
-                ""
-        ]
+            ]
             .filter(Boolean)
             .join("\n\n");
 
-    }
 
+        case "review":
 
-    if (
-        section ===
-        "review"
-    ) {
+            return [
 
-        return [
-            entry.review,
-            entry.learned
-                ?
-                `What I learned: ${entry.learned}`
-                :
-                "",
-            entry.stayed
-                ?
-                `What stayed with me: ${entry.stayed}`
-                :
-                ""
-        ]
+                entry.review,
+
+                entry.learned
+                    ?
+                    `What I learned: ${entry.learned}`
+                    :
+                    "",
+
+                entry.stayed
+                    ?
+                    `What stayed with me: ${entry.stayed}`
+                    :
+                    ""
+
+            ]
             .filter(Boolean)
             .join("\n\n");
 
+
+        default:
+
+            return entry.body ||
+            "";
+
     }
-
-
-    return entry.body ||
-    "";
 
 }
 
@@ -3694,9 +4430,7 @@ function getEntryMeta(
         [];
 
 
-    if (
-        entry.page
-    ) {
+    if (entry.page) {
 
         parts.push(
             `page ${entry.page}`
@@ -3705,9 +4439,7 @@ function getEntryMeta(
     }
 
 
-    if (
-        entry.chapter
-    ) {
+    if (entry.chapter) {
 
         parts.push(
             entry.chapter
@@ -3716,9 +4448,7 @@ function getEntryMeta(
     }
 
 
-    if (
-        entry.tags
-    ) {
+    if (entry.tags) {
 
         parts.push(
             entry.tags
@@ -3803,9 +4533,7 @@ function openEntryModal() {
         );
 
 
-    if (
-        modal
-    ) {
+    if (modal) {
 
         modal.hidden =
             false;
@@ -3827,9 +4555,7 @@ function closeEntryModal() {
         );
 
 
-    if (
-        modal
-    ) {
+    if (modal) {
 
         modal.hidden =
             true;
@@ -3853,16 +4579,14 @@ function renderEntryFields(
         );
 
 
-    if (
-        !container
-    ) {
+    if (!container) {
 
         return;
 
     }
 
 
-    const commonDate = `
+    const dateField = `
 
         <div class="entry-field">
 
@@ -3900,13 +4624,6 @@ function renderEntryFields(
                 <input
                     id="entryTitle"
                     type="text"
-                    placeholder="${
-                        section === "notes"
-                        ?
-                        "Chapter notes"
-                        :
-                        "Something I'm thinking about"
-                    }"
                 >
 
             </div>
@@ -3945,11 +4662,12 @@ function renderEntryFields(
 
                 <label>
                     ${
-                        section === "notes"
-                        ?
-                        "Note"
-                        :
-                        "Thought"
+                        section ===
+                        "notes"
+                            ?
+                            "Note"
+                            :
+                            "Thought"
                     }
                 </label>
 
@@ -3970,14 +4688,16 @@ function renderEntryFields(
                 <input
                     id="entryTags"
                     type="text"
-                    placeholder="#character #faith #chapter3"
+                    placeholder="#character #theme"
                 >
 
             </div>
 
-            ${commonDate}
+
+            ${dateField}
 
         `;
+
 
         return;
 
@@ -4020,7 +4740,7 @@ function renderEntryFields(
             </div>
 
 
-            ${commonDate}
+            ${dateField}
 
 
             <div class="entry-field full">
@@ -4065,6 +4785,7 @@ function renderEntryFields(
             </div>
 
         `;
+
 
         return;
 
@@ -4124,7 +4845,7 @@ function renderEntryFields(
             <div class="entry-field full">
 
                 <label>
-                    Why did I save this?
+                    Why did I save it?
                 </label>
 
                 <textarea
@@ -4135,9 +4856,10 @@ function renderEntryFields(
             </div>
 
 
-            ${commonDate}
+            ${dateField}
 
         `;
+
 
         return;
 
@@ -4194,7 +4916,7 @@ function renderEntryFields(
             </div>
 
 
-            ${commonDate}
+            ${dateField}
 
 
             <div class="entry-field full">
@@ -4211,6 +4933,7 @@ function renderEntryFields(
             </div>
 
         `;
+
 
         return;
 
@@ -4253,9 +4976,10 @@ function renderEntryFields(
             </div>
 
 
-            ${commonDate}
+            ${dateField}
 
         `;
+
 
         return;
 
@@ -4309,7 +5033,7 @@ function renderEntryFields(
             </div>
 
 
-            ${commonDate}
+            ${dateField}
 
 
             <div class="entry-field full">
@@ -4326,6 +5050,7 @@ function renderEntryFields(
             </div>
 
         `;
+
 
         return;
 
@@ -4362,18 +5087,32 @@ function renderEntryFields(
 
                 <select id="entryRating">
 
-                    <option value="1">1 / 5</option>
-                    <option value="2">2 / 5</option>
-                    <option value="3">3 / 5</option>
-                    <option value="4">4 / 5</option>
-                    <option value="5">5 / 5</option>
+                    <option value="1">
+                        1 / 5
+                    </option>
+
+                    <option value="2">
+                        2 / 5
+                    </option>
+
+                    <option value="3">
+                        3 / 5
+                    </option>
+
+                    <option value="4">
+                        4 / 5
+                    </option>
+
+                    <option value="5">
+                        5 / 5
+                    </option>
 
                 </select>
 
             </div>
 
 
-            ${commonDate}
+            ${dateField}
 
 
             <div class="entry-field full">
@@ -4486,7 +5225,7 @@ function saveJournalEntry(
 
 
 /* =========================================================
-   BUILD JOURNAL ENTRY
+   BUILD ENTRY
    ========================================================= */
 
 function buildEntryFromForm(
@@ -4759,14 +5498,14 @@ function buildEntryFromForm(
 
 
 /* =========================================================
-   SECTION ENTRY NAME
+   SINGULAR ENTRY NAME
    ========================================================= */
 
 function getSingularEntryName(
     section
 ) {
 
-    const labels = {
+    const names = {
 
         notes:
             "note",
@@ -4795,11 +5534,11 @@ function getSingularEntryName(
     };
 
 
-    return labels[
+    return names[
         section
     ]
-    ||
-    "entry";
+        ||
+        "entry";
 
 }
 
@@ -4818,7 +5557,7 @@ function getBookOrnament(
             "◇",
 
         floral:
-            "❀",
+            "✿",
 
         botanical:
             "❧",
@@ -4841,14 +5580,14 @@ function getBookOrnament(
     return ornaments[
         style
     ]
-    ||
-    "◇";
+        ||
+        "◇";
 
 }
 
 
 /* =========================================================
-   STATUS LABEL
+   STATUS
    ========================================================= */
 
 function getStatusLabel(
@@ -4858,7 +5597,7 @@ function getStatusLabel(
     const labels = {
 
         want:
-            "♡ want to read",
+            "want to read",
 
         reading:
             "currently reading",
@@ -4881,8 +5620,8 @@ function getStatusLabel(
     return labels[
         status
     ]
-    ||
-    status;
+        ||
+        status;
 
 }
 
@@ -4892,10 +5631,10 @@ function getStatusLabel(
    ========================================================= */
 
 function normalizeBookStatus(
-    value
+    status
 ) {
 
-    const valid = [
+    const allowed = [
 
         "want",
         "reading",
@@ -4907,11 +5646,11 @@ function normalizeBookStatus(
     ];
 
 
-    return valid.includes(
-        value
+    return allowed.includes(
+        status
     )
         ?
-        value
+        status
         :
         "want";
 
@@ -4954,13 +5693,13 @@ function getProgressPercent(
 
 
 /* =========================================================
-   SAVE STORAGE
+   SAVE DATA
    ========================================================= */
 
 function saveShelves() {
 
     localStorage.setItem(
-        SHELF_STORAGE_KEY,
+        STORAGE_KEYS.shelves,
         JSON.stringify(
             shelves
         )
@@ -4972,7 +5711,7 @@ function saveShelves() {
 function saveBooks() {
 
     localStorage.setItem(
-        BOOK_STORAGE_KEY,
+        STORAGE_KEYS.books,
         JSON.stringify(
             books
         )
@@ -5042,54 +5781,72 @@ function todayISO() {
         String(
             date.getMonth() + 1
         )
-            .padStart(
-                2,
-                "0"
-            ),
+        .padStart(
+            2,
+            "0"
+        ),
 
         String(
             date.getDate()
         )
-            .padStart(
-                2,
-                "0"
-            )
+        .padStart(
+            2,
+            "0"
+        )
 
     ]
-        .join("-");
+    .join("-");
 
 }
 
+
+/* =========================================================
+   FORMAT DATE
+   ========================================================= */
 
 function formatDate(
     value
 ) {
 
-    if (
-        !value
-    ) {
+    if (!value) {
 
         return "—";
 
     }
 
 
-    return new Date(
-        `${value}T12:00:00`
-    )
-        .toLocaleDateString(
-            "en-US",
-            {
-                month:
-                    "short",
-
-                day:
-                    "numeric",
-
-                year:
-                    "numeric"
-            }
+    const date =
+        new Date(
+            `${value}T12:00:00`
         );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return value;
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-US",
+        {
+
+            month:
+                "short",
+
+            day:
+                "numeric",
+
+            year:
+                "numeric"
+
+        }
+    );
 
 }
 
@@ -5130,13 +5887,14 @@ function normalizeNumber(
 
 
 /* =========================================================
-   GENERATE ID
+   ID
    ========================================================= */
 
 function generateId() {
 
     if (
-        window.crypto &&
+        window.crypto
+        &&
         typeof window.crypto.randomUUID ===
         "function"
     ) {
@@ -5160,7 +5918,7 @@ function generateId() {
 
 
 /* =========================================================
-   FORM HELPERS
+   HELPERS
    ========================================================= */
 
 function getValue(
@@ -5173,9 +5931,7 @@ function getValue(
         );
 
 
-    if (
-        !element
-    ) {
+    if (!element) {
 
         return "";
 
@@ -5186,7 +5942,7 @@ function getValue(
         element.value ??
         ""
     )
-        .trim();
+    .trim();
 
 }
 
@@ -5202,9 +5958,7 @@ function setValue(
         );
 
 
-    if (
-        element
-    ) {
+    if (element) {
 
         element.value =
             value ??
@@ -5226,13 +5980,34 @@ function setText(
         );
 
 
-    if (
-        element
-    ) {
+    if (element) {
 
         element.textContent =
             value ??
             "";
+
+    }
+
+}
+
+
+function setChecked(
+    id,
+    checked
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (element) {
+
+        element.checked =
+            Boolean(
+                checked
+            );
 
     }
 
@@ -5251,20 +6026,20 @@ function safeStyleURL(
         value ||
         ""
     )
-        .replace(
-            /"/g,
-            "%22"
-        )
-        .replace(
-            /\n/g,
-            ""
-        );
+    .replace(
+        /"/g,
+        "%22"
+    )
+    .replace(
+        /\n/g,
+        ""
+    );
 
 }
 
 
 /* =========================================================
-   ESCAPE
+   ESCAPE HTML
    ========================================================= */
 
 function escapeHTML(
@@ -5275,30 +6050,25 @@ function escapeHTML(
         value ??
         ""
     )
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
 
 }
