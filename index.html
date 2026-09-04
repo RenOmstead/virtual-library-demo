@@ -15,12 +15,12 @@
 
     <link
         rel="stylesheet"
-        href="css/global.css?v=4"
+        href="css/global.css?v=5"
     >
 
     <link
         rel="stylesheet"
-        href="css/library.css?v=4"
+        href="css/library.css?v=5"
     >
 </head>
 
@@ -658,6 +658,10 @@
 
 
 
+            <!-- =================================================
+                 AMBIENT DETAILS
+                 ================================================= -->
+
             <div class="theme-settings-section">
 
                 <div class="theme-section-heading">
@@ -684,7 +688,7 @@
                             </strong>
 
                             <small>
-                                subtle warm light around shelves
+                                soft warm light around the room
                             </small>
 
                         </span>
@@ -707,7 +711,7 @@
                             </strong>
 
                             <small>
-                                tiny particles drifting through the room
+                                tiny drifting specks in the background
                             </small>
 
                         </span>
@@ -730,7 +734,7 @@
                             </strong>
 
                             <small>
-                                add a quiet stormy atmosphere
+                                quiet stormy atmosphere
                             </small>
 
                         </span>
@@ -749,11 +753,11 @@
                         <span>
 
                             <strong>
-                                Shelf surprises
+                                Ambient oddities
                             </strong>
 
                             <small>
-                                allow tiny decorative oddities to appear
+                                theme details that are not part of your placed decorations
                             </small>
 
                         </span>
@@ -794,19 +798,30 @@
 
 
 
+            <!-- =================================================
+                 AMBIENT CLUTTER
+                 ================================================= -->
+
             <div class="theme-settings-section">
 
                 <div class="theme-section-heading">
 
                     <span>
-                        DECORATION
+                        ROOM CLUTTER
                     </span>
 
                     <h3>
-                        How cluttered is your reading room?
+                        How much background personality?
                     </h3>
 
                 </div>
+
+
+                <p class="theme-intro-copy">
+                    This only changes automatic room details.
+                    Decorations you personally place on a shelf
+                    are always kept visible.
+                </p>
 
 
                 <div class="density-options">
@@ -826,7 +841,7 @@
                             </strong>
 
                             <small>
-                                just a few treasures
+                                almost no automatic clutter
                             </small>
 
                         </span>
@@ -850,7 +865,7 @@
                             </strong>
 
                             <small>
-                                comfortably collected
+                                a few extra room details
                             </small>
 
                         </span>
@@ -873,7 +888,7 @@
                             </strong>
 
                             <small>
-                                delightful clutter everywhere
+                                lots of strange little background things
                             </small>
 
                         </span>
@@ -1095,13 +1110,26 @@
             </div>
 
 
+
+            <!-- =================================================
+                 PLACED DECORATIONS
+                 ================================================= -->
+
             <fieldset
                 class="form-group full decoration-fieldset"
             >
 
                 <legend>
-                    Little shelf decorations
+                    Decorations for this shelf
                 </legend>
+
+
+                <p class="form-hint">
+                    Everything you choose here belongs to the shelf itself
+                    and will stay visible regardless of your room clutter setting.
+                    You can drag the decorations around after the shelf is created.
+                </p>
+
 
                 <div class="decoration-options">
                 </div>
@@ -1189,9 +1217,7 @@
 
 
 
-            <!-- =================================================
-                 BOOK INFORMATION
-                 ================================================= -->
+            <!-- BOOK -->
 
             <div class="form-section-title full">
                 THE BOOK
@@ -1307,9 +1333,7 @@
 
 
 
-            <!-- =================================================
-                 READING
-                 ================================================= -->
+            <!-- READING -->
 
             <div class="form-section-title full">
                 READING
@@ -1462,9 +1486,7 @@
 
 
 
-            <!-- =================================================
-                 COVER
-                 ================================================= -->
+            <!-- COVER -->
 
             <div class="form-section-title full">
                 COVER
@@ -1484,17 +1506,15 @@
                 >
 
                 <small class="form-hint">
-                    Optional. The cover appears when you pull the
-                    book from the shelf. Shelfmark generates the spine.
+                    Optional. The cover appears when you pull the book
+                    from the shelf. Shelfmark generates the spine.
                 </small>
 
             </div>
 
 
 
-            <!-- =================================================
-                 SPINE DESIGN
-                 ================================================= -->
+            <!-- SPINE DESIGN -->
 
             <div class="form-section-title full">
                 DESIGN THE SPINE
@@ -1645,9 +1665,7 @@
 
 
 
-            <!-- =================================================
-                 TYPOGRAPHY
-                 ================================================= -->
+            <!-- TYPOGRAPHY -->
 
             <div class="form-section-title full">
                 SPINE TYPOGRAPHY
@@ -1936,9 +1954,7 @@
 
 
 
-            <!-- =================================================
-                 PHYSICAL BOOK SIZE
-                 ================================================= -->
+            <!-- BOOK SIZE -->
 
             <div class="form-section-title full">
                 BOOK SIZE
@@ -2002,9 +2018,7 @@
 
 
 
-            <!-- =================================================
-                 LIVE PREVIEW
-                 ================================================= -->
+            <!-- LIVE PREVIEW -->
 
             <div class="form-group full spine-preview-group">
 
@@ -2077,7 +2091,6 @@
                 </div>
 
             </div>
-
 
 
             <div class="drawer-actions full">
@@ -2248,13 +2261,11 @@
                         class="open-book-button"
                         type="button"
                     >
-
                         open book
 
                         <span>
                             →
                         </span>
-
                     </button>
 
                 </div>
@@ -2316,46 +2327,23 @@
                     <div class="journal-book-details">
 
                         <div>
-
-                            <span>
-                                status
-                            </span>
-
+                            <span>status</span>
                             <strong id="journalStatus"></strong>
-
                         </div>
 
-
                         <div>
-
-                            <span>
-                                started
-                            </span>
-
+                            <span>started</span>
                             <strong id="journalStarted"></strong>
-
                         </div>
 
-
                         <div>
-
-                            <span>
-                                finished
-                            </span>
-
+                            <span>finished</span>
                             <strong id="journalFinished"></strong>
-
                         </div>
 
-
                         <div>
-
-                            <span>
-                                pages
-                            </span>
-
+                            <span>pages</span>
                             <strong id="journalPages"></strong>
-
                         </div>
 
                     </div>
@@ -2609,8 +2597,8 @@
          SCRIPTS
          ===================================================== -->
 
-    <script src="js/config.js?v=4"></script>
-    <script src="js/library.js?v=4"></script>
+    <script src="js/config.js?v=5"></script>
+    <script src="js/library.js?v=5"></script>
 
 </body>
 
