@@ -1,2018 +1,4350 @@
 /* =========================================================
    SHELFMARK
-   COMPLETE LIBRARY.CSS
+   MAIN LIBRARY APPLICATION
    ========================================================= */
 
 
 /* =========================================================
-   LIBRARY PAGE
+   CONFIG
    ========================================================= */
 
-.library-page {
-    position: relative;
-    isolation: isolate;
+const CONFIG = window.SHELFMARK_CONFIG || {};
 
-    width:
-        min(1500px, calc(100% - 60px));
+const STORAGE_KEYS = {
 
-    margin:
-        0 auto;
+    shelves:
+        CONFIG.storageKeys?.shelves ||
+        "shelfmark_shelves",
 
-    padding:
-        58px 0 96px;
-}
+    books:
+        CONFIG.storageKeys?.books ||
+        "shelfmark_books",
 
+    settings:
+        CONFIG.storageKeys?.settings ||
+        "shelfmark_settings"
 
-/* ambient light */
-
-.library-page::before {
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    right: 4%;
-
-    width: 430px;
-    height: 320px;
-
-    z-index: -2;
-
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            circle,
-            var(--glow),
-            transparent 68%
-        );
-
-    filter:
-        blur(16px);
-}
+};
 
 
-/* decorative theme mark */
+/* =========================================================
+   STATE
+   ========================================================= */
 
-.library-page::after {
-    content: "✦";
+let shelves = [];
 
-    position: absolute;
+let books = [];
 
-    top: 38px;
-    right: 4%;
+let selectedBookId = null;
 
-    z-index: -1;
+let selectedJournalSection = null;
 
-    color:
-        var(--accent);
+let pendingCoverData = "";
 
-    opacity: .22;
+let pendingSpineData = "";
 
-    font-size: 1rem;
+let activeDrag = null;
+
+
+let settings = {
+
+    theme:
+        CONFIG.defaultSettings?.theme ||
+        CONFIG.defaultTheme ||
+        "haunted",
+
+    candleGlow:
+        CONFIG.defaultSettings?.candleGlow ??
+        true,
+
+    dust:
+        CONFIG.defaultSettings?.dust ??
+        true,
+
+    rain:
+        CONFIG.defaultSettings?.rain ??
+        true,
+
+    oddities:
+        CONFIG.defaultSettings?.oddities ??
+        true,
+
+    reducedMotion:
+        CONFIG.defaultSettings?.reducedMotion ??
+        false,
+
+    decorationDensity:
+        CONFIG.defaultSettings?.decorationDensity ||
+        "cozy"
+
+};
+
+
+/* =========================================================
+   DECORATION FALLBACK ICONS
+
+   These make new decoration types visible immediately.
+   Later we can replace them with richer CSS illustrations.
+   ========================================================= */
+
+const DECORATION_SYMBOLS = {
+
+    plant: "❧",
+
+    candle: "🕯",
+
+    flowers: "✿",
+
+    stars: "✦",
+
+    mug: "☕",
+
+    cat: "🐈",
+
+    ghost: "♧",
+
+    bat: "⌁",
+
+    goblin: "♟",
+
+    moss: "❦",
+
+    mushroom: "♠",
+
+    potion: "⚗",
+
+    crystal: "♦",
+
+    raven: "♜",
+
+    pumpkin: "●"
+
+};
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    initializeShelfmark
+);
+
+
+function initializeShelfmark() {
+
+    resetInitialUI();
+
+    loadSettings();
+
+    loadData();
+
+    applySettings();
+
+    bindControls();
+
+    renderLibrary();
+
 }
 
 
 /* =========================================================
-   THEME BACKGROUNDS
+   RESET UI
    ========================================================= */
 
-body.theme-haunted .library-page {
-    background:
-        radial-gradient(
-            circle at 84% 14%,
-            rgba(218, 159, 91, .09),
-            transparent 18%
-        ),
-        radial-gradient(
-            circle at 12% 48%,
-            rgba(99, 40, 55, .15),
-            transparent 24%
-        );
-}
+function resetInitialUI() {
 
-body.theme-haunted .library-page::after {
-    content: "☾   ✦   ✧";
-    letter-spacing: .45rem;
-}
-
-
-body.theme-autumn .library-page {
-    background:
-        radial-gradient(
-            circle at 82% 14%,
-            rgba(240, 143, 67, .13),
-            transparent 20%
-        ),
-        radial-gradient(
-            circle at 14% 46%,
-            rgba(116, 127, 83, .09),
-            transparent 22%
-        );
-}
-
-body.theme-autumn .library-page::after {
-    content: "❧   ✦";
-    color: #e6a05e;
-}
-
-
-body.theme-forest .library-page {
-    background:
-        radial-gradient(
-            circle at 80% 14%,
-            rgba(205, 216, 150, .08),
-            transparent 18%
-        ),
-        radial-gradient(
-            circle at 14% 46%,
-            rgba(101, 133, 91, .14),
-            transparent 24%
-        );
-}
-
-body.theme-forest .library-page::after {
-    content: "✦   ❧   ☾";
-    color: #c5cf91;
-}
-
-
-body.theme-retro .library-page {
-    background:
-        linear-gradient(
-            rgba(148,173,63,.018) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(148,173,63,.018) 1px,
-            transparent 1px
+    const overlay =
+        document.getElementById(
+            "overlay"
         );
 
-    background-size:
-        34px 34px;
-}
 
-body.theme-retro .library-page::after {
-    content: "● REC";
-    color: #9fb747;
-    font-family: "Courier New", monospace;
-    font-size: .6rem;
-    letter-spacing: .08em;
-}
+    if (overlay) {
 
+        overlay.hidden = true;
 
-body.theme-ghosts .library-page {
-    background:
-        radial-gradient(
-            circle at 84% 15%,
-            rgba(255,229,211,.14),
-            transparent 20%
-        ),
-        radial-gradient(
-            circle at 14% 48%,
-            rgba(95,120,89,.10),
-            transparent 22%
+        overlay.classList.remove(
+            "open"
         );
-}
 
-body.theme-ghosts .library-page::after {
-    content: "✦   ♡   ✧";
-    color: #ffe0d2;
+    }
+
+
+    document
+        .querySelectorAll(
+            ".form-drawer"
+        )
+        .forEach(
+            drawer => {
+
+                drawer.hidden = true;
+
+                drawer.classList.remove(
+                    "open"
+                );
+
+            }
+        );
+
+
+    [
+
+        "bookReveal",
+        "readingBook",
+        "entryModal"
+
+    ]
+        .forEach(
+            id => {
+
+                const element =
+                    document.getElementById(
+                        id
+                    );
+
+
+                if (element) {
+
+                    element.hidden =
+                        true;
+
+                }
+
+            }
+        );
+
+
+    document.body.classList.remove(
+        "modal-open"
+    );
+
 }
 
 
 /* =========================================================
-   INTRO
+   LOAD DATA
    ========================================================= */
 
-.library-intro {
-    position: relative;
-    z-index: 2;
+function loadData() {
 
-    display: grid;
-
-    grid-template-columns:
-        minmax(0, 1fr)
-        auto;
-
-    gap: 45px;
-
-    align-items: end;
-
-    margin-bottom: 58px;
-}
-
-.eyebrow {
-    color:
-        var(--accent);
-
-    font-size: .51rem;
-
-    font-weight: 700;
-
-    letter-spacing: .18em;
-}
-
-.library-intro h1 {
-    max-width: 830px;
-
-    margin:
-        13px 0 0;
-
-    color:
-        var(--text);
-
-    font-size:
-        clamp(
-            3rem,
-            7vw,
-            6.9rem
+    shelves =
+        loadCollection(
+            STORAGE_KEYS.shelves,
+            window.SHELFMARK_DATA?.shelves
+        )
+        .map(
+            normalizeShelf
         );
 
-    line-height: .89;
 
-    letter-spacing: -.055em;
+    books =
+        loadCollection(
+            STORAGE_KEYS.books,
+            window.SHELFMARK_DATA?.books
+        )
+        .map(
+            normalizeBook
+        );
 
-    text-shadow:
-        0 12px 30px
-        rgba(0,0,0,.25);
-}
-
-.library-intro h1 em {
-    display: block;
-
-    color:
-        var(--accent-2);
-
-    font-weight: 400;
-}
-
-.library-intro p {
-    max-width: 650px;
-
-    margin:
-        24px 0 0;
-
-    color:
-        var(--muted);
-
-    font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
-
-    font-size: .78rem;
-
-    line-height: 1.8;
 }
 
 
 /* =========================================================
-   LIBRARY SUMMARY
+   LOAD COLLECTION
    ========================================================= */
 
-.library-summary {
-    position: relative;
+function loadCollection(
+    key,
+    fallback = []
+) {
 
-    display: grid;
+    try {
 
-    grid-template-columns:
-        repeat(3, 100px);
+        const saved =
+            localStorage.getItem(
+                key
+            );
 
-    overflow: hidden;
 
-    border:
-        1px solid
-        var(--border);
+        if (saved) {
 
-    border-radius: 14px;
+            const parsed =
+                JSON.parse(
+                    saved
+                );
 
-    background:
-        linear-gradient(
-            145deg,
-            var(--panel-2),
-            var(--panel)
+
+            if (
+                Array.isArray(
+                    parsed
+                )
+            ) {
+
+                return parsed;
+
+            }
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            `Could not load ${key}`,
+            error
         );
 
-    box-shadow:
-        var(--shadow-soft);
-}
+    }
 
-.library-summary::before {
-    content: "";
 
-    position: absolute;
+    return Array.isArray(
+        fallback
+    )
+        ?
+        [...fallback]
+        :
+        [];
 
-    top: 7px;
-    left: 16px;
-    right: 16px;
-
-    height: 1px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            var(--accent),
-            transparent
-        );
-
-    opacity: .34;
-}
-
-.library-summary > div {
-    min-height: 98px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-right:
-        1px solid
-        var(--border-soft);
-}
-
-.library-summary > div:last-child {
-    border-right: none;
-}
-
-.library-summary strong {
-    color:
-        var(--accent-light);
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: 1.55rem;
-
-    font-weight: 400;
-}
-
-.library-summary span {
-    margin-top: 5px;
-
-    color:
-        var(--muted);
-
-    font-size: .5rem;
 }
 
 
 /* =========================================================
-   SHELF CONTAINER
+   SETTINGS
    ========================================================= */
 
-.shelf-container {
-    display: flex;
+function loadSettings() {
 
-    flex-direction: column;
+    try {
 
-    gap: 60px;
-}
-
-
-/* =========================================================
-   LIBRARY SHELF
-   ========================================================= */
-
-.library-shelf {
-    position: relative;
-}
-
-.library-shelf::before {
-    content: "";
-
-    position: absolute;
-
-    left: -12px;
-    top: 52%;
-
-    width: 5px;
-    height: 5px;
-
-    border-radius: 50%;
-
-    background:
-        var(--accent);
-
-    box-shadow:
-        0 0 12px
-        var(--glow);
-
-    opacity: .6;
-}
+        const saved =
+            localStorage.getItem(
+                STORAGE_KEYS.settings
+            );
 
 
-/* =========================================================
-   SHELF HEADING
-   ========================================================= */
+        if (!saved) {
 
-.shelf-heading {
-    display: flex;
+            return;
 
-    align-items: flex-end;
-
-    justify-content:
-        space-between;
-
-    gap: 20px;
-
-    margin-bottom: 13px;
-
-    padding:
-        0 8px;
-}
-
-.shelf-heading h2 {
-    margin: 0;
-
-    color:
-        var(--text);
-
-    font-size: 1.45rem;
-}
-
-.shelf-heading p {
-    margin:
-        6px 0 0;
-
-    color:
-        var(--muted);
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: .59rem;
-
-    font-style: italic;
-}
-
-.shelf-tools {
-    display: flex;
-
-    gap: 6px;
-}
-
-.shelf-tool {
-    min-height: 32px;
-
-    padding:
-        0 11px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius: 8px;
-
-    background:
-        rgba(255,255,255,.02);
-
-    color:
-        var(--muted);
-
-    cursor: pointer;
-
-    font-size: .49rem;
-
-    transition:
-        .16s ease;
-}
-
-.shelf-tool:hover {
-    color:
-        var(--accent-light);
-
-    background:
-        rgba(255,255,255,.045);
-}
+        }
 
 
-/* =========================================================
-   SHELF CABINET
-   ========================================================= */
+        settings = {
 
-.shelf-cabinet {
-    position: relative;
+            ...settings,
 
-    min-height: 292px;
+            ...JSON.parse(
+                saved
+            )
 
-    padding:
-        40px 38px
-        36px;
+        };
 
-    overflow: hidden;
+    }
 
-    border:
-        2px solid
-        rgba(0,0,0,.45);
+    catch (error) {
 
-    border-radius:
-        15px 15px 6px 6px;
-
-    background:
-        linear-gradient(
-            180deg,
-            var(--wood-mid),
-            var(--wood)
+        console.error(
+            "Could not load settings.",
+            error
         );
 
-    box-shadow:
-        inset 0 16px 28px
-        rgba(255,255,255,.04),
+    }
 
-        inset 0 -18px 30px
-        rgba(0,0,0,.3),
-
-        0 20px 50px
-        rgba(0,0,0,.28);
 }
 
 
-/* wood grain */
+function saveSettings() {
 
-.shelf-cabinet::before {
-    content: "";
+    localStorage.setItem(
 
-    position: absolute;
+        STORAGE_KEYS.settings,
 
-    inset: 0;
+        JSON.stringify(
+            settings
+        )
 
-    pointer-events: none;
+    );
 
-    opacity: .16;
-
-    background:
-        repeating-linear-gradient(
-            7deg,
-            transparent 0,
-            transparent 22px,
-            rgba(0,0,0,.32) 23px,
-            transparent 24px
-        );
-}
-
-
-/* cabinet top shadow */
-
-.shelf-cabinet::after {
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    left: 0;
-    right: 0;
-
-    height: 95px;
-
-    pointer-events: none;
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(0,0,0,.25),
-            transparent
-        );
 }
 
 
 /* =========================================================
-   MATERIALS
+   APPLY SETTINGS
    ========================================================= */
 
-.library-shelf[data-material="walnut"] .shelf-cabinet {
-    background:
-        linear-gradient(
-            180deg,
-            color-mix(
-                in srgb,
-                var(--wood-mid) 88%,
-                #442918
+function applySettings() {
+
+    applyTheme(
+        settings.theme,
+        false
+    );
+
+
+    document.body.classList.toggle(
+        "reduce-motion",
+        settings.reducedMotion
+    );
+
+
+    document.body.classList.toggle(
+        "ambient-candle",
+        settings.candleGlow
+    );
+
+
+    document.body.classList.toggle(
+        "ambient-dust",
+        settings.dust
+    );
+
+
+    document.body.classList.toggle(
+        "ambient-rain",
+        settings.rain
+    );
+
+
+    document.body.classList.toggle(
+        "ambient-oddities",
+        settings.oddities
+    );
+
+
+    document.body.dataset.decorationDensity =
+        settings.decorationDensity;
+
+
+    syncSettingsControls();
+
+}
+
+
+/* =========================================================
+   THEME
+   ========================================================= */
+
+function getAllowedThemes() {
+
+    if (
+        Array.isArray(
+            CONFIG.themes
+        )
+    ) {
+
+        return CONFIG.themes.map(
+            theme =>
+                theme.id
+        );
+
+    }
+
+
+    return [
+
+        "haunted",
+        "autumn",
+        "forest",
+        "retro",
+        "ghosts"
+
+    ];
+
+}
+
+
+function applyTheme(
+    theme,
+    shouldSave = true
+) {
+
+    const allowedThemes =
+        getAllowedThemes();
+
+
+    if (
+        !allowedThemes.includes(
+            theme
+        )
+    ) {
+
+        theme =
+            CONFIG.defaultTheme ||
+            "haunted";
+
+    }
+
+
+    allowedThemes.forEach(
+        item => {
+
+            document.body.classList.remove(
+                `theme-${item}`
+            );
+
+        }
+    );
+
+
+    document.body.classList.add(
+        `theme-${theme}`
+    );
+
+
+    settings.theme =
+        theme;
+
+
+    document
+        .querySelectorAll(
+            ".theme-card"
+        )
+        .forEach(
+            card => {
+
+                card.classList.toggle(
+
+                    "active",
+
+                    card.dataset.theme ===
+                    theme
+
+                );
+
+            }
+        );
+
+
+    if (shouldSave) {
+
+        saveSettings();
+
+    }
+
+
+    updateOpenShelfDecorationChoices();
+
+}
+
+
+/* =========================================================
+   SETTINGS UI
+   ========================================================= */
+
+function syncSettingsControls() {
+
+    setChecked(
+        "settingCandleGlow",
+        settings.candleGlow
+    );
+
+
+    setChecked(
+        "settingDust",
+        settings.dust
+    );
+
+
+    setChecked(
+        "settingRain",
+        settings.rain
+    );
+
+
+    setChecked(
+        "settingOddities",
+        settings.oddities
+    );
+
+
+    setChecked(
+        "settingReducedMotion",
+        settings.reducedMotion
+    );
+
+
+    const density =
+        document.querySelector(
+            `input[name="decorationDensity"][value="${settings.decorationDensity}"]`
+        );
+
+
+    if (density) {
+
+        density.checked =
+            true;
+
+    }
+
+}
+
+
+/* =========================================================
+   NORMALIZE SHELF
+   ========================================================= */
+
+function normalizeShelf(
+    shelf
+) {
+
+    return {
+
+        id:
+            shelf.id ||
+            generateId(),
+
+        name:
+            shelf.name ||
+            "Untitled Shelf",
+
+        description:
+            shelf.description ||
+            "",
+
+        material:
+            shelf.material ||
+            "walnut",
+
+        mood:
+            shelf.mood ||
+            "cozy",
+
+        layout:
+            shelf.layout ||
+            "mixed",
+
+        sort:
+            shelf.sort ||
+            "manual",
+
+        decorations:
+            normalizeDecorations(
+                shelf.decorations
             ),
-            color-mix(
-                in srgb,
-                var(--wood) 82%,
-                #24140d
+
+        created_at:
+            shelf.created_at ||
+            new Date()
+                .toISOString(),
+
+        updated_at:
+            shelf.updated_at ||
+            ""
+
+    };
+
+}
+
+
+/* =========================================================
+   NORMALIZE DECORATIONS
+
+   Older shelves may contain:
+
+   ["plant", "candle"]
+
+   New format:
+
+   [
+       {
+           id,
+           type,
+           x,
+           y,
+           scale,
+           rotate
+       }
+   ]
+   ========================================================= */
+
+function normalizeDecorations(
+    decorations
+) {
+
+    if (
+        !Array.isArray(
+            decorations
+        )
+    ) {
+
+        return [];
+
+    }
+
+
+    return decorations.map(
+        (
+            decoration,
+            index
+        ) => {
+
+            if (
+                typeof decoration ===
+                "string"
+            ) {
+
+                return createDecorationRecord(
+
+                    decoration,
+
+                    getDefaultDecorationPosition(
+                        index
+                    )
+
+                );
+
+            }
+
+
+            return {
+
+                id:
+                    decoration.id ||
+                    generateId(),
+
+                type:
+                    decoration.type ||
+                    decoration.name ||
+                    "plant",
+
+                x:
+                    normalizePercent(
+                        decoration.x,
+                        15 + index * 12
+                    ),
+
+                y:
+                    normalizePercent(
+                        decoration.y,
+                        70
+                    ),
+
+                scale:
+                    normalizeScale(
+                        decoration.scale
+                    ),
+
+                rotate:
+                    normalizeRotation(
+                        decoration.rotate
+                    )
+
+            };
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CREATE DECORATION RECORD
+   ========================================================= */
+
+function createDecorationRecord(
+    type,
+    position = {}
+) {
+
+    return {
+
+        id:
+            generateId(),
+
+        type,
+
+        x:
+            normalizePercent(
+                position.x,
+                50
+            ),
+
+        y:
+            normalizePercent(
+                position.y,
+                70
+            ),
+
+        scale:
+            normalizeScale(
+                position.scale
+            ),
+
+        rotate:
+            normalizeRotation(
+                position.rotate
+            )
+
+    };
+
+}
+
+
+/* =========================================================
+   DEFAULT DECORATION POSITIONS
+   ========================================================= */
+
+function getDefaultDecorationPosition(
+    index = 0
+) {
+
+    const positions = [
+
+        {
+            x: 12,
+            y: 70
+        },
+
+        {
+            x: 82,
+            y: 68
+        },
+
+        {
+            x: 55,
+            y: 28
+        },
+
+        {
+            x: 28,
+            y: 68
+        },
+
+        {
+            x: 70,
+            y: 70
+        },
+
+        {
+            x: 40,
+            y: 68
+        },
+
+        {
+            x: 92,
+            y: 60
+        }
+
+    ];
+
+
+    return positions[
+        index %
+        positions.length
+    ];
+
+}
+
+
+/* =========================================================
+   NORMALIZE BOOK
+   ========================================================= */
+
+function normalizeBook(
+    book
+) {
+
+    return {
+
+        id:
+            book.id ||
+            generateId(),
+
+        shelf_id:
+            book.shelf_id ||
+            "",
+
+        title:
+            book.title ||
+            "Untitled Book",
+
+        author:
+            book.author ||
+            "",
+
+        genre:
+            book.genre ||
+            "",
+
+        publication_year:
+            book.publication_year ||
+            "",
+
+        pages:
+            normalizeNumber(
+                book.pages
+            ),
+
+        isbn:
+            book.isbn ||
+            "",
+
+        series:
+            book.series ||
+            "",
+
+        status:
+            normalizeBookStatus(
+                book.status
+            ),
+
+        rating:
+            normalizeNumber(
+                book.rating
+            ),
+
+        started:
+            book.started ||
+            "",
+
+        finished:
+            book.finished ||
+            "",
+
+        current_page:
+            normalizeNumber(
+                book.current_page
+            ),
+
+        times_read:
+            normalizeNumber(
+                book.times_read
+            ),
+
+        cover_image:
+            book.cover_image ||
+            "",
+
+        spine_image:
+            book.spine_image ||
+            "",
+
+        spine_color:
+            book.spine_color ||
+            getThemeBookColor(),
+
+        text_color:
+            book.text_color ||
+            getThemeBookTextColor(),
+
+        height:
+            book.height ||
+            "medium",
+
+        thickness:
+            book.thickness ||
+            "medium",
+
+        style:
+            book.style ||
+            "classic",
+
+        journal:
+            normalizeJournal(
+                book.journal
+            ),
+
+        created_at:
+            book.created_at ||
+            new Date()
+                .toISOString(),
+
+        updated_at:
+            book.updated_at ||
+            ""
+
+    };
+
+}
+
+
+/* =========================================================
+   NORMALIZE JOURNAL
+   ========================================================= */
+
+function normalizeJournal(
+    journal = {}
+) {
+
+    return {
+
+        notes:
+            Array.isArray(
+                journal.notes
+            )
+                ?
+                journal.notes
+                :
+                [],
+
+        thoughts:
+            Array.isArray(
+                journal.thoughts
+            )
+                ?
+                journal.thoughts
+                :
+                [],
+
+        words:
+            Array.isArray(
+                journal.words
+            )
+                ?
+                journal.words
+                :
+                [],
+
+        quotes:
+            Array.isArray(
+                journal.quotes
+            )
+                ?
+                journal.quotes
+                :
+                [],
+
+        characters:
+            Array.isArray(
+                journal.characters
+            )
+                ?
+                journal.characters
+                :
+                [],
+
+        themes:
+            Array.isArray(
+                journal.themes
+            )
+                ?
+                journal.themes
+                :
+                [],
+
+        questions:
+            Array.isArray(
+                journal.questions
+            )
+                ?
+                journal.questions
+                :
+                [],
+
+        review:
+            Array.isArray(
+                journal.review
+            )
+                ?
+                journal.review
+                :
+                []
+
+    };
+
+}
+
+
+/* =========================================================
+   BIND CONTROLS
+   ========================================================= */
+
+function bindControls() {
+
+    bindShelfControls();
+
+    bindBookControls();
+
+    bindThemeControls();
+
+    bindRevealControls();
+
+    bindJournalControls();
+
+    bindKeyboardControls();
+
+}
+
+
+/* =========================================================
+   SHELF CONTROLS
+   ========================================================= */
+
+function bindShelfControls() {
+
+    [
+
+        "sidebarAddShelf",
+        "topAddShelf",
+        "bottomAddShelf",
+        "emptyAddShelf"
+
+    ]
+        .forEach(
+            id => {
+
+                document
+                    .getElementById(
+                        id
+                    )
+                    ?.addEventListener(
+                        "click",
+                        () =>
+                            openShelfDrawer()
+                    );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "closeShelfDrawer"
+        )
+        ?.addEventListener(
+            "click",
+            closeDrawers
+        );
+
+
+    document
+        .getElementById(
+            "cancelShelf"
+        )
+        ?.addEventListener(
+            "click",
+            closeDrawers
+        );
+
+
+    document
+        .getElementById(
+            "shelfForm"
+        )
+        ?.addEventListener(
+            "submit",
+            saveShelfFromForm
+        );
+
+}
+
+
+/* =========================================================
+   BOOK CONTROLS
+   ========================================================= */
+
+function bindBookControls() {
+
+    [
+
+        "sidebarAddBook",
+        "topAddBook",
+        "emptyAddBook"
+
+    ]
+        .forEach(
+            id => {
+
+                document
+                    .getElementById(
+                        id
+                    )
+                    ?.addEventListener(
+                        "click",
+                        () =>
+                            openBookDrawer()
+                    );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "closeBookDrawer"
+        )
+        ?.addEventListener(
+            "click",
+            closeDrawers
+        );
+
+
+    document
+        .getElementById(
+            "cancelBook"
+        )
+        ?.addEventListener(
+            "click",
+            closeDrawers
+        );
+
+
+    document
+        .getElementById(
+            "bookForm"
+        )
+        ?.addEventListener(
+            "submit",
+            saveBookFromForm
+        );
+
+
+    document
+        .getElementById(
+            "bookCoverUpload"
+        )
+        ?.addEventListener(
+            "change",
+            handleCoverUpload
+        );
+
+
+    document
+        .getElementById(
+            "bookSpineUpload"
+        )
+        ?.addEventListener(
+            "change",
+            handleSpineUpload
+        );
+
+}
+
+
+/* =========================================================
+   THEME CONTROLS
+   ========================================================= */
+
+function bindThemeControls() {
+
+    [
+
+        "openThemeSettings",
+        "topThemeSettings"
+
+    ]
+        .forEach(
+            id => {
+
+                document
+                    .getElementById(
+                        id
+                    )
+                    ?.addEventListener(
+                        "click",
+                        openThemeDrawer
+                    );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "closeThemeDrawer"
+        )
+        ?.addEventListener(
+            "click",
+            closeDrawers
+        );
+
+
+    document
+        .querySelectorAll(
+            ".theme-card"
+        )
+        .forEach(
+            card => {
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        applyTheme(
+                            card.dataset.theme
+                        );
+
+
+                        syncSettingsControls();
+
+                        renderLibrary();
+
+                    }
+                );
+
+            }
+        );
+
+
+    bindSettingCheckbox(
+        "settingCandleGlow",
+        "candleGlow",
+        "ambient-candle"
+    );
+
+
+    bindSettingCheckbox(
+        "settingDust",
+        "dust",
+        "ambient-dust"
+    );
+
+
+    bindSettingCheckbox(
+        "settingRain",
+        "rain",
+        "ambient-rain"
+    );
+
+
+    bindSettingCheckbox(
+        "settingOddities",
+        "oddities",
+        "ambient-oddities"
+    );
+
+
+    document
+        .getElementById(
+            "settingReducedMotion"
+        )
+        ?.addEventListener(
+            "change",
+            event => {
+
+                settings.reducedMotion =
+                    event.target.checked;
+
+
+                document.body.classList.toggle(
+                    "reduce-motion",
+                    settings.reducedMotion
+                );
+
+
+                saveSettings();
+
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            'input[name="decorationDensity"]'
+        )
+        .forEach(
+            radio => {
+
+                radio.addEventListener(
+                    "change",
+                    () => {
+
+                        if (
+                            !radio.checked
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        settings.decorationDensity =
+                            radio.value;
+
+
+                        document.body.dataset.decorationDensity =
+                            radio.value;
+
+
+                        saveSettings();
+
+                    }
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "overlay"
+        )
+        ?.addEventListener(
+            "click",
+            closeDrawers
+        );
+
+}
+
+
+/* =========================================================
+   SETTING CHECKBOX
+   ========================================================= */
+
+function bindSettingCheckbox(
+    elementId,
+    settingKey,
+    bodyClass
+) {
+
+    document
+        .getElementById(
+            elementId
+        )
+        ?.addEventListener(
+            "change",
+            event => {
+
+                settings[
+                    settingKey
+                ] =
+                    event.target.checked;
+
+
+                document.body.classList.toggle(
+                    bodyClass,
+                    event.target.checked
+                );
+
+
+                saveSettings();
+
+                renderLibrary();
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   BOOK REVEAL CONTROLS
+   ========================================================= */
+
+function bindRevealControls() {
+
+    document
+        .getElementById(
+            "closeBookReveal"
+        )
+        ?.addEventListener(
+            "click",
+            closeBookReveal
+        );
+
+
+    document
+        .getElementById(
+            "editSelectedBook"
+        )
+        ?.addEventListener(
+            "click",
+            editSelectedBook
+        );
+
+
+    document
+        .getElementById(
+            "openSelectedBook"
+        )
+        ?.addEventListener(
+            "click",
+            openReadingBook
+        );
+
+}
+
+
+/* =========================================================
+   JOURNAL CONTROLS
+   ========================================================= */
+
+function bindJournalControls() {
+
+    document
+        .getElementById(
+            "closeReadingBook"
+        )
+        ?.addEventListener(
+            "click",
+            closeReadingBook
+        );
+
+
+    document
+        .getElementById(
+            "backToContents"
+        )
+        ?.addEventListener(
+            "click",
+            showJournalContents
+        );
+
+
+    document
+        .querySelectorAll(
+            "[data-journal-section]"
+        )
+        .forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        openJournalSection(
+                            button.dataset.journalSection
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "addJournalEntry"
+        )
+        ?.addEventListener(
+            "click",
+            openEntryModal
+        );
+
+
+    document
+        .getElementById(
+            "closeEntryModal"
+        )
+        ?.addEventListener(
+            "click",
+            closeEntryModal
+        );
+
+
+    document
+        .getElementById(
+            "cancelEntry"
+        )
+        ?.addEventListener(
+            "click",
+            closeEntryModal
+        );
+
+
+    document
+        .getElementById(
+            "entryForm"
+        )
+        ?.addEventListener(
+            "submit",
+            saveJournalEntry
+        );
+
+}
+
+
+/* =========================================================
+   KEYBOARD
+   ========================================================= */
+
+function bindKeyboardControls() {
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key !==
+                "Escape"
+            ) {
+
+                return;
+
+            }
+
+
+            closeEntryModal();
+
+            closeReadingBook();
+
+            closeBookReveal();
+
+            closeDrawers();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   THEME DRAWER
+   ========================================================= */
+
+function openThemeDrawer() {
+
+    syncSettingsControls();
+
+    showDrawer(
+        "themeDrawer"
+    );
+
+}
+
+
+/* =========================================================
+   RENDER LIBRARY
+   ========================================================= */
+
+function renderLibrary() {
+
+    renderShelfSelect();
+
+    renderShelves();
+
+    updateLibraryMetrics();
+
+}
+
+
+/* =========================================================
+   RENDER SHELVES
+   ========================================================= */
+
+function renderShelves() {
+
+    const container =
+        document.getElementById(
+            "shelfContainer"
+        );
+
+
+    const empty =
+        document.getElementById(
+            "libraryEmpty"
+        );
+
+
+    const bottomButton =
+        document.getElementById(
+            "bottomAddShelf"
+        );
+
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        "";
+
+
+    if (
+        !shelves.length
+    ) {
+
+        if (empty) {
+
+            empty.hidden =
+                false;
+
+        }
+
+
+        if (bottomButton) {
+
+            bottomButton.hidden =
+                true;
+
+        }
+
+
+        return;
+
+    }
+
+
+    if (empty) {
+
+        empty.hidden =
+            true;
+
+    }
+
+
+    if (bottomButton) {
+
+        bottomButton.hidden =
+            false;
+
+    }
+
+
+    shelves.forEach(
+        shelf => {
+
+            container.appendChild(
+                createShelfElement(
+                    shelf
+                )
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CREATE SHELF
+   ========================================================= */
+
+function createShelfElement(
+    shelf
+) {
+
+    const section =
+        document.createElement(
+            "section"
+        );
+
+
+    section.className =
+        "library-shelf";
+
+
+    section.dataset.material =
+        shelf.material;
+
+
+    section.dataset.mood =
+        shelf.mood;
+
+
+    const shelfBooks =
+        sortShelfBooks(
+
+            books.filter(
+                book =>
+                    String(
+                        book.shelf_id
+                    )
+                    ===
+                    String(
+                        shelf.id
+                    )
+            ),
+
+            shelf.sort
+
+        );
+
+
+    section.innerHTML = `
+
+        <div class="shelf-heading">
+
+            <div>
+
+                <h2>
+                    ${escapeHTML(shelf.name)}
+                </h2>
+
+                ${
+                    shelf.description
+
+                        ?
+
+                        `
+                            <p>
+                                ${escapeHTML(shelf.description)}
+                            </p>
+                        `
+
+                        :
+
+                        ""
+                }
+
+            </div>
+
+
+            <div class="shelf-tools">
+
+                <button
+                    class="shelf-tool"
+                    type="button"
+                    data-action="add-book"
+                >
+                    + book
+                </button>
+
+
+                <button
+                    class="shelf-tool"
+                    type="button"
+                    data-action="edit-shelf"
+                >
+                    edit shelf
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="shelf-cabinet"
+            data-shelf-id="${escapeHTML(shelf.id)}"
+        >
+
+            <div class="shelf-back"></div>
+
+            <div
+                class="book-row ${escapeHTML(shelf.layout)}"
+            >
+            </div>
+
+            <div class="decoration-layer"></div>
+
+            <div class="shelf-board"></div>
+
+        </div>
+
+    `;
+
+
+    const row =
+        section.querySelector(
+            ".book-row"
+        );
+
+
+    const decorationLayer =
+        section.querySelector(
+            ".decoration-layer"
+        );
+
+
+    prepareDecorationLayer(
+        decorationLayer
+    );
+
+
+    if (
+        shelfBooks.length
+    ) {
+
+        shelfBooks.forEach(
+            book => {
+
+                row.appendChild(
+                    createBookElement(
+                        book
+                    )
+                );
+
+            }
+        );
+
+    }
+
+    else {
+
+        const emptyMessage =
+            document.createElement(
+                "div"
+            );
+
+
+        emptyMessage.className =
+            "empty-shelf-message";
+
+
+        emptyMessage.innerHTML = `
+
+            This shelf is waiting for a story.
+
+            <button type="button">
+                tuck in a book
+            </button>
+
+        `;
+
+
+        emptyMessage
+            .querySelector(
+                "button"
+            )
+            ?.addEventListener(
+                "click",
+                () =>
+                    openBookDrawer(
+                        null,
+                        shelf.id
+                    )
+            );
+
+
+        row.appendChild(
+            emptyMessage
+        );
+
+    }
+
+
+    if (
+        settings.oddities
+    ) {
+
+        shelf.decorations.forEach(
+            decoration => {
+
+                decorationLayer.appendChild(
+                    createDecorationElement(
+                        shelf,
+                        decoration
+                    )
+                );
+
+            }
+        );
+
+    }
+
+
+    section
+        .querySelector(
+            '[data-action="add-book"]'
+        )
+        ?.addEventListener(
+            "click",
+            () =>
+                openBookDrawer(
+                    null,
+                    shelf.id
+                )
+        );
+
+
+    section
+        .querySelector(
+            '[data-action="edit-shelf"]'
+        )
+        ?.addEventListener(
+            "click",
+            () =>
+                openShelfDrawer(
+                    shelf.id
+                )
+        );
+
+
+    return section;
+
+}
+
+
+/* =========================================================
+   DECORATION LAYER
+   ========================================================= */
+
+function prepareDecorationLayer(
+    layer
+) {
+
+    if (!layer) {
+
+        return;
+
+    }
+
+
+    layer.style.position =
+        "absolute";
+
+
+    layer.style.inset =
+        "14px 20px 32px";
+
+
+    layer.style.zIndex =
+        "8";
+
+
+    layer.style.pointerEvents =
+        "none";
+
+
+    layer.style.overflow =
+        "hidden";
+
+}
+
+
+/* =========================================================
+   CREATE DECORATION ELEMENT
+   ========================================================= */
+
+function createDecorationElement(
+    shelf,
+    decoration
+) {
+
+    const element =
+        document.createElement(
+            "div"
+        );
+
+
+    element.className =
+        `shelf-decoration decor-${decoration.type} draggable-decoration`;
+
+
+    element.dataset.decorationId =
+        decoration.id;
+
+
+    element.dataset.shelfId =
+        shelf.id;
+
+
+    element.title =
+        getDecorationLabel(
+            decoration.type
+        );
+
+
+    element.style.position =
+        "absolute";
+
+
+    element.style.left =
+        `${decoration.x}%`;
+
+
+    element.style.top =
+        `${decoration.y}%`;
+
+
+    element.style.transform =
+        `
+            translate(-50%, -50%)
+            rotate(${decoration.rotate}deg)
+            scale(${decoration.scale})
+        `;
+
+
+    element.style.zIndex =
+        "15";
+
+
+    element.style.pointerEvents =
+        "auto";
+
+
+    element.style.cursor =
+        "grab";
+
+
+    element.style.touchAction =
+        "none";
+
+
+    /*
+       For decoration types that do not yet have custom CSS,
+       give them a visible illustrated-style placeholder.
+    */
+
+    if (
+        ![
+            "plant",
+            "candle",
+            "flowers",
+            "stars",
+            "mug"
+        ]
+        .includes(
+            decoration.type
+        )
+    ) {
+
+        const symbol =
+            document.createElement(
+                "span"
+            );
+
+
+        symbol.className =
+            "decoration-symbol";
+
+
+        symbol.textContent =
+            DECORATION_SYMBOLS[
+                decoration.type
+            ]
+            ||
+            "✦";
+
+
+        symbol.style.display =
+            "grid";
+
+
+        symbol.style.placeItems =
+            "center";
+
+
+        symbol.style.minWidth =
+            "42px";
+
+
+        symbol.style.minHeight =
+            "42px";
+
+
+        symbol.style.fontSize =
+            getDecorationFontSize(
+                decoration.type
+            );
+
+
+        symbol.style.color =
+            "var(--accent-light)";
+
+
+        symbol.style.filter =
+            "drop-shadow(0 5px 5px rgba(0,0,0,.35))";
+
+
+        symbol.style.userSelect =
+            "none";
+
+
+        element.appendChild(
+            symbol
+        );
+
+    }
+
+
+    element.addEventListener(
+        "pointerdown",
+        startDecorationDrag
+    );
+
+
+    element.addEventListener(
+        "dblclick",
+        () => {
+
+            cycleDecorationScale(
+                shelf.id,
+                decoration.id
+            );
+
+        }
+    );
+
+
+    return element;
+
+}
+
+
+/* =========================================================
+   DECORATION FONT SIZE
+   ========================================================= */
+
+function getDecorationFontSize(
+    type
+) {
+
+    const sizes = {
+
+        cat: "2.4rem",
+
+        ghost: "2.7rem",
+
+        bat: "2.5rem",
+
+        goblin: "2.4rem",
+
+        moss: "2rem",
+
+        mushroom: "2.5rem",
+
+        potion: "2.4rem",
+
+        crystal: "2.3rem",
+
+        raven: "2.6rem",
+
+        pumpkin: "2.6rem"
+
+    };
+
+
+    return sizes[
+        type
+    ]
+        ||
+        "2.3rem";
+
+}
+
+
+/* =========================================================
+   DECORATION LABEL
+   ========================================================= */
+
+function getDecorationLabel(
+    type
+) {
+
+    return (
+        CONFIG.decorations?.[
+            type
+        ]?.label
+        ||
+        type
+    );
+
+}
+
+
+/* =========================================================
+   DRAG DECORATION
+   ========================================================= */
+
+function startDecorationDrag(
+    event
+) {
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+
+    const element =
+        event.currentTarget;
+
+
+    const shelfId =
+        element.dataset.shelfId;
+
+
+    const decorationId =
+        element.dataset.decorationId;
+
+
+    const shelf =
+        getShelfById(
+            shelfId
+        );
+
+
+    if (!shelf) {
+
+        return;
+
+    }
+
+
+    const decoration =
+        shelf.decorations.find(
+            item =>
+                String(
+                    item.id
+                )
+                ===
+                String(
+                    decorationId
+                )
+        );
+
+
+    if (!decoration) {
+
+        return;
+
+    }
+
+
+    const layer =
+        element.parentElement;
+
+
+    if (!layer) {
+
+        return;
+
+    }
+
+
+    activeDrag = {
+
+        element,
+
+        shelf,
+
+        decoration,
+
+        layer
+
+    };
+
+
+    element.style.cursor =
+        "grabbing";
+
+
+    element.setPointerCapture?.(
+        event.pointerId
+    );
+
+
+    document.addEventListener(
+        "pointermove",
+        moveDecoration
+    );
+
+
+    document.addEventListener(
+        "pointerup",
+        finishDecorationDrag,
+        {
+            once: true
+        }
+    );
+
+}
+
+
+/* =========================================================
+   MOVE DECORATION
+   ========================================================= */
+
+function moveDecoration(
+    event
+) {
+
+    if (!activeDrag) {
+
+        return;
+
+    }
+
+
+    const rect =
+        activeDrag.layer
+            .getBoundingClientRect();
+
+
+    let x =
+        (
+            (
+                event.clientX -
+                rect.left
+            )
+            /
+            rect.width
+        )
+        *
+        100;
+
+
+    let y =
+        (
+            (
+                event.clientY -
+                rect.top
+            )
+            /
+            rect.height
+        )
+        *
+        100;
+
+
+    x =
+        clamp(
+            x,
+            2,
+            98
+        );
+
+
+    y =
+        clamp(
+            y,
+            5,
+            95
+        );
+
+
+    activeDrag.decoration.x =
+        Number(
+            x.toFixed(2)
+        );
+
+
+    activeDrag.decoration.y =
+        Number(
+            y.toFixed(2)
+        );
+
+
+    activeDrag.element.style.left =
+        `${activeDrag.decoration.x}%`;
+
+
+    activeDrag.element.style.top =
+        `${activeDrag.decoration.y}%`;
+
+}
+
+
+/* =========================================================
+   FINISH DRAG
+   ========================================================= */
+
+function finishDecorationDrag() {
+
+    if (!activeDrag) {
+
+        return;
+
+    }
+
+
+    activeDrag.element.style.cursor =
+        "grab";
+
+
+    activeDrag.shelf.updated_at =
+        new Date()
+            .toISOString();
+
+
+    saveShelves();
+
+
+    document.removeEventListener(
+        "pointermove",
+        moveDecoration
+    );
+
+
+    activeDrag =
+        null;
+
+}
+
+
+/* =========================================================
+   DOUBLE CLICK SIZE
+   ========================================================= */
+
+function cycleDecorationScale(
+    shelfId,
+    decorationId
+) {
+
+    const shelf =
+        getShelfById(
+            shelfId
+        );
+
+
+    if (!shelf) {
+
+        return;
+
+    }
+
+
+    const decoration =
+        shelf.decorations.find(
+            item =>
+                String(
+                    item.id
+                )
+                ===
+                String(
+                    decorationId
+                )
+        );
+
+
+    if (!decoration) {
+
+        return;
+
+    }
+
+
+    const sizes = [
+
+        .75,
+        1,
+        1.25,
+        1.5
+
+    ];
+
+
+    const currentIndex =
+        sizes.findIndex(
+            size =>
+                Math.abs(
+                    size -
+                    decoration.scale
+                )
+                <
+                .05
+        );
+
+
+    decoration.scale =
+        sizes[
+            (
+                currentIndex + 1
+            )
+            %
+            sizes.length
+        ];
+
+
+    saveShelves();
+
+    renderLibrary();
+
+}
+
+
+/* =========================================================
+   BOOK ELEMENT
+   ========================================================= */
+
+function createBookElement(
+    book
+) {
+
+    const element =
+        document.createElement(
+            "div"
+        );
+
+
+    element.className = [
+
+        "shelf-book",
+
+        `height-${book.height}`,
+
+        `thickness-${book.thickness}`,
+
+        `book-style-${book.style}`
+
+    ]
+        .join(
+            " "
+        );
+
+
+    element.dataset.status =
+        book.status;
+
+
+    element.style.setProperty(
+        "--book-color",
+        book.spine_color
+    );
+
+
+    element.style.setProperty(
+        "--book-text",
+        book.text_color
+    );
+
+
+    element.title =
+        book.author
+
+            ?
+
+            `${book.title} — ${book.author}`
+
+            :
+
+            book.title;
+
+
+    if (
+        book.spine_image
+    ) {
+
+        element.innerHTML = `
+
+            <div
+                class="book-spine custom-image"
+                style="background-image:url('${safeStyleURL(book.spine_image)}')"
+            >
+            </div>
+
+        `;
+
+    }
+
+    else {
+
+        element.innerHTML = `
+
+            <div class="book-spine">
+
+                <div class="spine-inner">
+
+                    <span class="spine-title">
+                        ${escapeHTML(book.title)}
+                    </span>
+
+                    <span class="spine-ornament">
+                        ${getBookOrnament(book.style)}
+                    </span>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    element.addEventListener(
+        "click",
+        () => {
+
+            document
+                .querySelectorAll(
+                    ".shelf-book"
+                )
+                .forEach(
+                    item => {
+
+                        item.classList.remove(
+                            "selected"
+                        );
+
+                    }
+                );
+
+
+            element.classList.add(
+                "selected"
+            );
+
+
+            const delay =
+                settings.reducedMotion
+                    ?
+                    0
+                    :
+                    170;
+
+
+            setTimeout(
+                () => {
+
+                    openBookReveal(
+                        book.id
+                    );
+
+                },
+                delay
+            );
+
+        }
+    );
+
+
+    return element;
+
+}
+
+
+/* =========================================================
+   SORT BOOKS
+   ========================================================= */
+
+function sortShelfBooks(
+    list,
+    sort
+) {
+
+    const copy =
+        [...list];
+
+
+    switch (sort) {
+
+        case "title":
+
+            return copy.sort(
+                (a,b) =>
+                    a.title.localeCompare(
+                        b.title
+                    )
+            );
+
+
+        case "author":
+
+            return copy.sort(
+                (a,b) =>
+                    a.author.localeCompare(
+                        b.author
+                    )
+            );
+
+
+        case "rating":
+
+            return copy.sort(
+                (a,b) =>
+                    b.rating -
+                    a.rating
+            );
+
+
+        case "finished":
+
+            return copy.sort(
+                (a,b) =>
+                    String(
+                        b.finished ||
+                        ""
+                    )
+                    .localeCompare(
+                        String(
+                            a.finished ||
+                            ""
+                        )
+                    )
+            );
+
+
+        default:
+
+            return copy.sort(
+                (a,b) =>
+                    new Date(
+                        a.created_at
+                    )
+                    -
+                    new Date(
+                        b.created_at
+                    )
+            );
+
+    }
+
+}
+
+
+/* =========================================================
+   METRICS
+   ========================================================= */
+
+function updateLibraryMetrics() {
+
+    setText(
+        "bookCount",
+        books.length
+    );
+
+
+    setText(
+        "readingCount",
+        books.filter(
+            book =>
+                book.status ===
+                "reading"
+        ).length
+    );
+
+
+    setText(
+        "finishedCount",
+        books.filter(
+            book =>
+                book.status ===
+                "finished"
+        ).length
+    );
+
+}
+
+
+/* =========================================================
+   SHELF SELECT
+   ========================================================= */
+
+function renderShelfSelect() {
+
+    const select =
+        document.getElementById(
+            "bookShelf"
+        );
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    const previousValue =
+        select.value;
+
+
+    select.innerHTML =
+        "";
+
+
+    if (
+        !shelves.length
+    ) {
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+
+        option.value =
+            "";
+
+
+        option.textContent =
+            "Create a shelf first";
+
+
+        select.appendChild(
+            option
+        );
+
+
+        return;
+
+    }
+
+
+    shelves.forEach(
+        shelf => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                shelf.id;
+
+
+            option.textContent =
+                shelf.name;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    if (
+        shelves.some(
+            shelf =>
+                String(
+                    shelf.id
+                )
+                ===
+                String(
+                    previousValue
+                )
+        )
+    ) {
+
+        select.value =
+            previousValue;
+
+    }
+
+}
+
+
+/* =========================================================
+   SHELF DRAWER
+   ========================================================= */
+
+function openShelfDrawer(
+    shelfId = null
+) {
+
+    resetShelfForm();
+
+
+    renderDecorationOptions();
+
+
+    if (shelfId) {
+
+        loadShelfIntoForm(
+            shelfId
+        );
+
+    }
+
+    else {
+
+        applyNewShelfDecorationDefaults();
+
+    }
+
+
+    showDrawer(
+        "shelfDrawer"
+    );
+
+}
+
+
+/* =========================================================
+   RESET SHELF FORM
+   ========================================================= */
+
+function resetShelfForm() {
+
+    document
+        .getElementById(
+            "shelfForm"
+        )
+        ?.reset();
+
+
+    setValue(
+        "editingShelfId",
+        ""
+    );
+
+
+    setValue(
+        "shelfMaterial",
+        "walnut"
+    );
+
+
+    setValue(
+        "shelfMood",
+        "cozy"
+    );
+
+
+    setValue(
+        "shelfLayout",
+        "mixed"
+    );
+
+
+    setValue(
+        "shelfSort",
+        "manual"
+    );
+
+
+    setText(
+        "shelfDrawerTitle",
+        "Create a shelf"
+    );
+
+
+    setText(
+        "saveShelfLabel",
+        "create shelf"
+    );
+
+}
+
+
+/* =========================================================
+   ACTIVE THEME CONFIG
+   ========================================================= */
+
+function getCurrentThemeConfig() {
+
+    return CONFIG.themes?.find(
+        theme =>
+            theme.id ===
+            settings.theme
+    )
+    ||
+    null;
+
+}
+
+
+/* =========================================================
+   DECORATION OPTIONS
+   ========================================================= */
+
+function renderDecorationOptions() {
+
+    const container =
+        document.querySelector(
+            ".decoration-options"
+        );
+
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    const theme =
+        getCurrentThemeConfig();
+
+
+    const types =
+        theme?.defaultDecorations
+        ||
+        Object.keys(
+            CONFIG.decorations ||
+            {}
+        );
+
+
+    container.innerHTML =
+        "";
+
+
+    types.forEach(
+        type => {
+
+            const information =
+                CONFIG.decorations?.[
+                    type
+                ];
+
+
+            const label =
+                document.createElement(
+                    "label"
+                );
+
+
+            label.innerHTML = `
+
+                <input
+                    type="checkbox"
+                    name="shelfDecoration"
+                    value="${escapeHTML(type)}"
+                >
+
+                <span>
+                    ${
+                        escapeHTML(
+                            information?.label ||
+                            type
+                        )
+                    }
+                </span>
+
+            `;
+
+
+            container.appendChild(
+                label
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   DEFAULT NEW SHELF DECORATIONS
+   ========================================================= */
+
+function applyNewShelfDecorationDefaults() {
+
+    const checkboxes = [
+
+        ...document.querySelectorAll(
+            '[name="shelfDecoration"]'
+        )
+
+    ];
+
+
+    checkboxes.forEach(
+        (
+            checkbox,
+            index
+        ) => {
+
+            checkbox.checked =
+                index <
+                3;
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   UPDATE OPEN SHELF OPTIONS
+   ========================================================= */
+
+function updateOpenShelfDecorationChoices() {
+
+    const drawer =
+        document.getElementById(
+            "shelfDrawer"
+        );
+
+
+    if (
+        !drawer ||
+        drawer.hidden
+    ) {
+
+        return;
+
+    }
+
+
+    renderDecorationOptions();
+
+}
+
+
+/* =========================================================
+   LOAD SHELF INTO FORM
+   ========================================================= */
+
+function loadShelfIntoForm(
+    id
+) {
+
+    const shelf =
+        getShelfById(
+            id
+        );
+
+
+    if (!shelf) {
+
+        return;
+
+    }
+
+
+    setValue(
+        "editingShelfId",
+        shelf.id
+    );
+
+
+    setValue(
+        "shelfName",
+        shelf.name
+    );
+
+
+    setValue(
+        "shelfDescription",
+        shelf.description
+    );
+
+
+    setValue(
+        "shelfMaterial",
+        shelf.material
+    );
+
+
+    setValue(
+        "shelfMood",
+        shelf.mood
+    );
+
+
+    setValue(
+        "shelfLayout",
+        shelf.layout
+    );
+
+
+    setValue(
+        "shelfSort",
+        shelf.sort
+    );
+
+
+    const selectedTypes =
+        shelf.decorations.map(
+            decoration =>
+                decoration.type
+        );
+
+
+    document
+        .querySelectorAll(
+            '[name="shelfDecoration"]'
+        )
+        .forEach(
+            checkbox => {
+
+                checkbox.checked =
+                    selectedTypes.includes(
+                        checkbox.value
+                    );
+
+            }
+        );
+
+
+    setText(
+        "shelfDrawerTitle",
+        "Edit shelf"
+    );
+
+
+    setText(
+        "saveShelfLabel",
+        "save shelf"
+    );
+
+}
+
+
+/* =========================================================
+   SAVE SHELF
+   ========================================================= */
+
+function saveShelfFromForm(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const name =
+        getValue(
+            "shelfName"
+        );
+
+
+    if (!name) {
+
+        return;
+
+    }
+
+
+    const editingId =
+        getValue(
+            "editingShelfId"
+        );
+
+
+    const existing =
+        editingId
+
+            ?
+
+            getShelfById(
+                editingId
+            )
+
+            :
+
+            null;
+
+
+    const selectedTypes = [
+
+        ...document.querySelectorAll(
+            '[name="shelfDecoration"]:checked'
+        )
+
+    ]
+        .map(
+            input =>
+                input.value
+        );
+
+
+    const existingDecorations =
+        existing?.decorations ||
+        [];
+
+
+    const decorations =
+        selectedTypes.map(
+            (
+                type,
+                index
+            ) => {
+
+                const saved =
+                    existingDecorations.find(
+                        decoration =>
+                            decoration.type ===
+                            type
+                    );
+
+
+                if (saved) {
+
+                    return saved;
+
+                }
+
+
+                return createDecorationRecord(
+
+                    type,
+
+                    getDefaultDecorationPosition(
+                        index
+                    )
+
+                );
+
+            }
+        );
+
+
+    const record = {
+
+        id:
+            editingId ||
+            generateId(),
+
+        name,
+
+        description:
+            getValue(
+                "shelfDescription"
+            ),
+
+        material:
+            getValue(
+                "shelfMaterial"
+            )
+            ||
+            "walnut",
+
+        mood:
+            getValue(
+                "shelfMood"
+            )
+            ||
+            "cozy",
+
+        layout:
+            getValue(
+                "shelfLayout"
+            )
+            ||
+            "mixed",
+
+        sort:
+            getValue(
+                "shelfSort"
+            )
+            ||
+            "manual",
+
+        decorations,
+
+        created_at:
+            existing?.created_at
+            ||
+            new Date()
+                .toISOString(),
+
+        updated_at:
+            new Date()
+                .toISOString()
+
+    };
+
+
+    if (editingId) {
+
+        const index =
+            shelves.findIndex(
+                shelf =>
+                    String(
+                        shelf.id
+                    )
+                    ===
+                    String(
+                        editingId
+                    )
+            );
+
+
+        if (
+            index >=
+            0
+        ) {
+
+            shelves[
+                index
+            ] =
+                record;
+
+        }
+
+    }
+
+    else {
+
+        shelves.push(
+            record
+        );
+
+    }
+
+
+    saveShelves();
+
+    closeDrawers();
+
+    renderLibrary();
+
+}
+
+
+/* =========================================================
+   BOOK DRAWER
+   ========================================================= */
+
+function openBookDrawer(
+    bookId = null,
+    shelfId = null
+) {
+
+    if (
+        !shelves.length
+        &&
+        !bookId
+    ) {
+
+        openShelfDrawer();
+
+        return;
+
+    }
+
+
+    resetBookForm();
+
+
+    if (bookId) {
+
+        loadBookIntoForm(
+            bookId
+        );
+
+    }
+
+    else if (shelfId) {
+
+        setValue(
+            "bookShelf",
+            shelfId
+        );
+
+    }
+
+
+    showDrawer(
+        "bookDrawer"
+    );
+
+}
+
+
+/* =========================================================
+   RESET BOOK FORM
+   ========================================================= */
+
+function resetBookForm() {
+
+    document
+        .getElementById(
+            "bookForm"
+        )
+        ?.reset();
+
+
+    pendingCoverData =
+        "";
+
+
+    pendingSpineData =
+        "";
+
+
+    setValue(
+        "editingBookId",
+        ""
+    );
+
+
+    setValue(
+        "bookStatus",
+        "want"
+    );
+
+
+    setValue(
+        "bookRating",
+        "0"
+    );
+
+
+    setValue(
+        "bookCurrentPage",
+        "0"
+    );
+
+
+    setValue(
+        "bookTimesRead",
+        "0"
+    );
+
+
+    setValue(
+        "bookSpineColor",
+        getThemeBookColor()
+    );
+
+
+    setValue(
+        "bookTextColor",
+        getThemeBookTextColor()
+    );
+
+
+    setValue(
+        "bookHeight",
+        "medium"
+    );
+
+
+    setValue(
+        "bookThickness",
+        "medium"
+    );
+
+
+    setValue(
+        "bookStyle",
+        "classic"
+    );
+
+
+    renderShelfSelect();
+
+
+    setText(
+        "bookDrawerTitle",
+        "Add a book"
+    );
+
+
+    setText(
+        "saveBookLabel",
+        "tuck it in"
+    );
+
+}
+
+
+/* =========================================================
+   THEME BOOK COLORS
+   ========================================================= */
+
+function getThemeBookColor() {
+
+    const colors = {
+
+        haunted:
+            "#6c2633",
+
+        autumn:
+            "#ad5b37",
+
+        forest:
+            "#536848",
+
+        retro:
+            "#738637",
+
+        ghosts:
+            "#b86b5a"
+
+    };
+
+
+    return colors[
+        settings.theme
+    ]
+    ||
+    "#6c2633";
+
+}
+
+
+function getThemeBookTextColor() {
+
+    const colors = {
+
+        haunted:
+            "#eadfca",
+
+        autumn:
+            "#fff0df",
+
+        forest:
+            "#e6e5ce",
+
+        retro:
+            "#e2ddaa",
+
+        ghosts:
+            "#fff0e7"
+
+    };
+
+
+    return colors[
+        settings.theme
+    ]
+    ||
+    "#eadfca";
+
+}
+
+
+/* =========================================================
+   LOAD BOOK FORM
+   ========================================================= */
+
+function loadBookIntoForm(
+    id
+) {
+
+    const book =
+        getBookById(
+            id
+        );
+
+
+    if (!book) {
+
+        return;
+
+    }
+
+
+    pendingCoverData =
+        book.cover_image;
+
+
+    pendingSpineData =
+        book.spine_image;
+
+
+    setValue(
+        "editingBookId",
+        book.id
+    );
+
+
+    setValue(
+        "bookTitle",
+        book.title
+    );
+
+
+    setValue(
+        "bookAuthor",
+        book.author
+    );
+
+
+    setValue(
+        "bookGenre",
+        book.genre
+    );
+
+
+    setValue(
+        "bookYear",
+        book.publication_year
+    );
+
+
+    setValue(
+        "bookPages",
+        book.pages
+    );
+
+
+    setValue(
+        "bookISBN",
+        book.isbn
+    );
+
+
+    setValue(
+        "bookSeries",
+        book.series
+    );
+
+
+    setValue(
+        "bookShelf",
+        book.shelf_id
+    );
+
+
+    setValue(
+        "bookStatus",
+        book.status
+    );
+
+
+    setValue(
+        "bookRating",
+        book.rating
+    );
+
+
+    setValue(
+        "bookStarted",
+        book.started
+    );
+
+
+    setValue(
+        "bookFinished",
+        book.finished
+    );
+
+
+    setValue(
+        "bookCurrentPage",
+        book.current_page
+    );
+
+
+    setValue(
+        "bookTimesRead",
+        book.times_read
+    );
+
+
+    setValue(
+        "bookSpineColor",
+        book.spine_color
+    );
+
+
+    setValue(
+        "bookTextColor",
+        book.text_color
+    );
+
+
+    setValue(
+        "bookHeight",
+        book.height
+    );
+
+
+    setValue(
+        "bookThickness",
+        book.thickness
+    );
+
+
+    setValue(
+        "bookStyle",
+        book.style
+    );
+
+
+    setText(
+        "bookDrawerTitle",
+        "Edit book"
+    );
+
+
+    setText(
+        "saveBookLabel",
+        "save changes"
+    );
+
+}
+
+
+/* =========================================================
+   SAVE BOOK
+   ========================================================= */
+
+function saveBookFromForm(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const title =
+        getValue(
+            "bookTitle"
+        );
+
+
+    const shelfId =
+        getValue(
+            "bookShelf"
+        );
+
+
+    if (
+        !title ||
+        !shelfId
+    ) {
+
+        return;
+
+    }
+
+
+    const editingId =
+        getValue(
+            "editingBookId"
+        );
+
+
+    const existing =
+        editingId
+
+            ?
+
+            getBookById(
+                editingId
+            )
+
+            :
+
+            null;
+
+
+    const pages =
+        normalizeNumber(
+            getValue(
+                "bookPages"
             )
         );
-}
-
-.library-shelf[data-material="honey"] .shelf-cabinet {
-    background:
-        linear-gradient(
-            180deg,
-            #86603c,
-            #584027
-        );
-}
-
-.library-shelf[data-material="cream"] .shelf-cabinet {
-    background:
-        linear-gradient(
-            180deg,
-            #867362,
-            #574a40
-        );
-}
-
-.library-shelf[data-material="sage"] .shelf-cabinet {
-    background:
-        linear-gradient(
-            180deg,
-            #52614f,
-            #354239
-        );
-}
-
-.library-shelf[data-material="rose"] .shelf-cabinet {
-    background:
-        linear-gradient(
-            180deg,
-            #68464d,
-            #432e34
-        );
-}
 
 
-/* =========================================================
-   THEME SHELF PERSONALITY
-   ========================================================= */
-
-body.theme-haunted .shelf-cabinet {
-    box-shadow:
-        inset 0 16px 30px
-        rgba(110,58,36,.05),
-
-        inset 0 -20px 35px
-        rgba(0,0,0,.35),
-
-        0 22px 52px
-        rgba(0,0,0,.34),
-
-        0 0 24px
-        rgba(183,93,53,.05);
-}
-
-body.theme-autumn .shelf-cabinet {
-    box-shadow:
-        inset 0 18px 30px
-        rgba(255,173,92,.07),
-
-        inset 0 -20px 34px
-        rgba(62,29,18,.26),
-
-        0 22px 46px
-        rgba(40,20,15,.25);
-}
-
-body.theme-forest .shelf-cabinet {
-    box-shadow:
-        inset 0 16px 30px
-        rgba(155,168,109,.05),
-
-        inset 0 -18px 34px
-        rgba(10,26,17,.3),
-
-        0 22px 50px
-        rgba(4,18,10,.32);
-}
-
-body.theme-retro .shelf-cabinet {
-    border-radius: 7px;
-
-    box-shadow:
-        inset 0 15px 25px
-        rgba(148,173,63,.035),
-
-        inset 0 -18px 30px
-        rgba(0,0,0,.34),
-
-        7px 9px 0
-        rgba(0,0,0,.25);
-}
-
-body.theme-ghosts .shelf-cabinet {
-    box-shadow:
-        inset 0 16px 28px
-        rgba(255,230,205,.06),
-
-        inset 0 -18px 30px
-        rgba(71,40,33,.18),
-
-        0 22px 45px
-        rgba(65,45,41,.2);
-}
-
-
-/* =========================================================
-   SHELF BACK
-   ========================================================= */
-
-.shelf-back {
-    position: absolute;
-
-    inset:
-        14px 20px
-        32px;
-
-    border-radius:
-        9px 9px 0 0;
-
-    background:
-        radial-gradient(
-            circle at 50% 16%,
-            var(--glow),
-            rgba(0,0,0,.16) 56%
+    let currentPage =
+        normalizeNumber(
+            getValue(
+                "bookCurrentPage"
+            )
         );
 
-    box-shadow:
-        inset 0 18px 28px
-        rgba(0,0,0,.22);
-}
 
-body.theme-haunted .shelf-back {
-    background:
-        radial-gradient(
-            circle at 72% 24%,
-            rgba(222,158,88,.08),
-            transparent 24%
-        ),
-        linear-gradient(
-            180deg,
-            #2b2022,
-            #181314
-        );
-}
+    if (
+        pages >
+        0
+    ) {
 
-body.theme-autumn .shelf-back {
-    background:
-        radial-gradient(
-            circle at 72% 24%,
-            rgba(247,162,87,.10),
-            transparent 28%
-        ),
-        linear-gradient(
-            180deg,
-            #694834,
-            #493126
-        );
-}
+        currentPage =
+            Math.min(
+                currentPage,
+                pages
+            );
 
-body.theme-forest .shelf-back {
-    background:
-        radial-gradient(
-            circle at 72% 24%,
-            rgba(205,219,157,.08),
-            transparent 24%
-        ),
-        linear-gradient(
-            180deg,
-            #2b4132,
-            #18261e
-        );
-}
-
-body.theme-retro .shelf-back {
-    background:
-        repeating-linear-gradient(
-            0deg,
-            rgba(145,169,65,.025) 0 2px,
-            transparent 2px 5px
-        ),
-        #171812;
-}
-
-body.theme-ghosts .shelf-back {
-    background:
-        radial-gradient(
-            circle at 72% 24%,
-            rgba(255,229,214,.12),
-            transparent 25%
-        ),
-        linear-gradient(
-            180deg,
-            #925f50,
-            #70473d
-        );
-}
-
-
-/* =========================================================
-   SHELF BOARD
-   ========================================================= */
-
-.shelf-board {
-    position: absolute;
-
-    left: 16px;
-    right: 16px;
-    bottom: 15px;
-
-    height: 27px;
-
-    border-radius: 4px;
-
-    background:
-        linear-gradient(
-            180deg,
-            var(--wood),
-            var(--wood-dark)
-        );
-
-    box-shadow:
-        0 9px 14px
-        rgba(0,0,0,.28),
-
-        inset 0 2px
-        rgba(255,255,255,.05);
-}
-
-
-/* =========================================================
-   BOOK ROW
-   ========================================================= */
-
-.book-row {
-    position: relative;
-
-    z-index: 2;
-
-    min-height: 214px;
-
-    display: flex;
-
-    align-items: flex-end;
-
-    gap: 4px;
-
-    padding:
-        0 7px;
-
-    overflow-x: auto;
-
-    overflow-y: hidden;
-
-    scrollbar-width: thin;
-
-    scrollbar-color:
-        var(--accent)
-        transparent;
-}
-
-
-/* =========================================================
-   BOOK
-   ========================================================= */
-
-.shelf-book {
-    position: relative;
-
-    flex:
-        0 0 auto;
-
-    display: flex;
-
-    align-items: flex-end;
-
-    cursor: pointer;
-
-    transform-origin:
-        bottom center;
-
-    transition:
-        transform .22s
-        cubic-bezier(.2,.8,.2,1),
-
-        filter .18s ease;
-}
-
-.shelf-book:hover {
-    z-index: 10;
-
-    transform:
-        translateY(-13px)
-        scale(1.03);
-
-    filter:
-        brightness(1.08)
-        drop-shadow(
-            0 0 10px
-            var(--glow)
-        );
-}
-
-.shelf-book.selected {
-    z-index: 12;
-
-    transform:
-        translateY(-23px)
-        scale(1.04);
-
-    filter:
-        drop-shadow(
-            0 0 15px
-            var(--glow)
-        );
-}
-
-
-/* =========================================================
-   MIXED ARRANGEMENT
-   ========================================================= */
-
-.book-row.mixed
-.shelf-book:nth-child(5n + 2) {
-    transform:
-        rotate(-2.8deg);
-}
-
-.book-row.mixed
-.shelf-book:nth-child(7n + 4) {
-    transform:
-        rotate(3deg);
-}
-
-.book-row.mixed
-.shelf-book:nth-child(9n + 6) {
-    transform:
-        rotate(-1.7deg);
-}
-
-.book-row.mixed
-.shelf-book:nth-child(5n + 2):hover,
-.book-row.mixed
-.shelf-book:nth-child(7n + 4):hover,
-.book-row.mixed
-.shelf-book:nth-child(9n + 6):hover {
-    transform:
-        translateY(-13px)
-        rotate(0deg)
-        scale(1.03);
-}
-
-
-/* =========================================================
-   BOOK SIZES
-   ========================================================= */
-
-.shelf-book.height-small {
-    height: 132px;
-}
-
-.shelf-book.height-medium {
-    height: 162px;
-}
-
-.shelf-book.height-tall {
-    height: 192px;
-}
-
-.shelf-book.thickness-slim {
-    width: 29px;
-}
-
-.shelf-book.thickness-medium {
-    width: 42px;
-}
-
-.shelf-book.thickness-chunky {
-    width: 56px;
-}
-
-
-/* =========================================================
-   BOOK SPINE
-   ========================================================= */
-
-.book-spine {
-    position: absolute;
-
-    inset: 0;
-
-    overflow: hidden;
-
-    border:
-        2px solid
-        rgba(0,0,0,.34);
-
-    border-radius:
-        4px 4px 1px 1px;
-
-    background:
-        var(--book-color);
-
-    color:
-        var(--book-text);
-
-    box-shadow:
-        inset -8px 0 0
-        rgba(0,0,0,.08),
-
-        inset 3px 0 0
-        rgba(255,255,255,.08),
-
-        4px 5px 0
-        rgba(0,0,0,.15);
-}
-
-.book-spine::before {
-    content: "";
-
-    position: absolute;
-
-    left: 3px;
-    right: 3px;
-    top: 8px;
-
-    height: 1px;
-
-    background:
-        rgba(255,255,255,.16);
-
-    box-shadow:
-        0 3px 0
-        rgba(0,0,0,.08);
-}
-
-.book-spine::after {
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    pointer-events: none;
-
-    background:
-        linear-gradient(
-            90deg,
-            rgba(255,255,255,.09),
-            transparent 18%,
-            transparent 78%,
-            rgba(0,0,0,.12)
-        );
-}
-
-.book-spine.custom-image {
-    background-position:
-        center;
-
-    background-repeat:
-        no-repeat;
-
-    background-size:
-        cover;
-}
-
-
-/* =========================================================
-   GENERATED SPINE
-   ========================================================= */
-
-.spine-inner {
-    position: absolute;
-
-    inset: 5px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border:
-        1px solid
-        rgba(255,255,255,.16);
-
-    border-radius: 2px;
-}
-
-.spine-title {
-    max-height:
-        calc(100% - 31px);
-
-    writing-mode:
-        vertical-rl;
-
-    transform:
-        rotate(180deg);
-
-    overflow: hidden;
-
-    color:
-        inherit;
-
-    font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
-
-    font-size: .58rem;
-
-    letter-spacing: .025em;
-
-    line-height: 1.08;
-
-    text-align: center;
-}
-
-.spine-ornament {
-    position: absolute;
-
-    bottom: 7px;
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    color:
-        var(--accent-light);
-
-    font-size: .58rem;
-
-    opacity: .86;
-}
-
-
-/* =========================================================
-   BOOK STYLE VARIATIONS
-   ========================================================= */
-
-.book-style-floral
-.spine-inner::before {
-    content: "✿";
-
-    position: absolute;
-
-    top: 5px;
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    font-size: .54rem;
-}
-
-.book-style-botanical
-.spine-inner::before {
-    content: "❧";
-
-    position: absolute;
-
-    top: 3px;
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    font-size: .68rem;
-}
-
-.book-style-celestial
-.spine-inner::before {
-    content: "✦";
-
-    position: absolute;
-
-    top: 6px;
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    color:
-        var(--accent-light);
-}
-
-.book-style-gothic
-.spine-inner {
-    border:
-        3px double
-        color-mix(
-            in srgb,
-            var(--accent-light) 50%,
-            transparent
-        );
-}
-
-.book-style-minimal
-.spine-inner {
-    border: none;
-}
-
-.book-style-gothic .book-spine {
-    background:
-        linear-gradient(
-            90deg,
-            rgba(0,0,0,.20),
-            transparent 16%,
-            transparent 84%,
-            rgba(0,0,0,.16)
-        ),
-        var(--book-color);
-}
-
-.book-style-celestial .book-spine {
-    background:
-        radial-gradient(
-            circle at 35% 12%,
-            rgba(255,255,255,.25) 0 1px,
-            transparent 2px
-        ),
-        radial-gradient(
-            circle at 70% 28%,
-            rgba(255,255,255,.18) 0 1px,
-            transparent 2px
-        ),
-        var(--book-color);
-}
-
-
-/* =========================================================
-   READING BOOKMARK
-   ========================================================= */
-
-.shelf-book[data-status="reading"]::after {
-    content: "";
-
-    position: absolute;
-
-    z-index: -1;
-
-    top: -7px;
-    right: 6px;
-
-    width: 8px;
-    height: 20px;
-
-    background:
-        var(--accent-2);
-
-    clip-path:
-        polygon(
-            0 0,
-            100% 0,
-            100% 100%,
-            50% 75%,
-            0 100%
-        );
-
-    filter:
-        drop-shadow(
-            0 2px 2px
-            rgba(0,0,0,.25)
-        );
-}
-
-
-/* =========================================================
-   DECORATIONS
-   CURRENT JS-SUPPORTED TYPES ONLY
-   ========================================================= */
-
-.shelf-decoration {
-    position: relative;
-
-    flex:
-        0 0 auto;
-
-    align-self:
-        flex-end;
-}
-
-
-/* =========================================================
-   PLANT
-   ========================================================= */
-
-.decor-plant {
-    width: 48px;
-    height: 84px;
-}
-
-.decor-plant::before {
-    content: "";
-
-    position: absolute;
-
-    bottom: 0;
-    left: 9px;
-
-    width: 30px;
-    height: 25px;
-
-    border-radius:
-        3px 3px 10px 10px;
-
-    background:
-        color-mix(
-            in srgb,
-            var(--wood-mid) 80%,
-            #874e39
-        );
-}
-
-.decor-plant::after {
-    content: "❧";
-
-    position: absolute;
-
-    top: -5px;
-    left: 2px;
-
-    color:
-        color-mix(
-            in srgb,
-            var(--accent) 62%,
-            #4a654b
-        );
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: 3.2rem;
-
-    transform:
-        rotate(-13deg);
-}
-
-
-/* =========================================================
-   CANDLE
-   ========================================================= */
-
-.decor-candle {
-    width: 27px;
-    height: 65px;
-
-    margin:
-        0 10px;
-}
-
-.decor-candle::before {
-    content: "";
-
-    position: absolute;
-
-    bottom: 0;
-
-    width: 25px;
-    height: 49px;
-
-    border-radius: 3px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #c9b184,
-            #8f7350
-        );
-
-    box-shadow:
-        0 0 20px
-        var(--glow);
-}
-
-.decor-candle::after {
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    left: 8px;
-
-    width: 8px;
-    height: 14px;
-
-    border-radius:
-        70% 35% 70% 35%;
-
-    background:
-        #e69a5a;
-
-    box-shadow:
-        0 0 16px
-        rgba(230,154,90,.58);
-
-    transform:
-        rotate(45deg);
-}
-
-
-/* =========================================================
-   FLOWERS
-   ========================================================= */
-
-.decor-flowers {
-    width: 48px;
-    height: 72px;
-}
-
-.decor-flowers::before {
-    content: "✿ ✦";
-
-    position: absolute;
-
-    top: 1px;
-
-    color:
-        color-mix(
-            in srgb,
-            var(--accent-2) 60%,
-            var(--paper)
-        );
-
-    font-size: 1rem;
-}
-
-.decor-flowers::after {
-    content: "";
-
-    position: absolute;
-
-    bottom: 0;
-    left: 10px;
-
-    width: 26px;
-    height: 32px;
-
-    border-radius:
-        3px 3px 10px 10px;
-
-    background:
-        color-mix(
-            in srgb,
-            var(--accent) 35%,
-            var(--wood)
-        );
-}
-
-
-/* =========================================================
-   STARS
-   ========================================================= */
-
-.decor-stars {
-    width: 42px;
-    height: 96px;
-
-    color:
-        var(--accent-light);
-}
-
-.decor-stars::before {
-    content: "✦";
-
-    position: absolute;
-
-    top: 15px;
-
-    text-shadow:
-        0 0 10px
-        var(--glow);
-}
-
-.decor-stars::after {
-    content: "✧";
-
-    position: absolute;
-
-    top: 42px;
-    right: 7px;
-
-    text-shadow:
-        0 0 10px
-        var(--glow);
-}
-
-
-/* =========================================================
-   MUG
-   ========================================================= */
-
-.decor-mug {
-    width: 45px;
-    height: 50px;
-
-    margin:
-        0 5px;
-}
-
-.decor-mug::before {
-    content: "";
-
-    position: absolute;
-
-    bottom: 0;
-    left: 2px;
-
-    width: 32px;
-    height: 38px;
-
-    border-radius:
-        4px 4px 10px 10px;
-
-    background:
-        color-mix(
-            in srgb,
-            var(--accent-2) 48%,
-            var(--panel)
-        );
-}
-
-.decor-mug::after {
-    content: "";
-
-    position: absolute;
-
-    right: 0;
-    bottom: 10px;
-
-    width: 15px;
-    height: 18px;
-
-    border:
-        4px solid
-        color-mix(
-            in srgb,
-            var(--accent-2) 48%,
-            var(--panel)
-        );
-
-    border-left: none;
-
-    border-radius:
-        0 12px 12px 0;
-}
-
-
-/* =========================================================
-   THEME-DEPENDENT EXISTING DECORATIONS
-   ========================================================= */
-
-body.theme-haunted .decor-plant::after {
-    color: #596452;
-}
-
-body.theme-haunted .decor-candle {
-    filter:
-        drop-shadow(
-            0 0 6px
-            rgba(230,154,90,.12)
-        );
-}
-
-
-body.theme-autumn .decor-plant::after {
-    color: #8d914e;
-}
-
-body.theme-autumn .decor-candle::after {
-    background: #f29b4d;
-}
-
-body.theme-autumn .decor-mug::before {
-    background: #92583c;
-}
-
-body.theme-autumn .decor-flowers::before {
-    color: #e8a45e;
-}
-
-
-body.theme-forest .decor-plant::after {
-    color: #93ad79;
-}
-
-body.theme-forest .decor-stars {
-    color: #ced699;
-}
-
-body.theme-forest .decor-mug::before {
-    background: #52664c;
-}
-
-
-body.theme-retro .shelf-decoration {
-    filter:
-        saturate(.8)
-        contrast(1.1);
-}
-
-body.theme-retro .decor-stars {
-    color: #9eb648;
-}
-
-
-body.theme-ghosts .decor-stars {
-    color: #ffe0ca;
-}
-
-body.theme-ghosts .decor-flowers::before {
-    color: #f6c9bb;
-}
-
-
-/* =========================================================
-   SHELF MOODS
-   ========================================================= */
-
-.library-shelf[data-mood="gothic"]
-.shelf-cabinet {
-    outline:
-        3px double
-        color-mix(
-            in srgb,
-            var(--accent) 22%,
-            transparent
-        );
-
-    outline-offset: -12px;
-}
-
-.library-shelf[data-mood="botanical"]
-.shelf-back {
-    background-image:
-        radial-gradient(
-            circle at 10% 90%,
-            rgba(87,114,78,.18),
-            transparent 28%
-        );
-}
-
-.library-shelf[data-mood="celestial"]
-.shelf-back {
-    background-image:
-        radial-gradient(
-            circle,
-            rgba(255,255,255,.10) 1px,
-            transparent 1px
-        );
-
-    background-size:
-        31px 31px;
-}
-
-.library-shelf[data-mood="cottage"]
-.shelf-back {
-    background-image:
-        repeating-linear-gradient(
-            90deg,
-            rgba(255,255,255,.018) 0 1px,
-            transparent 1px 30px
-        );
-}
-
-
-/* =========================================================
-   AMBIENT EFFECTS
-   ========================================================= */
-
-body.ambient-candle
-.shelf-cabinet {
-    box-shadow:
-        inset 0 16px 28px
-        rgba(255,255,255,.035),
-
-        inset 0 -18px 30px
-        rgba(0,0,0,.28),
-
-        0 20px 50px
-        rgba(0,0,0,.28),
-
-        0 0 26px
-        var(--glow);
-}
-
-body.ambient-dust
-.library-page {
-    background-image:
-        radial-gradient(
-            circle,
-            rgba(255,255,255,.08) 1px,
-            transparent 1px
-        );
-
-    background-size:
-        58px 58px;
-}
-
-body.ambient-rain
-.library-page::before {
-    opacity: .9;
-}
-
-body[data-decoration-density="maximal"]
-.shelf-cabinet {
-    outline:
-        1px solid
-        color-mix(
-            in srgb,
-            var(--accent) 11%,
-            transparent
-        );
-
-    outline-offset:
-        -7px;
-}
-
-
-/* =========================================================
-   ANIMATIONS
-   ========================================================= */
-
-@keyframes candleFlicker {
-    0%,
-    100% {
-        filter:
-            brightness(1);
     }
 
-    50% {
-        filter:
-            brightness(1.15);
-    }
-}
 
-body:not(.reduce-motion)
-.decor-candle::after {
-    animation:
-        candleFlicker
-        1.3s
-        ease-in-out
-        infinite;
-}
+    const record = {
 
+        id:
+            editingId ||
+            generateId(),
 
-/* =========================================================
-   EMPTY SHELF
-   ========================================================= */
+        shelf_id:
+            shelfId,
 
-.empty-shelf-message {
-    align-self: center;
+        title,
 
-    min-width: 260px;
-
-    padding: 26px;
-
-    color:
-        color-mix(
-            in srgb,
-            var(--text) 68%,
-            transparent
-        );
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: .64rem;
-
-    font-style: italic;
-
-    line-height: 1.55;
-
-    text-align: center;
-}
-
-.empty-shelf-message::before {
-    content: "✦";
-
-    display: block;
-
-    margin-bottom: 9px;
-
-    color:
-        var(--accent);
-}
-
-.empty-shelf-message button {
-    display: block;
-
-    margin:
-        11px auto 0;
-
-    padding: 0;
-
-    border: none;
-
-    background: transparent;
-
-    color:
-        var(--accent-light);
-
-    cursor: pointer;
-
-    font-size: .56rem;
-}
-
-
-/* =========================================================
-   EMPTY LIBRARY
-   ========================================================= */
-
-.library-empty {
-    position: relative;
-
-    min-height: 460px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    overflow: hidden;
-
-    padding: 45px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius: 16px;
-
-    background:
-        radial-gradient(
-            circle at 50% 45%,
-            color-mix(
-                in srgb,
-                var(--panel-2) 80%,
-                var(--accent-2)
+        author:
+            getValue(
+                "bookAuthor"
             ),
-            var(--panel)
+
+        genre:
+            getValue(
+                "bookGenre"
+            ),
+
+        publication_year:
+            getValue(
+                "bookYear"
+            ),
+
+        pages,
+
+        isbn:
+            getValue(
+                "bookISBN"
+            ),
+
+        series:
+            getValue(
+                "bookSeries"
+            ),
+
+        status:
+            normalizeBookStatus(
+                getValue(
+                    "bookStatus"
+                )
+            ),
+
+        rating:
+            normalizeNumber(
+                getValue(
+                    "bookRating"
+                )
+            ),
+
+        started:
+            getValue(
+                "bookStarted"
+            ),
+
+        finished:
+            getValue(
+                "bookFinished"
+            ),
+
+        current_page:
+            currentPage,
+
+        times_read:
+            normalizeNumber(
+                getValue(
+                    "bookTimesRead"
+                )
+            ),
+
+        cover_image:
+            pendingCoverData,
+
+        spine_image:
+            pendingSpineData,
+
+        spine_color:
+            getValue(
+                "bookSpineColor"
+            )
+            ||
+            getThemeBookColor(),
+
+        text_color:
+            getValue(
+                "bookTextColor"
+            )
+            ||
+            getThemeBookTextColor(),
+
+        height:
+            getValue(
+                "bookHeight"
+            )
+            ||
+            "medium",
+
+        thickness:
+            getValue(
+                "bookThickness"
+            )
+            ||
+            "medium",
+
+        style:
+            getValue(
+                "bookStyle"
+            )
+            ||
+            "classic",
+
+        journal:
+            existing?.journal
+            ||
+            normalizeJournal(),
+
+        created_at:
+            existing?.created_at
+            ||
+            new Date()
+                .toISOString(),
+
+        updated_at:
+            new Date()
+                .toISOString()
+
+    };
+
+
+    if (editingId) {
+
+        const index =
+            books.findIndex(
+                book =>
+                    String(
+                        book.id
+                    )
+                    ===
+                    String(
+                        editingId
+                    )
+            );
+
+
+        if (
+            index >=
+            0
+        ) {
+
+            books[
+                index
+            ] =
+                record;
+
+        }
+
+    }
+
+    else {
+
+        books.push(
+            record
         );
 
-    text-align: center;
+    }
 
-    box-shadow:
-        var(--shadow-deep);
-}
 
-.library-empty::after {
-    content: "✦";
+    saveBooks();
 
-    position: absolute;
+    closeDrawers();
 
-    top: 18%;
-    right: 13%;
+    renderLibrary();
 
-    color:
-        var(--accent);
-
-    opacity: .26;
-}
-
-.empty-stars {
-    color:
-        var(--accent);
-
-    font-size: .9rem;
-
-    letter-spacing: .18em;
-}
-
-.library-empty h2 {
-    margin:
-        19px 0 0;
-
-    color:
-        var(--text);
-
-    font-size: 1.9rem;
-}
-
-.library-empty p {
-    max-width: 445px;
-
-    margin:
-        13px 0 23px;
-
-    color:
-        var(--muted);
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: .69rem;
-
-    line-height: 1.7;
-}
-
-.empty-actions {
-    display: flex;
-
-    gap: 8px;
-
-    justify-content: center;
-
-    flex-wrap: wrap;
 }
 
 
 /* =========================================================
-   ADD ANOTHER SHELF
+   IMAGE UPLOADS
    ========================================================= */
 
-.add-another-shelf {
-    width: 100%;
+async function handleCoverUpload(
+    event
+) {
 
-    min-height: 88px;
+    const file =
+        event.target.files?.[
+            0
+        ];
 
-    display: flex;
 
-    align-items: center;
+    if (!file) {
 
-    justify-content: center;
+        return;
 
-    gap: 14px;
+    }
 
-    margin-top: 54px;
 
-    border:
-        1px dashed
-        color-mix(
-            in srgb,
-            var(--accent) 30%,
-            transparent
+    pendingCoverData =
+        await fileToDataURL(
+            file
         );
 
-    border-radius: 13px;
-
-    background:
-        rgba(255,255,255,.012);
-
-    color:
-        var(--muted);
-
-    cursor: pointer;
-
-    transition:
-        .16s ease;
 }
 
-.add-another-shelf:hover {
-    transform:
-        translateY(-2px);
 
-    border-color:
-        var(--accent);
+async function handleSpineUpload(
+    event
+) {
 
-    background:
-        color-mix(
-            in srgb,
-            var(--accent-2) 8%,
-            transparent
+    const file =
+        event.target.files?.[
+            0
+        ];
+
+
+    if (!file) {
+
+        return;
+
+    }
+
+
+    pendingSpineData =
+        await fileToDataURL(
+            file
         );
+
 }
 
-.add-another-shelf > span {
-    color:
-        var(--accent);
 
-    font-family:
-        Georgia,
-        serif;
+function fileToDataURL(
+    file
+) {
 
-    font-size: 1.6rem;
+    return new Promise(
+        (
+            resolve,
+            reject
+        ) => {
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                () =>
+                    resolve(
+                        reader.result
+                    );
+
+
+            reader.onerror =
+                reject;
+
+
+            reader.readAsDataURL(
+                file
+            );
+
+        }
+    );
+
 }
 
-.add-another-shelf strong {
-    display: block;
 
-    color:
-        var(--text-soft);
+/* =========================================================
+   DRAWERS
+   ========================================================= */
 
-    font-family:
-        Georgia,
-        serif;
+function showDrawer(
+    drawerId
+) {
 
-    font-size: .77rem;
+    hideAllDrawersImmediately();
 
-    font-weight: 400;
+
+    const drawer =
+        document.getElementById(
+            drawerId
+        );
+
+
+    const overlay =
+        document.getElementById(
+            "overlay"
+        );
+
+
+    if (
+        !drawer ||
+        !overlay
+    ) {
+
+        return;
+
+    }
+
+
+    drawer.hidden =
+        false;
+
+
+    overlay.hidden =
+        false;
+
+
+    requestAnimationFrame(
+        () => {
+
+            drawer.classList.add(
+                "open"
+            );
+
+
+            overlay.classList.add(
+                "open"
+            );
+
+        }
+    );
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
 }
 
-.add-another-shelf small {
-    display: block;
 
-    margin-top: 3px;
+function hideAllDrawersImmediately() {
 
-    color:
-        var(--muted-light);
+    const overlay =
+        document.getElementById(
+            "overlay"
+        );
 
-    font-size: .47rem;
+
+    if (overlay) {
+
+        overlay.hidden =
+            true;
+
+
+        overlay.classList.remove(
+            "open"
+        );
+
+    }
+
+
+    document
+        .querySelectorAll(
+            ".form-drawer"
+        )
+        .forEach(
+            drawer => {
+
+                drawer.hidden =
+                    true;
+
+
+                drawer.classList.remove(
+                    "open"
+                );
+
+            }
+        );
+
+}
+
+
+function closeDrawers() {
+
+    const overlay =
+        document.getElementById(
+            "overlay"
+        );
+
+
+    const drawers =
+        document.querySelectorAll(
+            ".form-drawer"
+        );
+
+
+    overlay?.classList.remove(
+        "open"
+    );
+
+
+    drawers.forEach(
+        drawer => {
+
+            drawer.classList.remove(
+                "open"
+            );
+
+        }
+    );
+
+
+    const delay =
+        settings.reducedMotion
+            ?
+            0
+            :
+            250;
+
+
+    setTimeout(
+        () => {
+
+            if (overlay) {
+
+                overlay.hidden =
+                    true;
+
+            }
+
+
+            drawers.forEach(
+                drawer => {
+
+                    drawer.hidden =
+                        true;
+
+                }
+            );
+
+        },
+        delay
+    );
+
+
+    document.body.classList.remove(
+        "modal-open"
+    );
+
 }
 
 
@@ -2020,1082 +4352,975 @@ body:not(.reduce-motion)
    BOOK REVEAL
    ========================================================= */
 
-.book-reveal {
-    position: fixed;
+function openBookReveal(
+    id
+) {
 
-    inset: 0;
+    const book =
+        getBookById(
+            id
+        );
 
-    z-index: 2100;
 
-    display: flex;
+    if (!book) {
 
-    align-items: center;
+        return;
 
-    justify-content: center;
+    }
 
-    padding: 40px;
 
-    overflow-y: auto;
+    selectedBookId =
+        book.id;
 
-    background:
-        radial-gradient(
-            circle at 55% 45%,
-            color-mix(
-                in srgb,
-                var(--panel-2) 85%,
-                var(--accent-2)
-            ),
-            color-mix(
-                in srgb,
-                var(--bg) 95%,
-                black
+
+    renderCoverInto(
+        "revealCover",
+        book
+    );
+
+
+    setText(
+        "revealStatus",
+        getStatusLabel(
+            book.status
+        )
+    );
+
+
+    setText(
+        "revealTitle",
+        book.title
+    );
+
+
+    setText(
+        "revealAuthor",
+        book.author ||
+        "Author not recorded"
+    );
+
+
+    setText(
+        "revealStarted",
+        formatDate(
+            book.started
+        )
+    );
+
+
+    setText(
+        "revealFinished",
+        formatDate(
+            book.finished
+        )
+    );
+
+
+    setText(
+        "revealPageCount",
+        `${book.current_page} / ${book.pages || 0} pages`
+    );
+
+
+    const percentage =
+        getProgressPercent(
+            book
+        );
+
+
+    setText(
+        "revealPercent",
+        `${percentage}%`
+    );
+
+
+    const bar =
+        document.getElementById(
+            "revealProgressBar"
+        );
+
+
+    if (bar) {
+
+        bar.style.width =
+            `${percentage}%`;
+
+    }
+
+
+    const bookmark =
+        document.getElementById(
+            "progressBookmark"
+        );
+
+
+    if (bookmark) {
+
+        bookmark.style.left =
+            `${percentage}%`;
+
+    }
+
+
+    renderRating(
+        book.rating
+    );
+
+
+    const reveal =
+        document.getElementById(
+            "bookReveal"
+        );
+
+
+    if (reveal) {
+
+        reveal.hidden =
+            false;
+
+    }
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
+}
+
+
+function closeBookReveal() {
+
+    const reveal =
+        document.getElementById(
+            "bookReveal"
+        );
+
+
+    if (reveal) {
+
+        reveal.hidden =
+            true;
+
+    }
+
+
+    document.body.classList.remove(
+        "modal-open"
+    );
+
+}
+
+
+function editSelectedBook() {
+
+    const id =
+        selectedBookId;
+
+
+    closeBookReveal();
+
+
+    if (!id) {
+
+        return;
+
+    }
+
+
+    openBookDrawer(
+        id
+    );
+
+}
+
+
+/* =========================================================
+   COVER
+   ========================================================= */
+
+function renderCoverInto(
+    elementId,
+    book
+) {
+
+    const element =
+        document.getElementById(
+            elementId
+        );
+
+
+    if (!element) {
+
+        return;
+
+    }
+
+
+    element.innerHTML =
+        "";
+
+
+    element.style.backgroundImage =
+        "";
+
+
+    element.style.backgroundColor =
+        book.spine_color;
+
+
+    if (
+        book.cover_image
+    ) {
+
+        element.style.backgroundImage =
+            `url("${safeStyleURL(book.cover_image)}")`;
+
+
+        return;
+
+    }
+
+
+    element.innerHTML = `
+
+        <div class="generated-cover">
+
+            <span class="cover-ornament">
+                ${getBookOrnament(book.style)}
+            </span>
+
+            <strong>
+                ${escapeHTML(book.title)}
+            </strong>
+
+            <span>
+                ${escapeHTML(book.author || "")}
+            </span>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   RATING
+   ========================================================= */
+
+function renderRating(
+    rating
+) {
+
+    const element =
+        document.getElementById(
+            "revealRating"
+        );
+
+
+    if (!element) {
+
+        return;
+
+    }
+
+
+    if (!rating) {
+
+        element.textContent =
+            "not rated yet";
+
+        return;
+
+    }
+
+
+    element.textContent =
+
+        "★".repeat(
+            Math.min(
+                5,
+                rating
             )
-            62%
-        );
+        )
 
-    backdrop-filter:
-        blur(16px);
-}
+        +
 
-.book-reveal::after {
-    content: "✦   ✧   ·";
-
-    position: absolute;
-
-    right: 8%;
-    top: 15%;
-
-    color:
-        var(--accent);
-
-    opacity: .28;
-
-    letter-spacing: .5em;
-}
-
-.reveal-close {
-    position: absolute;
-
-    top: 25px;
-    right: 30px;
-
-    width: 45px;
-    height: 45px;
-
-    display: grid;
-
-    place-items: center;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius: 50%;
-
-    background:
-        var(--panel);
-
-    color:
-        var(--text-soft);
-
-    cursor: pointer;
-
-    font-size: 1.4rem;
-}
-
-.reveal-stars {
-    position: absolute;
-
-    top: 13%;
-    left: 17%;
-
-    color:
-        var(--accent);
-
-    opacity: .48;
-}
-
-.revealed-book {
-    position: relative;
-
-    z-index: 2;
-
-    width:
-        min(850px, 100%);
-
-    display: grid;
-
-    grid-template-columns:
-        330px minmax(0, 1fr);
-
-    gap: 58px;
-
-    align-items: center;
-}
-
-
-/* =========================================================
-   REVEALED COVER
-   ========================================================= */
-
-.revealed-cover {
-    position: relative;
-
-    aspect-ratio:
-        2 / 3;
-
-    overflow: hidden;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        5px 12px 12px 5px;
-
-    background:
-        var(--accent-2);
-
-    background-position:
-        center;
-
-    background-repeat:
-        no-repeat;
-
-    background-size:
-        cover;
-
-    box-shadow:
-        22px 24px 42px
-        rgba(0,0,0,.45),
-
-        inset 8px 0 12px
-        rgba(255,255,255,.05);
-}
-
-.revealed-cover::after {
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    bottom: 0;
-    left: 8px;
-
-    width: 1px;
-
-    background:
-        rgba(255,255,255,.1);
-}
-
-.generated-cover {
-    height: 100%;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 29px;
-
-    color:
-        var(--paper);
-
-    text-align: center;
-
-    background:
-        radial-gradient(
-            circle at 50% 30%,
-            rgba(255,255,255,.07),
-            transparent 42%
-        );
-}
-
-.generated-cover .cover-ornament {
-    margin-bottom: 25px;
-
-    color:
-        var(--accent-light);
-
-    font-size: 1.1rem;
-}
-
-.generated-cover strong {
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: 1.85rem;
-
-    font-weight: 400;
-
-    line-height: 1.15;
-}
-
-.generated-cover span:last-child {
-    margin-top: 20px;
-
-    opacity: .82;
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: .76rem;
-
-    font-style: italic;
-}
-
-
-/* =========================================================
-   REVEAL INFO
-   ========================================================= */
-
-.reading-status {
-    color:
-        var(--accent);
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: .69rem;
-
-    font-style: italic;
-}
-
-.revealed-info h2 {
-    max-width: 470px;
-
-    margin:
-        12px 0 0;
-
-    color:
-        var(--text);
-
-    font-size:
-        clamp(
-            2.2rem,
-            5vw,
-            4.5rem
-        );
-
-    line-height: .95;
-}
-
-.reveal-author {
-    margin:
-        13px 0 0;
-
-    color:
-        var(--muted);
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: .82rem;
-}
-
-.reveal-meta {
-    display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap: 10px;
-
-    max-width: 400px;
-
-    margin-top: 30px;
-
-    padding:
-        15px 0;
-
-    border-top:
-        1px solid
-        var(--border-soft);
-
-    border-bottom:
-        1px solid
-        var(--border-soft);
-}
-
-.reveal-meta span {
-    display: block;
-
-    color:
-        var(--muted-light);
-
-    font-size: .44rem;
-
-    letter-spacing: .08em;
-}
-
-.reveal-meta strong {
-    display: block;
-
-    margin-top: 5px;
-
-    color:
-        var(--text-soft);
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: .69rem;
-
-    font-weight: 400;
-}
-
-
-/* =========================================================
-   PROGRESS
-   ========================================================= */
-
-.reading-progress-wrap {
-    max-width: 400px;
-
-    margin-top: 25px;
-}
-
-.progress-copy {
-    display: flex;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-    color:
-        var(--muted);
-
-    font-size: .56rem;
-}
-
-.progress-copy strong {
-    color:
-        var(--accent);
-}
-
-.reading-progress {
-    position: relative;
-
-    height: 5px;
-
-    margin-top: 12px;
-
-    border-radius: 6px;
-
-    background:
-        rgba(255,255,255,.07);
-}
-
-.reading-progress-fill {
-    height: 100%;
-
-    border-radius: 6px;
-
-    background:
-        linear-gradient(
-            90deg,
-            var(--accent-2),
-            var(--accent)
-        );
-}
-
-.bookmark {
-    position: absolute;
-
-    top: -7px;
-
-    width: 9px;
-    height: 19px;
-
-    background:
-        var(--accent-2);
-
-    transform:
-        translateX(-50%);
-
-    clip-path:
-        polygon(
-            0 0,
-            100% 0,
-            100% 100%,
-            50% 75%,
-            0 100%
-        );
-}
-
-.reveal-rating {
-    margin-top: 20px;
-
-    color:
-        var(--accent-light);
-
-    font-size: .83rem;
-
-    letter-spacing: .18em;
-}
-
-
-/* =========================================================
-   REVEAL ACTIONS
-   ========================================================= */
-
-.reveal-actions {
-    display: flex;
-
-    gap: 9px;
-
-    margin-top: 29px;
-}
-
-.open-book-button {
-    min-width: 165px;
-    min-height: 46px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-    padding:
-        0 16px;
-
-    border:
-        1px solid
-        color-mix(
-            in srgb,
-            var(--accent) 30%,
-            transparent
-        );
-
-    border-radius: 10px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--accent-2),
-            color-mix(
-                in srgb,
-                var(--accent-2) 64%,
-                black
+        "☆".repeat(
+            Math.max(
+                0,
+                5 - rating
             )
         );
 
-    color:
-        var(--paper);
-
-    cursor: pointer;
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: .64rem;
 }
 
 
 /* =========================================================
-   READING BOOK OVERLAY
+   READING BOOK
    ========================================================= */
 
-.reading-book {
-    position: fixed;
+function openReadingBook() {
 
-    inset: 0;
-
-    z-index: 2300;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 45px;
-
-    background:
-        radial-gradient(
-            circle at center,
-            color-mix(
-                in srgb,
-                var(--panel-2) 72%,
-                transparent
-            ),
-            rgba(4,4,4,.95)
+    const book =
+        getBookById(
+            selectedBookId
         );
 
-    backdrop-filter:
-        blur(10px);
-}
 
-.reading-book-close {
-    position: absolute;
+    if (!book) {
 
-    top: 24px;
-    right: 28px;
+        return;
 
-    z-index: 5;
-
-    width: 44px;
-    height: 44px;
-
-    display: grid;
-
-    place-items: center;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius: 50%;
-
-    background:
-        var(--panel);
-
-    color:
-        var(--text-soft);
-
-    cursor: pointer;
-
-    font-size: 1.3rem;
-}
+    }
 
 
-/* =========================================================
-   OPEN BOOK
-   ========================================================= */
+    closeBookReveal();
 
-.open-book {
-    position: relative;
 
-    z-index: 2;
+    setText(
+        "journalBookTitle",
+        book.title
+    );
 
-    width:
-        min(1120px, 100%);
 
-    height:
-        min(
-            720px,
-            calc(100vh - 90px)
+    setText(
+        "journalBookAuthor",
+        book.author ||
+        "Author not recorded"
+    );
+
+
+    setText(
+        "journalStatus",
+        getStatusLabel(
+            book.status
+        )
+    );
+
+
+    setText(
+        "journalStarted",
+        formatDate(
+            book.started
+        )
+    );
+
+
+    setText(
+        "journalFinished",
+        formatDate(
+            book.finished
+        )
+    );
+
+
+    setText(
+        "journalPages",
+        `${book.current_page} / ${book.pages || 0}`
+    );
+
+
+    renderCoverInto(
+        "journalCover",
+        book
+    );
+
+
+    showJournalContents();
+
+
+    const readingBook =
+        document.getElementById(
+            "readingBook"
         );
 
-    display: grid;
 
-    grid-template-columns:
-        1fr 1fr;
+    if (readingBook) {
 
-    filter:
-        drop-shadow(
-            0 30px 48px
-            rgba(0,0,0,.55)
-        );
+        readingBook.hidden =
+            false;
+
+    }
+
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
 }
 
 
-/* =========================================================
-   BOOK PAGE
-   ========================================================= */
+function closeReadingBook() {
 
-.book-page {
-    position: relative;
-
-    min-width: 0;
-
-    overflow-y: auto;
-
-    color:
-        #433830;
-
-    background:
-        radial-gradient(
-            circle at 50% 20%,
-            var(--paper-soft),
-            var(--paper)
-        );
-}
-
-.book-page.left-page {
-    border-radius:
-        18px 4px 4px 18px;
-
-    box-shadow:
-        inset -18px 0 28px
-        rgba(79,55,40,.14);
-}
-
-.book-page.right-page {
-    border-radius:
-        4px 18px 18px 4px;
-
-    box-shadow:
-        inset 18px 0 28px
-        rgba(79,55,40,.14);
-}
-
-.book-page::before {
-    content: "";
-
-    position: absolute;
-
-    inset: 13px;
-
-    pointer-events: none;
-
-    border:
-        1px solid
-        rgba(90,65,48,.11);
-
-    border-radius: inherit;
-}
-
-.book-page::after {
-    content: "✦";
-
-    position: absolute;
-
-    right: 25px;
-    bottom: 21px;
-
-    color:
-        rgba(128,96,52,.26);
-
-    font-size: .48rem;
-}
-
-.page-inner {
-    position: relative;
-
-    min-height: 100%;
-
-    padding:
-        52px 49px;
-}
-
-.book-page-label {
-    color:
-        #765737;
-
-    font-size: .48rem;
-
-    letter-spacing: .13em;
-}
-
-
-/* =========================================================
-   LEFT PAGE
-   ========================================================= */
-
-.left-page h2 {
-    max-width: 420px;
-
-    margin:
-        14px 0 0;
-
-    color:
-        #4d2731;
-
-    font-size:
-        clamp(
-            2rem,
-            4vw,
-            3.8rem
+    const element =
+        document.getElementById(
+            "readingBook"
         );
 
-    line-height: .95;
-}
 
-.journal-author {
-    margin:
-        11px 0 0;
+    if (element) {
 
-    color:
-        #7f6d5f;
+        element.hidden =
+            true;
 
-    font-family:
-        Georgia,
-        serif;
+    }
 
-    font-size: .77rem;
 
-    font-style: italic;
+    document.body.classList.remove(
+        "modal-open"
+    );
+
 }
 
 
 /* =========================================================
-   MINI COVER
+   JOURNAL
    ========================================================= */
 
-.journal-mini-cover {
-    width: 115px;
+function showJournalContents() {
 
-    aspect-ratio:
-        2 / 3;
+    selectedJournalSection =
+        null;
 
-    margin-top: 28px;
 
-    overflow: hidden;
-
-    border:
-        1px solid
-        rgba(74,48,35,.18);
-
-    border-radius:
-        4px 7px 7px 4px;
-
-    background-position:
-        center;
-
-    background-repeat:
-        no-repeat;
-
-    background-size:
-        cover;
-
-    box-shadow:
-        8px 9px 16px
-        rgba(50,32,24,.22);
-}
-
-.journal-mini-cover
-.generated-cover {
-    padding: 10px;
-}
-
-.journal-mini-cover
-.generated-cover strong {
-    font-size: .68rem;
-}
-
-.journal-mini-cover
-.generated-cover span:last-child,
-.journal-mini-cover
-.cover-ornament {
-    display: none;
-}
-
-
-/* =========================================================
-   JOURNAL DETAILS
-   ========================================================= */
-
-.journal-book-details {
-    display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap: 13px;
-
-    max-width: 330px;
-
-    margin-top: 28px;
-}
-
-.journal-book-details span {
-    display: block;
-
-    color:
-        #806a59;
-
-    font-size: .42rem;
-}
-
-.journal-book-details strong {
-    display: block;
-
-    margin-top: 3px;
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: .62rem;
-
-    font-weight: 400;
-}
-
-.page-number {
-    position: absolute;
-
-    bottom: 21px;
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    color:
-        #9b8877;
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: .48rem;
-}
-
-
-/* =========================================================
-   TABLE OF CONTENTS
-   ========================================================= */
-
-.journal-contents h3,
-.journal-section h3 {
-    margin:
-        11px 0 25px;
-
-    color:
-        #4d2731;
-
-    font-size: 1.65rem;
-}
-
-.toc-list {
-    display: flex;
-
-    flex-direction: column;
-}
-
-.toc-list button {
-    min-height: 48px;
-
-    display: grid;
-
-    grid-template-columns:
-        34px 1fr;
-
-    align-items: center;
-
-    padding: 0;
-
-    border: none;
-
-    border-bottom:
-        1px dotted
-        rgba(87,64,48,.24);
-
-    background:
-        transparent;
-
-    color:
-        #51463d;
-
-    cursor: pointer;
-
-    text-align: left;
-
-    font-family:
-        Georgia,
-        serif;
-
-    font-size: .71rem;
-
-    transition:
-        .16s ease;
-}
-
-.toc-list button:hover {
-    padding-left: 7px;
-
-    color:
-        #6f2d3d;
-}
-
-.toc-list button span {
-    color:
-        #8e6c3f;
-
-    font-size: .48rem;
-}
-
-
-/* =========================================================
-   JOURNAL SECTION
-   ========================================================= */
-
-.back-to-contents {
-    margin-bottom: 23px;
-
-    padding: 0;
-
-    border: none;
-
-    background:
-        transparent;
-
-    color:
-        #7a624e;
-
-    cursor: pointer;
-
-    font-size: .52rem;
-}
-
-.journal-entries {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 11px;
-
-    max-height: 420px;
-
-    overflow-y: auto;
-
-    padding-right: 5px;
-}
-
-.journal-entry {
-    position: relative;
-
-    padding:
-        14px 15px;
-
-    border:
-        1px solid
-        rgba(95,71,53,.13);
-
-    border-radius: 9px;
-
-    background:
-        rgba(255,255,255,.22);
-}
-
-.journal-entry::before {
-    content: "";
-
-    position: absolute;
-
-    left: 5px;
-    top: 8px;
-    bottom: 8px;
-
-    width: 2px;
-
-    background:
-        linear-gradient(
-            #6b2b3a,
-            #9b7a43
+    const contents =
+        document.getElementById(
+            "journalContents"
         );
 
-    opacity: .5;
+
+    const section =
+        document.getElementById(
+            "journalSection"
+        );
+
+
+    if (contents) {
+
+        contents.hidden =
+            false;
+
+    }
+
+
+    if (section) {
+
+        section.hidden =
+            true;
+
+    }
+
 }
 
-.journal-entry-header {
-    display: flex;
 
-    justify-content: space-between;
+function openJournalSection(
+    section
+) {
 
-    gap: 12px;
+    selectedJournalSection =
+        section;
+
+
+    document.getElementById(
+        "journalContents"
+    ).hidden =
+        true;
+
+
+    document.getElementById(
+        "journalSection"
+    ).hidden =
+        false;
+
+
+    setText(
+        "journalSectionLabel",
+        getSectionLabel(
+            section
+        )
+    );
+
+
+    setText(
+        "journalSectionTitle",
+        getSectionTitle(
+            section
+        )
+    );
+
+
+    renderJournalEntries();
+
 }
 
-.journal-entry strong {
-    font-family:
-        Georgia,
-        serif;
 
-    font-size: .67rem;
+/* =========================================================
+   JOURNAL LABELS
+   ========================================================= */
 
-    font-weight: 400;
+function getSectionLabel(
+    section
+) {
 
-    color:
-        #4d2731;
+    const labels = {
+
+        overview:
+            "ABOUT THIS BOOK",
+
+        notes:
+            "MARGINAL NOTES",
+
+        thoughts:
+            "THINGS I'M THINKING",
+
+        words:
+            "LITTLE WORDS",
+
+        quotes:
+            "WORDS WORTH KEEPING",
+
+        characters:
+            "PEOPLE IN THESE PAGES",
+
+        themes:
+            "THREADS & THEMES",
+
+        questions:
+            "THINGS I'M WONDERING",
+
+        review:
+            "WHEN THE BOOK IS DONE"
+
+    };
+
+
+    return labels[
+        section
+    ]
+    ||
+    "";
+
 }
 
-.journal-entry small {
-    color:
-        #887464;
 
-    font-size: .43rem;
+function getSectionTitle(
+    section
+) {
+
+    const titles = {
+
+        overview:
+            "Overview",
+
+        notes:
+            "My notes",
+
+        thoughts:
+            "My thoughts",
+
+        words:
+            "Word study",
+
+        quotes:
+            "Saved quotes",
+
+        characters:
+            "Characters",
+
+        themes:
+            "Themes",
+
+        questions:
+            "Questions",
+
+        review:
+            "My review"
+
+    };
+
+
+    return titles[
+        section
+    ]
+    ||
+    section;
+
 }
 
-.journal-entry p {
-    margin:
-        8px 0 0;
 
-    color:
-        #51463d;
+/* =========================================================
+   RENDER JOURNAL ENTRIES
+   ========================================================= */
 
-    font-family:
-        Georgia,
-        serif;
+function renderJournalEntries() {
 
-    font-size: .6rem;
+    const container =
+        document.getElementById(
+            "journalEntries"
+        );
 
-    line-height: 1.6;
 
-    white-space: pre-wrap;
+    const addButton =
+        document.getElementById(
+            "addJournalEntry"
+        );
+
+
+    const book =
+        getBookById(
+            selectedBookId
+        );
+
+
+    if (
+        !container ||
+        !book
+    ) {
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        "";
+
+
+    if (
+        selectedJournalSection ===
+        "overview"
+    ) {
+
+        addButton.hidden =
+            true;
+
+
+        renderOverview(
+            container,
+            book
+        );
+
+
+        return;
+
+    }
+
+
+    addButton.hidden =
+        false;
+
+
+    const entries =
+        book.journal[
+            selectedJournalSection
+        ]
+        ||
+        [];
+
+
+    if (
+        !entries.length
+    ) {
+
+        container.innerHTML = `
+
+            <div class="empty-journal-section">
+
+                Nothing has been written here yet.
+
+                <br><br>
+
+                Add your first
+                ${escapeHTML(
+                    getSingularEntryName(
+                        selectedJournalSection
+                    )
+                )}.
+
+            </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+    entries
+        .slice()
+        .reverse()
+        .forEach(
+            entry => {
+
+                container.appendChild(
+                    createJournalEntry(
+                        entry,
+                        selectedJournalSection
+                    )
+                );
+
+            }
+        );
+
 }
 
-.journal-entry-meta {
-    margin-top: 8px;
 
-    color:
-        #836841;
+/* =========================================================
+   OVERVIEW
+   ========================================================= */
 
-    font-size: .45rem;
+function renderOverview(
+    container,
+    book
+) {
+
+    container.innerHTML = `
+
+        <article class="journal-entry">
+
+            <div class="journal-entry-header">
+
+                <strong>
+                    ${escapeHTML(book.title)}
+                </strong>
+
+                <small>
+                    ${getProgressPercent(book)}% read
+                </small>
+
+            </div>
+
+            <p>
+
+                Author:
+                ${escapeHTML(book.author || "—")}
+
+                <br>
+
+                Genre:
+                ${escapeHTML(book.genre || "—")}
+
+                <br>
+
+                Publication year:
+                ${escapeHTML(book.publication_year || "—")}
+
+                <br>
+
+                Pages:
+                ${book.pages || "—"}
+
+                <br>
+
+                Series:
+                ${escapeHTML(book.series || "—")}
+
+            </p>
+
+        </article>
+
+    `;
+
 }
 
-.empty-journal-section {
-    padding:
-        32px 10px;
 
-    color:
-        #7f6f63;
+/* =========================================================
+   JOURNAL ENTRY DISPLAY
+   ========================================================= */
 
-    font-family:
-        Georgia,
-        serif;
+function createJournalEntry(
+    entry,
+    section
+) {
 
-    font-size: .63rem;
+    const card =
+        document.createElement(
+            "article"
+        );
 
-    font-style: italic;
 
-    text-align: center;
+    card.className =
+        "journal-entry";
+
+
+    card.innerHTML = `
+
+        <div class="journal-entry-header">
+
+            <strong>
+                ${escapeHTML(
+                    getEntryHeading(
+                        entry,
+                        section
+                    )
+                )}
+            </strong>
+
+            <small>
+                ${escapeHTML(
+                    formatDate(
+                        entry.date
+                    )
+                )}
+            </small>
+
+        </div>
+
+
+        <p>
+            ${escapeHTML(
+                getEntryBody(
+                    entry,
+                    section
+                )
+            )}
+        </p>
+
+    `;
+
+
+    return card;
+
 }
 
-.empty-journal-section::before {
-    content: "✦";
 
-    display: block;
+function getEntryHeading(
+    entry,
+    section
+) {
 
-    margin-bottom: 8px;
+    if (
+        section ===
+        "words"
+    ) {
 
-    color:
-        #9d7642;
+        return entry.word ||
+        "New word";
+
+    }
+
+
+    if (
+        section ===
+        "characters"
+    ) {
+
+        return entry.name ||
+        "Character";
+
+    }
+
+
+    if (
+        section ===
+        "themes"
+    ) {
+
+        return entry.theme ||
+        "Theme";
+
+    }
+
+
+    return entry.title ||
+    getSectionTitle(
+        section
+    );
+
 }
 
-.add-journal-entry {
-    width: 100%;
 
-    min-height: 45px;
+function getEntryBody(
+    entry,
+    section
+) {
 
-    margin-top: 14px;
+    switch (section) {
 
-    border:
-        1px dashed
-        rgba(103,45,58,.34);
+        case "words":
 
-    border-radius: 9px;
+            return [
 
-    background:
-        rgba(109,42,57,.07);
+                entry.definition,
 
-    color:
-        #6b2b3a;
+                entry.context,
 
-    cursor: pointer;
+                entry.sentence
 
-    font-size: .57rem;
+            ]
+            .filter(Boolean)
+            .join("\n\n");
+
+
+        case "quotes":
+
+            return [
+
+                entry.quote,
+
+                entry.reason
+
+            ]
+            .filter(Boolean)
+            .join("\n\n");
+
+
+        case "characters":
+
+            return [
+
+                entry.role,
+
+                entry.notes
+
+            ]
+            .filter(Boolean)
+            .join("\n\n");
+
+
+        case "themes":
+
+            return entry.notes ||
+            "";
+
+
+        case "questions":
+
+            return [
+
+                entry.question,
+
+                entry.answer
+
+            ]
+            .filter(Boolean)
+            .join("\n\n");
+
+
+        case "review":
+
+            return [
+
+                entry.review,
+
+                entry.learned,
+
+                entry.stayed
+
+            ]
+            .filter(Boolean)
+            .join("\n\n");
+
+
+        default:
+
+            return entry.body ||
+            "";
+
+    }
+
 }
 
 
@@ -3103,312 +5328,1400 @@ body:not(.reduce-motion)
    ENTRY MODAL
    ========================================================= */
 
-.entry-modal {
-    position: fixed;
+function openEntryModal() {
 
-    inset: 0;
+    if (
+        !selectedJournalSection
+        ||
+        selectedJournalSection ===
+        "overview"
+    ) {
 
-    z-index: 2600;
+        return;
 
-    display: flex;
+    }
 
-    align-items: center;
 
-    justify-content: center;
+    setValue(
+        "entrySection",
+        selectedJournalSection
+    );
 
-    padding: 25px;
 
-    background:
-        rgba(4,4,4,.72);
+    setText(
+        "entryModalTitle",
+        `Add ${getSingularEntryName(selectedJournalSection)}`
+    );
 
-    backdrop-filter:
-        blur(8px);
+
+    renderEntryFields(
+        selectedJournalSection
+    );
+
+
+    document.getElementById(
+        "entryModal"
+    ).hidden =
+        false;
+
 }
 
-.entry-card {
-    width:
-        min(560px, 100%);
 
-    max-height:
-        calc(100vh - 50px);
+function closeEntryModal() {
 
-    overflow-y: auto;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius: 16px;
-
-    background:
-        linear-gradient(
-            180deg,
-            var(--panel-2),
-            var(--panel)
+    const modal =
+        document.getElementById(
+            "entryModal"
         );
 
-    box-shadow:
-        0 28px 65px
-        rgba(0,0,0,.52);
-}
 
-.entry-card-header {
-    min-height: 92px;
+    if (modal) {
 
-    display: flex;
+        modal.hidden =
+            true;
 
-    align-items: center;
+    }
 
-    justify-content:
-        space-between;
-
-    padding:
-        19px 22px;
-
-    border-bottom:
-        1px solid
-        var(--border-soft);
-}
-
-.entry-card-header span {
-    color:
-        var(--accent);
-
-    font-size: .44rem;
-
-    letter-spacing: .11em;
-}
-
-.entry-card-header h3 {
-    margin:
-        5px 0 0;
-
-    color:
-        var(--text);
-
-    font-size: 1.25rem;
 }
 
 
 /* =========================================================
-   ENTRY FORM
+   ENTRY FIELDS
    ========================================================= */
 
-.entry-fields {
-    display: grid;
+function renderEntryFields(
+    section
+) {
 
-    grid-template-columns:
-        1fr 1fr;
+    const container =
+        document.getElementById(
+            "entryDynamicFields"
+        );
 
-    gap: 13px;
 
-    padding: 22px;
-}
+    if (!container) {
 
-.entry-field {
-    display: flex;
+        return;
 
-    flex-direction: column;
+    }
 
-    gap: 6px;
-}
 
-.entry-field.full {
-    grid-column:
-        1 / -1;
-}
+    const dateField = `
 
-.entry-field label {
-    color:
-        var(--text-soft);
+        <div class="entry-field">
 
-    font-size: .48rem;
+            <label>
+                Date
+            </label>
 
-    font-weight: 700;
+            <input
+                id="entryDate"
+                type="date"
+                value="${todayISO()}"
+            >
 
-    text-transform: uppercase;
-}
+        </div>
 
-.entry-field input,
-.entry-field textarea,
-.entry-field select {
-    width: 100%;
+    `;
 
-    border:
-        1px solid
-        var(--border);
 
-    border-radius: 8px;
+    if (
+        section ===
+        "notes"
+        ||
+        section ===
+        "thoughts"
+    ) {
 
-    background:
-        rgba(0,0,0,.16);
+        container.innerHTML = `
 
-    color:
-        var(--text);
+            <div class="entry-field full">
 
-    outline: none;
-}
+                <label>
+                    Heading
+                </label>
 
-.entry-field input,
-.entry-field select {
-    min-height: 43px;
+                <input
+                    id="entryTitle"
+                    type="text"
+                >
 
-    padding:
-        0 10px;
-}
+            </div>
 
-.entry-field textarea {
-    padding: 10px;
 
-    resize: vertical;
+            <div class="entry-field">
 
-    line-height: 1.5;
-}
+                <label>
+                    Page
+                </label>
 
-.entry-field input:focus,
-.entry-field textarea:focus,
-.entry-field select:focus {
-    border-color:
-        var(--accent);
-}
+                <input
+                    id="entryPage"
+                    type="number"
+                >
 
-.entry-actions {
-    display: grid;
+            </div>
 
-    grid-template-columns:
-        1fr 1.3fr;
 
-    gap: 8px;
+            ${dateField}
 
-    padding:
-        0 22px 22px;
+
+            <div class="entry-field full">
+
+                <label>
+                    Entry
+                </label>
+
+                <textarea
+                    id="entryBody"
+                    rows="7"
+                ></textarea>
+
+            </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+    if (
+        section ===
+        "words"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="entry-field full">
+
+                <label>Word</label>
+
+                <input
+                    id="entryWord"
+                    required
+                >
+
+            </div>
+
+            ${dateField}
+
+            <div class="entry-field full">
+
+                <label>Definition</label>
+
+                <textarea
+                    id="entryDefinition"
+                ></textarea>
+
+            </div>
+
+            <div class="entry-field full">
+
+                <label>Context</label>
+
+                <textarea
+                    id="entryContext"
+                ></textarea>
+
+            </div>
+
+            <div class="entry-field full">
+
+                <label>My sentence</label>
+
+                <textarea
+                    id="entrySentence"
+                ></textarea>
+
+            </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+    if (
+        section ===
+        "quotes"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="entry-field full">
+
+                <label>Quote</label>
+
+                <textarea
+                    id="entryQuote"
+                    rows="6"
+                    required
+                ></textarea>
+
+            </div>
+
+            ${dateField}
+
+            <div class="entry-field full">
+
+                <label>Why I saved it</label>
+
+                <textarea
+                    id="entryReason"
+                ></textarea>
+
+            </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+    if (
+        section ===
+        "characters"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="entry-field full">
+
+                <label>Name</label>
+
+                <input
+                    id="entryName"
+                    required
+                >
+
+            </div>
+
+            ${dateField}
+
+            <div class="entry-field full">
+
+                <label>Role</label>
+
+                <input
+                    id="entryRole"
+                >
+
+            </div>
+
+            <div class="entry-field full">
+
+                <label>Notes</label>
+
+                <textarea
+                    id="entryNotes"
+                ></textarea>
+
+            </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+    if (
+        section ===
+        "themes"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="entry-field full">
+
+                <label>Theme</label>
+
+                <input
+                    id="entryTheme"
+                    required
+                >
+
+            </div>
+
+            ${dateField}
+
+            <div class="entry-field full">
+
+                <label>Notes</label>
+
+                <textarea
+                    id="entryNotes"
+                ></textarea>
+
+            </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+    if (
+        section ===
+        "questions"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="entry-field full">
+
+                <label>Question</label>
+
+                <textarea
+                    id="entryQuestion"
+                    required
+                ></textarea>
+
+            </div>
+
+            ${dateField}
+
+            <div class="entry-field full">
+
+                <label>Answer / thoughts</label>
+
+                <textarea
+                    id="entryAnswer"
+                ></textarea>
+
+            </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+    if (
+        section ===
+        "review"
+    ) {
+
+        container.innerHTML = `
+
+            <div class="entry-field full">
+
+                <label>Review title</label>
+
+                <input
+                    id="entryTitle"
+                >
+
+            </div>
+
+            ${dateField}
+
+            <div class="entry-field full">
+
+                <label>Review</label>
+
+                <textarea
+                    id="entryReview"
+                    rows="7"
+                ></textarea>
+
+            </div>
+
+            <div class="entry-field full">
+
+                <label>What I learned</label>
+
+                <textarea
+                    id="entryLearned"
+                ></textarea>
+
+            </div>
+
+            <div class="entry-field full">
+
+                <label>What stayed with me</label>
+
+                <textarea
+                    id="entryStayed"
+                ></textarea>
+
+            </div>
+
+        `;
+
+    }
+
 }
 
 
 /* =========================================================
-   SAFETY
+   SAVE JOURNAL ENTRY
    ========================================================= */
 
-[hidden] {
-    display: none !important;
+function saveJournalEntry(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const book =
+        getBookById(
+            selectedBookId
+        );
+
+
+    const section =
+        getValue(
+            "entrySection"
+        );
+
+
+    if (
+        !book ||
+        !section
+    ) {
+
+        return;
+
+    }
+
+
+    book.journal[
+        section
+    ]
+        .push(
+            buildEntryFromForm(
+                section
+            )
+        );
+
+
+    saveBooks();
+
+    closeEntryModal();
+
+    renderJournalEntries();
+
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   BUILD ENTRY
    ========================================================= */
 
-@media (max-width: 1000px) {
+function buildEntryFromForm(
+    section
+) {
 
-    .library-intro {
-        grid-template-columns: 1fr;
+    const base = {
+
+        id:
+            generateId(),
+
+        date:
+            getValue(
+                "entryDate"
+            )
+            ||
+            todayISO()
+
+    };
+
+
+    if (
+        section ===
+        "notes"
+        ||
+        section ===
+        "thoughts"
+    ) {
+
+        return {
+
+            ...base,
+
+            title:
+                getValue(
+                    "entryTitle"
+                ),
+
+            page:
+                getValue(
+                    "entryPage"
+                ),
+
+            body:
+                getValue(
+                    "entryBody"
+                )
+
+        };
+
     }
 
-    .library-summary {
-        width: fit-content;
+
+    if (
+        section ===
+        "words"
+    ) {
+
+        return {
+
+            ...base,
+
+            word:
+                getValue(
+                    "entryWord"
+                ),
+
+            definition:
+                getValue(
+                    "entryDefinition"
+                ),
+
+            context:
+                getValue(
+                    "entryContext"
+                ),
+
+            sentence:
+                getValue(
+                    "entrySentence"
+                )
+
+        };
+
     }
 
-    .revealed-book {
-        grid-template-columns:
-            250px
-            minmax(0,1fr);
+
+    if (
+        section ===
+        "quotes"
+    ) {
+
+        return {
+
+            ...base,
+
+            quote:
+                getValue(
+                    "entryQuote"
+                ),
+
+            reason:
+                getValue(
+                    "entryReason"
+                )
+
+        };
+
     }
+
+
+    if (
+        section ===
+        "characters"
+    ) {
+
+        return {
+
+            ...base,
+
+            name:
+                getValue(
+                    "entryName"
+                ),
+
+            role:
+                getValue(
+                    "entryRole"
+                ),
+
+            notes:
+                getValue(
+                    "entryNotes"
+                )
+
+        };
+
+    }
+
+
+    if (
+        section ===
+        "themes"
+    ) {
+
+        return {
+
+            ...base,
+
+            theme:
+                getValue(
+                    "entryTheme"
+                ),
+
+            notes:
+                getValue(
+                    "entryNotes"
+                )
+
+        };
+
+    }
+
+
+    if (
+        section ===
+        "questions"
+    ) {
+
+        return {
+
+            ...base,
+
+            question:
+                getValue(
+                    "entryQuestion"
+                ),
+
+            answer:
+                getValue(
+                    "entryAnswer"
+                )
+
+        };
+
+    }
+
+
+    return {
+
+        ...base,
+
+        title:
+            getValue(
+                "entryTitle"
+            ),
+
+        review:
+            getValue(
+                "entryReview"
+            ),
+
+        learned:
+            getValue(
+                "entryLearned"
+            ),
+
+        stayed:
+            getValue(
+                "entryStayed"
+            )
+
+    };
+
 }
 
 
-@media (max-width: 760px) {
+/* =========================================================
+   ENTRY NAME
+   ========================================================= */
 
-    .library-page {
-        width:
-            calc(100% - 30px);
+function getSingularEntryName(
+    section
+) {
 
-        padding-top: 35px;
-    }
+    const names = {
 
-    .library-intro h1 {
-        font-size: 3.8rem;
-    }
+        notes:
+            "note",
 
-    .shelf-cabinet {
-        padding-left: 20px;
-        padding-right: 20px;
-    }
+        thoughts:
+            "thought",
 
-    .book-reveal {
-        align-items: flex-start;
-    }
+        words:
+            "word",
 
-    .revealed-book {
-        grid-template-columns: 1fr;
+        quotes:
+            "quote",
 
-        width:
-            min(400px,100%);
+        characters:
+            "character",
 
-        gap: 28px;
-    }
+        themes:
+            "theme",
 
-    .revealed-cover {
-        width: 230px;
+        questions:
+            "question",
 
-        margin:
-            40px auto 0;
-    }
+        review:
+            "review"
 
-    .open-book {
-        height: auto;
+    };
 
-        max-height:
-            calc(100vh - 50px);
 
-        overflow-y: auto;
+    return names[
+        section
+    ]
+    ||
+    "entry";
 
-        grid-template-columns: 1fr;
-    }
-
-    .left-page {
-        display: none;
-    }
-
-    .book-page.right-page {
-        min-height: 600px;
-
-        border-radius: 18px;
-    }
 }
 
 
-@media (max-width: 550px) {
+/* =========================================================
+   BOOK ORNAMENT
+   ========================================================= */
 
-    .library-summary {
-        width: 100%;
+function getBookOrnament(
+    style
+) {
 
-        grid-template-columns:
-            repeat(3,1fr);
+    const ornaments = {
+
+        classic:
+            "◇",
+
+        floral:
+            "✿",
+
+        botanical:
+            "❧",
+
+        celestial:
+            "✦",
+
+        pastel:
+            "♡",
+
+        gothic:
+            "◆",
+
+        minimal:
+            "·"
+
+    };
+
+
+    return ornaments[
+        style
+    ]
+    ||
+    "◇";
+
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+function getStatusLabel(
+    status
+) {
+
+    const labels = {
+
+        want:
+            "want to read",
+
+        reading:
+            "currently reading",
+
+        paused:
+            "paused for now",
+
+        finished:
+            "finished",
+
+        dnf:
+            "did not finish",
+
+        reference:
+            "kept for reference"
+
+    };
+
+
+    return labels[
+        status
+    ]
+    ||
+    status;
+
+}
+
+
+function normalizeBookStatus(
+    status
+) {
+
+    const allowed = [
+
+        "want",
+        "reading",
+        "paused",
+        "finished",
+        "dnf",
+        "reference"
+
+    ];
+
+
+    return allowed.includes(
+        status
+    )
+        ?
+        status
+        :
+        "want";
+
+}
+
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+function getProgressPercent(
+    book
+) {
+
+    if (
+        !book.pages
+    ) {
+
+        return 0;
+
     }
 
-    .library-summary > div {
-        min-height: 80px;
+
+    return Math.min(
+
+        100,
+
+        Math.max(
+
+            0,
+
+            Math.round(
+                (
+                    book.current_page /
+                    book.pages
+                )
+                *
+                100
+            )
+
+        )
+
+    );
+
+}
+
+
+/* =========================================================
+   SAVE
+   ========================================================= */
+
+function saveShelves() {
+
+    localStorage.setItem(
+
+        STORAGE_KEYS.shelves,
+
+        JSON.stringify(
+            shelves
+        )
+
+    );
+
+}
+
+
+function saveBooks() {
+
+    localStorage.setItem(
+
+        STORAGE_KEYS.books,
+
+        JSON.stringify(
+            books
+        )
+
+    );
+
+}
+
+
+/* =========================================================
+   LOOKUPS
+   ========================================================= */
+
+function getShelfById(
+    id
+) {
+
+    return shelves.find(
+        shelf =>
+            String(
+                shelf.id
+            )
+            ===
+            String(
+                id
+            )
+    )
+    ||
+    null;
+
+}
+
+
+function getBookById(
+    id
+) {
+
+    return books.find(
+        book =>
+            String(
+                book.id
+            )
+            ===
+            String(
+                id
+            )
+    )
+    ||
+    null;
+
+}
+
+
+/* =========================================================
+   DATE
+   ========================================================= */
+
+function todayISO() {
+
+    const date =
+        new Date();
+
+
+    return [
+
+        date.getFullYear(),
+
+        String(
+            date.getMonth() + 1
+        )
+        .padStart(
+            2,
+            "0"
+        ),
+
+        String(
+            date.getDate()
+        )
+        .padStart(
+            2,
+            "0"
+        )
+
+    ]
+    .join(
+        "-"
+    );
+
+}
+
+
+function formatDate(
+    value
+) {
+
+    if (!value) {
+
+        return "—";
+
     }
 
-    .shelf-heading {
-        flex-direction: column;
 
-        align-items: flex-start;
+    const date =
+        new Date(
+            `${value}T12:00:00`
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return value;
+
     }
 
-    .entry-fields {
-        grid-template-columns: 1fr;
+
+    return date.toLocaleDateString(
+        "en-US",
+        {
+
+            month:
+                "short",
+
+            day:
+                "numeric",
+
+            year:
+                "numeric"
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   NORMALIZERS
+   ========================================================= */
+
+function normalizeNumber(
+    value
+) {
+
+    const number =
+        Number(
+            value
+        );
+
+
+    if (
+        Number.isNaN(
+            number
+        )
+    ) {
+
+        return 0;
+
     }
 
-    .entry-field.full {
-        grid-column: auto;
+
+    return Math.max(
+        0,
+        Math.round(
+            number
+        )
+    );
+
+}
+
+
+function normalizePercent(
+    value,
+    fallback = 50
+) {
+
+    const number =
+        Number(
+            value
+        );
+
+
+    if (
+        Number.isNaN(
+            number
+        )
+    ) {
+
+        return fallback;
+
     }
 
-    .entry-actions {
-        grid-template-columns: 1fr;
+
+    return clamp(
+        number,
+        0,
+        100
+    );
+
+}
+
+
+function normalizeScale(
+    value
+) {
+
+    const number =
+        Number(
+            value
+        );
+
+
+    if (
+        Number.isNaN(
+            number
+        )
+    ) {
+
+        return 1;
+
     }
 
-    .reveal-actions {
-        flex-direction: column;
+
+    return clamp(
+        number,
+        .5,
+        2
+    );
+
+}
+
+
+function normalizeRotation(
+    value
+) {
+
+    const number =
+        Number(
+            value
+        );
+
+
+    if (
+        Number.isNaN(
+            number
+        )
+    ) {
+
+        return 0;
+
     }
+
+
+    return clamp(
+        number,
+        -45,
+        45
+    );
+
+}
+
+
+function clamp(
+    value,
+    minimum,
+    maximum
+) {
+
+    return Math.min(
+        maximum,
+        Math.max(
+            minimum,
+            value
+        )
+    );
+
+}
+
+
+/* =========================================================
+   ID
+   ========================================================= */
+
+function generateId() {
+
+    if (
+        window.crypto
+        &&
+        typeof window.crypto.randomUUID ===
+        "function"
+    ) {
+
+        return window.crypto.randomUUID();
+
+    }
+
+
+    return (
+        Date.now()
+        +
+        "-"
+        +
+        Math.random()
+            .toString(16)
+            .slice(2)
+    );
+
+}
+
+
+/* =========================================================
+   FORM HELPERS
+   ========================================================= */
+
+function getValue(
+    id
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (!element) {
+
+        return "";
+
+    }
+
+
+    return String(
+        element.value ??
+        ""
+    )
+    .trim();
+
+}
+
+
+function setValue(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (element) {
+
+        element.value =
+            value ??
+            "";
+
+    }
+
+}
+
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (element) {
+
+        element.textContent =
+            value ??
+            "";
+
+    }
+
+}
+
+
+function setChecked(
+    id,
+    checked
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (element) {
+
+        element.checked =
+            Boolean(
+                checked
+            );
+
+    }
+
+}
+
+
+/* =========================================================
+   SAFE URL
+   ========================================================= */
+
+function safeStyleURL(
+    value
+) {
+
+    return String(
+        value ||
+        ""
+    )
+    .replace(
+        /"/g,
+        "%22"
+    )
+    .replace(
+        /\n/g,
+        ""
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHTML(
+    value
+) {
+
+    return String(
+        value ??
+        ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
 }
