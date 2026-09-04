@@ -1,6 +1,7 @@
 /* =========================================================
    SHELFMARK
    GLOBAL.CSS
+   v5
    ========================================================= */
 
 
@@ -9,56 +10,9 @@
    ========================================================= */
 
 :root {
+
     --sidebar-width: 232px;
 
-    --bg: #171313;
-    --bg-2: #21191b;
-
-    --panel: #261e1f;
-    --panel-2: #2e2526;
-
-    --paper: #eadfca;
-    --paper-soft: #f2e9da;
-
-    --text: #eee0ca;
-    --text-soft: #c8b8a6;
-
-    --muted: #95877c;
-    --muted-light: #74675f;
-
-    --accent: #b28a4a;
-    --accent-light: #d1b374;
-    --accent-2: #6c2633;
-
-    --wood: #4d3023;
-    --wood-mid: #65402c;
-    --wood-dark: #2d1c16;
-
-    --border: rgba(178,138,74,.15);
-    --border-soft: rgba(178,138,74,.08);
-
-    --glow: rgba(226,154,95,.15);
-
-    --shadow-soft:
-        0 14px 40px rgba(0,0,0,.26);
-
-    --shadow-deep:
-        0 24px 65px rgba(0,0,0,.42);
-
-    --radius: 14px;
-}
-
-
-/* =========================================================
-   THEMES
-   ========================================================= */
-
-
-/* ---------------------------------------------------------
-   HAUNTED LIBRARY
-   --------------------------------------------------------- */
-
-body.theme-haunted {
     --bg: #171313;
     --bg-2: #21191b;
 
@@ -82,7 +36,63 @@ body.theme-haunted {
     --wood-mid: #65402c;
     --wood-dark: #2d1c16;
 
-    --glow: rgba(226,154,95,.16);
+    --border:
+        rgba(178, 138, 74, .16);
+
+    --border-soft:
+        rgba(178, 138, 74, .08);
+
+    --glow:
+        rgba(226, 154, 95, .16);
+
+    --shadow-soft:
+        0 14px 40px
+        rgba(0, 0, 0, .26);
+
+    --shadow-deep:
+        0 24px 65px
+        rgba(0, 0, 0, .42);
+
+    --radius: 14px;
+}
+
+
+/* =========================================================
+   THEMES
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   HAUNTED LIBRARY
+   --------------------------------------------------------- */
+
+body.theme-haunted {
+
+    --bg: #171313;
+    --bg-2: #21191b;
+
+    --panel: #261e1f;
+    --panel-2: #2f2527;
+
+    --paper: #eadfca;
+    --paper-soft: #f3e7d3;
+
+    --text: #eee0ca;
+    --text-soft: #c7b6a4;
+
+    --muted: #95877c;
+    --muted-light: #74675f;
+
+    --accent: #b28a4a;
+    --accent-light: #d1b374;
+    --accent-2: #6c2633;
+
+    --wood: #4d3023;
+    --wood-mid: #65402c;
+    --wood-dark: #2d1c16;
+
+    --glow:
+        rgba(226, 154, 95, .16);
 }
 
 
@@ -91,6 +101,7 @@ body.theme-haunted {
    --------------------------------------------------------- */
 
 body.theme-autumn {
+
     --bg: #3d2924;
     --bg-2: #56372d;
 
@@ -114,7 +125,8 @@ body.theme-autumn {
     --wood-mid: #855235;
     --wood-dark: #3b241a;
 
-    --glow: rgba(240,138,67,.18);
+    --glow:
+        rgba(240, 138, 67, .18);
 }
 
 
@@ -123,6 +135,7 @@ body.theme-autumn {
    --------------------------------------------------------- */
 
 body.theme-forest {
+
     --bg: #17241c;
     --bg-2: #213327;
 
@@ -146,7 +159,8 @@ body.theme-forest {
     --wood-mid: #6e5138;
     --wood-dark: #2f241a;
 
-    --glow: rgba(165,185,105,.16);
+    --glow:
+        rgba(165, 185, 105, .16);
 }
 
 
@@ -155,6 +169,7 @@ body.theme-forest {
    --------------------------------------------------------- */
 
 body.theme-retro {
+
     --bg: #11120f;
     --bg-2: #1d1d17;
 
@@ -178,7 +193,8 @@ body.theme-retro {
     --wood-mid: #4b3929;
     --wood-dark: #201914;
 
-    --glow: rgba(148,173,63,.15);
+    --glow:
+        rgba(148, 173, 63, .15);
 }
 
 
@@ -187,6 +203,7 @@ body.theme-retro {
    --------------------------------------------------------- */
 
 body.theme-ghosts {
+
     --bg: #53645c;
     --bg-2: #65766d;
 
@@ -210,7 +227,8 @@ body.theme-ghosts {
     --wood-mid: #8e543c;
     --wood-dark: #43291f;
 
-    --glow: rgba(255,214,186,.18);
+    --glow:
+        rgba(255, 214, 186, .18);
 }
 
 
@@ -361,9 +379,10 @@ h4 {
     background:
         linear-gradient(
             180deg,
-            color-mix(in srgb, var(--panel) 90%, black),
-            color-mix(in srgb, var(--bg) 92%, black)
-        );
+            rgba(0,0,0,.14),
+            transparent 35%
+        ),
+        var(--panel);
 
     border-right:
         1px solid
@@ -372,9 +391,26 @@ h4 {
     box-shadow:
         8px 0 30px
         rgba(0,0,0,.22);
+}
 
-    transition:
-        background .35s ease;
+.sidebar::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: .11;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 20px,
+            rgba(255,255,255,.025) 21px,
+            transparent 22px
+        );
 }
 
 .sidebar::after {
@@ -383,14 +419,12 @@ h4 {
     position: absolute;
 
     right: 18px;
-    bottom: 110px;
+    bottom: 112px;
 
     color:
-        color-mix(
-            in srgb,
-            var(--accent) 45%,
-            transparent
-        );
+        var(--accent);
+
+    opacity: .25;
 }
 
 
@@ -428,20 +462,12 @@ h4 {
 
     border:
         1px solid
-        color-mix(
-            in srgb,
-            var(--accent) 45%,
-            transparent
-        );
+        var(--border);
 
     border-radius: 50%;
 
     background:
-        color-mix(
-            in srgb,
-            var(--accent-2) 70%,
-            var(--panel)
-        );
+        var(--accent-2);
 
     color:
         var(--accent-light);
@@ -463,7 +489,7 @@ h4 {
 
     font-size: .92rem;
 
-    letter-spacing: .1em;
+    letter-spacing: .10em;
 }
 
 .brand span {
@@ -515,7 +541,8 @@ h4 {
         0 11px;
 
     border:
-        1px solid transparent;
+        1px solid
+        transparent;
 
     border-radius: 10px;
 
@@ -549,11 +576,7 @@ h4 {
     background:
         linear-gradient(
             90deg,
-            color-mix(
-                in srgb,
-                var(--accent-2) 30%,
-                transparent
-            ),
+            rgba(255,255,255,.035),
             transparent
         );
 
@@ -607,11 +630,16 @@ h4 {
     cursor: pointer;
 
     font-size: .6rem;
+
+    transition: .16s ease;
 }
 
 .sidebar-button:hover {
     background:
         rgba(255,255,255,.055);
+
+    border-color:
+        var(--accent);
 }
 
 .sidebar-button.primary {
@@ -619,19 +647,12 @@ h4 {
         linear-gradient(
             135deg,
             var(--accent-2),
-            color-mix(
-                in srgb,
-                var(--accent-2) 68%,
-                black
-            )
-        );
+            rgba(0,0,0,.16)
+        ),
+        var(--accent-2);
 
     border-color:
-        color-mix(
-            in srgb,
-            var(--accent) 30%,
-            transparent
-        );
+        var(--border);
 
     color:
         var(--paper);
@@ -667,11 +688,7 @@ h4 {
     border-radius: 11px;
 
     background:
-        color-mix(
-            in srgb,
-            var(--panel) 82%,
-            transparent
-        );
+        rgba(255,255,255,.025);
 
     cursor: pointer;
 
@@ -683,11 +700,7 @@ h4 {
 
 .reading-room-button:hover {
     background:
-        color-mix(
-            in srgb,
-            var(--panel-2) 90%,
-            transparent
-        );
+        rgba(255,255,255,.05);
 }
 
 .reading-room-icon {
@@ -698,22 +711,21 @@ h4 {
 
     place-items: center;
 
-    flex:
-        0 0 auto;
+    flex: 0 0 auto;
 
     border-radius: 50%;
 
     background:
-        color-mix(
-            in srgb,
-            var(--accent-2) 45%,
-            var(--panel)
-        );
+        var(--accent-2);
 
     color:
         var(--accent-light);
 
     font-size: .62rem;
+
+    box-shadow:
+        0 0 12px
+        var(--glow);
 }
 
 .reading-room-button strong {
@@ -802,18 +814,14 @@ h4 {
     width: 50px;
 
     background:
-        color-mix(
-            in srgb,
-            var(--accent) 65%,
-            var(--bg)
-        );
+        var(--accent);
 }
 
 .tiny-book-stack span:nth-child(3) {
     width: 38px;
 
     background:
-        var(--accent);
+        var(--accent-light);
 }
 
 
@@ -834,8 +842,7 @@ h4 {
 
     align-items: center;
 
-    justify-content:
-        space-between;
+    justify-content: space-between;
 
     gap: 20px;
 
@@ -847,14 +854,30 @@ h4 {
         var(--border-soft);
 
     background:
-        color-mix(
-            in srgb,
-            var(--bg) 82%,
-            transparent
-        );
+        rgba(20,16,16,.76);
 
     backdrop-filter:
         blur(16px);
+}
+
+body.theme-autumn .topbar {
+    background:
+        rgba(61,41,36,.76);
+}
+
+body.theme-forest .topbar {
+    background:
+        rgba(23,36,28,.76);
+}
+
+body.theme-retro .topbar {
+    background:
+        rgba(17,18,15,.80);
+}
+
+body.theme-ghosts .topbar {
+    background:
+        rgba(83,100,92,.76);
 }
 
 .topbar-copy {
@@ -905,24 +928,12 @@ h4 {
 
     border:
         1px solid
-        color-mix(
-            in srgb,
-            var(--accent) 28%,
-            transparent
-        );
+        var(--border);
 
     border-radius: 10px;
 
     background:
-        linear-gradient(
-            135deg,
-            var(--accent-2),
-            color-mix(
-                in srgb,
-                var(--accent-2) 66%,
-                black
-            )
-        );
+        var(--accent-2);
 
     color:
         var(--paper);
@@ -934,11 +945,15 @@ h4 {
         serif;
 
     font-size: .63rem;
+
+    box-shadow:
+        0 8px 18px
+        rgba(0,0,0,.16);
 }
 
 
 /* =========================================================
-   BUTTONS
+   GENERAL BUTTONS
    ========================================================= */
 
 .soft-button,
@@ -950,7 +965,17 @@ h4 {
 
     cursor: pointer;
 
-    font-size: .61rem;
+    transition:
+        transform .15s ease,
+        background .15s ease,
+        border-color .15s ease;
+}
+
+.soft-button:hover,
+.secondary-button:hover,
+.primary-button:hover {
+    transform:
+        translateY(-1px);
 }
 
 .soft-button {
@@ -988,6 +1013,11 @@ h4 {
         var(--muted);
 }
 
+.secondary-button:hover {
+    border-color:
+        var(--accent);
+}
+
 .primary-button {
     display: flex;
 
@@ -1003,25 +1033,17 @@ h4 {
 
     border:
         1px solid
-        color-mix(
-            in srgb,
-            var(--accent) 28%,
-            transparent
-        );
+        var(--border);
 
     background:
-        linear-gradient(
-            135deg,
-            var(--accent-2),
-            color-mix(
-                in srgb,
-                var(--accent-2) 65%,
-                black
-            )
-        );
+        var(--accent-2);
 
     color:
         var(--paper);
+
+    box-shadow:
+        0 8px 18px
+        rgba(0,0,0,.14);
 }
 
 
@@ -1094,6 +1116,11 @@ h4 {
         background .35s ease;
 }
 
+.book-drawer {
+    width:
+        min(700px,100%);
+}
+
 .form-drawer.open {
     transform:
         translateX(0);
@@ -1109,14 +1136,19 @@ body.modal-open {
    ========================================================= */
 
 .drawer-header {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 20;
+
     min-height: 108px;
 
     display: flex;
 
     align-items: center;
 
-    justify-content:
-        space-between;
+    justify-content: space-between;
 
     gap: 20px;
 
@@ -1128,11 +1160,11 @@ body.modal-open {
         var(--border-soft);
 
     background:
-        color-mix(
-            in srgb,
-            var(--panel-2) 90%,
-            transparent
-        );
+        var(--panel-2);
+
+    box-shadow:
+        0 9px 22px
+        rgba(0,0,0,.12);
 }
 
 .drawer-header > div > span {
@@ -1162,6 +1194,8 @@ body.modal-open {
 
     place-items: center;
 
+    flex: 0 0 auto;
+
     border:
         1px solid
         var(--border);
@@ -1177,6 +1211,14 @@ body.modal-open {
         var(--text-soft);
 
     font-size: 1.25rem;
+}
+
+.close-button:hover {
+    border-color:
+        var(--accent);
+
+    background:
+        rgba(255,255,255,.055);
 }
 
 
@@ -1195,7 +1237,7 @@ body.modal-open {
 }
 
 .theme-intro-copy {
-    max-width: 560px;
+    max-width: 580px;
 
     margin:
         0 0 26px;
@@ -1249,7 +1291,8 @@ body.modal-open {
 
     transition:
         transform .16s ease,
-        border-color .16s ease;
+        border-color .16s ease,
+        box-shadow .16s ease;
 }
 
 .theme-card:hover {
@@ -1257,11 +1300,7 @@ body.modal-open {
         translateY(-2px);
 
     border-color:
-        color-mix(
-            in srgb,
-            var(--accent) 42%,
-            transparent
-        );
+        var(--accent);
 }
 
 .theme-card.active {
@@ -1270,11 +1309,10 @@ body.modal-open {
 
     box-shadow:
         0 0 0 1px
-        color-mix(
-            in srgb,
-            var(--accent) 22%,
-            transparent
-        );
+        rgba(255,255,255,.035),
+
+        0 10px 26px
+        rgba(0,0,0,.16);
 }
 
 .theme-preview {
@@ -1333,20 +1371,21 @@ body.modal-open {
     font-size: .68rem;
 }
 
-.theme-card.active .theme-check {
+.theme-card.active
+.theme-check {
     display: block;
 }
 
 
 /* =========================================================
-   THEME PREVIEWS
+   THEME PREVIEW ART
    ========================================================= */
 
 .theme-preview-haunted {
     background:
         radial-gradient(
             circle at 55% 75%,
-            rgba(226,154,95,.3),
+            rgba(226,154,95,.30),
             transparent 28%
         ),
         linear-gradient(
@@ -1398,9 +1437,7 @@ body.modal-open {
 }
 
 
-/* =========================================================
-   PREVIEW WINDOW
-   ========================================================= */
+/* Window */
 
 .preview-window {
     position: absolute;
@@ -1413,11 +1450,7 @@ body.modal-open {
 
     border:
         4px solid
-        color-mix(
-            in srgb,
-            var(--wood) 80%,
-            black
-        );
+        rgba(48,30,24,.78);
 
     border-radius:
         35px 35px 6px 6px;
@@ -1447,9 +1480,7 @@ body.modal-open {
 }
 
 
-/* =========================================================
-   PREVIEW FIRE
-   ========================================================= */
+/* Fire */
 
 .preview-fire {
     position: absolute;
@@ -1493,9 +1524,7 @@ body.modal-open {
 }
 
 
-/* =========================================================
-   PREVIEW BOOKS
-   ========================================================= */
+/* Books */
 
 .preview-books {
     position: absolute;
@@ -1537,17 +1566,11 @@ body.modal-open {
     height: 27px;
 
     background:
-        color-mix(
-            in srgb,
-            var(--accent) 55%,
-            var(--panel)
-        );
+        var(--accent-light);
 }
 
 
-/* =========================================================
-   AUTUMN PREVIEW
-   ========================================================= */
+/* Pumpkin */
 
 .preview-pumpkin {
     position: absolute;
@@ -1591,9 +1614,7 @@ body.modal-open {
 }
 
 
-/* =========================================================
-   FOREST PREVIEW
-   ========================================================= */
+/* Forest moon */
 
 .preview-moon {
     position: absolute;
@@ -1644,9 +1665,7 @@ body.modal-open {
 }
 
 
-/* =========================================================
-   RETRO PREVIEW
-   ========================================================= */
+/* Retro TV */
 
 .preview-tv {
     position: absolute;
@@ -1696,9 +1715,7 @@ body.modal-open {
 }
 
 
-/* =========================================================
-   GHOST PREVIEW
-   ========================================================= */
+/* Ghost */
 
 .preview-ghost {
     position: absolute;
@@ -1869,7 +1886,7 @@ body.modal-open {
 
 
 /* =========================================================
-   DENSITY OPTIONS
+   CLUTTER / DENSITY OPTIONS
    ========================================================= */
 
 .density-options {
@@ -1884,7 +1901,7 @@ body.modal-open {
 }
 
 .density-options label {
-    min-height: 88px;
+    min-height: 92px;
 
     display: flex;
 
@@ -1909,6 +1926,9 @@ body.modal-open {
 .density-options label:hover {
     background:
         rgba(255,255,255,.035);
+
+    border-color:
+        var(--accent);
 }
 
 .density-options input {
@@ -2017,16 +2037,6 @@ body.modal-open {
         0 11px;
 }
 
-.form-group input[type="file"] {
-    min-height: auto;
-
-    padding: 11px;
-}
-
-.form-group input[type="color"] {
-    padding: 5px;
-}
-
 .form-group textarea {
     padding: 11px;
 
@@ -2035,14 +2045,61 @@ body.modal-open {
     line-height: 1.5;
 }
 
+.form-group input[type="file"] {
+    min-height: auto;
+
+    padding: 11px;
+}
+
+.form-group input[type="color"] {
+    height: 47px;
+
+    padding: 5px;
+
+    cursor: pointer;
+}
+
+.form-group select {
+    cursor: pointer;
+}
+
+.form-group option {
+    background:
+        var(--panel);
+
+    color:
+        var(--text);
+}
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     border-color:
         var(--accent);
+
+    box-shadow:
+        0 0 0 2px
+        rgba(178,138,74,.08);
 }
 
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color:
+        var(--muted-light);
+
+    opacity: .8;
+}
+
+
+/* =========================================================
+   FORM HINT
+   ========================================================= */
+
 .form-hint {
+    display: block;
+
+    margin-top: 2px;
+
     color:
         var(--muted-light);
 
@@ -2053,13 +2110,22 @@ body.modal-open {
     font-size: .55rem;
 
     font-style: italic;
+
+    line-height: 1.55;
+
+    text-transform: none;
 }
 
+
+/* =========================================================
+   FORM SECTION TITLES
+   ========================================================= */
+
 .form-section-title {
-    margin-top: 9px;
+    margin-top: 12px;
 
     padding:
-        10px 0;
+        11px 0;
 
     border-bottom:
         1px solid
@@ -2079,7 +2145,7 @@ body.modal-open {
 
 
 /* =========================================================
-   DECORATION OPTIONS
+   DECORATION FIELDSET
    ========================================================= */
 
 .decoration-fieldset {
@@ -2090,6 +2156,10 @@ body.modal-open {
     border: none;
 }
 
+.decoration-fieldset legend {
+    margin-bottom: 6px;
+}
+
 .decoration-options {
     display: grid;
 
@@ -2098,20 +2168,20 @@ body.modal-open {
 
     gap: 8px;
 
-    margin-top: 8px;
+    margin-top: 10px;
 }
 
 .decoration-options label {
-    min-height: 43px;
+    min-height: 46px;
 
     display: flex;
 
     align-items: center;
 
-    gap: 7px;
+    gap: 8px;
 
     padding:
-        0 10px;
+        0 11px;
 
     border:
         1px solid
@@ -2130,10 +2200,23 @@ body.modal-open {
     font-size: .57rem;
 
     text-transform: none;
+
+    transition:
+        background .14s ease,
+        border-color .14s ease;
+}
+
+.decoration-options label:hover {
+    background:
+        rgba(255,255,255,.045);
+
+    border-color:
+        var(--accent);
 }
 
 .decoration-options input {
     width: auto;
+    min-height: auto;
 
     accent-color:
         var(--accent-2);
@@ -2141,7 +2224,7 @@ body.modal-open {
 
 
 /* =========================================================
-   SPINE DESIGNER PREVIEW
+   SPINE PREVIEW GROUP
    ========================================================= */
 
 .spine-preview-group {
@@ -2152,13 +2235,15 @@ body.modal-open {
     display: grid;
 
     grid-template-columns:
-        100px 1fr;
+        130px 1fr;
 
     gap: 24px;
 
     align-items: center;
 
-    padding: 20px;
+    min-height: 270px;
+
+    padding: 22px;
 
     border:
         1px solid
@@ -2168,7 +2253,16 @@ body.modal-open {
 
     background:
         rgba(0,0,0,.12);
+
+    box-shadow:
+        inset 0 0 28px
+        rgba(0,0,0,.08);
 }
+
+
+/* =========================================================
+   SPINE PREVIEW BOOK BASE
+   ========================================================= */
 
 .spine-preview-book {
     position: relative;
@@ -2201,8 +2295,8 @@ body.modal-open {
         inset 4px 0 7px
         rgba(255,255,255,.08),
 
-        6px 8px 14px
-        rgba(0,0,0,.28);
+        7px 10px 18px
+        rgba(0,0,0,.30);
 
     transition:
         background .2s ease,
@@ -2238,17 +2332,32 @@ body.modal-open {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     border:
         1px solid
         rgba(255,255,255,.2);
+
+    overflow: hidden;
+}
+
+.spine-preview-title-panel {
+    position: relative;
+
+    z-index: 3;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    max-height: 78%;
+
+    padding: 4px;
 }
 
 .spine-preview-title {
-    max-height:
-        calc(100% - 40px);
+    max-height: 100%;
 
     writing-mode:
         vertical-rl;
@@ -2266,7 +2375,7 @@ body.modal-open {
 
     font-size: .72rem;
 
-    line-height: 1.1;
+    line-height: 1.08;
 
     text-align: center;
 }
@@ -2282,8 +2391,15 @@ body.modal-open {
 
     color: inherit;
 
-    font-size: .7rem;
+    font-size: .72rem;
+
+    z-index: 4;
 }
+
+
+/* =========================================================
+   SPINE PREVIEW COPY
+   ========================================================= */
 
 .spine-preview-copy strong {
     display: block;
@@ -2295,13 +2411,13 @@ body.modal-open {
         Georgia,
         serif;
 
-    font-size: .72rem;
+    font-size: .75rem;
 
     font-weight: 400;
 }
 
 .spine-preview-copy p {
-    max-width: 340px;
+    max-width: 360px;
 
     margin:
         8px 0 0;
@@ -2315,59 +2431,7 @@ body.modal-open {
 
     font-size: .58rem;
 
-    line-height: 1.6;
-}
-
-
-/* =========================================================
-   SPINE PREVIEW FONT OPTIONS
-   ========================================================= */
-
-.spine-font-serif
-.spine-preview-title {
-    font-family:
-        Georgia,
-        serif;
-}
-
-.spine-font-roman
-.spine-preview-title {
-    font-family:
-        "Times New Roman",
-        serif;
-
-    letter-spacing: .08em;
-
-    text-transform: uppercase;
-}
-
-.spine-font-typewriter
-.spine-preview-title {
-    font-family:
-        "Courier New",
-        monospace;
-
-    letter-spacing: .04em;
-}
-
-.spine-font-storybook
-.spine-preview-title {
-    font-family:
-        Georgia,
-        serif;
-
-    font-style: italic;
-}
-
-.spine-font-clean
-.spine-preview-title {
-    font-family:
-        Arial,
-        sans-serif;
-
-    font-size: .64rem;
-
-    letter-spacing: .04em;
+    line-height: 1.65;
 }
 
 
@@ -2384,6 +2448,49 @@ body.modal-open {
     gap: 10px;
 
     margin-top: 11px;
+
+    padding-top: 4px;
+}
+
+
+/* =========================================================
+   SCROLLBARS
+   ========================================================= */
+
+.form-drawer,
+.entry-card,
+.book-page,
+.journal-entries {
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        var(--accent)
+        transparent;
+}
+
+.form-drawer::-webkit-scrollbar,
+.entry-card::-webkit-scrollbar,
+.book-page::-webkit-scrollbar,
+.journal-entries::-webkit-scrollbar {
+    width: 8px;
+}
+
+.form-drawer::-webkit-scrollbar-track,
+.entry-card::-webkit-scrollbar-track,
+.book-page::-webkit-scrollbar-track,
+.journal-entries::-webkit-scrollbar-track {
+    background:
+        transparent;
+}
+
+.form-drawer::-webkit-scrollbar-thumb,
+.entry-card::-webkit-scrollbar-thumb,
+.book-page::-webkit-scrollbar-thumb,
+.journal-entries::-webkit-scrollbar-thumb {
+    background:
+        var(--accent);
+
+    border-radius: 8px;
 }
 
 
@@ -2394,13 +2501,17 @@ body.modal-open {
 body.reduce-motion *,
 body.reduce-motion *::before,
 body.reduce-motion *::after {
+
     scroll-behavior: auto !important;
 
-    animation-duration: .001ms !important;
+    animation-duration:
+        .001ms !important;
 
-    animation-iteration-count: 1 !important;
+    animation-iteration-count:
+        1 !important;
 
-    transition-duration: .001ms !important;
+    transition-duration:
+        .001ms !important;
 }
 
 
@@ -2408,14 +2519,16 @@ body.reduce-motion *::after {
    RESPONSIVE
    ========================================================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
 
     .theme-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
 
     .density-options {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
 
 }
@@ -2460,17 +2573,20 @@ body.reduce-motion *::after {
     }
 
     .drawer-form {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
 
     .form-group.full,
     .form-section-title.full,
     .drawer-actions.full {
-        grid-column: auto;
+        grid-column:
+            auto;
     }
 
     .drawer-actions {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
 
     .decoration-options {
@@ -2479,7 +2595,8 @@ body.reduce-motion *::after {
     }
 
     .spine-designer-preview {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
 
         text-align: center;
     }
@@ -2487,6 +2604,22 @@ body.reduce-motion *::after {
     .spine-preview-copy p {
         margin:
             8px auto 0;
+    }
+
+}
+
+
+@media (max-width: 430px) {
+
+    .decoration-options {
+        grid-template-columns:
+            1fr;
+    }
+
+    .theme-settings-content,
+    .drawer-form {
+        padding:
+            20px;
     }
 
 }
