@@ -1,7 +1,7 @@
 /* =========================================================
    SHELFMARK
    LIBRARY.CSS
-   v7 — DIMENSIONAL ILLUSTRATED LIBRARY
+   v8 — DIMENSIONAL SHELVES + FIXED BOOK SPINES
    ========================================================= */
 
 
@@ -37,10 +37,6 @@
 }
 
 
-/* =========================================================
-   AMBIENT ROOM BACKGROUND
-   ========================================================= */
-
 .library-page::before {
     content: "";
 
@@ -69,7 +65,7 @@
 }
 
 
-/* automatic ambient details only */
+/* automatic ambient room details only */
 
 .library-page::after {
     content: "✦        ·          ✧                     ·       ✦";
@@ -216,7 +212,7 @@ body[data-decoration-density="maximal"]
     display: grid;
 
     grid-template-columns:
-        repeat(3, 108px);
+        repeat(3,108px);
 
     overflow: hidden;
 
@@ -345,8 +341,6 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* top cap */
-
 .library-shelf::before {
     content: "";
 
@@ -379,8 +373,6 @@ body[data-decoration-density="maximal"]
         inset 0 2px rgba(255,255,255,.12);
 }
 
-
-/* floor shadow under whole shelf */
 
 .library-shelf::after {
     content: "";
@@ -460,7 +452,7 @@ body[data-decoration-density="maximal"]
 
 
 /* =========================================================
-   SHELF HEADER PLAQUE
+   SHELF HEADER
    ========================================================= */
 
 .shelf-header {
@@ -535,7 +527,11 @@ body[data-decoration-density="maximal"]
         #fff0d8;
 
     font-size:
-        clamp(1.25rem, 2vw, 1.7rem);
+        clamp(
+            1.25rem,
+            2vw,
+            1.7rem
+        );
 
     line-height: 1;
 }
@@ -613,7 +609,7 @@ body[data-decoration-density="maximal"]
 
 
 /* =========================================================
-   SHELF BODY / DIORAMA
+   SHELF BODY
    ========================================================= */
 
 .shelf-body {
@@ -657,8 +653,6 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* inner back panel frame */
-
 .shelf-body::before {
     content: "";
 
@@ -674,19 +668,17 @@ body[data-decoration-density="maximal"]
     border:
         1px solid rgba(255,255,255,.045);
 
-    box-shadow:
-        inset 0 0 35px rgba(0,0,0,.18);
-
     background:
         repeating-linear-gradient(
             90deg,
             rgba(255,255,255,.012) 0 1px,
             transparent 1px 54px
         );
+
+    box-shadow:
+        inset 0 0 35px rgba(0,0,0,.18);
 }
 
-
-/* light pool */
 
 .shelf-body::after {
     content: "";
@@ -828,8 +820,6 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* subtle shadow behind books */
-
 .shelf-books-row::before {
     content: "";
 
@@ -855,7 +845,7 @@ body[data-decoration-density="maximal"]
 
 
 /* =========================================================
-   THICK 3D SHELF BOARD
+   3D SHELF BOARD
    ========================================================= */
 
 .shelf-board {
@@ -891,8 +881,6 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* front lip */
-
 .shelf-board::before {
     content: "";
 
@@ -923,8 +911,6 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* wood highlight */
-
 .shelf-board::after {
     content: "";
 
@@ -951,6 +937,10 @@ body[data-decoration-density="maximal"]
    ========================================================= */
 
 .shelf-book {
+    --book-color: #6c2633;
+    --book-text: #eadfca;
+    --book-accent: #b28a4a;
+
     position: relative;
 
     flex:
@@ -1035,14 +1025,13 @@ body[data-decoration-density="maximal"]
 
 
 /* =========================================================
-   GENERATED BOOK SPINE
+   ACTUAL BOOK SPINE
+   IMPORTANT:
+   DO NOT REDEFINE --book-color / --book-text / --book-accent
+   HERE. JS applies those values to the rendered book.
    ========================================================= */
 
 .book-spine {
-    --book-color: #6c2633;
-    --book-text: #eadfca;
-    --book-accent: #b28a4a;
-
     position: relative;
 
     width: 100%;
@@ -1057,10 +1046,10 @@ body[data-decoration-density="maximal"]
         5px 6px 2px 2px;
 
     background:
-        var(--book-color);
+        var(--book-color, #6c2633);
 
     color:
-        var(--book-text);
+        var(--book-text, #eadfca);
 
     box-shadow:
         inset 5px 0 7px rgba(255,255,255,.05),
@@ -1069,18 +1058,20 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* spine ridge */
-
 .book-spine::before {
     content: "";
 
     position: absolute;
+
+    z-index: 2;
 
     top: 0;
     bottom: 0;
     left: 5px;
 
     width: 3px;
+
+    pointer-events: none;
 
     background:
         linear-gradient(
@@ -1093,18 +1084,20 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* bottom page/book shadow */
-
 .book-spine::after {
     content: "";
 
     position: absolute;
+
+    z-index: 2;
 
     left: 3px;
     right: 3px;
     bottom: 3px;
 
     height: 5px;
+
+    pointer-events: none;
 
     background:
         rgba(0,0,0,.12);
@@ -1113,6 +1106,8 @@ body[data-decoration-density="maximal"]
 
 .spine-inner {
     position: absolute;
+
+    z-index: 3;
 
     inset: 7px;
 
@@ -1128,7 +1123,7 @@ body[data-decoration-density="maximal"]
 .spine-title-panel {
     position: relative;
 
-    z-index: 3;
+    z-index: 4;
 
     max-width: 92%;
     max-height: 79%;
@@ -1171,7 +1166,7 @@ body[data-decoration-density="maximal"]
 .spine-ornament {
     position: absolute;
 
-    z-index: 4;
+    z-index: 6;
 
     left: 50%;
     bottom: 8px;
@@ -1180,30 +1175,31 @@ body[data-decoration-density="maximal"]
         translateX(-50%);
 
     color:
-        var(--book-accent);
+        var(--book-accent, #b28a4a);
 
     font-size: .67rem;
 }
 
 
 /* =========================================================
-   BOOK STYLES
+   BOOK SPINE DESIGNS
    ========================================================= */
 
-.book-style-classic {
+.book-spine.book-style-classic {
     background:
         linear-gradient(
             90deg,
-            rgba(255,255,255,.06),
+            rgba(255,255,255,.07),
             transparent 18%,
             transparent 82%,
-            rgba(0,0,0,.15)
+            rgba(0,0,0,.18)
         ),
         var(--book-color);
 }
 
 
-.book-style-classic .spine-inner {
+.book-spine.book-style-classic
+.spine-inner {
     border-top:
         2px solid var(--book-accent);
 
@@ -1212,7 +1208,7 @@ body[data-decoration-density="maximal"]
 }
 
 
-.book-style-gothic {
+.book-spine.book-style-gothic {
     background:
         radial-gradient(
             circle at 50% 16%,
@@ -1221,77 +1217,155 @@ body[data-decoration-density="maximal"]
         ),
         linear-gradient(
             90deg,
-            rgba(0,0,0,.28),
+            rgba(0,0,0,.30),
             transparent 22%,
             transparent 78%,
-            rgba(0,0,0,.28)
+            rgba(0,0,0,.30)
         ),
         var(--book-color);
 }
 
 
-.book-style-gothic .spine-inner {
+.book-spine.book-style-gothic
+.spine-inner {
     border:
         3px double var(--book-accent);
 }
 
 
-.book-style-botanical {
+.book-spine.book-style-gothic
+.spine-title-panel::before,
+.book-spine.book-style-gothic
+.spine-title-panel::after {
+    content: "◆";
+
+    position: absolute;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    color:
+        var(--book-accent);
+
+    font-size: .35rem;
+
+    opacity: .75;
+}
+
+
+.book-spine.book-style-gothic
+.spine-title-panel::before {
+    top: -12px;
+}
+
+
+.book-spine.book-style-gothic
+.spine-title-panel::after {
+    bottom: -12px;
+}
+
+
+.book-spine.book-style-botanical {
     background:
         radial-gradient(
             ellipse at 20% 18%,
             rgba(255,255,255,.06),
             transparent 26%
         ),
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.10),
+            transparent 24%,
+            transparent 76%,
+            rgba(0,0,0,.12)
+        ),
         var(--book-color);
 }
 
 
-.book-style-botanical::after {
+.book-spine.book-style-botanical::after {
     content: "❧";
 
     position: absolute;
 
+    z-index: 5;
+
     right: 5px;
     top: 9px;
+
+    height: auto;
+
+    left: auto;
+    bottom: auto;
 
     color:
         var(--book-accent);
 
+    background: none;
+
     font-size: .85rem;
 
-    opacity: .55;
+    opacity: .58;
 }
 
 
-.book-style-celestial {
+.book-spine.book-style-botanical
+.spine-inner::before {
+    content: "❧";
+
+    position: absolute;
+
+    left: 3px;
+    bottom: 12px;
+
+    color:
+        var(--book-accent);
+
+    font-size: .74rem;
+
+    transform:
+        rotate(180deg);
+
+    opacity: .42;
+}
+
+
+.book-spine.book-style-celestial {
     background:
         radial-gradient(
             circle at 22% 18%,
-            rgba(255,255,255,.14) 0 1px,
+            var(--book-accent) 0 1px,
             transparent 2px
         ),
         radial-gradient(
             circle at 72% 38%,
-            rgba(255,255,255,.12) 0 1px,
+            var(--book-accent) 0 1px,
             transparent 2px
         ),
         radial-gradient(
             circle at 30% 72%,
-            rgba(255,255,255,.12) 0 1px,
+            var(--book-accent) 0 1px,
+            transparent 2px
+        ),
+        radial-gradient(
+            circle at 74% 83%,
+            var(--book-accent) 0 1px,
             transparent 2px
         ),
         var(--book-color);
 }
 
 
-.book-style-celestial .spine-inner {
+.book-spine.book-style-celestial
+.spine-inner {
     border:
         1px solid var(--book-accent);
 }
 
 
-.book-style-floral {
+.book-spine.book-style-floral {
     background:
         radial-gradient(
             circle at 23% 17%,
@@ -1308,15 +1382,20 @@ body[data-decoration-density="maximal"]
             var(--book-accent) 0 2px,
             transparent 3px
         ),
+        radial-gradient(
+            circle at 73% 86%,
+            var(--book-accent) 0 2px,
+            transparent 3px
+        ),
         var(--book-color);
 }
 
 
-.book-style-pastel {
+.book-spine.book-style-pastel {
     background:
         linear-gradient(
             180deg,
-            rgba(255,255,255,.15),
+            rgba(255,255,255,.16),
             transparent 46%
         ),
         var(--book-color);
@@ -1326,36 +1405,55 @@ body[data-decoration-density="maximal"]
 }
 
 
-.book-style-minimal {
+.book-spine.book-style-pastel
+.spine-inner {
+    border:
+        1px solid color-mix(
+            in srgb,
+            var(--book-accent) 65%,
+            white
+        );
+}
+
+
+.book-spine.book-style-minimal {
     background:
         var(--book-color);
 }
 
 
-.book-style-minimal .spine-inner {
+.book-spine.book-style-minimal
+.spine-inner {
     inset: 10px;
 }
 
 
-.book-style-leather {
+.book-spine.book-style-minimal
+.spine-ornament {
+    opacity: .4;
+}
+
+
+.book-spine.book-style-leather {
     background:
         repeating-linear-gradient(
             90deg,
             rgba(255,255,255,.018) 0 1px,
-            rgba(0,0,0,.03) 1px 3px
+            rgba(0,0,0,.035) 1px 3px
         ),
         linear-gradient(
             90deg,
-            rgba(0,0,0,.27),
+            rgba(0,0,0,.28),
             transparent 20%,
             transparent 80%,
-            rgba(0,0,0,.27)
+            rgba(0,0,0,.28)
         ),
         var(--book-color);
 }
 
 
-.book-style-leather .spine-inner {
+.book-spine.book-style-leather
+.spine-inner {
     border-top:
         4px double var(--book-accent);
 
@@ -1364,20 +1462,21 @@ body[data-decoration-density="maximal"]
 }
 
 
-.book-style-academia {
+.book-spine.book-style-academia {
     background:
         linear-gradient(
             90deg,
-            rgba(0,0,0,.21),
+            rgba(0,0,0,.22),
             transparent 18%,
             transparent 82%,
-            rgba(0,0,0,.21)
+            rgba(0,0,0,.22)
         ),
         var(--book-color);
 }
 
 
-.book-style-academia .spine-title-panel {
+.book-spine.book-style-academia
+.spine-title-panel {
     border:
         1px solid var(--book-accent);
 
@@ -1386,18 +1485,19 @@ body[data-decoration-density="maximal"]
 }
 
 
-.book-style-storybook {
+.book-spine.book-style-storybook {
     background:
         radial-gradient(
             circle at 50% 50%,
-            rgba(255,255,255,.06),
+            rgba(255,255,255,.07),
             transparent 52%
         ),
         var(--book-color);
 }
 
 
-.book-style-storybook .spine-inner {
+.book-spine.book-style-storybook
+.spine-inner {
     border:
         1px dashed var(--book-accent);
 
@@ -1663,7 +1763,7 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* title panel */
+/* title panels */
 
 .spine-panel-none .spine-title-panel,
 .spine-panel-none .spine-preview-title-panel {
@@ -1728,6 +1828,153 @@ body[data-decoration-density="maximal"]
 
 
 /* =========================================================
+   SPINE DESIGN PREVIEW
+   ========================================================= */
+
+.spine-preview-book {
+    --book-color: #6c2633;
+    --book-text: #eadfca;
+    --book-accent: #b28a4a;
+
+    color:
+        var(--book-text);
+}
+
+
+.spine-preview-book.book-style-classic {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.07),
+            transparent 18%,
+            transparent 82%,
+            rgba(0,0,0,.17)
+        ),
+        var(--book-color);
+}
+
+
+.spine-preview-book.book-style-gothic {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.27),
+            transparent 20%,
+            transparent 80%,
+            rgba(0,0,0,.27)
+        ),
+        var(--book-color);
+}
+
+
+.spine-preview-book.book-style-botanical {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.06),
+            transparent 38%
+        ),
+        var(--book-color);
+}
+
+
+.spine-preview-book.book-style-celestial {
+    background:
+        radial-gradient(
+            circle at 25% 16%,
+            var(--book-accent) 0 1px,
+            transparent 2px
+        ),
+        radial-gradient(
+            circle at 70% 42%,
+            var(--book-accent) 0 1px,
+            transparent 2px
+        ),
+        var(--book-color);
+}
+
+
+.spine-preview-book.book-style-floral {
+    background:
+        radial-gradient(
+            circle at 20% 15%,
+            var(--book-accent) 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 75% 40%,
+            var(--book-accent) 0 2px,
+            transparent 3px
+        ),
+        var(--book-color);
+}
+
+
+.spine-preview-book.book-style-pastel {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.14),
+            transparent 46%
+        ),
+        var(--book-color);
+}
+
+
+.spine-preview-book.book-style-minimal {
+    background:
+        var(--book-color);
+}
+
+
+.spine-preview-book.book-style-leather {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.018) 0 1px,
+            rgba(0,0,0,.03) 1px 3px
+        ),
+        var(--book-color);
+}
+
+
+.spine-preview-book.book-style-academia {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.20),
+            transparent 18%,
+            transparent 82%,
+            rgba(0,0,0,.20)
+        ),
+        var(--book-color);
+}
+
+
+.spine-preview-book.book-style-storybook {
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,255,255,.06),
+            transparent 55%
+        ),
+        var(--book-color);
+}
+
+
+.spine-preview-title {
+    color:
+        var(--book-text);
+}
+
+
+.spine-preview-ornament {
+    color:
+        var(--book-accent);
+}
+
+
+/* =========================================================
    DECORATION BASE
    ========================================================= */
 
@@ -1770,9 +2017,8 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* object grounding shadow */
-
-.shelf-decoration .decor-shadow {
+.shelf-decoration
+.decor-shadow {
     position: absolute;
 
     z-index: 0;
@@ -1794,7 +2040,7 @@ body[data-decoration-density="maximal"]
 
 
 /* =========================================================
-   CAT — RICH MARKUP
+   CAT
    ========================================================= */
 
 .decor-cat {
@@ -1847,12 +2093,13 @@ body[data-decoration-density="maximal"]
     background:
         linear-gradient(
             135deg,
-            #332a2d,
-            #1e191b
+            #41363a,
+            #211b1e
         );
 
     box-shadow:
-        inset 7px 0 rgba(255,255,255,.025);
+        inset 7px 0 rgba(255,255,255,.035),
+        inset -6px -4px rgba(0,0,0,.12);
 }
 
 
@@ -1873,8 +2120,8 @@ body[data-decoration-density="maximal"]
     background:
         linear-gradient(
             145deg,
-            #3a3033,
-            #211b1d
+            #493c40,
+            #252023
         );
 }
 
@@ -1888,7 +2135,7 @@ body[data-decoration-density="maximal"]
     height: 20px;
 
     background:
-        #2b2326;
+        #30272a;
 
     clip-path:
         polygon(
@@ -1971,8 +2218,7 @@ body[data-decoration-density="maximal"]
     transform:
         translateX(-50%);
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         #ba7d7b;
@@ -2180,8 +2426,7 @@ body[data-decoration-density="maximal"]
     width: 18px;
     height: 27px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         #201b22;
@@ -2252,7 +2497,7 @@ body[data-decoration-density="maximal"]
     background:
         linear-gradient(
             135deg,
-            #332a35,
+            #3a303c,
             #1d181f
         );
 }
@@ -2279,7 +2524,8 @@ body[data-decoration-density="maximal"]
 .decor-bat .bat-wing.right {
     right: 0;
 
-    transform: scaleX(-1);
+    transform:
+        scaleX(-1);
 
     clip-path:
         polygon(
@@ -2293,6 +2539,200 @@ body[data-decoration-density="maximal"]
             70% 61%,
             100% 100%
         );
+}
+
+
+/* =========================================================
+   GOBLIN
+   ========================================================= */
+
+.decor-goblin {
+    width: 75px;
+    height: 78px;
+}
+
+
+.decor-goblin .goblin-body {
+    position: absolute;
+
+    z-index: 2;
+
+    left: 19px;
+    bottom: 5px;
+
+    width: 39px;
+    height: 41px;
+
+    border-radius:
+        48% 48% 37% 37%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #71825b,
+            #4d6543
+        );
+}
+
+
+.decor-goblin .goblin-head {
+    position: absolute;
+
+    z-index: 4;
+
+    left: 16px;
+    top: 7px;
+
+    width: 46px;
+    height: 40px;
+
+    border-radius:
+        50% 50% 46% 46%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #829269,
+            #5a704d
+        );
+}
+
+
+.decor-goblin .goblin-ear {
+    position: absolute;
+
+    z-index: 3;
+
+    top: 19px;
+
+    width: 23px;
+    height: 15px;
+
+    background:
+        #6d8058;
+
+    clip-path:
+        polygon(
+            0 50%,
+            100% 0,
+            80% 100%
+        );
+}
+
+
+.decor-goblin .goblin-ear.left {
+    left: 3px;
+}
+
+
+.decor-goblin .goblin-ear.right {
+    right: 3px;
+
+    transform:
+        scaleX(-1);
+}
+
+
+.decor-goblin .goblin-eye {
+    position: absolute;
+
+    z-index: 6;
+
+    top: 23px;
+
+    width: 7px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background:
+        #2b3025;
+}
+
+
+.decor-goblin .goblin-eye.left {
+    left: 27px;
+}
+
+
+.decor-goblin .goblin-eye.right {
+    right: 27px;
+}
+
+
+.decor-goblin .goblin-smile {
+    position: absolute;
+
+    z-index: 6;
+
+    left: 50%;
+    top: 34px;
+
+    width: 13px;
+    height: 7px;
+
+    transform:
+        translateX(-50%);
+
+    border-bottom:
+        2px solid #34402d;
+
+    border-radius: 50%;
+}
+
+
+/* =========================================================
+   MOSS
+   ========================================================= */
+
+.decor-moss {
+    width: 90px;
+    height: 45px;
+}
+
+
+.decor-moss .moss-clump {
+    position: absolute;
+
+    z-index: 2;
+
+    bottom: 5px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            180deg,
+            #8da16e,
+            #536746
+        );
+
+    box-shadow:
+        inset 0 -5px rgba(0,0,0,.07);
+}
+
+
+.decor-moss .moss-1 {
+    left: 4px;
+
+    width: 36px;
+    height: 23px;
+}
+
+
+.decor-moss .moss-2 {
+    left: 30px;
+
+    width: 42px;
+    height: 30px;
+}
+
+
+.decor-moss .moss-3 {
+    right: 1px;
+
+    width: 32px;
+    height: 21px;
 }
 
 
@@ -2602,112 +3042,100 @@ body[data-decoration-density="maximal"]
 
 
 /* =========================================================
-   CANDLE
+   RAVEN
    ========================================================= */
 
-.decor-candle {
-    width: 55px;
+.decor-raven {
+    width: 76px;
     height: 76px;
 }
 
 
-.decor-candle .candle-body {
-    position: absolute;
-
-    z-index: 2;
-
-    left: 16px;
-    bottom: 6px;
-
-    width: 27px;
-    height: 46px;
-
-    border-radius:
-        7px 7px 3px 3px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #d9c8a8,
-            #f0dfbe 55%,
-            #c2ad8a
-        );
-
-    box-shadow:
-        inset -5px 0 rgba(0,0,0,.05);
-}
-
-
-.decor-candle .candle-wax {
+.decor-raven .raven-body {
     position: absolute;
 
     z-index: 3;
 
     left: 19px;
-    top: 23px;
+    bottom: 8px;
 
-    width: 9px;
-    height: 17px;
+    width: 38px;
+    height: 47px;
 
     border-radius:
-        0 0 7px 7px;
+        55% 45% 50% 43%;
 
     background:
-        #f0dfbe;
+        linear-gradient(
+            135deg,
+            #292930,
+            #121317
+        );
+
+    transform:
+        rotate(-7deg);
 }
 
 
-.decor-candle .candle-flame {
+.decor-raven .raven-head {
     position: absolute;
 
     z-index: 5;
 
-    left: 22px;
-    top: 3px;
+    left: 29px;
+    top: 7px;
 
-    width: 15px;
-    height: 23px;
-
-    border-radius:
-        65% 35% 65% 35%;
-
-    background:
-        radial-gradient(
-            circle at 55% 60%,
-            #fff1a3 0 25%,
-            #eda058 28% 65%,
-            #d66f40
-        );
-
-    transform:
-        rotate(45deg);
-
-    box-shadow:
-        0 0 15px rgba(236,157,85,.65);
-
-    animation:
-        candleFlicker 1.15s ease-in-out infinite alternate;
-}
-
-
-.decor-candle .candle-glow {
-    position: absolute;
-
-    z-index: 0;
-
-    left: 4px;
-    top: -6px;
-
-    width: 50px;
-    height: 50px;
+    width: 31px;
+    height: 30px;
 
     border-radius: 50%;
 
     background:
-        rgba(237,157,85,.18);
+        #17181c;
+}
 
-    filter:
-        blur(10px);
+
+.decor-raven .raven-beak {
+    position: absolute;
+
+    z-index: 6;
+
+    right: 2px;
+    top: 20px;
+
+    width: 25px;
+    height: 12px;
+
+    background:
+        #111216;
+
+    clip-path:
+        polygon(
+            0 20%,
+            100% 50%,
+            0 85%
+        );
+}
+
+
+.decor-raven .raven-eye {
+    position: absolute;
+
+    z-index: 7;
+
+    right: 18px;
+    top: 17px;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background:
+        #d6b265;
+
+    box-shadow:
+        0 0 4px rgba(214,178,101,.5);
 }
 
 
@@ -2880,57 +3308,259 @@ body[data-decoration-density="maximal"]
 
 
 /* =========================================================
-   MOSS
+   CANDLE
    ========================================================= */
 
-.decor-moss {
-    width: 90px;
-    height: 45px;
+.decor-candle {
+    width: 55px;
+    height: 76px;
 }
 
 
-.decor-moss .moss-clump {
+.decor-candle .candle-body {
     position: absolute;
 
     z-index: 2;
 
-    bottom: 5px;
+    left: 16px;
+    bottom: 6px;
+
+    width: 27px;
+    height: 46px;
+
+    border-radius:
+        7px 7px 3px 3px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #d9c8a8,
+            #f0dfbe 55%,
+            #c2ad8a
+        );
+
+    box-shadow:
+        inset -5px 0 rgba(0,0,0,.05);
+}
+
+
+.decor-candle .candle-wax {
+    position: absolute;
+
+    z-index: 3;
+
+    left: 19px;
+    top: 23px;
+
+    width: 9px;
+    height: 17px;
+
+    border-radius:
+        0 0 7px 7px;
+
+    background:
+        #f0dfbe;
+}
+
+
+.decor-candle .candle-flame {
+    position: absolute;
+
+    z-index: 5;
+
+    left: 22px;
+    top: 3px;
+
+    width: 15px;
+    height: 23px;
+
+    border-radius:
+        65% 35% 65% 35%;
+
+    background:
+        radial-gradient(
+            circle at 55% 60%,
+            #fff1a3 0 25%,
+            #eda058 28% 65%,
+            #d66f40
+        );
+
+    transform:
+        rotate(45deg);
+
+    box-shadow:
+        0 0 15px rgba(236,157,85,.65);
+
+    animation:
+        candleFlicker
+        1.15s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+
+.decor-candle .candle-glow {
+    position: absolute;
+
+    z-index: 0;
+
+    left: 4px;
+    top: -6px;
+
+    width: 50px;
+    height: 50px;
 
     border-radius: 50%;
 
     background:
-        linear-gradient(
-            180deg,
-            #8da16e,
-            #536746
+        rgba(237,157,85,.18);
+
+    filter:
+        blur(10px);
+}
+
+
+/* =========================================================
+   FLOWERS
+   ========================================================= */
+
+.decor-flowers {
+    width: 72px;
+    height: 74px;
+}
+
+
+.decor-flowers .flower-stem {
+    position: absolute;
+
+    z-index: 1;
+
+    left: 50%;
+    bottom: 8px;
+
+    width: 3px;
+    height: 42px;
+
+    background:
+        #647653;
+
+    transform-origin:
+        bottom;
+}
+
+
+.decor-flowers .stem-1 {
+    transform:
+        translateX(-50%)
+        rotate(-17deg);
+}
+
+
+.decor-flowers .stem-2 {
+    transform:
+        translateX(-50%);
+}
+
+
+.decor-flowers .stem-3 {
+    transform:
+        translateX(-50%)
+        rotate(19deg);
+}
+
+
+.decor-flowers .flower-bloom {
+    position: absolute;
+
+    z-index: 3;
+
+    width: 25px;
+    height: 25px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #dcb873 0 23%,
+            #c8848b 24% 55%,
+            transparent 57%
         );
-
-    box-shadow:
-        inset 0 -5px rgba(0,0,0,.07);
 }
 
 
-.decor-moss .moss-1 {
-    left: 4px;
-
-    width: 36px;
-    height: 23px;
+.decor-flowers .bloom-1 {
+    left: 7px;
+    top: 11px;
 }
 
 
-.decor-moss .moss-2 {
-    left: 30px;
+.decor-flowers .bloom-2 {
+    left: 27px;
+    top: 2px;
 
-    width: 42px;
-    height: 30px;
+    transform:
+        scale(1.08);
 }
 
 
-.decor-moss .moss-3 {
-    right: 1px;
+.decor-flowers .bloom-3 {
+    right: 5px;
+    top: 16px;
 
-    width: 32px;
-    height: 21px;
+    background:
+        radial-gradient(
+            circle,
+            #d8b371 0 23%,
+            #b7819b 24% 55%,
+            transparent 57%
+        );
+}
+
+
+/* =========================================================
+   STARS
+   ========================================================= */
+
+.decor-stars {
+    width: 75px;
+    height: 68px;
+}
+
+
+.decor-stars .star {
+    position: absolute;
+
+    color:
+        #d8ba72;
+
+    text-shadow:
+        0 0 7px rgba(216,186,114,.32);
+}
+
+
+.decor-stars .star-1 {
+    left: 6px;
+    top: 9px;
+
+    font-size: 1.6rem;
+}
+
+
+.decor-stars .star-2 {
+    right: 6px;
+    top: 22px;
+
+    font-size: 1rem;
+}
+
+
+.decor-stars .star-3 {
+    left: 32px;
+    bottom: 5px;
+
+    font-size: .8rem;
 }
 
 
@@ -3029,389 +3659,6 @@ body[data-decoration-density="maximal"]
 
 
 /* =========================================================
-   RAVEN
-   ========================================================= */
-
-.decor-raven {
-    width: 76px;
-    height: 76px;
-}
-
-
-.decor-raven .raven-body {
-    position: absolute;
-
-    z-index: 3;
-
-    left: 19px;
-    bottom: 8px;
-
-    width: 38px;
-    height: 47px;
-
-    border-radius:
-        55% 45% 50% 43%;
-
-    background:
-        linear-gradient(
-            135deg,
-            #292930,
-            #121317
-        );
-
-    transform:
-        rotate(-7deg);
-}
-
-
-.decor-raven .raven-head {
-    position: absolute;
-
-    z-index: 5;
-
-    left: 29px;
-    top: 7px;
-
-    width: 31px;
-    height: 30px;
-
-    border-radius: 50%;
-
-    background:
-        #17181c;
-}
-
-
-.decor-raven .raven-beak {
-    position: absolute;
-
-    z-index: 6;
-
-    right: 2px;
-    top: 20px;
-
-    width: 25px;
-    height: 12px;
-
-    background:
-        #111216;
-
-    clip-path:
-        polygon(
-            0 20%,
-            100% 50%,
-            0 85%
-        );
-}
-
-
-.decor-raven .raven-eye {
-    position: absolute;
-
-    z-index: 7;
-
-    right: 18px;
-    top: 17px;
-
-    width: 5px;
-    height: 5px;
-
-    border-radius: 50%;
-
-    background:
-        #d6b265;
-
-    box-shadow:
-        0 0 4px rgba(214,178,101,.5);
-}
-
-
-/* =========================================================
-   GOBLIN
-   ========================================================= */
-
-.decor-goblin {
-    width: 75px;
-    height: 78px;
-}
-
-
-.decor-goblin .goblin-body {
-    position: absolute;
-
-    z-index: 2;
-
-    left: 19px;
-    bottom: 5px;
-
-    width: 39px;
-    height: 41px;
-
-    border-radius:
-        48% 48% 37% 37%;
-
-    background:
-        linear-gradient(
-            135deg,
-            #71825b,
-            #4d6543
-        );
-}
-
-
-.decor-goblin .goblin-head {
-    position: absolute;
-
-    z-index: 4;
-
-    left: 16px;
-    top: 7px;
-
-    width: 46px;
-    height: 40px;
-
-    border-radius:
-        50% 50% 46% 46%;
-
-    background:
-        linear-gradient(
-            135deg,
-            #829269,
-            #5a704d
-        );
-}
-
-
-.decor-goblin .goblin-ear {
-    position: absolute;
-
-    z-index: 3;
-
-    top: 19px;
-
-    width: 23px;
-    height: 15px;
-
-    background:
-        #6d8058;
-
-    clip-path:
-        polygon(
-            0 50%,
-            100% 0,
-            80% 100%
-        );
-}
-
-
-.decor-goblin .goblin-ear.left {
-    left: 3px;
-}
-
-
-.decor-goblin .goblin-ear.right {
-    right: 3px;
-
-    transform: scaleX(-1);
-}
-
-
-.decor-goblin .goblin-eye {
-    position: absolute;
-
-    z-index: 6;
-
-    top: 23px;
-
-    width: 7px;
-    height: 6px;
-
-    border-radius: 50%;
-
-    background:
-        #2b3025;
-}
-
-
-.decor-goblin .goblin-eye.left {
-    left: 27px;
-}
-
-
-.decor-goblin .goblin-eye.right {
-    right: 27px;
-}
-
-
-.decor-goblin .goblin-smile {
-    position: absolute;
-
-    z-index: 6;
-
-    left: 50%;
-    top: 34px;
-
-    width: 13px;
-    height: 7px;
-
-    transform:
-        translateX(-50%);
-
-    border-bottom:
-        2px solid #34402d;
-
-    border-radius: 50%;
-}
-
-
-/* =========================================================
-   FLOWERS
-   ========================================================= */
-
-.decor-flowers {
-    width: 72px;
-    height: 74px;
-}
-
-
-.decor-flowers .flower-stem {
-    position: absolute;
-
-    z-index: 1;
-
-    left: 50%;
-    bottom: 8px;
-
-    width: 3px;
-    height: 42px;
-
-    background:
-        #647653;
-
-    transform-origin:
-        bottom;
-}
-
-
-.decor-flowers .stem-1 {
-    transform:
-        translateX(-50%)
-        rotate(-17deg);
-}
-
-
-.decor-flowers .stem-2 {
-    transform:
-        translateX(-50%);
-}
-
-
-.decor-flowers .stem-3 {
-    transform:
-        translateX(-50%)
-        rotate(19deg);
-}
-
-
-.decor-flowers .flower-bloom {
-    position: absolute;
-
-    z-index: 3;
-
-    width: 25px;
-    height: 25px;
-
-    display: grid;
-
-    place-items: center;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            #dcb873 0 23%,
-            #c8848b 24% 55%,
-            transparent 57%
-        );
-}
-
-
-.decor-flowers .bloom-1 {
-    left: 7px;
-    top: 11px;
-}
-
-
-.decor-flowers .bloom-2 {
-    left: 27px;
-    top: 2px;
-
-    transform:
-        scale(1.08);
-}
-
-
-.decor-flowers .bloom-3 {
-    right: 5px;
-    top: 16px;
-
-    background:
-        radial-gradient(
-            circle,
-            #d8b371 0 23%,
-            #b7819b 24% 55%,
-            transparent 57%
-        );
-}
-
-
-/* =========================================================
-   STARS
-   ========================================================= */
-
-.decor-stars {
-    width: 75px;
-    height: 68px;
-}
-
-
-.decor-stars .star {
-    position: absolute;
-
-    color:
-        #d8ba72;
-
-    text-shadow:
-        0 0 7px rgba(216,186,114,.32);
-}
-
-
-.decor-stars .star-1 {
-    left: 6px;
-    top: 9px;
-
-    font-size: 1.6rem;
-}
-
-
-.decor-stars .star-2 {
-    right: 6px;
-    top: 22px;
-
-    font-size: 1rem;
-}
-
-
-.decor-stars .star-3 {
-    left: 32px;
-    bottom: 5px;
-
-    font-size: .8rem;
-}
-
-
-/* =========================================================
    DECORATION FALLBACK
    ========================================================= */
 
@@ -3448,7 +3695,7 @@ body[data-decoration-density="maximal"]
 
 
 /* =========================================================
-   DECORATION ANIMATION
+   DECORATION ANIMATIONS
    ========================================================= */
 
 @keyframes ghostFloat {
@@ -3461,6 +3708,7 @@ body[data-decoration-density="maximal"]
     50% {
         margin-top: -7px;
     }
+
 }
 
 
@@ -3474,6 +3722,7 @@ body[data-decoration-density="maximal"]
     50% {
         margin-top: -5px;
     }
+
 }
 
 
@@ -3490,6 +3739,7 @@ body[data-decoration-density="maximal"]
             rotate(48deg)
             scale(1.06);
     }
+
 }
 
 
@@ -3727,131 +3977,6 @@ body[data-decoration-density="maximal"]
 
 
 /* =========================================================
-   SPINE PREVIEW
-   ========================================================= */
-
-.spine-preview-book.book-style-classic {
-    background:
-        linear-gradient(
-            90deg,
-            rgba(255,255,255,.06),
-            transparent 18%,
-            transparent 82%,
-            rgba(0,0,0,.15)
-        ),
-        var(--book-color);
-}
-
-
-.spine-preview-book.book-style-gothic {
-    background:
-        linear-gradient(
-            90deg,
-            rgba(0,0,0,.25),
-            transparent 20%,
-            transparent 80%,
-            rgba(0,0,0,.25)
-        ),
-        var(--book-color);
-}
-
-
-.spine-preview-book.book-style-botanical {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,.06),
-            transparent 38%
-        ),
-        var(--book-color);
-}
-
-
-.spine-preview-book.book-style-celestial {
-    background:
-        radial-gradient(
-            circle at 25% 16%,
-            rgba(255,255,255,.15) 0 1px,
-            transparent 2px
-        ),
-        radial-gradient(
-            circle at 70% 42%,
-            rgba(255,255,255,.12) 0 1px,
-            transparent 2px
-        ),
-        var(--book-color);
-}
-
-
-.spine-preview-book.book-style-floral {
-    background:
-        radial-gradient(
-            circle at 20% 15%,
-            var(--book-accent) 0 2px,
-            transparent 3px
-        ),
-        radial-gradient(
-            circle at 75% 40%,
-            var(--book-accent) 0 2px,
-            transparent 3px
-        ),
-        var(--book-color);
-}
-
-
-.spine-preview-book.book-style-pastel {
-    background:
-        linear-gradient(
-            180deg,
-            rgba(255,255,255,.13),
-            transparent 46%
-        ),
-        var(--book-color);
-}
-
-
-.spine-preview-book.book-style-minimal {
-    background:
-        var(--book-color);
-}
-
-
-.spine-preview-book.book-style-leather {
-    background:
-        repeating-linear-gradient(
-            90deg,
-            rgba(255,255,255,.018) 0 1px,
-            rgba(0,0,0,.025) 1px 3px
-        ),
-        var(--book-color);
-}
-
-
-.spine-preview-book.book-style-academia {
-    background:
-        linear-gradient(
-            90deg,
-            rgba(0,0,0,.18),
-            transparent 18%,
-            transparent 82%,
-            rgba(0,0,0,.18)
-        ),
-        var(--book-color);
-}
-
-
-.spine-preview-book.book-style-storybook {
-    background:
-        radial-gradient(
-            circle,
-            rgba(255,255,255,.06),
-            transparent 55%
-        ),
-        var(--book-color);
-}
-
-
-/* =========================================================
    GENERATED COVERS
    ========================================================= */
 
@@ -3935,7 +4060,7 @@ body[data-decoration-density="maximal"]
     margin-top: 18px;
 
     color:
-        inherit;
+        var(--book-text);
 
     font-family:
         Georgia,
@@ -4051,7 +4176,8 @@ body[data-decoration-density="maximal"]
 
     margin: auto;
 
-    aspect-ratio: 2 / 3;
+    aspect-ratio:
+        2 / 3;
 
     overflow: hidden;
 
@@ -4488,7 +4614,8 @@ body[data-decoration-density="maximal"]
 
     margin-top: 27px;
 
-    aspect-ratio: 2 / 3;
+    aspect-ratio:
+        2 / 3;
 
     overflow: hidden;
 
@@ -4506,17 +4633,20 @@ body[data-decoration-density="maximal"]
 }
 
 
-.journal-mini-cover .generated-cover {
+.journal-mini-cover
+.generated-cover {
     padding: 12px;
 }
 
 
-.journal-mini-cover .generated-cover strong {
+.journal-mini-cover
+.generated-cover strong {
     font-size: .75rem;
 }
 
 
-.journal-mini-cover .generated-cover span:last-child {
+.journal-mini-cover
+.generated-cover span:last-child {
     font-size: .45rem;
 }
 
@@ -4675,7 +4805,8 @@ body[data-decoration-density="maximal"]
 
     border: none;
 
-    background: transparent;
+    background:
+        transparent;
 
     color:
         #8b6c55;
@@ -4783,7 +4914,8 @@ body[data-decoration-density="maximal"]
     border:
         1px dashed rgba(90,65,50,.24);
 
-    background: transparent;
+    background:
+        transparent;
 
     color:
         #7b6252;
@@ -5159,8 +5291,6 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* headings */
-
 .reading-section-heading > span {
     color:
         var(--accent);
@@ -5307,7 +5437,8 @@ body[data-decoration-density="maximal"]
 
     width: 215px;
 
-    aspect-ratio: 2 / 3;
+    aspect-ratio:
+        2 / 3;
 
     overflow: hidden;
 
@@ -5601,7 +5732,7 @@ body[data-decoration-density="maximal"]
 
 
 /* =========================================================
-   READING CARDS
+   READING GRID
    ========================================================= */
 
 .reading-list-section {
@@ -5613,7 +5744,10 @@ body[data-decoration-density="maximal"]
     display: grid;
 
     grid-template-columns:
-        repeat(3,minmax(0,1fr));
+        repeat(
+            3,
+            minmax(0,1fr)
+        );
 
     gap: 17px;
 }
@@ -5696,7 +5830,8 @@ body[data-decoration-density="maximal"]
 .reading-card-cover {
     width: 108px;
 
-    aspect-ratio: 2 / 3;
+    aspect-ratio:
+        2 / 3;
 
     overflow: hidden;
 
@@ -5714,17 +5849,20 @@ body[data-decoration-density="maximal"]
 }
 
 
-.reading-card-cover .generated-cover {
+.reading-card-cover
+.generated-cover {
     padding: 12px;
 }
 
 
-.reading-card-cover .generated-cover strong {
+.reading-card-cover
+.generated-cover strong {
     font-size: .72rem;
 }
 
 
-.reading-card-cover .generated-cover span:last-child {
+.reading-card-cover
+.generated-cover span:last-child {
     margin-top: 8px;
 
     font-size: .45rem;
@@ -6061,7 +6199,10 @@ body[data-decoration-density="maximal"]
     display: grid;
 
     grid-template-columns:
-        repeat(4,minmax(0,1fr));
+        repeat(
+            4,
+            minmax(0,1fr)
+        );
 
     gap: 12px;
 
@@ -6174,7 +6315,10 @@ body[data-decoration-density="maximal"]
     display: grid;
 
     grid-template-columns:
-        repeat(2,minmax(0,1fr));
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
 
     gap: 18px;
 }
@@ -6240,7 +6384,9 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* genre */
+/* =========================================================
+   GENRE STATS
+   ========================================================= */
 
 .genre-stats {
     display: flex;
@@ -6319,7 +6465,9 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* monthly */
+/* =========================================================
+   MONTHLY READING
+   ========================================================= */
 
 .monthly-reading-stats {
     height: 225px;
@@ -6405,13 +6553,18 @@ body[data-decoration-density="maximal"]
 }
 
 
-/* detail stats */
+/* =========================================================
+   DETAIL STATS
+   ========================================================= */
 
 .library-detail-stats {
     display: grid;
 
     grid-template-columns:
-        repeat(6,minmax(0,1fr));
+        repeat(
+            6,
+            minmax(0,1fr)
+        );
 
     margin-top: 23px;
 
@@ -6525,7 +6678,10 @@ body[data-decoration-density="maximal"]
 
 .progress-card {
     width:
-        min(480px,100%);
+        min(
+            480px,
+            100%
+        );
 
     overflow: hidden;
 
@@ -6789,7 +6945,10 @@ body[data-decoration-density="maximal"]
 
     .reading-grid {
         grid-template-columns:
-            repeat(2,minmax(0,1fr));
+            repeat(
+                2,
+                minmax(0,1fr)
+            );
     }
 
 
@@ -6811,7 +6970,8 @@ body[data-decoration-density="maximal"]
 
     .library-summary,
     .reading-now-summary {
-        width: fit-content;
+        width:
+            fit-content;
     }
 
 
@@ -6828,7 +6988,10 @@ body[data-decoration-density="maximal"]
 
     .stats-grid {
         grid-template-columns:
-            repeat(2,minmax(0,1fr));
+            repeat(
+                2,
+                minmax(0,1fr)
+            );
     }
 
 }
@@ -6866,7 +7029,10 @@ body[data-decoration-density="maximal"]
         grid-template-columns: 1fr;
 
         width:
-            min(620px,100%);
+            min(
+                620px,
+                100%
+            );
     }
 
 
