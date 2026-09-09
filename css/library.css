@@ -2889,7 +2889,7 @@ body.theme-ghosts
 
     .shelf-interior {
         min-height:
-            315px;
+            280px;
 
         padding-left:
             22px;
@@ -2900,8 +2900,26 @@ body.theme-ghosts
 
 
     .shelf-books {
+        top:
+            20px;
+
+        left:
+            22px;
+
+        right:
+            22px;
+
+        bottom:
+            calc(
+                var(--shelf-depth)
+                + 6px
+            );
+
         min-height:
-            255px;
+            0;
+
+        padding:
+            0 10px;
     }
 
 }
@@ -2953,7 +2971,8 @@ body.theme-ghosts
 
 
     .shelf-actions {
-        width: 100%;
+        width:
+            100%;
 
         flex-wrap:
             wrap;
@@ -2968,10 +2987,10 @@ body.theme-ghosts
 
     .shelf-interior {
         min-height:
-            295px;
+            260px;
 
         padding:
-            23px 13px 17px;
+            20px 13px 0;
     }
 
 
@@ -2995,14 +3014,29 @@ body.theme-ghosts
 
 
     .shelf-books {
+        top:
+            18px;
+
+        left:
+            13px;
+
+        right:
+            13px;
+
+        bottom:
+            calc(
+                var(--shelf-depth)
+                + 5px
+            );
+
         min-height:
-            242px;
+            0;
 
         gap:
             1px;
 
         padding:
-            0 4px 29px;
+            0 4px;
     }
 
 
@@ -3086,22 +3120,34 @@ body.theme-ghosts
 
     .shelf-interior {
         min-height:
-            275px;
+            240px;
 
         padding:
-            20px 8px 14px;
+            18px 8px 0;
     }
 
 
     .shelf-books {
+        top:
+            16px;
+
+        left:
+            8px;
+
+        right:
+            8px;
+
+        bottom:
+            calc(
+                var(--shelf-depth)
+                + 5px
+            );
+
         min-height:
-            222px;
+            0;
 
-        padding-left:
-            1px;
-
-        padding-right:
-            1px;
+        padding:
+            0 1px;
     }
 
 
@@ -3120,8 +3166,6 @@ body.theme-ghosts
     }
 
 }
-
-
 /* =========================================================
    REDUCED MOTION
    ========================================================= */
