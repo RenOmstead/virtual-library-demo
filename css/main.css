@@ -4309,3 +4309,163 @@ body.reduce-motion *::after {
     transition-duration:
         0.001ms !important;
 }
+/* =========================================================
+   NOVELLOW
+   DRAWER SCROLL HARD FIX
+   ========================================================= */
+
+/*
+   The drawer itself must never scroll.
+   Only the middle content area scrolls.
+*/
+
+.drawer {
+    height: 100vh !important;
+    height: 100dvh !important;
+
+    max-height: 100vh !important;
+    max-height: 100dvh !important;
+
+    overflow: hidden !important;
+}
+
+
+/* =========================================================
+   DRAWERS WITHOUT FORMS
+   Theme + Settings
+   ========================================================= */
+
+.drawer:not(:has(> form)) {
+    display: grid !important;
+
+    grid-template-rows:
+        auto
+        minmax(0, 1fr)
+        auto !important;
+}
+
+
+.drawer:not(:has(> form)) > .drawer-body {
+    min-height: 0 !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    -webkit-overflow-scrolling: touch;
+
+    overscroll-behavior: contain;
+}
+
+
+/* =========================================================
+   DRAWERS WITH FORMS
+   Shelf + Book
+   ========================================================= */
+
+.drawer > form {
+    width: 100% !important;
+    height: 100% !important;
+
+    min-height: 0 !important;
+
+    display: grid !important;
+
+    grid-template-rows:
+        minmax(0, 1fr)
+        auto !important;
+
+    overflow: hidden !important;
+}
+
+
+/*
+   The header sits outside the form, so the form gets
+   the remainder of the viewport.
+*/
+
+.drawer:has(> form) > form {
+    height:
+        calc(
+            100dvh - 86px
+        ) !important;
+
+    max-height:
+        calc(
+            100dvh - 86px
+        ) !important;
+}
+
+
+.drawer > form > .drawer-body {
+    min-height: 0 !important;
+    height: auto !important;
+
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+
+    -webkit-overflow-scrolling: touch;
+
+    overscroll-behavior-y: contain;
+
+    padding-bottom: 40px;
+}
+
+
+.drawer > form > .drawer-footer {
+    position: relative !important;
+
+    flex: none !important;
+
+    min-height: 70px;
+
+    background: var(--panel);
+
+    z-index: 20;
+}
+
+
+/* =========================================================
+   FORCE VERTICAL SCROLLBAR ON DESKTOP
+   ========================================================= */
+
+.drawer > form > .drawer-body::-webkit-scrollbar,
+.drawer > .drawer-body::-webkit-scrollbar {
+    width: 10px;
+}
+
+
+.drawer > form > .drawer-body::-webkit-scrollbar-track,
+.drawer > .drawer-body::-webkit-scrollbar-track {
+    background: var(--bg-2);
+}
+
+
+.drawer > form > .drawer-body::-webkit-scrollbar-thumb,
+.drawer > .drawer-body::-webkit-scrollbar-thumb {
+    background: var(--muted-light);
+
+    border-radius: 10px;
+
+    border: 2px solid var(--bg-2);
+}
+
+
+/* =========================================================
+   MOBILE HEADER HEIGHT
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .drawer:has(> form) > form {
+        height:
+            calc(
+                100dvh - 74px
+            ) !important;
+
+        max-height:
+            calc(
+                100dvh - 74px
+            ) !important;
+    }
+
+}
