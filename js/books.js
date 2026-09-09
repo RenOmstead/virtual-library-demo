@@ -2949,3 +2949,295 @@ button.addEventListener(
 
 
 })();
+/* =========================================================
+   NOVELLOW
+   ADD BOOK BUTTON SAFETY PATCH
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const addBookButtons = [
+            "headerAddBook",
+            "libraryAddBook",
+            "emptyAddBook",
+            "mobileAddBook",
+            "readingAddBook"
+        ];
+
+
+        function safelyOpenAddBook() {
+
+            console.log(
+                "Novellow: opening Add Book drawer"
+            );
+
+
+            /*
+               Use the normal books module first.
+            */
+
+            if (
+                window.NOVELLOW?.books?.openAddDrawer
+            ) {
+
+                try {
+
+                    window.NOVELLOW
+                        .books
+                        .openAddDrawer();
+
+                    return;
+
+                } catch (error) {
+
+                    console.error(
+                        "Normal Add Book opener failed:",
+                        error
+                    );
+
+                }
+
+            }
+
+
+            /*
+               Fallback:
+               open the actual drawer directly.
+            */
+
+            const drawer =
+                document.getElementById(
+                    "bookDrawer"
+                );
+
+
+            const overlay =
+                document.getElementById(
+                    "overlay"
+                );
+
+
+            if (!drawer) {
+
+                console.error(
+                    "bookDrawer was not found."
+                );
+
+                return;
+
+            }
+
+
+            /*
+               Reset the form for a new book.
+            */
+
+            const form =
+                document.getElementById(
+                    "bookForm"
+                );
+
+
+            if (form) {
+
+                form.reset();
+
+            }
+
+
+            const editingId =
+                document.getElementById(
+                    "editingBookId"
+                );
+
+
+            if (editingId) {
+
+                editingId.value =
+                    "";
+
+            }
+
+
+            const title =
+                document.getElementById(
+                    "bookDrawerTitle"
+                );
+
+
+            if (title) {
+
+                title.textContent =
+                    "Add a Book";
+
+            }
+
+
+            const saveLabel =
+                document.getElementById(
+                    "saveBookButtonLabel"
+                );
+
+
+            if (saveLabel) {
+
+                saveLabel.textContent =
+                    "Save Book";
+
+            }
+
+
+            /*
+               Populate shelf dropdown manually if needed.
+            */
+
+            const shelfSelect =
+                document.getElementById(
+                    "bookShelf"
+                );
+
+
+            if (shelfSelect) {
+
+                const shelves =
+                    window.NOVELLOW
+                        ?.state
+                        ?.shelves ||
+                    [];
+
+
+                shelfSelect.innerHTML =
+                    "";
+
+
+                const noShelf =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                noShelf.value =
+                    "";
+
+
+                noShelf.textContent =
+                    shelves.length
+                        ? "No shelf"
+                        : "Create a shelf first";
+
+
+                shelfSelect.appendChild(
+                    noShelf
+                );
+
+
+                shelves.forEach(
+                    shelf => {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+
+                        option.value =
+                            shelf.id;
+
+
+                        option.textContent =
+                            shelf.name ||
+                            "Shelf";
+
+
+                        shelfSelect.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+            }
+
+
+            drawer.hidden =
+                false;
+
+
+            if (overlay) {
+
+                overlay.hidden =
+                    false;
+
+            }
+
+
+            document.body.classList.add(
+                "modal-open"
+            );
+
+
+            requestAnimationFrame(
+                () => {
+
+                    document
+                        .getElementById(
+                            "bookTitle"
+                        )
+                        ?.focus();
+
+                }
+            );
+
+        }
+
+
+        addBookButtons.forEach(
+            id => {
+
+                const button =
+                    document.getElementById(
+                        id
+                    );
+
+
+                if (!button) {
+                    return;
+                }
+
+
+                /*
+                   Replace the button node so any broken or duplicate
+                   click listeners attached previously are discarded.
+                */
+
+                const replacement =
+                    button.cloneNode(
+                        true
+                    );
+
+
+                button.replaceWith(
+                    replacement
+                );
+
+
+                replacement.addEventListener(
+                    "click",
+                    event => {
+
+                        event.preventDefault();
+
+                        event.stopPropagation();
+
+                        safelyOpenAddBook();
+
+                    }
+                );
+
+            }
+        );
+
+    }
+);
