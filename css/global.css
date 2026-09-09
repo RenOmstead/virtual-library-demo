@@ -52,31 +52,34 @@
    THEMES
    ========================================================= */
 
-body.theme-haunted {
-    --bg: #171313;
-    --bg-2: #21191b;
+body[data-theme="haunted"] {
+    --bg: #171416;
+    --bg-secondary: #201a1d;
 
-    --panel: #261e1f;
-    --panel-2: #2f2527;
+    --surface: #292126;
+    --surface-2: #33282d;
 
-    --paper: #eadfca;
-    --paper-soft: #f3e7d3;
+    --text: #f3e8d5;
+    --muted: #aa9994;
 
-    --text: #eee0ca;
-    --text-soft: #c7b6a4;
+    --accent: #a84d68;
+    --accent-2: #c88467;
+    --accent-light: #e5b88f;
 
-    --muted: #95877c;
-    --muted-light: #74675f;
+    --border: rgba(243, 232, 213, 0.10);
+    --border-soft: rgba(243, 232, 213, 0.055);
 
-    --accent: #b28a4a;
-    --accent-light: #d1b374;
-    --accent-2: #6c2633;
+    --shadow: rgba(0, 0, 0, 0.34);
+    --glow: rgba(197, 111, 91, 0.13);
 
-    --wood: #4d3023;
-    --wood-mid: #65402c;
-    --wood-dark: #2d1c16;
+    --wood: #5c3c32;
+    --wood-light: #765044;
+    --wood-dark: #352420;
 
-    --glow: rgba(226, 154, 95, .16);
+    --sage: #77836f;
+    --dusty-rose: #9a6472;
+    --wine: #752f46;
+    --parchment: #e8d7ba;
 }
 
 
