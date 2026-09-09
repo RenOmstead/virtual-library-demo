@@ -2227,3 +2227,717 @@ body.reduce-motion *::after {
 [hidden] {
     display: none !important;
 }
+/* =========================================================
+   SHELFMARK
+   TOP NAVIGATION OVERRIDE
+   Turns the existing sidebar into a full-width top nav.
+   ========================================================= */
+
+
+/* =========================================================
+   APP LAYOUT
+   ========================================================= */
+
+.app-shell {
+    display: block !important;
+
+    width: 100%;
+    min-height: 100vh;
+}
+
+
+.main-shell {
+    width: 100% !important;
+
+    min-width: 0;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+}
+
+
+.main-content {
+    width: 100%;
+
+    margin: 0;
+
+    padding: 0;
+}
+
+
+/* =========================================================
+   OLD SIDEBAR BECOMES TOP NAV
+   ========================================================= */
+
+.sidebar {
+    position: sticky !important;
+
+    z-index: 2000;
+
+    top: 0 !important;
+    left: auto !important;
+
+    width: 100% !important;
+    height: auto !important;
+    min-height: 82px !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+        auto
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 28px;
+
+    padding:
+        12px
+        max(
+            24px,
+            calc((100vw - 1600px) / 2)
+        ) !important;
+
+    overflow: visible !important;
+
+    border-right: 0 !important;
+
+    border-bottom:
+        1px solid
+        rgba(255, 240, 218, 0.09);
+
+    background:
+        rgba(29, 29, 24, 0.96);
+
+    box-shadow:
+        0 8px 28px
+        rgba(0, 0, 0, 0.18);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.sidebar-top {
+    width: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+.brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    width: auto !important;
+
+    padding: 0 !important;
+
+    border: 0 !important;
+
+    background: transparent !important;
+
+    text-decoration: none;
+}
+
+
+.brand-mark {
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+
+    place-items: center;
+
+    flex: 0 0 auto;
+
+    border:
+        1px solid
+        rgba(209, 190, 107, 0.23);
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.018);
+
+    color:
+        var(--accent);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 0.7rem;
+
+    font-style: italic;
+}
+
+
+.brand-copy {
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: max-content;
+}
+
+
+.brand-copy strong {
+    color:
+        var(--text);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 1.15rem;
+
+    font-style: italic;
+
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+
+.brand-copy small {
+    margin-top: 4px;
+
+    color:
+        var(--muted);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 0.45rem;
+
+    font-style: italic;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   MAIN NAVIGATION
+   ========================================================= */
+
+.main-nav {
+    width: auto !important;
+
+    display: flex !important;
+
+    flex-direction: row !important;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+}
+
+
+.main-nav .nav-link {
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 42px;
+
+    display: inline-flex !important;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    margin: 0 !important;
+
+    padding:
+        0 15px !important;
+
+    border:
+        1px solid
+        transparent !important;
+
+    border-radius: 9px !important;
+
+    background:
+        transparent !important;
+
+    color:
+        var(--muted);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 0.64rem;
+
+    white-space: nowrap;
+
+    text-decoration: none;
+
+    box-shadow: none !important;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease;
+}
+
+
+.main-nav .nav-link:hover {
+    color:
+        var(--text);
+
+    border-color:
+        rgba(255, 240, 218, 0.07) !important;
+
+    background:
+        rgba(255, 255, 255, 0.025) !important;
+}
+
+
+.main-nav .nav-link.active {
+    color:
+        var(--accent-light);
+
+    border-color:
+        rgba(180, 199, 75, 0.24) !important;
+
+    background:
+        rgba(180, 199, 75, 0.055) !important;
+
+    box-shadow:
+        inset 3px 0
+        var(--accent) !important;
+}
+
+
+.main-nav .nav-icon {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color:
+        var(--accent);
+
+    font-size: 0.58rem;
+}
+
+
+/* =========================================================
+   NAV ACTIONS
+   ========================================================= */
+
+.sidebar-actions {
+    width: auto !important;
+
+    display: flex !important;
+
+    flex-direction: row !important;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+}
+
+
+.sidebar-actions button,
+.sidebar-primary-button,
+.sidebar-secondary-button {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+
+    min-height: 39px !important;
+
+    margin: 0 !important;
+
+    padding:
+        0 13px !important;
+
+    border:
+        1px solid
+        rgba(255, 240, 218, 0.11) !important;
+
+    border-radius: 8px !important;
+
+    background:
+        rgba(255, 255, 255, 0.025) !important;
+
+    color:
+        var(--text) !important;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif !important;
+
+    font-size: 0.58rem !important;
+
+    font-weight: 400 !important;
+
+    line-height: 1 !important;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    box-shadow: none !important;
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease;
+}
+
+
+.sidebar-actions button:hover,
+.sidebar-primary-button:hover,
+.sidebar-secondary-button:hover {
+    transform:
+        translateY(-1px);
+
+    border-color:
+        rgba(255, 240, 218, 0.22) !important;
+
+    background:
+        rgba(255, 255, 255, 0.055) !important;
+}
+
+
+#sidebarAddBook {
+    border-color:
+        color-mix(
+            in srgb,
+            var(--accent) 45%,
+            transparent
+        ) !important;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--accent) 13%,
+            transparent
+        ) !important;
+
+    color:
+        var(--accent-light) !important;
+}
+
+
+/* =========================================================
+   LOGIN BUTTON
+   Use this class when we add the login control.
+   ========================================================= */
+
+.login-button {
+    min-height: 39px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding:
+        0 15px;
+
+    border:
+        1px solid
+        var(--accent);
+
+    border-radius: 8px;
+
+    background:
+        var(--accent);
+
+    color:
+        #1c1c18;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 0.58rem;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.18s ease,
+        filter 0.18s ease;
+}
+
+
+.login-button:hover {
+    transform:
+        translateY(-1px);
+
+    filter:
+        brightness(1.08);
+}
+
+
+/* =========================================================
+   REMOVE OLD SIDEBAR FOOTER
+   ========================================================= */
+
+.sidebar-footer {
+    display: none !important;
+}
+
+
+/* =========================================================
+   HIDE THE OLD SECOND TOPBAR
+   We only need one navigation bar now.
+   ========================================================= */
+
+.topbar {
+    display: none !important;
+}
+
+
+/* =========================================================
+   GIVE THE LIBRARY MORE WIDTH
+   ========================================================= */
+
+.library-page,
+.reading-now-section,
+.reading-stats-section {
+    width:
+        min(
+            1600px,
+            calc(100% - 48px)
+        ) !important;
+
+    margin-left:
+        auto !important;
+
+    margin-right:
+        auto !important;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1150px) {
+
+    .sidebar {
+        grid-template-columns:
+            auto
+            1fr;
+
+        gap:
+            12px 22px;
+
+        padding:
+            13px 22px !important;
+    }
+
+
+    .main-nav {
+        justify-content:
+            flex-end;
+    }
+
+
+    .sidebar-actions {
+        grid-column:
+            1 / -1;
+
+        width: 100% !important;
+
+        justify-content:
+            flex-end;
+
+        padding-top:
+            10px !important;
+
+        border-top:
+            1px solid
+            rgba(255, 240, 218, 0.06);
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    .sidebar {
+        position: relative !important;
+
+        display: flex !important;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 12px;
+
+        min-height: 0 !important;
+
+        padding:
+            14px 12px !important;
+    }
+
+
+    .sidebar-top {
+        display: flex;
+
+        justify-content: center;
+    }
+
+
+    .brand {
+        justify-content: center;
+    }
+
+
+    .main-nav {
+        width: 100% !important;
+
+        display: grid !important;
+
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(0, 1fr)
+            );
+
+        gap: 5px;
+    }
+
+
+    .main-nav .nav-link {
+        width: 100% !important;
+
+        min-height: 42px;
+
+        padding:
+            0 6px !important;
+
+        gap: 5px;
+
+        font-size:
+            0.52rem;
+
+        text-align: center;
+    }
+
+
+    .main-nav .nav-link.active {
+        box-shadow:
+            inset 0 -3px
+            var(--accent) !important;
+    }
+
+
+    .sidebar-actions {
+        width: 100% !important;
+
+        display: grid !important;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+        gap: 6px;
+
+        padding-top:
+            10px !important;
+    }
+
+
+    .sidebar-actions button,
+    .sidebar-primary-button,
+    .sidebar-secondary-button {
+        width: 100% !important;
+
+        padding:
+            0 7px !important;
+
+        font-size:
+            0.52rem !important;
+    }
+
+
+    #openThemeSettings {
+        grid-column:
+            1 / -1;
+    }
+
+
+    .library-page,
+    .reading-now-section,
+    .reading-stats-section {
+        width:
+            calc(100% - 20px) !important;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 440px) {
+
+    .brand-copy strong {
+        font-size:
+            1.05rem;
+    }
+
+
+    .main-nav .nav-link {
+        font-size:
+            0.47rem;
+    }
+
+
+    .main-nav .nav-icon {
+        display: none;
+    }
+
+}
