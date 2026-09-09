@@ -1,15 +1,18 @@
 /* =========================================================
    NOVELLOW
    BOOKS.CSS
+   VERSION 2 — TACTILE BOOK SYSTEM
 
-   Book spines
-   Binding styles
-   Theme-aware materials
-   Spine typography
-   Shelf interaction
+   Physical book spines
+   Rich binding materials
+   Dimensional lighting
+   Decorative spine styles
+   Typography
+   Title plates
+   Mobile shelf correction
+   Live designer preview
    Generated covers
    Book reveal
-   Preview system
    ========================================================= */
 
 
@@ -22,36 +25,63 @@
         #793f55;
 
     --book-text:
-        #f1e3cf;
+        #f3e5d2;
 
     --book-accent:
-        #c39a67;
+        #cda56c;
 
     --book-edge:
         color-mix(
             in srgb,
-            var(--book-color) 72%,
+            var(--book-color) 65%,
+            #160f12
+        );
+
+    --book-deep:
+        color-mix(
+            in srgb,
+            var(--book-color) 52%,
             black
         );
 
-    --book-highlight:
-        rgba(255, 255, 255, 0.05);
+    --book-light:
+        color-mix(
+            in srgb,
+            var(--book-color) 80%,
+            white
+        );
 
-    --book-shadow:
-        rgba(0, 0, 0, 0.16);
+    --book-soft-light:
+        rgba(255, 255, 255, 0.09);
 
+    --book-deep-shadow:
+        rgba(0, 0, 0, 0.30);
+
+    --book-radius:
+        5px 5px 2px 2px;
 
     position: relative;
 
     flex:
         0 0 auto;
 
-    width: 38px;
-    height: 220px;
+    align-self:
+        flex-end;
 
-    overflow: hidden;
+    width:
+        44px;
 
-    padding: 0;
+    height:
+        220px;
+
+    margin-bottom:
+        0 !important;
+
+    padding:
+        0;
+
+    overflow:
+        hidden;
 
     border:
         1px solid
@@ -60,70 +90,184 @@
     border-radius:
         var(--book-radius);
 
-    background:
-        var(--book-color);
-
     color:
         var(--book-text);
 
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.09) 0,
+            rgba(255, 255, 255, 0.025) 9%,
+            transparent 23%,
+            transparent 73%,
+            rgba(0, 0, 0, 0.08) 88%,
+            rgba(0, 0, 0, 0.20) 100%
+        ),
+        var(--book-color);
+
     box-shadow:
-        inset 6px 0 7px
-        var(--book-highlight),
+        inset 2px 0 0
+        rgba(255, 255, 255, 0.08),
 
-        inset -7px 0 9px
-        var(--book-shadow),
+        inset 5px 0 9px
+        rgba(255, 255, 255, 0.035),
 
-        inset 0 1px
-        rgba(255, 255, 255, 0.04),
+        inset -4px 0 6px
+        rgba(0, 0, 0, 0.16),
 
-        3px 5px 7px
-        rgba(0, 0, 0, 0.20);
+        inset -9px 0 13px
+        rgba(0, 0, 0, 0.11),
 
-    cursor: pointer;
+        inset 0 2px 1px
+        rgba(255, 255, 255, 0.06),
+
+        2px 2px 0
+        rgba(0, 0, 0, 0.16),
+
+        5px 8px 11px
+        rgba(0, 0, 0, 0.26);
+
+    cursor:
+        pointer;
 
     transform-origin:
-        center bottom;
+        bottom center;
 
     transition:
-        transform 0.16s ease,
-        box-shadow 0.16s ease,
-        filter 0.16s ease;
+        transform 0.18s ease,
+        filter 0.18s ease,
+        box-shadow 0.18s ease;
 }
 
 
 /* =========================================================
-   BOOK HOVER
+   SPINE ROUNDING / BINDING CURVE
+   ========================================================= */
+
+.book-spine::before {
+    content: "";
+
+    position:
+        absolute;
+
+    z-index:
+        2;
+
+    top:
+        0;
+
+    bottom:
+        0;
+
+    left:
+        0;
+
+    width:
+        32%;
+
+    pointer-events:
+        none;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.13),
+            rgba(255, 255, 255, 0.035) 35%,
+            transparent 100%
+        );
+
+    opacity:
+        0.68;
+}
+
+
+/* =========================================================
+   BOOK FOOT / PHYSICAL DEPTH
+   ========================================================= */
+
+.book-spine::after {
+    content: "";
+
+    position:
+        absolute;
+
+    z-index:
+        30;
+
+    left:
+        2px;
+
+    right:
+        1px;
+
+    bottom:
+        0;
+
+    height:
+        5px;
+
+    pointer-events:
+        none;
+
+    border-radius:
+        0 0 3px 3px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.04),
+            rgba(0, 0, 0, 0.20)
+        );
+
+    box-shadow:
+        0 2px 2px
+        rgba(0, 0, 0, 0.24);
+}
+
+
+/* =========================================================
+   HOVER / PULL FROM SHELF
    ========================================================= */
 
 .book-spine:hover {
-    z-index: 80;
+    z-index:
+        100;
 
     transform:
         translateY(
-            var(--book-hover-lift)
+            var(
+                --book-hover-lift,
+                -9px
+            )
         )
         rotate(0deg);
 
+    filter:
+        brightness(1.06)
+        saturate(1.03);
+
     box-shadow:
-        inset 6px 0 7px
-        var(--book-highlight),
+        inset 2px 0 0
+        rgba(255, 255, 255, 0.11),
 
-        inset -7px 0 9px
-        var(--book-shadow),
+        inset 7px 0 12px
+        rgba(255, 255, 255, 0.045),
 
-        7px 14px 15px
-        rgba(0, 0, 0, 0.28);
+        inset -9px 0 14px
+        rgba(0, 0, 0, 0.18),
+
+        5px 8px 0
+        rgba(0, 0, 0, 0.12),
+
+        9px 17px 18px
+        rgba(0, 0, 0, 0.31);
 }
 
 
 .book-spine:active {
     transform:
-        translateY(
-            calc(
-                var(--book-hover-lift)
-                + 3px
-            )
-        );
+        translateY(-4px)
+        scale(0.985);
 }
 
 
@@ -142,78 +286,32 @@
    ========================================================= */
 
 .spine-inner {
-    position: absolute;
+    position:
+        absolute;
 
-    z-index: 8;
+    z-index:
+        12;
 
     inset:
-        7px 5px;
+        9px 5px 9px;
 
-    display: flex;
+    display:
+        flex;
 
-    flex-direction: column;
+    flex-direction:
+        column;
 
-    align-items: center;
-    justify-content: center;
+    align-items:
+        center;
 
-    overflow: hidden;
+    justify-content:
+        center;
 
-    pointer-events: none;
-}
+    overflow:
+        hidden;
 
-
-/* =========================================================
-   SPINE EDGE
-   ========================================================= */
-
-.book-spine::before {
-    content: "";
-
-    position: absolute;
-
-    z-index: 4;
-
-    top: 0;
-    bottom: 0;
-    left: 3px;
-
-    width: 2px;
-
-    background:
-        rgba(255, 255, 255, 0.04);
-
-    box-shadow:
-        2px 0
-        rgba(0, 0, 0, 0.04);
-
-    pointer-events: none;
-}
-
-
-/* =========================================================
-   BOTTOM BOOK EDGE
-   ========================================================= */
-
-.book-spine::after {
-    content: "";
-
-    position: absolute;
-
-    z-index: 3;
-
-    left: 2px;
-    right: 2px;
-    bottom: 2px;
-
-    height: 3px;
-
-    border-radius:
-        0 0 2px 2px;
-
-    background:
-        rgba(0, 0, 0, 0.08);
-
-    pointer-events: none;
+    pointer-events:
+        none;
 }
 
 
@@ -222,24 +320,35 @@
    ========================================================= */
 
 .spine-title-panel {
-    position: relative;
+    position:
+        relative;
 
-    z-index: 10;
+    z-index:
+        15;
 
-    max-width: 100%;
+    max-width:
+        100%;
 
     max-height:
-        calc(100% - 34px);
+        calc(100% - 37px);
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
-    justify-content: center;
+    align-items:
+        center;
+
+    justify-content:
+        center;
 
     padding:
-        5px 3px;
+        7px 4px;
 
-    overflow: hidden;
+    overflow:
+        hidden;
+
+    box-sizing:
+        border-box;
 }
 
 
@@ -248,11 +357,14 @@
    ========================================================= */
 
 .spine-title {
-    display: block;
+    display:
+        block;
 
-    max-height: 100%;
+    max-height:
+        100%;
 
-    overflow: hidden;
+    overflow:
+        hidden;
 
     writing-mode:
         vertical-rl;
@@ -270,10 +382,10 @@
         var(--font-book);
 
     font-size:
-        0.64rem;
+        0.68rem;
 
     font-weight:
-        var(--book-title-weight);
+        600;
 
     line-height:
         1.05;
@@ -289,6 +401,10 @@
 
     -webkit-font-smoothing:
         antialiased;
+
+    text-shadow:
+        0 1px 0
+        rgba(0, 0, 0, 0.20);
 }
 
 
@@ -297,12 +413,17 @@
    ========================================================= */
 
 .spine-ornament {
-    position: absolute;
+    position:
+        absolute;
 
-    z-index: 16;
+    z-index:
+        22;
 
-    left: 50%;
-    bottom: 7px;
+    left:
+        50%;
+
+    bottom:
+        8px;
 
     transform:
         translateX(-50%);
@@ -311,18 +432,28 @@
         var(--book-accent);
 
     font-family:
-        var(--font-book);
+        Georgia,
+        serif;
 
     font-size:
-        0.67rem;
+        0.76rem;
 
-    line-height: 1;
+    line-height:
+        1;
 
     text-shadow:
-        0 1px
-        rgba(0, 0, 0, 0.14);
+        0 1px 1px
+        rgba(0, 0, 0, 0.30),
 
-    pointer-events: none;
+        0 0 5px
+        color-mix(
+            in srgb,
+            var(--book-accent) 25%,
+            transparent
+        );
+
+    pointer-events:
+        none;
 }
 
 
@@ -331,125 +462,158 @@
    ========================================================= */
 
 .binding-band {
-    position: absolute;
+    position:
+        absolute;
 
-    z-index: 7;
+    z-index:
+        19;
 
-    left: 0;
-    right: 0;
+    left:
+        0;
 
-    display: none;
+    right:
+        0;
 
-    height: 3px;
+    display:
+        none;
+
+    height:
+        4px;
+
+    pointer-events:
+        none;
 
     background:
-        var(--book-accent);
+        linear-gradient(
+            to bottom,
+            color-mix(
+                in srgb,
+                var(--book-accent) 70%,
+                white
+            ),
+            var(--book-accent) 40%,
+            color-mix(
+                in srgb,
+                var(--book-accent) 65%,
+                black
+            )
+        );
 
-    opacity:
-        0.42;
+    box-shadow:
+        0 1px 1px
+        rgba(0, 0, 0, 0.28),
 
-    pointer-events: none;
+        inset 0 1px
+        rgba(255, 255, 255, 0.22);
 }
 
 
 .binding-band.top {
-    top: 18px;
+    top:
+        17px;
 }
 
 
 .binding-band.bottom {
-    bottom: 18px;
+    bottom:
+        17px;
 }
 
 
 /* =========================================================
-   NO FAKE PAGE EDGE
+   HEIGHT
+   SUPPORT NEW + LEGACY VALUES
    ========================================================= */
 
-.book-pages {
-    display:
-        none !important;
-}
-
-
-/* =========================================================
-   HEIGHTS
-   ========================================================= */
-
-.book-height-small {
+.book-height-small,
+.book-height-short {
     height:
-        182px;
+        184px;
 }
 
 
 .book-height-medium {
     height:
-        220px;
+        218px;
 }
 
 
 .book-height-tall {
     height:
-        252px;
+        250px;
+}
+
+
+.book-height-tower {
+    height:
+        274px;
 }
 
 
 /* =========================================================
    THICKNESS
+   SUPPORT NEW + LEGACY VALUES
    ========================================================= */
 
-.book-thickness-slim {
+.book-thickness-slim,
+.book-thickness-thin {
     width:
-        27px;
+        30px;
 }
 
 
 .book-thickness-medium {
     width:
-        38px;
+        44px;
+}
+
+
+.book-thickness-thick {
+    width:
+        57px;
 }
 
 
 .book-thickness-chunky {
     width:
-        52px;
+        70px;
 }
 
 
 /* =========================================================
-   SPINE TYPOGRAPHY — SIZE
+   FONT SIZE
    ========================================================= */
 
 .book-font-size-small
 .spine-title {
     font-size:
-        0.50rem;
+        0.54rem;
 }
 
 
 .book-font-size-medium
 .spine-title {
     font-size:
-        0.64rem;
+        0.68rem;
 }
 
 
 .book-font-size-large
 .spine-title {
     font-size:
-        0.76rem;
+        0.80rem;
 }
 
 
 .book-font-size-xlarge
 .spine-title {
     font-size:
-        0.88rem;
+        0.93rem;
 }
 
 
 /* =========================================================
-   SPINE TYPOGRAPHY — WEIGHT
+   FONT WEIGHT
    ========================================================= */
 
 .book-font-weight-light
@@ -463,6 +627,13 @@
 .spine-title {
     font-weight:
         500;
+}
+
+
+.book-font-weight-medium
+.spine-title {
+    font-weight:
+        600;
 }
 
 
@@ -481,13 +652,13 @@
 
 
 /* =========================================================
-   SPINE TYPOGRAPHY — LETTER SPACING
+   LETTER SPACING
    ========================================================= */
 
 .book-letter-spacing-tight
 .spine-title {
     letter-spacing:
-        -0.04em;
+        -0.035em;
 }
 
 
@@ -501,19 +672,19 @@
 .book-letter-spacing-wide
 .spine-title {
     letter-spacing:
-        0.08em;
+        0.07em;
 }
 
 
 .book-letter-spacing-extra-wide
 .spine-title {
     letter-spacing:
-        0.15em;
+        0.13em;
 }
 
 
 /* =========================================================
-   SPINE TYPOGRAPHY — STYLE
+   FONT STYLE
    ========================================================= */
 
 .book-font-style-normal
@@ -531,9 +702,13 @@
 
 
 /* =========================================================
-   SPINE TITLE ALIGNMENT
+   TEXT ALIGNMENT
+   NEW VALUES ARE start / center / end
+   LEGACY VALUES ARE top / center / bottom
    ========================================================= */
 
+.book-text-align-start
+.spine-inner,
 .book-text-align-top
 .spine-inner {
     justify-content:
@@ -548,6 +723,8 @@
 }
 
 
+.book-text-align-end
+.spine-inner,
 .book-text-align-bottom
 .spine-inner {
     justify-content:
@@ -556,7 +733,7 @@
 
 
 /* =========================================================
-   TITLE PANELS
+   TITLE PANEL — NONE
    ========================================================= */
 
 .book-title-panel-none
@@ -566,68 +743,173 @@
 }
 
 
+/* =========================================================
+   TITLE PANEL — LABEL
+   ========================================================= */
+
+.book-title-panel-label
+.spine-title-panel,
 .book-title-panel-simple
 .spine-title-panel {
-    background:
-        rgba(255, 255, 255, 0.07);
+    padding:
+        9px 5px;
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--book-accent) 46%,
+            transparent
+        );
 
     border-radius:
-        3px;
+        4px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.07),
+            rgba(0, 0, 0, 0.10)
+        );
+
+    box-shadow:
+        inset 0 1px
+        rgba(255, 255, 255, 0.07),
+
+        0 1px 2px
+        rgba(0, 0, 0, 0.18);
 }
 
 
+/* =========================================================
+   TITLE PANEL — FRAME
+   ========================================================= */
+
+.book-title-panel-frame
+.spine-title-panel,
 .book-title-panel-bordered
 .spine-title-panel {
+    padding:
+        8px 4px;
+
     border:
         1px solid
         var(--book-accent);
 
     border-radius:
         3px;
+
+    box-shadow:
+        inset 0 0 0 2px
+        color-mix(
+            in srgb,
+            var(--book-accent) 10%,
+            transparent
+        );
 }
 
 
+/* =========================================================
+   TITLE PANEL — BAND
+   ========================================================= */
+
+.book-title-panel-band
+.spine-title-panel {
+    width:
+        calc(100% + 10px);
+
+    padding:
+        10px 4px;
+
+    border-top:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--book-accent) 58%,
+            transparent
+        );
+
+    border-bottom:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--book-accent) 58%,
+            transparent
+        );
+
+    background:
+        rgba(0, 0, 0, 0.13);
+}
+
+
+/* =========================================================
+   TITLE PANEL — PLATE
+   ========================================================= */
+
+.book-title-panel-plate
+.spine-title-panel,
 .book-title-panel-ornate
 .spine-title-panel {
+    padding:
+        10px 5px;
+
     border:
         3px double
         var(--book-accent);
 
     border-radius:
-        4px;
+        5px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--book-color) 78%,
+            black
+        );
+
+    box-shadow:
+        0 2px 3px
+        rgba(0, 0, 0, 0.19),
+
+        inset 0 1px
+        rgba(255, 255, 255, 0.07);
 }
 
 
+/* =========================================================
+   LEGACY TITLE PANELS
+   ========================================================= */
+
 .book-title-panel-dark
 .spine-title-panel {
+    background:
+        rgba(0, 0, 0, 0.24);
+
     border:
         1px solid
-        rgba(0, 0, 0, 0.15);
+        rgba(0, 0, 0, 0.22);
 
     border-radius:
         3px;
-
-    background:
-        rgba(0, 0, 0, 0.22);
 }
 
 
 .book-title-panel-light
 .spine-title-panel {
+    background:
+        rgba(255, 255, 255, 0.14);
+
     border:
         1px solid
-        rgba(255, 255, 255, 0.13);
+        rgba(255, 255, 255, 0.16);
 
     border-radius:
         3px;
-
-    background:
-        rgba(255, 255, 255, 0.13);
 }
 
 
 /* =========================================================
-   SPINE FONTS
+   FONTS
    ========================================================= */
 
 .book-font-serif
@@ -645,9 +927,6 @@
         "Times New Roman",
         Georgia,
         serif;
-
-    letter-spacing:
-        0.03em;
 }
 
 
@@ -664,9 +943,6 @@
         "Cormorant Garamond",
         Georgia,
         serif;
-
-    font-weight:
-        600;
 }
 
 
@@ -716,8 +992,8 @@
 .book-font-handwritten
 .spine-title {
     font-family:
-        "Comic Sans MS",
         "Bradley Hand",
+        "Segoe Print",
         cursive;
 }
 
@@ -733,7 +1009,7 @@
         700;
 
     letter-spacing:
-        0.05em;
+        0.045em;
 }
 
 
@@ -748,7 +1024,7 @@
         700;
 
     letter-spacing:
-        0.12em;
+        0.10em;
 }
 
 
@@ -760,30 +1036,35 @@
 
     font-weight:
         700;
-
-    letter-spacing:
-        0.05em;
 }
 
 
 /* =========================================================
-   CLASSIC CLOTH
+   STYLE — CLASSIC
+   Soft woven book cloth
    ========================================================= */
 
 .book-spine.book-style-classic {
     background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.10),
+            transparent 20%,
+            rgba(0, 0, 0, 0.07) 88%
+        ),
+
         repeating-linear-gradient(
             0deg,
-            rgba(255, 255, 255, 0.014)
-            0 1px,
+            rgba(255, 255, 255, 0.022) 0 1px,
             transparent 1px 3px
         ),
+
         repeating-linear-gradient(
             90deg,
-            rgba(0, 0, 0, 0.012)
-            0 1px,
-            transparent 1px 3px
+            rgba(0, 0, 0, 0.017) 0 1px,
+            transparent 1px 4px
         ),
+
         var(--book-color);
 }
 
@@ -796,45 +1077,238 @@
 
 
 /* =========================================================
-   GOTHIC BINDING
+   STYLE — CLOTHBOUND
    ========================================================= */
 
-.book-spine.book-style-gothic {
+.book-spine.book-style-cloth {
     border-radius:
-        4px 4px 2px 2px;
+        7px 6px 3px 3px;
 
     background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.12),
+            transparent 21%,
+            transparent 77%,
+            rgba(0, 0, 0, 0.13)
+        ),
+
         repeating-linear-gradient(
-            135deg,
-            rgba(0, 0, 0, 0.022)
-            0 2px,
-            transparent 2px 6px
+            0deg,
+            rgba(255, 255, 255, 0.026) 0 1px,
+            rgba(0, 0, 0, 0.013) 1px 2px,
+            transparent 2px 4px
+        ),
+
+        var(--book-color);
+
+    box-shadow:
+        inset 3px 0 4px
+        rgba(255, 255, 255, 0.09),
+
+        inset -7px 0 11px
+        rgba(0, 0, 0, 0.15),
+
+        4px 7px 10px
+        rgba(0, 0, 0, 0.24);
+}
+
+
+.book-style-cloth
+.binding-band {
+    display:
+        block;
+
+    opacity:
+        0.30;
+}
+
+
+/* =========================================================
+   STYLE — ORNATE
+   ========================================================= */
+
+.book-spine.book-style-ornate {
+    border-radius:
+        6px 6px 2px 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.08),
+            transparent 18%,
+            rgba(0, 0, 0, 0.14) 100%
+        ),
+
+        repeating-linear-gradient(
+            45deg,
+            transparent 0 7px,
+            rgba(255, 255, 255, 0.015) 7px 8px
+        ),
+
+        var(--book-color);
+}
+
+
+.book-style-ornate
+.spine-inner {
+    inset:
+        7px 5px;
+
+    border:
+        3px double
+        color-mix(
+            in srgb,
+            var(--book-accent) 75%,
+            transparent
+        );
+
+    border-radius:
+        4px;
+
+    padding:
+        9px 2px;
+}
+
+
+.book-style-ornate
+.binding-band {
+    display:
+        block;
+
+    height:
+        5px;
+}
+
+
+/* =========================================================
+   STYLE — PAPERBACK
+   ========================================================= */
+
+.book-spine.book-style-paperback {
+    --book-radius:
+        2px 3px 2px 2px;
+
+    border-color:
+        color-mix(
+            in srgb,
+            var(--book-color) 78%,
+            black
+        );
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.05),
+            transparent 16%,
+            rgba(0, 0, 0, 0.06)
         ),
         var(--book-color);
 
     box-shadow:
-        inset 7px 0 8px
+        inset -2px 0 3px
+        rgba(0, 0, 0, 0.08),
+
+        2px 4px 5px
+        rgba(0, 0, 0, 0.17);
+}
+
+
+.book-style-paperback::before {
+    opacity:
+        0.25;
+}
+
+
+.book-style-paperback::after {
+    height:
+        3px;
+}
+
+
+/* =========================================================
+   STYLE — MODERN HARDCOVER
+   ========================================================= */
+
+.book-spine.book-style-modern {
+    border-radius:
+        4px 4px 2px 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.08),
+            transparent 16%,
+            transparent 82%,
+            rgba(0, 0, 0, 0.12)
+        ),
+        var(--book-color);
+}
+
+
+.book-style-modern
+.binding-band,
+.book-style-modern
+.spine-ornament {
+    display:
+        none;
+}
+
+
+/* =========================================================
+   STYLE — GOTHIC
+   ========================================================= */
+
+.book-spine.book-style-gothic {
+    border-radius:
+        5px 5px 2px 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.045),
+            transparent 20%,
+            rgba(0, 0, 0, 0.20)
+        ),
+
+        repeating-linear-gradient(
+            135deg,
+            rgba(0, 0, 0, 0.035) 0 2px,
+            transparent 2px 7px
+        ),
+
+        var(--book-color);
+
+    box-shadow:
+        inset 6px 0 10px
         rgba(255, 255, 255, 0.025),
 
-        inset -7px 0 10px
-        rgba(0, 0, 0, 0.22),
+        inset -9px 0 13px
+        rgba(0, 0, 0, 0.28),
 
-        3px 6px 8px
-        rgba(0, 0, 0, 0.23);
+        4px 7px 10px
+        rgba(0, 0, 0, 0.30);
 }
 
 
 .book-style-gothic
 .spine-inner {
     inset:
-        8px 5px;
+        7px 5px;
 
     border:
         3px double
-        var(--book-accent);
+        color-mix(
+            in srgb,
+            var(--book-accent) 70%,
+            transparent
+        );
+
+    border-radius:
+        3px;
 
     padding:
-        9px 2px;
+        10px 2px;
 }
 
 
@@ -845,29 +1319,213 @@
 
     height:
         5px;
-
-    opacity:
-        0.45;
-}
-
-
-.book-style-gothic
-.spine-ornament {
-    font-size:
-        0.78rem;
 }
 
 
 /* =========================================================
-   BOTANICAL BINDING
+   STYLE — VINTAGE
+   Worn linen / aged binding
+   ========================================================= */
+
+.book-spine.book-style-vintage {
+    border-radius:
+        8px 7px 3px 3px;
+
+    filter:
+        saturate(0.88);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(238, 210, 164, 0.11),
+            transparent 23%,
+            rgba(61, 38, 29, 0.14) 100%
+        ),
+
+        repeating-linear-gradient(
+            0deg,
+            rgba(255, 240, 214, 0.018) 0 1px,
+            transparent 1px 5px
+        ),
+
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 8px,
+            rgba(0, 0, 0, 0.015) 8px 9px
+        ),
+
+        var(--book-color);
+}
+
+
+.book-style-vintage
+.binding-band {
+    display:
+        block;
+
+    opacity:
+        0.34;
+}
+
+
+/* =========================================================
+   STYLE — ART DECO
+   ========================================================= */
+
+.book-spine.book-style-deco {
+    border-radius:
+        2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.07),
+            transparent 19%,
+            rgba(0, 0, 0, 0.14)
+        ),
+        var(--book-color);
+}
+
+
+.book-style-deco
+.spine-inner {
+    inset:
+        8px 5px;
+
+    border-left:
+        2px solid
+        var(--book-accent);
+
+    border-right:
+        2px solid
+        var(--book-accent);
+
+    box-shadow:
+        inset 2px 0
+        color-mix(
+            in srgb,
+            var(--book-accent) 22%,
+            transparent
+        ),
+
+        inset -2px 0
+        color-mix(
+            in srgb,
+            var(--book-accent) 22%,
+            transparent
+        );
+}
+
+
+.book-style-deco
+.binding-band {
+    display:
+        block;
+
+    height:
+        2px;
+
+    opacity:
+        0.72;
+}
+
+
+/* =========================================================
+   STYLE — RETRO
+   ========================================================= */
+
+.book-spine.book-style-retro {
+    border:
+        2px solid
+        var(--book-edge);
+
+    border-radius:
+        1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.07),
+            transparent 16%
+        ),
+        var(--book-color);
+
+    box-shadow:
+        4px 4px 0
+        rgba(0, 0, 0, 0.24);
+}
+
+
+.book-style-retro
+.spine-title {
+    text-transform:
+        uppercase;
+}
+
+
+/* =========================================================
+   LEGACY — LEATHER
+   ========================================================= */
+
+.book-spine.book-style-leather {
+    border-radius:
+        7px 6px 2px 2px;
+
+    background:
+        radial-gradient(
+            ellipse at 20% 30%,
+            rgba(255, 255, 255, 0.035),
+            transparent 32%
+        ),
+
+        repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.03) 0 2px,
+            transparent 2px 6px
+        ),
+
+        repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.012) 0 1px,
+            transparent 1px 4px
+        ),
+
+        var(--book-color);
+
+    box-shadow:
+        inset 7px 0 10px
+        rgba(255, 255, 255, 0.035),
+
+        inset -9px 0 14px
+        rgba(0, 0, 0, 0.26),
+
+        4px 7px 10px
+        rgba(0, 0, 0, 0.27);
+}
+
+
+.book-style-leather
+.binding-band {
+    display:
+        block;
+
+    height:
+        6px;
+
+    opacity:
+        0.54;
+}
+
+
+/* =========================================================
+   LEGACY — BOTANICAL
    ========================================================= */
 
 .book-spine.book-style-botanical {
     background:
         repeating-linear-gradient(
             90deg,
-            rgba(255, 255, 255, 0.01)
-            0 1px,
+            rgba(255, 255, 255, 0.018) 0 1px,
             transparent 1px 4px
         ),
         var(--book-color);
@@ -876,77 +1534,89 @@
 
 .book-style-botanical
 .spine-inner::before {
-    content: "❦";
+    content:
+        "❦";
 
-    position: absolute;
+    position:
+        absolute;
 
-    top: 5px;
+    top:
+        5px;
 
     color:
         var(--book-accent);
 
-    font-family:
-        Georgia,
-        serif;
-
     font-size:
-        0.75rem;
+        0.82rem;
 
     opacity:
-        0.78;
+        0.85;
 }
 
 
 .book-style-botanical
 .spine-inner::after {
-    content: "❧";
+    content:
+        "❧";
 
-    position: absolute;
+    position:
+        absolute;
 
-    bottom: 6px;
+    bottom:
+        6px;
 
     color:
         var(--book-accent);
 
-    font-family:
-        Georgia,
-        serif;
-
     font-size:
-        0.68rem;
-
-    opacity:
-        0.62;
+        0.76rem;
 
     transform:
         rotate(180deg);
+
+    opacity:
+        0.70;
 }
 
 
 /* =========================================================
-   CELESTIAL BINDING
+   LEGACY — CELESTIAL
    ========================================================= */
 
 .book-spine.book-style-celestial {
     background:
         radial-gradient(
-            circle at 30% 18%,
-            rgba(255, 255, 255, 0.10)
+            circle at 28% 16%,
+            rgba(255, 255, 255, 0.17)
             0 1px,
-            transparent 1.3px
+            transparent 1.5px
         ),
+
         radial-gradient(
-            circle at 72% 48%,
-            rgba(255, 255, 255, 0.08)
+            circle at 68% 33%,
+            color-mix(
+                in srgb,
+                var(--book-accent) 55%,
+                transparent
+            )
             0 1px,
-            transparent 1.3px
+            transparent 1.5px
         ),
+
         radial-gradient(
-            circle at 42% 76%,
-            rgba(255, 255, 255, 0.07)
+            circle at 42% 69%,
+            rgba(255, 255, 255, 0.12)
             0 1px,
-            transparent 1.3px
+            transparent 1.5px
         ),
+
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.07),
+            transparent 20%,
+            rgba(0, 0, 0, 0.12)
+        ),
+
         var(--book-color);
 }
 
@@ -957,26 +1627,25 @@
         1px solid
         color-mix(
             in srgb,
-            var(--book-accent) 60%,
+            var(--book-accent) 58%,
             transparent
         );
 
     border-radius:
-        3px;
+        4px;
 }
 
 
 /* =========================================================
-   FLORAL BINDING
+   LEGACY — FLORAL
    ========================================================= */
 
 .book-spine.book-style-floral {
     background:
         repeating-linear-gradient(
             45deg,
-            transparent 0 9px,
-            rgba(255, 255, 255, 0.014)
-            9px 10px
+            transparent 0 10px,
+            rgba(255, 255, 255, 0.018) 10px 11px
         ),
         var(--book-color);
 }
@@ -984,174 +1653,101 @@
 
 .book-style-floral
 .spine-inner::before {
-    content: "✿";
+    content:
+        "✿";
 
-    position: absolute;
+    position:
+        absolute;
 
-    top: 5px;
+    top:
+        5px;
 
     color:
         var(--book-accent);
 
     font-size:
-        0.68rem;
+        0.77rem;
 }
 
 
 .book-style-floral
 .spine-inner::after {
-    content: "❀";
+    content:
+        "❀";
 
-    position: absolute;
+    position:
+        absolute;
 
-    bottom: 5px;
+    bottom:
+        5px;
 
     color:
         var(--book-accent);
 
     font-size:
-        0.65rem;
+        0.72rem;
 }
 
 
 /* =========================================================
-   PASTEL BINDING
+   LEGACY — PASTEL
    ========================================================= */
 
 .book-spine.book-style-pastel {
+    border-radius:
+        12px 10px 5px 5px;
+
     border-color:
         rgba(255, 255, 255, 0.18);
 
-    border-radius:
-        11px 9px 5px 5px;
-
-    background:
-        var(--book-color);
-
     box-shadow:
-        inset 6px 0 8px
-        rgba(255, 255, 255, 0.10),
+        inset 7px 0 10px
+        rgba(255, 255, 255, 0.14),
 
-        inset -6px 0 8px
-        rgba(0, 0, 0, 0.06),
+        inset -7px 0 10px
+        rgba(0, 0, 0, 0.07),
 
-        3px 5px 7px
-        rgba(0, 0, 0, 0.11);
+        4px 7px 9px
+        rgba(0, 0, 0, 0.14);
 }
 
 
 /* =========================================================
-   MINIMAL BINDING
+   LEGACY — MINIMAL
    ========================================================= */
 
 .book-spine.book-style-minimal {
     border-radius:
         2px;
 
-    background:
-        var(--book-color);
-
     box-shadow:
-        inset -4px 0 5px
-        rgba(0, 0, 0, 0.08),
+        inset -4px 0 6px
+        rgba(0, 0, 0, 0.10),
 
         2px 4px 6px
-        rgba(0, 0, 0, 0.13);
+        rgba(0, 0, 0, 0.15);
 }
 
 
 .book-style-minimal
-.spine-inner {
-    inset:
-        7px 3px;
-}
-
-
+.spine-ornament,
 .book-style-minimal
-.spine-ornament {
-    display: none;
-}
-
-
-/* =========================================================
-   LEATHER BINDING
-   ========================================================= */
-
-.book-spine.book-style-leather {
-    border-radius:
-        6px 5px 2px 2px;
-
-    background:
-        repeating-linear-gradient(
-            0deg,
-            rgba(0, 0, 0, 0.025)
-            0 2px,
-            transparent 2px 5px
-        ),
-        repeating-linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.012)
-            0 1px,
-            transparent 1px 4px
-        ),
-        var(--book-color);
-
-    box-shadow:
-        inset 7px 0 8px
-        rgba(255, 255, 255, 0.025),
-
-        inset -8px 0 12px
-        rgba(0, 0, 0, 0.23),
-
-        3px 6px 8px
-        rgba(0, 0, 0, 0.22);
-}
-
-
-.book-style-leather
 .binding-band {
     display:
-        block;
-
-    height:
-        5px;
-
-    opacity:
-        0.48;
-}
-
-
-.book-style-leather
-.spine-inner {
-    border-left:
-        1px solid
-        color-mix(
-            in srgb,
-            var(--book-accent) 42%,
-            transparent
-        );
-
-    border-right:
-        1px solid
-        color-mix(
-            in srgb,
-            var(--book-accent) 42%,
-            transparent
-        );
+        none;
 }
 
 
 /* =========================================================
-   DARK ACADEMIA
+   LEGACY — DARK ACADEMIA
    ========================================================= */
 
 .book-spine.book-style-academia {
     background:
         repeating-linear-gradient(
             90deg,
-            rgba(255, 255, 255, 0.008)
-            0 1px,
-            transparent 1px 3px
+            rgba(255, 255, 255, 0.012) 0 1px,
+            transparent 1px 4px
         ),
         var(--book-color);
 }
@@ -1168,45 +1764,21 @@
 }
 
 
-.book-style-academia
-.spine-inner::before {
-    content: "";
-
-    position: absolute;
-
-    top: 9px;
-    left: 50%;
-
-    width: 9px;
-    height: 1px;
-
-    transform:
-        translateX(-50%);
-
-    background:
-        var(--book-accent);
-
-    box-shadow:
-        0 4px
-        var(--book-accent);
-}
-
-
 /* =========================================================
-   STORYBOOK
+   LEGACY — STORYBOOK
    ========================================================= */
 
 .book-spine.book-style-storybook {
     border-radius:
-        10px 8px 4px 4px;
+        11px 9px 4px 4px;
 
     background:
         repeating-linear-gradient(
             135deg,
-            rgba(255, 255, 255, 0.016)
-            0 3px,
-            transparent 3px 7px
+            rgba(255, 255, 255, 0.022) 0 3px,
+            transparent 3px 8px
         ),
+
         var(--book-color);
 }
 
@@ -1217,7 +1789,7 @@
         2px solid
         color-mix(
             in srgb,
-            var(--book-accent) 72%,
+            var(--book-accent) 70%,
             transparent
         );
 
@@ -1227,200 +1799,28 @@
 
 
 /* =========================================================
-   THEME — HAUNTED
+   LIVE DESIGNER
    ========================================================= */
 
-body.theme-haunted
-.book-spine {
-    --book-highlight:
-        rgba(230, 207, 181, 0.025);
-
-    border-radius:
-        4px 4px 2px 2px;
-
-    box-shadow:
-        inset 6px 0 8px
-        rgba(255, 255, 255, 0.025),
-
-        inset -7px 0 10px
-        rgba(0, 0, 0, 0.22),
-
-        3px 6px 8px
-        rgba(0, 0, 0, 0.25);
-}
-
-
-body.theme-haunted
-.book-spine::after {
-    background:
-        rgba(0, 0, 0, 0.13);
-}
-
-
-body.theme-haunted
-.spine-title {
-    text-shadow:
-        0 1px
-        rgba(0, 0, 0, 0.18);
-}
-
-
-/* =========================================================
-   THEME — AUTUMN
-   ========================================================= */
-
-body.theme-autumn
-.book-spine {
-    border-radius:
-        8px 7px 4px 4px;
-
-    box-shadow:
-        inset 6px 0 8px
-        rgba(255, 255, 255, 0.055),
-
-        inset -6px 0 8px
-        rgba(0, 0, 0, 0.11),
-
-        3px 5px 7px
-        rgba(0, 0, 0, 0.15);
-}
-
-
-body.theme-autumn
-.book-style-classic {
-    border-radius:
-        9px 8px 4px 4px;
-}
-
-
-/* =========================================================
-   THEME — FOREST
-   ========================================================= */
-
-body.theme-forest
-.book-spine {
-    border-radius:
-        10px 8px 5px 5px;
-}
-
-
-body.theme-forest
-.book-style-botanical
-.spine-inner::before {
-    font-size:
-        0.82rem;
-}
-
-
-body.theme-forest
-.book-style-botanical
-.spine-inner::after {
-    font-size:
-        0.75rem;
-}
-
-
-/* =========================================================
-   THEME — RETRO
-   ========================================================= */
-
-body.theme-retro
-.book-spine {
-    border-radius:
-        1px;
-
-    border-width:
-        2px;
-
-    box-shadow:
-        4px 4px 0
-        rgba(0, 0, 0, 0.20);
-
-    text-transform:
-        uppercase;
-}
-
-
-body.theme-retro
-.book-spine:hover {
-    box-shadow:
-        6px 7px 0
-        rgba(0, 0, 0, 0.25);
-}
-
-
-body.theme-retro
-.spine-title {
-    font-family:
-        var(--font-book);
-
-    letter-spacing:
-        0.05em;
-}
-
-
-/* =========================================================
-   THEME — PASTEL GHOSTS
-   ========================================================= */
-
-body.theme-ghosts
-.book-spine {
-    border-radius:
-        12px 10px 6px 6px;
-
-    border-color:
-        rgba(74, 60, 66, 0.10);
-
-    box-shadow:
-        inset 5px 0 7px
-        rgba(255, 255, 255, 0.12),
-
-        inset -5px 0 8px
-        rgba(81, 62, 68, 0.07),
-
-        3px 5px 7px
-        rgba(91, 73, 79, 0.10);
-}
-
-
-body.theme-ghosts
-.book-title-panel-simple
-.spine-title-panel {
-    background:
-        rgba(255, 255, 255, 0.18);
-}
-
-
-/* =========================================================
-   LIVE PREVIEW AREA
-   ========================================================= */
-
-.spine-editor {
-    display: grid;
-
-    grid-template-columns:
-        180px minmax(0, 1fr);
-
-    gap: 24px;
-
-    align-items: start;
-}
-
-
+.book-spine-preview-shell,
 .spine-preview-area {
     min-height:
-        340px;
+        335px;
 
-    display: flex;
+    display:
+        flex;
 
-    flex-direction: column;
+    align-items:
+        center;
 
-    align-items: center;
-    justify-content: center;
+    justify-content:
+        center;
 
-    gap: 14px;
+    padding:
+        24px;
 
-    padding: 18px;
+    overflow:
+        hidden;
 
     border:
         1px solid
@@ -1430,138 +1830,226 @@ body.theme-ghosts
         var(--radius-medium);
 
     background:
-        var(--bg);
-}
+        radial-gradient(
+            circle at 50% 42%,
+            color-mix(
+                in srgb,
+                var(--panel-2) 70%,
+                transparent
+            ),
+            var(--bg) 68%
+        );
 
-
-.preview-label {
-    color:
-        var(--muted);
-
-    font-family:
-        var(--font-ui);
-
-    font-size:
-        0.49rem;
-
-    font-weight:
-        700;
-
-    letter-spacing:
-        0.12em;
-
-    text-transform:
-        uppercase;
+    box-shadow:
+        inset 0 1px
+        rgba(255, 255, 255, 0.025);
 }
 
 
 /* =========================================================
-   LIVE PREVIEW BOOK
+   PREVIEW BOOK
    ========================================================= */
 
+.book-spine-preview,
 .spine-preview-book {
     --book-color:
         #793f55;
 
     --book-text:
-        #f1e3cf;
+        #f3e5d2;
 
     --book-accent:
-        #c39a67;
+        #cda56c;
 
-    position: relative;
+    position:
+        relative;
 
-    width: 52px;
-    height: 250px;
+    width:
+        68px;
 
-    overflow: hidden;
+    height:
+        260px;
+
+    overflow:
+        hidden;
 
     border:
         1px solid
         color-mix(
             in srgb,
-            var(--book-color) 72%,
+            var(--book-color) 62%,
             black
         );
 
     border-radius:
-        var(--book-radius);
-
-    background:
-        var(--book-color);
+        7px 7px 3px 3px;
 
     color:
         var(--book-text);
 
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.12),
+            transparent 21%,
+            transparent 76%,
+            rgba(0, 0, 0, 0.17)
+        ),
+
+        repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.018) 0 1px,
+            transparent 1px 4px
+        ),
+
+        var(--book-color);
+
     box-shadow:
-        inset 7px 0 9px
-        rgba(255, 255, 255, 0.045),
+        inset 3px 0 3px
+        rgba(255, 255, 255, 0.10),
 
-        inset -9px 0 12px
-        rgba(0, 0, 0, 0.13),
+        inset 8px 0 12px
+        rgba(255, 255, 255, 0.035),
 
-        6px 9px 13px
-        rgba(0, 0, 0, 0.18);
+        inset -9px 0 14px
+        rgba(0, 0, 0, 0.18),
+
+        8px 13px 18px
+        rgba(0, 0, 0, 0.27);
+
+    transition:
+        all 0.18s ease;
 }
 
 
+.book-spine-preview::before,
 .spine-preview-book::before {
-    content: "";
+    content:
+        "";
 
-    position: absolute;
+    position:
+        absolute;
 
-    left: 4px;
-    top: 0;
-    bottom: 0;
+    top:
+        0;
 
-    width: 2px;
+    bottom:
+        0;
+
+    left:
+        2px;
+
+    width:
+        22%;
 
     background:
-        rgba(255, 255, 255, 0.05);
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.10),
+            transparent
+        );
+
+    pointer-events:
+        none;
 }
 
 
+.book-spine-preview::after,
+.spine-preview-book::after {
+    content:
+        "";
+
+    position:
+        absolute;
+
+    z-index:
+        30;
+
+    left:
+        2px;
+
+    right:
+        2px;
+
+    bottom:
+        0;
+
+    height:
+        6px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(0, 0, 0, 0.19)
+        );
+
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   PREVIEW INNER
+   ========================================================= */
+
 .spine-preview-inner {
-    position: absolute;
+    position:
+        absolute;
+
+    z-index:
+        12;
 
     inset:
-        8px 7px;
+        9px 7px;
 
-    display: flex;
+    display:
+        flex;
 
-    flex-direction: column;
+    flex-direction:
+        column;
 
-    align-items: center;
-    justify-content: center;
+    align-items:
+        center;
+
+    justify-content:
+        center;
 }
 
 
 .spine-preview-title-panel {
     max-width:
-        calc(100% - 3px);
+        calc(100% - 2px);
 
     max-height:
-        calc(100% - 42px);
+        calc(100% - 43px);
 
-    display: inline-flex;
+    display:
+        inline-flex;
 
-    align-items: center;
-    justify-content: center;
+    align-items:
+        center;
+
+    justify-content:
+        center;
 
     padding:
-        8px 5px;
+        9px 6px;
 
-    overflow: visible;
+    overflow:
+        hidden;
 }
 
 
 .spine-preview-title {
-    display: block;
+    display:
+        block;
 
     max-height:
         100%;
 
-    overflow: hidden;
+    overflow:
+        hidden;
 
     writing-mode:
         vertical-rl;
@@ -1579,18 +2067,23 @@ body.theme-ghosts
         var(--font-book);
 
     line-height:
-        1.08;
+        1.07;
 
-    text-rendering:
-        geometricPrecision;
+    text-shadow:
+        0 1px 1px
+        rgba(0, 0, 0, 0.22);
 }
 
 
 .spine-preview-ornament {
-    position: absolute;
+    position:
+        absolute;
 
-    left: 50%;
-    bottom: 7px;
+    left:
+        50%;
+
+    bottom:
+        9px;
 
     transform:
         translateX(-50%);
@@ -1599,23 +2092,37 @@ body.theme-ghosts
         var(--book-accent);
 
     font-size:
-        0.72rem;
+        0.86rem;
+
+    text-shadow:
+        0 1px 1px
+        rgba(0, 0, 0, 0.26);
 }
 
 
 /* =========================================================
-   PREVIEW PANELS
+   PREVIEW TITLE PANELS
    ========================================================= */
 
+.preview-panel-label,
 .preview-panel-simple {
-    background:
-        rgba(255, 255, 255, 0.08);
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--book-accent) 45%,
+            transparent
+        );
 
     border-radius:
-        3px;
+        4px;
+
+    background:
+        rgba(0, 0, 0, 0.09);
 }
 
 
+.preview-panel-frame,
 .preview-panel-bordered {
     border:
         1px solid
@@ -1626,19 +2133,40 @@ body.theme-ghosts
 }
 
 
+.preview-panel-band {
+    width:
+        calc(100% + 14px);
+
+    border-top:
+        1px solid
+        var(--book-accent);
+
+    border-bottom:
+        1px solid
+        var(--book-accent);
+
+    background:
+        rgba(0, 0, 0, 0.12);
+}
+
+
+.preview-panel-plate,
 .preview-panel-ornate {
     border:
         3px double
         var(--book-accent);
 
     border-radius:
-        4px;
+        5px;
+
+    background:
+        rgba(0, 0, 0, 0.14);
 }
 
 
 .preview-panel-dark {
     background:
-        rgba(0, 0, 0, 0.22);
+        rgba(0, 0, 0, 0.24);
 
     border-radius:
         3px;
@@ -1647,7 +2175,7 @@ body.theme-ghosts
 
 .preview-panel-light {
     background:
-        rgba(255, 255, 255, 0.16);
+        rgba(255, 255, 255, 0.15);
 
     border:
         1px solid
@@ -1655,6 +2183,114 @@ body.theme-ghosts
 
     border-radius:
         3px;
+}
+
+
+/* =========================================================
+   DRAWER — DESIGNER POLISH
+   ========================================================= */
+
+.book-drawer
+.drawer-section {
+    position:
+        relative;
+
+    padding:
+        20px;
+
+    margin-bottom:
+        14px;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        var(--radius-medium);
+
+    background:
+        linear-gradient(
+            145deg,
+            color-mix(
+                in srgb,
+                var(--panel) 96%,
+                white
+            ),
+            var(--panel)
+        );
+
+    box-shadow:
+        inset 0 1px
+        rgba(255, 255, 255, 0.025);
+}
+
+
+.book-drawer
+.drawer-section-heading {
+    margin-bottom:
+        17px;
+}
+
+
+.book-drawer
+.drawer-section-heading h3 {
+    margin:
+        3px 0 0;
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.5rem;
+
+    font-weight:
+        500;
+
+    color:
+        var(--paper);
+}
+
+
+.book-drawer
+input[type="color"] {
+    width:
+        100%;
+
+    min-height:
+        48px;
+
+    padding:
+        5px;
+
+    cursor:
+        pointer;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        var(--radius-small);
+
+    background:
+        var(--bg);
+}
+
+
+.book-drawer
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding:
+        0;
+}
+
+
+.book-drawer
+input[type="color"]::-webkit-color-swatch {
+    border:
+        0;
+
+    border-radius:
+        4px;
 }
 
 
@@ -1667,40 +2303,45 @@ body.theme-ghosts
         #793f55;
 
     --cover-text:
-        #f1e3cf;
+        #f3e5d2;
 
     --cover-accent:
-        #c39a67;
+        #cda56c;
 
-    position: relative;
+    position:
+        relative;
 
-    overflow: hidden;
+    overflow:
+        hidden;
 
-    display: flex;
+    display:
+        flex;
 
-    flex-direction: column;
+    flex-direction:
+        column;
 
-    align-items: center;
-    justify-content: center;
+    align-items:
+        center;
+
+    justify-content:
+        center;
 
     aspect-ratio:
         2 / 3;
 
-    padding: 16px;
+    padding:
+        18px;
 
     border:
         1px solid
         color-mix(
             in srgb,
-            var(--cover-color) 72%,
+            var(--cover-color) 63%,
             black
         );
 
     border-radius:
-        5px 10px 10px 5px;
-
-    background:
-        var(--cover-color);
+        7px 15px 15px 7px;
 
     color:
         var(--cover-text);
@@ -1708,64 +2349,98 @@ body.theme-ghosts
     text-align:
         center;
 
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.08),
+            transparent 12%,
+            transparent 86%,
+            rgba(0, 0, 0, 0.12)
+        ),
+
+        repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.014) 0 1px,
+            transparent 1px 4px
+        ),
+
+        var(--cover-color);
+
     box-shadow:
-        inset 8px 0
-        rgba(255, 255, 255, 0.04),
+        inset 9px 0 13px
+        rgba(255, 255, 255, 0.035),
 
-        inset -8px 0
-        rgba(0, 0, 0, 0.10),
+        inset -11px 0 15px
+        rgba(0, 0, 0, 0.12),
 
-        0 12px 24px
-        rgba(0, 0, 0, 0.18);
+        0 16px 30px
+        rgba(0, 0, 0, 0.24);
 }
 
 
 .generated-cover::before {
-    content: "";
+    content:
+        "";
 
-    position: absolute;
+    position:
+        absolute;
 
-    inset: 9px;
+    inset:
+        11px;
 
     border:
-        1px solid
-        var(--cover-accent);
+        2px double
+        color-mix(
+            in srgb,
+            var(--cover-accent) 73%,
+            transparent
+        );
 
     border-radius:
-        3px 7px 7px 3px;
+        4px 10px 10px 4px;
 
     opacity:
-        0.55;
+        0.72;
 }
 
 
 .generated-cover::after {
-    content: "";
+    content:
+        "";
 
-    position: absolute;
+    position:
+        absolute;
 
-    top: 0;
-    bottom: 0;
-    left: 8px;
+    top:
+        0;
 
-    width: 2px;
+    bottom:
+        0;
+
+    left:
+        10px;
+
+    width:
+        3px;
 
     background:
         rgba(0, 0, 0, 0.16);
 
     box-shadow:
         3px 0
-        rgba(255, 255, 255, 0.04);
+        rgba(255, 255, 255, 0.045);
 }
 
 
 .generated-cover-title {
-    position: relative;
+    position:
+        relative;
 
-    z-index: 3;
+    z-index:
+        3;
 
     max-width:
-        88%;
+        85%;
 
     color:
         var(--cover-text);
@@ -1777,7 +2452,7 @@ body.theme-ghosts
         clamp(
             1rem,
             2.6vw,
-            1.45rem
+            1.5rem
         );
 
     font-weight:
@@ -1789,12 +2464,14 @@ body.theme-ghosts
 
 
 .generated-cover-author {
-    position: relative;
+    position:
+        relative;
 
-    z-index: 3;
+    z-index:
+        3;
 
     margin-top:
-        10px;
+        11px;
 
     color:
         var(--cover-text);
@@ -1803,16 +2480,16 @@ body.theme-ghosts
         var(--font-ui);
 
     font-size:
-        0.52rem;
+        0.54rem;
 
     font-weight:
         600;
 
     letter-spacing:
-        0.06em;
+        0.07em;
 
     opacity:
-        0.74;
+        0.77;
 
     text-transform:
         uppercase;
@@ -1820,28 +2497,29 @@ body.theme-ghosts
 
 
 .generated-cover-ornament {
-    position: relative;
+    position:
+        relative;
 
-    z-index: 3;
+    z-index:
+        3;
 
     margin-top:
-        16px;
+        18px;
 
     color:
         var(--cover-accent);
 
     font-size:
-        1rem;
+        1.08rem;
 }
 
 
-/* =========================================================
-   COVER IMAGE
-   ========================================================= */
-
 .cover-image {
-    width: 100%;
-    height: 100%;
+    width:
+        100%;
+
+    height:
+        100%;
 
     object-fit:
         cover;
@@ -1856,23 +2534,32 @@ body.theme-ghosts
    ========================================================= */
 
 .book-reveal {
-    position: fixed;
+    position:
+        fixed;
 
-    z-index: 5000;
+    z-index:
+        5000;
 
-    inset: 0;
+    inset:
+        0;
 
-    display: grid;
+    display:
+        grid;
 
-    place-items: center;
+    place-items:
+        center;
 
-    overflow-y: auto;
+    overflow-y:
+        auto;
 
     padding:
         40px 24px;
 
     background:
-        rgba(13, 10, 12, 0.93);
+        rgba(13, 10, 12, 0.94);
+
+    backdrop-filter:
+        blur(7px);
 }
 
 
@@ -1889,7 +2576,8 @@ body.theme-ghosts
             100%
         );
 
-    display: grid;
+    display:
+        grid;
 
     grid-template-columns:
         minmax(
@@ -1913,24 +2601,30 @@ body.theme-ghosts
 }
 
 
-/* =========================================================
-   REVEAL CLOSE
-   ========================================================= */
-
 .book-reveal-close {
-    position: fixed;
+    position:
+        fixed;
 
-    z-index: 3;
+    z-index:
+        3;
 
-    top: 22px;
-    right: 26px;
+    top:
+        22px;
 
-    width: 44px;
-    height: 44px;
+    right:
+        26px;
 
-    display: grid;
+    width:
+        44px;
 
-    place-items: center;
+    height:
+        44px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
 
     border:
         1px solid
@@ -1959,10 +2653,6 @@ body.theme-ghosts
 }
 
 
-/* =========================================================
-   REVEAL COVER
-   ========================================================= */
-
 .reveal-book-cover {
     width:
         min(
@@ -1976,23 +2666,21 @@ body.theme-ghosts
     aspect-ratio:
         2 / 3;
 
-    overflow: hidden;
+    overflow:
+        hidden;
 
     border-radius:
-        7px 14px 14px 7px;
+        8px 16px 16px 8px;
 
     box-shadow:
-        0 30px 50px
-        rgba(0, 0, 0, 0.36);
+        0 32px 55px
+        rgba(0, 0, 0, 0.40);
 }
 
 
-/* =========================================================
-   REVEAL DETAILS
-   ========================================================= */
-
 .reveal-book-details {
-    min-width: 0;
+    min-width:
+        0;
 }
 
 
@@ -2039,12 +2727,9 @@ body.theme-ghosts
 }
 
 
-/* =========================================================
-   REVEAL META
-   ========================================================= */
-
 .reveal-meta-grid {
-    display: grid;
+    display:
+        grid;
 
     grid-template-columns:
         repeat(
@@ -2055,7 +2740,8 @@ body.theme-ghosts
             )
         );
 
-    gap: 10px;
+    gap:
+        10px;
 
     margin-bottom:
         28px;
@@ -2066,15 +2752,20 @@ body.theme-ghosts
     min-height:
         78px;
 
-    display: flex;
+    display:
+        flex;
 
-    flex-direction: column;
+    flex-direction:
+        column;
 
-    justify-content: center;
+    justify-content:
+        center;
 
-    gap: 5px;
+    gap:
+        5px;
 
-    padding: 14px;
+    padding:
+        14px;
 
     border:
         1px solid
@@ -2124,38 +2815,67 @@ body.theme-ghosts
 }
 
 
-/* =========================================================
-   REVEAL PROGRESS
-   ========================================================= */
-
 .reveal-progress {
     margin-bottom:
         28px;
 }
 
 
-/* =========================================================
-   REVEAL ACTIONS
-   ========================================================= */
-
 .reveal-actions {
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    gap: 10px;
+    gap:
+        10px;
 
-    flex-wrap: wrap;
+    flex-wrap:
+        wrap;
 }
 
 
 /* =========================================================
-   MOBILE
+   TABLET / MOBILE
+
+   IMPORTANT:
+   The shelf baseline is deliberately repeated here so
+   books cannot float above the board because of a later
+   mobile rule in another stylesheet.
    ========================================================= */
 
-@media (max-width: 700px) {
+@media (max-width: 760px) {
 
-    .book-height-small {
+    .shelf-interior
+    .shelf-books {
+        align-items:
+            flex-end !important;
+
+        bottom:
+            calc(
+                var(--shelf-depth)
+                + 5px
+            ) !important;
+
+        padding-bottom:
+            0 !important;
+    }
+
+
+    .shelf-interior
+    .shelf-books >
+    .book-spine {
+        align-self:
+            flex-end !important;
+
+        margin-bottom:
+            0 !important;
+    }
+
+
+    .book-height-small,
+    .book-height-short {
         height:
             160px;
     }
@@ -2163,52 +2883,64 @@ body.theme-ghosts
 
     .book-height-medium {
         height:
-            190px;
+            188px;
     }
 
 
     .book-height-tall {
         height:
-            215px;
+            216px;
     }
 
 
-    .book-thickness-slim {
+    .book-height-tower {
+        height:
+            236px;
+    }
+
+
+    .book-thickness-slim,
+    .book-thickness-thin {
         width:
-            23px;
+            27px;
     }
 
 
     .book-thickness-medium {
         width:
-            31px;
+            38px;
+    }
+
+
+    .book-thickness-thick {
+        width:
+            48px;
     }
 
 
     .book-thickness-chunky {
         width:
-            42px;
+            59px;
     }
 
 
-    .spine-editor {
-        grid-template-columns:
-            1fr;
-    }
-
-
+    .book-spine-preview-shell,
     .spine-preview-area {
         min-height:
-            285px;
+            310px;
+
+        padding:
+            18px;
     }
 
 
+    .book-spine-preview,
     .spine-preview-book {
         width:
-            50px;
+            64px;
 
         height:
-            230px;
+            245px;
     }
 
 
@@ -2275,66 +3007,117 @@ body.theme-ghosts
 
 @media (max-width: 430px) {
 
-    .book-height-small {
+    .shelf-interior
+    .shelf-books {
+        bottom:
+            calc(
+                var(--shelf-depth)
+                + 5px
+            ) !important;
+
+        padding-bottom:
+            0 !important;
+    }
+
+
+    .book-height-small,
+    .book-height-short {
         height:
-            145px;
+            148px;
     }
 
 
     .book-height-medium {
         height:
-            170px;
+            174px;
     }
 
 
     .book-height-tall {
         height:
-            195px;
+            198px;
     }
 
 
-    .book-thickness-slim {
+    .book-height-tower {
+        height:
+            218px;
+    }
+
+
+    .book-thickness-slim,
+    .book-thickness-thin {
         width:
-            20px;
+            25px;
     }
 
 
     .book-thickness-medium {
         width:
-            27px;
+            35px;
+    }
+
+
+    .book-thickness-thick {
+        width:
+            44px;
     }
 
 
     .book-thickness-chunky {
         width:
-            36px;
+            54px;
     }
 
 
     .spine-title {
         font-size:
-            0.52rem;
+            0.58rem;
     }
 
 
     .book-font-size-small
     .spine-title {
         font-size:
-            0.43rem;
+            0.47rem;
+    }
+
+
+    .book-font-size-medium
+    .spine-title {
+        font-size:
+            0.58rem;
     }
 
 
     .book-font-size-large
     .spine-title {
         font-size:
-            0.61rem;
+            0.67rem;
     }
 
 
     .book-font-size-xlarge
     .spine-title {
         font-size:
-            0.68rem;
+            0.75rem;
+    }
+
+
+    .book-spine-preview,
+    .spine-preview-book {
+        width:
+            62px;
+
+        height:
+            232px;
+    }
+
+
+    .book-drawer
+    .drawer-section {
+        padding:
+            16px;
     }
 
 
@@ -2345,12 +3128,14 @@ body.theme-ghosts
 
 
     .reveal-actions {
-        display: grid;
+        display:
+            grid;
 
         grid-template-columns:
             1fr;
 
-        width: 100%;
+        width:
+            100%;
     }
 
 
@@ -2358,7 +3143,8 @@ body.theme-ghosts
     .primary-button,
     .reveal-actions
     .secondary-button {
-        width: 100%;
+        width:
+            100%;
     }
 
 }
