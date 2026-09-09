@@ -3022,74 +3022,133 @@
          BOOK DRAWER
          ===================================================== -->
 
-    <aside
-        id="bookDrawer"
-        class="drawer book-drawer"
-        hidden
-    >
+  <!-- =========================================================
+     BOOK DRAWER
+     Advanced Novellow Book + Spine Designer
+     ========================================================= -->
 
-        <header class="drawer-header">
+<aside
+    id="bookDrawer"
+    class="drawer book-drawer"
+    hidden
+>
 
-            <div>
+    <!-- =====================================================
+         DRAWER HEADER
+         ===================================================== -->
 
-                <span class="drawer-eyebrow">
-                    Library book
-                </span>
+    <header class="drawer-header">
 
-                <h2 id="bookDrawerTitle">
-                    Add a Book
-                </h2>
+        <div class="drawer-header-copy">
 
-            </div>
+            <span class="drawer-eyebrow">
+                Your Library
+            </span>
 
-            <button
-                id="closeBookDrawer"
-                type="button"
-                class="drawer-close"
-            >
-                ×
-            </button>
+            <h2 id="bookDrawerTitle">
+                Add a Book
+            </h2>
 
-        </header>
-
-
-        <form id="bookForm">
-
-            <input
-                id="editingBookId"
-                type="hidden"
-            >
+        </div>
 
 
-            <div class="drawer-body">
+        <button
+            id="closeBookDrawer"
+            class="drawer-close"
+            type="button"
+            aria-label="Close book editor"
+        >
+            ×
+        </button>
+
+    </header>
 
 
-                <section class="drawer-section">
+    <!-- =====================================================
+         BOOK FORM
+         ===================================================== -->
 
-                    <div class="drawer-section-heading">
+    <form id="bookForm">
 
-                        <span class="drawer-eyebrow">
-                            About the book
-                        </span>
+        <input
+            id="editingBookId"
+            type="hidden"
+        >
 
-                        <h3>
-                            Details
-                        </h3>
 
-                    </div>
+        <div class="drawer-body">
 
+
+            <!-- =================================================
+                 BOOK INFORMATION
+                 ================================================= -->
+
+            <section class="drawer-section">
+
+                <div class="drawer-section-heading">
+
+                    <span class="drawer-eyebrow">
+                        The Book
+                    </span>
+
+                    <h3>
+                        Book Details
+                    </h3>
+
+                    <p>
+                        Add the basic information Novellow will use
+                        throughout your library and journal.
+                    </p>
+
+                </div>
+
+
+                <label class="field">
+
+                    <span class="field-label">
+                        Title
+                    </span>
+
+                    <input
+                        id="bookTitle"
+                        type="text"
+                        required
+                        autocomplete="off"
+                        placeholder="The Brothers Karamazov"
+                    >
+
+                </label>
+
+
+                <label class="field">
+
+                    <span class="field-label">
+                        Author
+                    </span>
+
+                    <input
+                        id="bookAuthor"
+                        type="text"
+                        autocomplete="off"
+                        placeholder="Fyodor Dostoevsky"
+                    >
+
+                </label>
+
+
+                <div class="form-grid">
 
                     <label class="field">
 
-                        <span>
-                            Title
+                        <span class="field-label">
+                            Genre
                         </span>
 
                         <input
-                            id="bookTitle"
+                            id="bookGenre"
                             type="text"
-                            required
-                            placeholder="Book title"
+                            autocomplete="off"
+                            placeholder="Classic Literature"
                         >
 
                     </label>
@@ -3097,422 +3156,1880 @@
 
                     <label class="field">
 
-                        <span>
-                            Author
+                        <span class="field-label">
+                            Publication Year
                         </span>
 
                         <input
-                            id="bookAuthor"
-                            type="text"
-                            placeholder="Author"
+                            id="bookYear"
+                            type="number"
+                            min="0"
+                            max="9999"
+                            placeholder="1880"
                         >
 
                     </label>
 
 
-                    <div class="form-grid">
+                    <label class="field">
 
-                        <label class="field">
+                        <span class="field-label">
+                            Total Pages
+                        </span>
 
-                            <span>
-                                Genre
-                            </span>
+                        <input
+                            id="bookPages"
+                            type="number"
+                            min="0"
+                            placeholder="824"
+                        >
 
-                            <input
-                                id="bookGenre"
-                                type="text"
-                                placeholder="Gothic, Classics..."
-                            >
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Year
-                            </span>
-
-                            <input
-                                id="bookYear"
-                                type="number"
-                                min="0"
-                                placeholder="1866"
-                            >
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Pages
-                            </span>
-
-                            <input
-                                id="bookPages"
-                                type="number"
-                                min="0"
-                                placeholder="0"
-                            >
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                ISBN
-                            </span>
-
-                            <input
-                                id="bookISBN"
-                                type="text"
-                            >
-
-                        </label>
-
-                    </div>
+                    </label>
 
 
                     <label class="field">
 
-                        <span>
-                            Series
+                        <span class="field-label">
+                            ISBN
                         </span>
 
                         <input
-                            id="bookSeries"
+                            id="bookISBN"
                             type="text"
+                            autocomplete="off"
                             placeholder="Optional"
                         >
 
                     </label>
 
-
-                    <div class="form-grid">
-
-                        <label class="field">
-
-                            <span>
-                                Shelf
-                            </span>
-
-                            <select id="bookShelf"></select>
-
-                        </label>
+                </div>
 
 
-                        <label class="field">
+                <label class="field">
 
-                            <span>
-                                Status
-                            </span>
+                    <span class="field-label">
+                        Series
+                    </span>
 
-                            <select id="bookStatus">
+                    <input
+                        id="bookSeries"
+                        type="text"
+                        autocomplete="off"
+                        placeholder="Optional"
+                    >
 
-                                <option value="want">
-                                    Want to Read
-                                </option>
+                </label>
 
-                                <option value="reading">
-                                    Currently Reading
-                                </option>
-
-                                <option value="paused">
-                                    Paused
-                                </option>
-
-                                <option value="finished">
-                                    Finished
-                                </option>
-
-                                <option value="dnf">
-                                    Did Not Finish
-                                </option>
-
-                                <option value="reference">
-                                    Reference
-                                </option>
-
-                            </select>
-
-                        </label>
-
-                    </div>
-
-                </section>
+            </section>
 
 
-                <section class="drawer-section">
+            <!-- =================================================
+                 LIBRARY PLACEMENT
+                 ================================================= -->
 
-                    <div class="drawer-section-heading">
+            <section class="drawer-section">
 
-                        <span class="drawer-eyebrow">
-                            Reading history
-                        </span>
+                <div class="drawer-section-heading">
 
-                        <h3>
-                            Progress
-                        </h3>
+                    <span class="drawer-eyebrow">
+                        Your Library
+                    </span>
 
-                    </div>
+                    <h3>
+                        Shelf & Reading Status
+                    </h3>
 
-
-                    <div class="form-grid">
-
-                        <label class="field">
-
-                            <span>
-                                Started
-                            </span>
-
-                            <input
-                                id="bookStarted"
-                                type="date"
-                            >
-
-                        </label>
+                </div>
 
 
-                        <label class="field">
-
-                            <span>
-                                Finished
-                            </span>
-
-                            <input
-                                id="bookFinished"
-                                type="date"
-                            >
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Current page
-                            </span>
-
-                            <input
-                                id="bookCurrentPage"
-                                type="number"
-                                min="0"
-                                placeholder="0"
-                            >
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Times read
-                            </span>
-
-                            <input
-                                id="bookTimesRead"
-                                type="number"
-                                min="0"
-                                value="0"
-                            >
-
-                        </label>
-
-                    </div>
-
+                <div class="form-grid">
 
                     <label class="field">
 
-                        <span>
-                            Rating
+                        <span class="field-label">
+                            Shelf
                         </span>
 
-                        <select id="bookRating">
+                        <select id="bookShelf">
 
                             <option value="">
-                                Not rated
-                            </option>
-
-                            <option value="1">
-                                1
-                            </option>
-
-                            <option value="2">
-                                2
-                            </option>
-
-                            <option value="3">
-                                3
-                            </option>
-
-                            <option value="4">
-                                4
-                            </option>
-
-                            <option value="5">
-                                5
+                                No shelf
                             </option>
 
                         </select>
 
                     </label>
 
-                </section>
 
+                    <label class="field">
 
-                <section class="drawer-section">
-
-                    <div class="drawer-section-heading">
-
-                        <span class="drawer-eyebrow">
-                            Book object
+                        <span class="field-label">
+                            Status
                         </span>
 
-                        <h3>
-                            Spine Design
-                        </h3>
+                        <select id="bookStatus">
+
+                            <option value="want">
+                                Want to Read
+                            </option>
+
+                            <option value="reading">
+                                Currently Reading
+                            </option>
+
+                            <option value="paused">
+                                Paused
+                            </option>
+
+                            <option value="finished">
+                                Finished
+                            </option>
+
+                            <option value="dnf">
+                                Did Not Finish
+                            </option>
+
+                            <option value="reference">
+                                Reference
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <label class="field">
+
+                        <span class="field-label">
+                            Rating
+                        </span>
+
+                        <select id="bookRating">
+
+                            <option value="">
+                                Not Rated
+                            </option>
+
+                            <option value="1">
+                                ★
+                            </option>
+
+                            <option value="2">
+                                ★★
+                            </option>
+
+                            <option value="3">
+                                ★★★
+                            </option>
+
+                            <option value="4">
+                                ★★★★
+                            </option>
+
+                            <option value="5">
+                                ★★★★★
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <label class="field">
+
+                        <span class="field-label">
+                            Times Read
+                        </span>
+
+                        <input
+                            id="bookTimesRead"
+                            type="number"
+                            min="0"
+                            value="0"
+                        >
+
+                    </label>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 READING PROGRESS
+                 ================================================= -->
+
+            <section class="drawer-section">
+
+                <div class="drawer-section-heading">
+
+                    <span class="drawer-eyebrow">
+                        Reading
+                    </span>
+
+                    <h3>
+                        Reading Progress
+                    </h3>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <label class="field">
+
+                        <span class="field-label">
+                            Started
+                        </span>
+
+                        <input
+                            id="bookStarted"
+                            type="date"
+                        >
+
+                    </label>
+
+
+                    <label class="field">
+
+                        <span class="field-label">
+                            Finished
+                        </span>
+
+                        <input
+                            id="bookFinished"
+                            type="date"
+                        >
+
+                    </label>
+
+
+                    <label class="field">
+
+                        <span class="field-label">
+                            Current Page
+                        </span>
+
+                        <input
+                            id="bookCurrentPage"
+                            type="number"
+                            min="0"
+                            value="0"
+                        >
+
+                    </label>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 COVER
+                 ================================================= -->
+
+            <section class="drawer-section">
+
+                <div class="drawer-section-heading">
+
+                    <span class="drawer-eyebrow">
+                        Optional
+                    </span>
+
+                    <h3>
+                        Cover Art
+                    </h3>
+
+                    <p>
+                        Upload a cover or let Novellow create one
+                        from your book design.
+                    </p>
+
+                </div>
+
+
+                <label class="field file-field">
+
+                    <span class="field-label">
+                        Upload Cover
+                    </span>
+
+                    <input
+                        id="bookCoverUpload"
+                        type="file"
+                        accept="image/*"
+                    >
+
+                </label>
+
+            </section>
+
+
+            <!-- =================================================
+                 SPINE DESIGNER
+                 ================================================= -->
+
+            <section class="drawer-section spine-designer-section">
+
+                <div class="drawer-section-heading">
+
+                    <span class="drawer-eyebrow">
+                        Make It Yours
+                    </span>
+
+                    <h3>
+                        Spine Designer
+                    </h3>
+
+                    <p>
+                        Build the physical book that will live on
+                        your Novellow shelf.
+                    </p>
+
+                </div>
+
+
+                <!-- =============================================
+                     LIVE BOOK PREVIEW
+                     ============================================= -->
+
+                <div class="spine-designer-layout">
+
+                    <div class="spine-designer-preview">
+
+                        <span class="preview-label">
+                            Live Preview
+                        </span>
+
+
+                        <div class="book-spine-preview-shell">
+
+                            <div
+                                id="bookSpinePreview"
+                                class="book-spine-preview spine-preview-book"
+                                data-style="classic"
+                                data-material="linen"
+                                data-curve="soft"
+                                data-height="medium"
+                                data-thickness="medium"
+                                data-raised-bands="2"
+                                data-band-thickness="medium"
+                                data-foil="gold"
+                                data-border="none"
+                                data-texture="medium"
+                                data-wear="none"
+                                data-edge-wear="none"
+                                data-depth="medium"
+                                data-sheen="matte"
+                                data-label-shape="none"
+                            >
+
+                                <span
+                                    class="spine-material-layer"
+                                    aria-hidden="true"
+                                ></span>
+
+
+                                <span
+                                    class="spine-depth-layer"
+                                    aria-hidden="true"
+                                ></span>
+
+
+                                <span
+                                    class="spine-wear-layer"
+                                    aria-hidden="true"
+                                ></span>
+
+
+                                <span
+                                    class="spine-border-layer"
+                                    aria-hidden="true"
+                                ></span>
+
+
+                                <span class="spine-preview-inner">
+
+                                    <span
+                                        id="bookSpinePreviewTopOrnament"
+                                        class="spine-top-ornament"
+                                        aria-hidden="true"
+                                    >
+                                        ✦
+                                    </span>
+
+
+                                    <span
+                                        id="bookSpinePreviewTitlePanel"
+                                        class="spine-preview-title-panel"
+                                    >
+
+                                        <span
+                                            id="bookSpinePreviewTitle"
+                                            class="spine-preview-title"
+                                        >
+                                            Book Title
+                                        </span>
+
+                                    </span>
+
+
+                                    <span
+                                        id="bookSpinePreviewBottomOrnament"
+                                        class="spine-bottom-ornament"
+                                        aria-hidden="true"
+                                    >
+                                        ✦
+                                    </span>
+
+
+                                    <!--
+                                        Legacy preview ornament.
+                                        Kept for compatibility.
+                                    -->
+
+                                    <span
+                                        id="bookSpinePreviewOrnament"
+                                        class="spine-preview-ornament"
+                                        aria-hidden="true"
+                                    >
+                                        ✦
+                                    </span>
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <p class="spine-preview-note">
+                            This preview will match the book that
+                            appears on your shelf.
+                        </p>
 
                     </div>
 
 
-                    <div id="bookSpinePreview"></div>
+                    <!-- =========================================
+                         DESIGN CONTROLS
+                         ========================================= -->
+
+                    <div class="spine-designer-controls">
 
 
-                    <div class="form-grid">
+                        <!-- =====================================
+                             DESIGN FAMILY
+                             ===================================== -->
 
-                        <label class="field">
+                        <div class="designer-control-group">
 
-                            <span>
-                                Spine color
-                            </span>
+                            <div class="designer-group-heading">
 
-                            <input
-                                id="bookSpineColor"
-                                type="color"
-                                value="#6f394d"
+                                <span>
+                                    01
+                                </span>
+
+                                <div>
+
+                                    <h4>
+                                        Style
+                                    </h4>
+
+                                    <p>
+                                        Choose the overall personality.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <label class="field">
+
+                                <span class="field-label">
+                                    Spine Style
+                                </span>
+
+                                <select id="bookStyle">
+
+                                    <option value="classic">
+                                        Classic
+                                    </option>
+
+                                    <option value="cloth">
+                                        Clothbound
+                                    </option>
+
+                                    <option value="leather">
+                                        Leather
+                                    </option>
+
+                                    <option value="ornate">
+                                        Ornate
+                                    </option>
+
+                                    <option value="vintage">
+                                        Vintage
+                                    </option>
+
+                                    <option value="gothic">
+                                        Gothic
+                                    </option>
+
+                                    <option value="botanical">
+                                        Botanical
+                                    </option>
+
+                                    <option value="celestial">
+                                        Celestial
+                                    </option>
+
+                                    <option value="floral">
+                                        Floral
+                                    </option>
+
+                                    <option value="storybook">
+                                        Storybook
+                                    </option>
+
+                                    <option value="academia">
+                                        Dark Academia
+                                    </option>
+
+                                    <option value="pastel">
+                                        Pastel
+                                    </option>
+
+                                    <option value="deco">
+                                        Art Deco
+                                    </option>
+
+                                    <option value="retro">
+                                        Retro
+                                    </option>
+
+                                    <option value="modern">
+                                        Modern Hardcover
+                                    </option>
+
+                                    <option value="minimal">
+                                        Minimal
+                                    </option>
+
+                                    <option value="paperback">
+                                        Paperback
+                                    </option>
+
+                                </select>
+
+                            </label>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             MATERIAL
+                             ===================================== -->
+
+                        <div class="designer-control-group">
+
+                            <div class="designer-group-heading">
+
+                                <span>
+                                    02
+                                </span>
+
+                                <div>
+
+                                    <h4>
+                                        Material
+                                    </h4>
+
+                                    <p>
+                                        Give the binding a physical texture.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-grid">
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Binding Material
+                                    </span>
+
+                                    <select id="bookBindingMaterial">
+
+                                        <option value="linen">
+                                            Linen
+                                        </option>
+
+                                        <option value="cloth">
+                                            Book Cloth
+                                        </option>
+
+                                        <option value="buckram">
+                                            Buckram
+                                        </option>
+
+                                        <option value="velvet">
+                                            Velvet
+                                        </option>
+
+                                        <option value="leather">
+                                            Leather
+                                        </option>
+
+                                        <option value="suede">
+                                            Suede
+                                        </option>
+
+                                        <option value="paper">
+                                            Paper
+                                        </option>
+
+                                        <option value="worn-cloth">
+                                            Worn Cloth
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Texture
+                                    </span>
+
+                                    <select id="bookTextureStrength">
+
+                                        <option value="none">
+                                            Smooth
+                                        </option>
+
+                                        <option value="light">
+                                            Subtle
+                                        </option>
+
+                                        <option value="medium" selected>
+                                            Textured
+                                        </option>
+
+                                        <option value="heavy">
+                                            Heavily Textured
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Finish
+                                    </span>
+
+                                    <select id="bookSheen">
+
+                                        <option value="matte">
+                                            Matte
+                                        </option>
+
+                                        <option value="soft">
+                                            Soft Sheen
+                                        </option>
+
+                                        <option value="satin">
+                                            Satin
+                                        </option>
+
+                                        <option value="gloss">
+                                            Glossy
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Depth
+                                    </span>
+
+                                    <select id="bookDepthStrength">
+
+                                        <option value="flat">
+                                            Flat
+                                        </option>
+
+                                        <option value="light">
+                                            Light
+                                        </option>
+
+                                        <option value="medium" selected>
+                                            Dimensional
+                                        </option>
+
+                                        <option value="deep">
+                                            Deep
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             BOOK SHAPE
+                             ===================================== -->
+
+                        <div class="designer-control-group">
+
+                            <div class="designer-group-heading">
+
+                                <span>
+                                    03
+                                </span>
+
+                                <div>
+
+                                    <h4>
+                                        Shape
+                                    </h4>
+
+                                    <p>
+                                        Change the proportions and binding curve.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-grid">
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Height
+                                    </span>
+
+                                    <select id="bookHeight">
+
+                                        <option value="short">
+                                            Short
+                                        </option>
+
+                                        <option value="medium" selected>
+                                            Medium
+                                        </option>
+
+                                        <option value="tall">
+                                            Tall
+                                        </option>
+
+                                        <option value="tower">
+                                            Extra Tall
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Thickness
+                                    </span>
+
+                                    <select id="bookThickness">
+
+                                        <option value="thin">
+                                            Thin
+                                        </option>
+
+                                        <option value="medium" selected>
+                                            Medium
+                                        </option>
+
+                                        <option value="thick">
+                                            Thick
+                                        </option>
+
+                                        <option value="chunky">
+                                            Chunky
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Spine Curve
+                                    </span>
+
+                                    <select id="bookSpineCurve">
+
+                                        <option value="flat">
+                                            Flat
+                                        </option>
+
+                                        <option value="soft" selected>
+                                            Softly Rounded
+                                        </option>
+
+                                        <option value="round">
+                                            Rounded
+                                        </option>
+
+                                        <option value="deep-round">
+                                            Deeply Rounded
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             COLOR PALETTE
+                             ===================================== -->
+
+                        <div class="designer-control-group">
+
+                            <div class="designer-group-heading">
+
+                                <span>
+                                    04
+                                </span>
+
+                                <div>
+
+                                    <h4>
+                                        Color
+                                    </h4>
+
+                                    <p>
+                                        Build the palette for the binding.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="designer-color-grid">
+
+                                <label class="field color-field">
+
+                                    <span class="field-label">
+                                        Spine
+                                    </span>
+
+                                    <input
+                                        id="bookSpineColor"
+                                        type="color"
+                                        value="#793f55"
+                                    >
+
+                                </label>
+
+
+                                <label class="field color-field">
+
+                                    <span class="field-label">
+                                        Text
+                                    </span>
+
+                                    <input
+                                        id="bookTextColor"
+                                        type="color"
+                                        value="#f1e3cf"
+                                    >
+
+                                </label>
+
+
+                                <label class="field color-field">
+
+                                    <span class="field-label">
+                                        Accent
+                                    </span>
+
+                                    <input
+                                        id="bookAccentColor"
+                                        type="color"
+                                        value="#c39a67"
+                                    >
+
+                                </label>
+
+
+                                <label class="field color-field">
+
+                                    <span class="field-label">
+                                        Label
+                                    </span>
+
+                                    <input
+                                        id="bookLabelColor"
+                                        type="color"
+                                        value="#4a2d34"
+                                    >
+
+                                </label>
+
+                            </div>
+
+
+                            <label class="field">
+
+                                <span class="field-label">
+                                    Foil / Print Finish
+                                </span>
+
+                                <select id="bookFoilStyle">
+
+                                    <option value="gold">
+                                        Gold
+                                    </option>
+
+                                    <option value="silver">
+                                        Silver
+                                    </option>
+
+                                    <option value="copper">
+                                        Copper
+                                    </option>
+
+                                    <option value="rose-gold">
+                                        Rose Gold
+                                    </option>
+
+                                    <option value="cream">
+                                        Cream
+                                    </option>
+
+                                    <option value="ink">
+                                        Accent Ink
+                                    </option>
+
+                                    <option value="black">
+                                        Black Ink
+                                    </option>
+
+                                </select>
+
+                            </label>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             RAISED BANDS
+                             ===================================== -->
+
+                        <div class="designer-control-group">
+
+                            <div class="designer-group-heading">
+
+                                <span>
+                                    05
+                                </span>
+
+                                <div>
+
+                                    <h4>
+                                        Binding Bands
+                                    </h4>
+
+                                    <p>
+                                        Add dimensional bands across the spine.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-grid">
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Raised Bands
+                                    </span>
+
+                                    <select id="bookRaisedBands">
+
+                                        <option value="0">
+                                            None
+                                        </option>
+
+                                        <option value="1">
+                                            1 Band
+                                        </option>
+
+                                        <option value="2" selected>
+                                            2 Bands
+                                        </option>
+
+                                        <option value="3">
+                                            3 Bands
+                                        </option>
+
+                                        <option value="4">
+                                            4 Bands
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Band Thickness
+                                    </span>
+
+                                    <select id="bookBandThickness">
+
+                                        <option value="fine">
+                                            Fine
+                                        </option>
+
+                                        <option value="medium" selected>
+                                            Medium
+                                        </option>
+
+                                        <option value="raised">
+                                            Raised
+                                        </option>
+
+                                        <option value="heavy">
+                                            Heavy
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             FRAME + LABEL
+                             ===================================== -->
+
+                        <div class="designer-control-group">
+
+                            <div class="designer-group-heading">
+
+                                <span>
+                                    06
+                                </span>
+
+                                <div>
+
+                                    <h4>
+                                        Frame & Label
+                                    </h4>
+
+                                    <p>
+                                        Give the title its own little home.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-grid">
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Title Panel
+                                    </span>
+
+                                    <select id="bookSpineTitlePanel">
+
+                                        <option value="none">
+                                            None
+                                        </option>
+
+                                        <option value="label">
+                                            Small Label
+                                        </option>
+
+                                        <option value="frame">
+                                            Framed
+                                        </option>
+
+                                        <option value="band">
+                                            Full Band
+                                        </option>
+
+                                        <option value="plate">
+                                            Ornate Plate
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Label Shape
+                                    </span>
+
+                                    <select id="bookLabelShape">
+
+                                        <option value="none">
+                                            None
+                                        </option>
+
+                                        <option value="rectangle">
+                                            Rectangle
+                                        </option>
+
+                                        <option value="rounded">
+                                            Rounded
+                                        </option>
+
+                                        <option value="arched">
+                                            Arched
+                                        </option>
+
+                                        <option value="oval">
+                                            Oval
+                                        </option>
+
+                                        <option value="shield">
+                                            Shield
+                                        </option>
+
+                                        <option value="ticket">
+                                            Vintage Ticket
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Spine Border
+                                    </span>
+
+                                    <select id="bookBorderStyle">
+
+                                        <option value="none">
+                                            None
+                                        </option>
+
+                                        <option value="single">
+                                            Single Line
+                                        </option>
+
+                                        <option value="double">
+                                            Double Line
+                                        </option>
+
+                                        <option value="ornate">
+                                            Ornate
+                                        </option>
+
+                                        <option value="gothic">
+                                            Gothic
+                                        </option>
+
+                                        <option value="deco">
+                                            Art Deco
+                                        </option>
+
+                                        <option value="vine">
+                                            Vine
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             ORNAMENTS
+                             ===================================== -->
+
+                        <div class="designer-control-group">
+
+                            <div class="designer-group-heading">
+
+                                <span>
+                                    07
+                                </span>
+
+                                <div>
+
+                                    <h4>
+                                        Ornaments
+                                    </h4>
+
+                                    <p>
+                                        Add small details that make the book feel alive.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <!--
+                                This legacy field stays available
+                                so older books remain editable.
+                            -->
+
+                            <label
+                                class="field legacy-ornament-field"
+                                hidden
                             >
 
-                        </label>
+                                <span class="field-label">
+                                    Ornament
+                                </span>
+
+                                <select id="bookSpineOrnament">
+
+                                    <option value="auto">
+                                        Automatic
+                                    </option>
+
+                                    <option value="none">
+                                        None
+                                    </option>
+
+                                </select>
+
+                            </label>
 
 
-                        <label class="field">
+                            <div class="form-grid">
 
-                            <span>
-                                Text color
-                            </span>
+                                <label class="field">
 
-                            <input
-                                id="bookTextColor"
-                                type="color"
-                                value="#f2e4d5"
-                            >
+                                    <span class="field-label">
+                                        Top Ornament
+                                    </span>
 
-                        </label>
+                                    <select id="bookTopOrnament">
+
+                                        <option value="auto">
+                                            Match Style
+                                        </option>
+
+                                        <option value="none">
+                                            None
+                                        </option>
+
+                                        <option value="star">
+                                            Star ✦
+                                        </option>
+
+                                        <option value="tinyStar">
+                                            Tiny Star ⋆
+                                        </option>
+
+                                        <option value="sparkle">
+                                            Sparkle ✧
+                                        </option>
+
+                                        <option value="moon">
+                                            Moon ☾
+                                        </option>
+
+                                        <option value="sun">
+                                            Sun ☼
+                                        </option>
+
+                                        <option value="diamond">
+                                            Diamond ◆
+                                        </option>
+
+                                        <option value="smallDiamond">
+                                            Small Diamond ◇
+                                        </option>
+
+                                        <option value="flower">
+                                            Flower ❀
+                                        </option>
+
+                                        <option value="blossom">
+                                            Blossom ✿
+                                        </option>
+
+                                        <option value="leaf">
+                                            Leaf ❧
+                                        </option>
+
+                                        <option value="vine">
+                                            Vine ❦
+                                        </option>
+
+                                        <option value="gothic">
+                                            Gothic ✥
+                                        </option>
+
+                                        <option value="cross">
+                                            Cross ✣
+                                        </option>
+
+                                        <option value="heart">
+                                            Heart ♡
+                                        </option>
+
+                                        <option value="dot">
+                                            Dot •
+                                        </option>
+
+                                    </select>
+
+                                </label>
 
 
-                        <label class="field">
+                                <label class="field">
 
-                            <span>
-                                Spine style
-                            </span>
+                                    <span class="field-label">
+                                        Bottom Ornament
+                                    </span>
 
-                            <select id="bookSpineStyle">
+                                    <select id="bookBottomOrnament">
 
-                                <option value="classic">
-                                    Classic
-                                </option>
+                                        <option value="auto">
+                                            Match Style
+                                        </option>
 
-                                <option value="cloth">
-                                    Clothbound
-                                </option>
+                                        <option value="none">
+                                            None
+                                        </option>
 
-                                <option value="ornate">
-                                    Ornate
-                                </option>
+                                        <option value="star">
+                                            Star ✦
+                                        </option>
 
-                                <option value="paperback">
-                                    Paperback
-                                </option>
+                                        <option value="tinyStar">
+                                            Tiny Star ⋆
+                                        </option>
 
-                                <option value="modern">
-                                    Modern
-                                </option>
+                                        <option value="sparkle">
+                                            Sparkle ✧
+                                        </option>
 
-                            </select>
+                                        <option value="moon">
+                                            Moon ☾
+                                        </option>
 
-                        </label>
+                                        <option value="sun">
+                                            Sun ☼
+                                        </option>
+
+                                        <option value="diamond">
+                                            Diamond ◆
+                                        </option>
+
+                                        <option value="smallDiamond">
+                                            Small Diamond ◇
+                                        </option>
+
+                                        <option value="flower">
+                                            Flower ❀
+                                        </option>
+
+                                        <option value="blossom">
+                                            Blossom ✿
+                                        </option>
+
+                                        <option value="leaf">
+                                            Leaf ❧
+                                        </option>
+
+                                        <option value="vine">
+                                            Vine ❦
+                                        </option>
+
+                                        <option value="gothic">
+                                            Gothic ✥
+                                        </option>
+
+                                        <option value="cross">
+                                            Cross ✣
+                                        </option>
+
+                                        <option value="heart">
+                                            Heart ♡
+                                        </option>
+
+                                        <option value="dot">
+                                            Dot •
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+                            </div>
+
+                        </div>
 
 
-                        <label class="field">
+                        <!-- =====================================
+                             TYPOGRAPHY
+                             ===================================== -->
 
-                            <span>
-                                Spine font
-                            </span>
+                        <div class="designer-control-group">
 
-                            <select id="bookSpineFont">
+                            <div class="designer-group-heading">
 
-                                <option value="serif">
-                                    Serif
-                                </option>
+                                <span>
+                                    08
+                                </span>
 
-                                <option value="display">
-                                    Display
-                                </option>
+                                <div>
 
-                                <option value="ui">
-                                    Clean
-                                </option>
+                                    <h4>
+                                        Typography
+                                    </h4>
 
-                                <option value="journal">
-                                    Journal
-                                </option>
+                                    <p>
+                                        Control how the title feels on the spine.
+                                    </p>
 
-                            </select>
+                                </div>
 
-                        </label>
+                            </div>
+
+
+                            <div class="form-grid">
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Font
+                                    </span>
+
+                                    <select id="bookSpineFont">
+
+                                        <option value="bookish">
+                                            Bookish
+                                        </option>
+
+                                        <option value="elegant">
+                                            Elegant
+                                        </option>
+
+                                        <option value="serif">
+                                            Classic Serif
+                                        </option>
+
+                                        <option value="roman">
+                                            Roman
+                                        </option>
+
+                                        <option value="storybook">
+                                            Storybook
+                                        </option>
+
+                                        <option value="gothic">
+                                            Gothic
+                                        </option>
+
+                                        <option value="deco">
+                                            Art Deco
+                                        </option>
+
+                                        <option value="typewriter">
+                                            Typewriter
+                                        </option>
+
+                                        <option value="handwritten">
+                                            Handwritten
+                                        </option>
+
+                                        <option value="clean">
+                                            Clean
+                                        </option>
+
+                                        <option value="condensed">
+                                            Condensed
+                                        </option>
+
+                                        <option value="heavy">
+                                            Heavy
+                                        </option>
+
+                                        <option value="retro">
+                                            Retro
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Size
+                                    </span>
+
+                                    <select id="bookSpineFontSize">
+
+                                        <option value="small">
+                                            Small
+                                        </option>
+
+                                        <option value="medium" selected>
+                                            Medium
+                                        </option>
+
+                                        <option value="large">
+                                            Large
+                                        </option>
+
+                                        <option value="xlarge">
+                                            Extra Large
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Weight
+                                    </span>
+
+                                    <select id="bookSpineFontWeight">
+
+                                        <option value="light">
+                                            Light
+                                        </option>
+
+                                        <option value="regular" selected>
+                                            Regular
+                                        </option>
+
+                                        <option value="medium">
+                                            Medium
+                                        </option>
+
+                                        <option value="bold">
+                                            Bold
+                                        </option>
+
+                                        <option value="heavy">
+                                            Heavy
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Letter Spacing
+                                    </span>
+
+                                    <select id="bookSpineLetterSpacing">
+
+                                        <option value="tight">
+                                            Tight
+                                        </option>
+
+                                        <option value="normal" selected>
+                                            Normal
+                                        </option>
+
+                                        <option value="wide">
+                                            Wide
+                                        </option>
+
+                                        <option value="extra-wide">
+                                            Extra Wide
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Letter Case
+                                    </span>
+
+                                    <select id="bookSpineCase">
+
+                                        <option value="typed">
+                                            As Typed
+                                        </option>
+
+                                        <option value="title">
+                                            Title Case
+                                        </option>
+
+                                        <option value="uppercase">
+                                            UPPERCASE
+                                        </option>
+
+                                        <option value="lowercase">
+                                            lowercase
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Font Style
+                                    </span>
+
+                                    <select id="bookSpineFontStyle">
+
+                                        <option value="normal">
+                                            Normal
+                                        </option>
+
+                                        <option value="italic">
+                                            Italic
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Title Position
+                                    </span>
+
+                                    <select id="bookSpineTextAlign">
+
+                                        <option value="start">
+                                            Toward Top
+                                        </option>
+
+                                        <option value="center" selected>
+                                            Centered
+                                        </option>
+
+                                        <option value="end">
+                                            Toward Bottom
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             AGING + PERSONALITY
+                             ===================================== -->
+
+                        <div class="designer-control-group">
+
+                            <div class="designer-group-heading">
+
+                                <span>
+                                    09
+                                </span>
+
+                                <div>
+
+                                    <h4>
+                                        Age & Character
+                                    </h4>
+
+                                    <p>
+                                        Make the book pristine, loved, or wonderfully old.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-grid">
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Wear
+                                    </span>
+
+                                    <select id="bookWearLevel">
+
+                                        <option value="none">
+                                            Pristine
+                                        </option>
+
+                                        <option value="light">
+                                            Lightly Loved
+                                        </option>
+
+                                        <option value="medium">
+                                            Well Loved
+                                        </option>
+
+                                        <option value="heavy">
+                                            Heavily Worn
+                                        </option>
+
+                                        <option value="antique">
+                                            Antique
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span class="field-label">
+                                        Edge Wear
+                                    </span>
+
+                                    <select id="bookEdgeWear">
+
+                                        <option value="none">
+                                            Clean
+                                        </option>
+
+                                        <option value="light">
+                                            Softened
+                                        </option>
+
+                                        <option value="rubbed">
+                                            Rubbed
+                                        </option>
+
+                                        <option value="worn">
+                                            Worn
+                                        </option>
+
+                                        <option value="distressed">
+                                            Distressed
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                </section>
+                </div>
 
-            </div>
+            </section>
+
+        </div>
 
 
-            <footer class="drawer-footer">
+        <!-- =================================================
+             DRAWER FOOTER
+             ================================================= -->
 
-                <button
-                    id="deleteBookButton"
-                    type="button"
-                    class="danger-button"
-                    hidden
-                >
-                    Delete
-                </button>
+        <footer class="drawer-footer">
+
+            <button
+                id="deleteBookButton"
+                class="danger-button"
+                type="button"
+                hidden
+            >
+                Delete Book
+            </button>
+
+
+            <div class="drawer-footer-actions">
 
                 <button
                     id="cancelBookButton"
-                    type="button"
                     class="secondary-button"
+                    type="button"
                 >
                     Cancel
                 </button>
 
+
                 <button
-                    type="submit"
                     class="primary-button"
+                    type="submit"
                 >
+
                     <span id="saveBookButtonLabel">
                         Save Book
                     </span>
+
                 </button>
 
-            </footer>
+            </div>
 
-        </form>
+        </footer>
 
-    </aside>
+    </form>
+
+</aside>
 
 
     <!-- =====================================================
