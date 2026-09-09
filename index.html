@@ -306,6 +306,7 @@
     <div
         id="loadingScreen"
         class="loading-screen"
+        hidden
     >
 
         <div class="loading-content">
@@ -464,6 +465,21 @@
                 </button>
 
                 <button
+                    id="openProfileDrawer"
+                    type="button"
+                    class="icon-button profile-header-button"
+                    aria-label="Open profile"
+                    title="Profile"
+                >
+                    <span
+                        id="profileHeaderInitial"
+                        aria-hidden="true"
+                    >
+                        N
+                    </span>
+                </button>
+
+                <button
                     id="openSettingsDrawer"
                     type="button"
                     class="icon-button"
@@ -547,10 +563,6 @@
                 </div>
 
 
-                <!-- =================================================
-                     LIBRARY SUMMARY
-                     ================================================= -->
-
                 <div class="summary-grid">
 
                     <article class="summary-card">
@@ -591,10 +603,6 @@
 
                 </div>
 
-
-                <!-- =================================================
-                     LIBRARY TOOLBAR
-                     ================================================= -->
 
                 <div class="page-toolbar">
 
@@ -655,10 +663,6 @@
                 </div>
 
 
-                <!-- =================================================
-                     EMPTY LIBRARY
-                     ================================================= -->
-
                 <div
                     id="libraryEmptyState"
                     class="empty-state"
@@ -700,10 +704,6 @@
 
                 </div>
 
-
-                <!-- =================================================
-                     SHELVES
-                     ================================================= -->
 
                 <div
                     id="shelfContainer"
@@ -794,10 +794,6 @@
 
                 </div>
 
-
-                <!-- =================================================
-                     FEATURED READ
-                     ================================================= -->
 
                 <article
                     id="featuredReading"
@@ -983,13 +979,6 @@
                 </div>
 
 
-                <!-- =================================================
-                     JOURNAL BOOK GRID
-
-                     journal.js will populate this with visual
-                     book journals instead of relying on a dropdown.
-                     ================================================= -->
-
                 <div
                     id="journalLibrary"
                     class="journal-library"
@@ -1026,14 +1015,6 @@
                 </div>
 
 
-                <!-- =================================================
-                     LEGACY SELECT
-
-                     Kept hidden for compatibility while we transition
-                     older journal code. The new journal.js will no
-                     longer use it as the main interface.
-                     ================================================= -->
-
                 <select
                     id="journalBookSelect"
                     hidden
@@ -1041,20 +1022,11 @@
                 ></select>
 
 
-                <!-- =================================================
-                     OPEN BOOK JOURNAL
-                     ================================================= -->
-
                 <div
                     id="journalWorkspace"
                     class="journal-workspace open-book-workspace"
                     hidden
                 >
-
-
-                    <!-- =============================================
-                         OPEN BOOK TOP BAR
-                         ============================================= -->
 
                     <div class="open-book-toolbar">
 
@@ -1094,10 +1066,6 @@
 
                     </div>
 
-
-                    <!-- =============================================
-                         BOOKMARK TABS
-                         ============================================= -->
 
                     <nav
                         id="journalBookmarks"
@@ -1180,28 +1148,16 @@
                     </nav>
 
 
-                    <!-- =============================================
-                         ACTUAL OPEN BOOK
-                         ============================================= -->
-
                     <div
                         id="openJournalBook"
                         class="open-journal-book"
                     >
-
-                        <!-- =========================================
-                             BOOK COVER / LEFT EDGE
-                             ========================================= -->
 
                         <div
                             class="open-book-cover-edge"
                             aria-hidden="true"
                         ></div>
 
-
-                        <!-- =========================================
-                             LEFT PAGE
-                             ========================================= -->
 
                         <article
                             id="journalLeftPage"
@@ -1242,19 +1198,11 @@
                         </article>
 
 
-                        <!-- =========================================
-                             BOOK GUTTER
-                             ========================================= -->
-
                         <div
                             class="journal-book-gutter"
                             aria-hidden="true"
                         ></div>
 
-
-                        <!-- =========================================
-                             RIGHT PAGE
-                             ========================================= -->
 
                         <article
                             id="journalRightPage"
@@ -1303,10 +1251,6 @@
                         </article>
 
 
-                        <!-- =========================================
-                             PAGE EDGES
-                             ========================================= -->
-
                         <div
                             class="journal-page-stack journal-page-stack-left"
                             aria-hidden="true"
@@ -1319,12 +1263,6 @@
 
                     </div>
 
-
-                    <!-- =============================================
-                         HIDDEN COMPATIBILITY FIELDS
-
-                         Existing code may briefly reference these.
-                         ============================================= -->
 
                     <div hidden>
 
@@ -1922,7 +1860,7 @@
 
 
     <!-- =====================================================
-         SINGLE GLOBAL DRAWER OVERLAY
+         OVERLAY
          ===================================================== -->
 
     <div
@@ -2494,6 +2432,230 @@
 
 
     <!-- =====================================================
+         PROFILE DRAWER
+         ===================================================== -->
+
+    <aside
+        id="profileDrawer"
+        class="drawer profile-drawer"
+        hidden
+    >
+
+        <header class="drawer-header">
+
+            <div>
+
+                <span class="drawer-eyebrow">
+                    Your account
+                </span>
+
+                <h2>
+                    Profile
+                </h2>
+
+            </div>
+
+            <button
+                id="closeProfileDrawer"
+                type="button"
+                class="drawer-close"
+                aria-label="Close profile"
+            >
+                ×
+            </button>
+
+        </header>
+
+
+        <form id="profileForm">
+
+            <div class="drawer-body">
+
+
+                <section class="drawer-section">
+
+                    <div class="profile-identity">
+
+                        <div
+                            id="profileAvatarPreview"
+                            class="profile-avatar-preview"
+                            aria-hidden="true"
+                        >
+                            N
+                        </div>
+
+                        <div class="profile-identity-copy">
+
+                            <span class="drawer-eyebrow">
+                                Novellow reader
+                            </span>
+
+                            <h3 id="profilePreviewName">
+                                Your Profile
+                            </h3>
+
+                            <p id="profileEmail">
+                                —
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <section class="drawer-section">
+
+                    <div class="drawer-section-heading">
+
+                        <span class="drawer-eyebrow">
+                            About you
+                        </span>
+
+                        <h3>
+                            Profile Details
+                        </h3>
+
+                    </div>
+
+
+                    <label class="field">
+
+                        <span>
+                            Display name
+                        </span>
+
+                        <input
+                            id="profileDisplayName"
+                            type="text"
+                            autocomplete="name"
+                            maxlength="80"
+                            placeholder="Your name"
+                        >
+
+                    </label>
+
+
+                    <label class="field">
+
+                        <span>
+                            Username
+                        </span>
+
+                        <input
+                            id="profileUsername"
+                            type="text"
+                            autocomplete="username"
+                            maxlength="40"
+                            placeholder="yourusername"
+                        >
+
+                        <small>
+                            This will be used for your Novellow identity later.
+                        </small>
+
+                    </label>
+
+
+                    <label class="field">
+
+                        <span>
+                            Library name
+                        </span>
+
+                        <input
+                            id="profileLibraryName"
+                            type="text"
+                            maxlength="100"
+                            placeholder="My Library"
+                        >
+
+                    </label>
+
+
+                    <label class="field">
+
+                        <span>
+                            Bio
+                        </span>
+
+                        <textarea
+                            id="profileBio"
+                            maxlength="500"
+                            placeholder="A little about you and your reading life..."
+                        ></textarea>
+
+                    </label>
+
+                </section>
+
+
+                <section class="drawer-section">
+
+                    <div class="drawer-section-heading">
+
+                        <span class="drawer-eyebrow">
+                            Account
+                        </span>
+
+                        <h3>
+                            Signed In
+                        </h3>
+
+                    </div>
+
+                    <p class="drawer-intro">
+                        Your Novellow library belongs to this account.
+                    </p>
+
+                    <button
+                        id="profileSignOutButton"
+                        type="button"
+                        class="danger-button"
+                    >
+                        Sign Out
+                    </button>
+
+                </section>
+
+
+                <p
+                    id="profileMessage"
+                    class="auth-message"
+                    role="status"
+                    aria-live="polite"
+                ></p>
+
+            </div>
+
+
+            <footer class="drawer-footer">
+
+                <button
+                    id="cancelProfileButton"
+                    type="button"
+                    class="secondary-button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    id="saveProfileButton"
+                    type="submit"
+                    class="primary-button"
+                >
+                    Save Profile
+                </button>
+
+            </footer>
+
+        </form>
+
+    </aside>
+
+
+    <!-- =====================================================
          SHELF DRAWER
          ===================================================== -->
 
@@ -2897,10 +3059,6 @@
             <div class="drawer-body">
 
 
-                <!-- =============================================
-                     BOOK DETAILS
-                     ============================================= -->
-
                 <section class="drawer-section">
 
                     <div class="drawer-section-heading">
@@ -3076,74 +3234,17 @@
 
                         </label>
 
-
-                        <label class="field">
-
-                            <span>
-                                Rating
-                            </span>
-
-                            <select id="bookRating">
-
-                                <option value="0">
-                                    Not rated
-                                </option>
-
-                                <option value="1">
-                                    ★
-                                </option>
-
-                                <option value="2">
-                                    ★★
-                                </option>
-
-                                <option value="3">
-                                    ★★★
-                                </option>
-
-                                <option value="4">
-                                    ★★★★
-                                </option>
-
-                                <option value="5">
-                                    ★★★★★
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Times read
-                            </span>
-
-                            <input
-                                id="bookTimesRead"
-                                type="number"
-                                min="0"
-                                value="0"
-                            >
-
-                        </label>
-
                     </div>
 
                 </section>
 
-
-                <!-- =============================================
-                     READING PROGRESS
-                     ============================================= -->
 
                 <section class="drawer-section">
 
                     <div class="drawer-section-heading">
 
                         <span class="drawer-eyebrow">
-                            Reading life
+                            Reading history
                         </span>
 
                         <h3>
@@ -3193,6 +3294,22 @@
                                 id="bookCurrentPage"
                                 type="number"
                                 min="0"
+                                placeholder="0"
+                            >
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Times read
+                            </span>
+
+                            <input
+                                id="bookTimesRead"
+                                type="number"
+                                min="0"
                                 value="0"
                             >
 
@@ -3200,590 +3317,156 @@
 
                     </div>
 
-                </section>
-
-
-                <!-- =============================================
-                     COVER
-                     ============================================= -->
-
-                <section class="drawer-section">
-
-                    <div class="drawer-section-heading">
-
-                        <span class="drawer-eyebrow">
-                            Optional
-                        </span>
-
-                        <h3>
-                            Cover Image
-                        </h3>
-
-                    </div>
 
                     <label class="field">
 
                         <span>
-                            Upload cover
+                            Rating
                         </span>
 
-                        <input
-                            id="bookCoverUpload"
-                            type="file"
-                            accept="image/*"
-                        >
+                        <select id="bookRating">
+
+                            <option value="">
+                                Not rated
+                            </option>
+
+                            <option value="1">
+                                1
+                            </option>
+
+                            <option value="2">
+                                2
+                            </option>
+
+                            <option value="3">
+                                3
+                            </option>
+
+                            <option value="4">
+                                4
+                            </option>
+
+                            <option value="5">
+                                5
+                            </option>
+
+                        </select>
 
                     </label>
 
                 </section>
 
 
-                <!-- =============================================
-                     SPINE DESIGN
-                     ============================================= -->
-
-                <section class="drawer-section spine-design-section">
+                <section class="drawer-section">
 
                     <div class="drawer-section-heading">
 
                         <span class="drawer-eyebrow">
-                            Make it yours
+                            Book object
                         </span>
 
                         <h3>
-                            Design the Spine
+                            Spine Design
                         </h3>
-
-                        <p>
-                            Your book does not have to look like
-                            everybody else's.
-                        </p>
 
                     </div>
 
 
-                    <div class="spine-editor">
+                    <div id="bookSpinePreview"></div>
 
 
-                        <!-- =========================================
-                             PREVIEW
-                             ========================================= -->
+                    <div class="form-grid">
 
-                        <div class="spine-preview-area">
+                        <label class="field">
 
-                            <span class="preview-label">
-                                Preview
+                            <span>
+                                Spine color
                             </span>
 
-
-                            <div
-                                id="bookSpinePreview"
-                                class="spine-preview-book"
+                            <input
+                                id="bookSpineColor"
+                                type="color"
+                                value="#6f394d"
                             >
 
-                                <div class="spine-preview-inner">
+                        </label>
 
-                                    <div
-                                        id="bookSpinePreviewTitlePanel"
-                                        class="spine-preview-title-panel"
-                                    >
 
-                                        <span
-                                            id="bookSpinePreviewTitle"
-                                            class="spine-preview-title"
-                                        >
-                                            Book Title
-                                        </span>
+                        <label class="field">
 
-                                    </div>
+                            <span>
+                                Text color
+                            </span>
 
+                            <input
+                                id="bookTextColor"
+                                type="color"
+                                value="#f2e4d5"
+                            >
 
-                                    <span
-                                        id="bookSpinePreviewOrnament"
-                                        class="spine-preview-ornament"
-                                    >
-                                        ✦
-                                    </span>
+                        </label>
 
-                                </div>
 
-                            </div>
+                        <label class="field">
 
-                        </div>
+                            <span>
+                                Spine style
+                            </span>
 
+                            <select id="bookSpineStyle">
 
-                        <!-- =========================================
-                             OPTIONS
-                             ========================================= -->
+                                <option value="classic">
+                                    Classic
+                                </option>
 
-                        <div class="spine-options">
+                                <option value="cloth">
+                                    Clothbound
+                                </option>
 
+                                <option value="ornate">
+                                    Ornate
+                                </option>
 
-                            <label class="field">
+                                <option value="paperback">
+                                    Paperback
+                                </option>
 
-                                <span>
-                                    Binding style
-                                </span>
+                                <option value="modern">
+                                    Modern
+                                </option>
 
-                                <select id="bookStyle">
+                            </select>
 
-                                    <option value="classic">
-                                        Classic Cloth
-                                    </option>
+                        </label>
 
-                                    <option value="gothic">
-                                        Gothic
-                                    </option>
 
-                                    <option value="botanical">
-                                        Botanical
-                                    </option>
+                        <label class="field">
 
-                                    <option value="celestial">
-                                        Celestial
-                                    </option>
+                            <span>
+                                Spine font
+                            </span>
 
-                                    <option value="floral">
-                                        Floral
-                                    </option>
+                            <select id="bookSpineFont">
 
-                                    <option value="pastel">
-                                        Pastel
-                                    </option>
+                                <option value="serif">
+                                    Serif
+                                </option>
 
-                                    <option value="minimal">
-                                        Minimal
-                                    </option>
+                                <option value="display">
+                                    Display
+                                </option>
 
-                                    <option value="leather">
-                                        Leather
-                                    </option>
+                                <option value="ui">
+                                    Clean
+                                </option>
 
-                                    <option value="academia">
-                                        Dark Academia
-                                    </option>
+                                <option value="journal">
+                                    Journal
+                                </option>
 
-                                    <option value="storybook">
-                                        Storybook
-                                    </option>
+                            </select>
 
-                                </select>
-
-                            </label>
-
-
-                            <div class="form-grid">
-
-                                <label class="field color-field">
-
-                                    <span>
-                                        Spine
-                                    </span>
-
-                                    <input
-                                        id="bookSpineColor"
-                                        type="color"
-                                        value="#793f55"
-                                    >
-
-                                </label>
-
-
-                                <label class="field color-field">
-
-                                    <span>
-                                        Text
-                                    </span>
-
-                                    <input
-                                        id="bookTextColor"
-                                        type="color"
-                                        value="#f1e3cf"
-                                    >
-
-                                </label>
-
-
-                                <label class="field color-field">
-
-                                    <span>
-                                        Accent
-                                    </span>
-
-                                    <input
-                                        id="bookAccentColor"
-                                        type="color"
-                                        value="#c39a67"
-                                    >
-
-                                </label>
-
-                            </div>
-
-
-                            <label class="field">
-
-                                <span>
-                                    Ornament
-                                </span>
-
-                                <select id="bookSpineOrnament">
-
-                                    <option value="auto">
-                                        Match Binding
-                                    </option>
-
-                                    <option value="star">
-                                        Star
-                                    </option>
-
-                                    <option value="moon">
-                                        Moon
-                                    </option>
-
-                                    <option value="flower">
-                                        Flower
-                                    </option>
-
-                                    <option value="leaf">
-                                        Leaf
-                                    </option>
-
-                                    <option value="diamond">
-                                        Diamond
-                                    </option>
-
-                                    <option value="heart">
-                                        Heart
-                                    </option>
-
-                                    <option value="none">
-                                        None
-                                    </option>
-
-                                </select>
-
-                            </label>
-
-
-                            <div class="form-grid">
-
-                                <label class="field">
-
-                                    <span>
-                                        Font
-                                    </span>
-
-                                    <select id="bookSpineFont">
-
-                                        <option value="serif">
-                                            Classic Serif
-                                        </option>
-
-                                        <option value="roman">
-                                            Roman
-                                        </option>
-
-                                        <option value="bookish">
-                                            Bookish
-                                        </option>
-
-                                        <option value="elegant">
-                                            Elegant
-                                        </option>
-
-                                        <option value="typewriter">
-                                            Typewriter
-                                        </option>
-
-                                        <option value="clean">
-                                            Clean
-                                        </option>
-
-                                        <option value="condensed">
-                                            Condensed
-                                        </option>
-
-                                        <option value="heavy">
-                                            Heavy
-                                        </option>
-
-                                        <option value="storybook">
-                                            Storybook
-                                        </option>
-
-                                        <option value="handwritten">
-                                            Handwritten
-                                        </option>
-
-                                        <option value="gothic">
-                                            Gothic
-                                        </option>
-
-                                        <option value="deco">
-                                            Art Deco
-                                        </option>
-
-                                        <option value="retro">
-                                            Retro
-                                        </option>
-
-                                    </select>
-
-                                </label>
-
-
-                                <label class="field">
-
-                                    <span>
-                                        Font size
-                                    </span>
-
-                                    <select id="bookSpineFontSize">
-
-                                        <option value="small">
-                                            Small
-                                        </option>
-
-                                        <option value="medium">
-                                            Medium
-                                        </option>
-
-                                        <option value="large">
-                                            Large
-                                        </option>
-
-                                        <option value="xlarge">
-                                            Extra Large
-                                        </option>
-
-                                    </select>
-
-                                </label>
-
-
-                                <label class="field">
-
-                                    <span>
-                                        Weight
-                                    </span>
-
-                                    <select id="bookSpineFontWeight">
-
-                                        <option value="light">
-                                            Light
-                                        </option>
-
-                                        <option value="regular">
-                                            Regular
-                                        </option>
-
-                                        <option value="bold">
-                                            Bold
-                                        </option>
-
-                                        <option value="heavy">
-                                            Heavy
-                                        </option>
-
-                                    </select>
-
-                                </label>
-
-
-                                <label class="field">
-
-                                    <span>
-                                        Spacing
-                                    </span>
-
-                                    <select id="bookSpineLetterSpacing">
-
-                                        <option value="tight">
-                                            Tight
-                                        </option>
-
-                                        <option value="normal">
-                                            Normal
-                                        </option>
-
-                                        <option value="wide">
-                                            Wide
-                                        </option>
-
-                                        <option value="extra-wide">
-                                            Extra Wide
-                                        </option>
-
-                                    </select>
-
-                                </label>
-
-
-                                <label class="field">
-
-                                    <span>
-                                        Letter case
-                                    </span>
-
-                                    <select id="bookSpineCase">
-
-                                        <option value="typed">
-                                            As Typed
-                                        </option>
-
-                                        <option value="uppercase">
-                                            UPPERCASE
-                                        </option>
-
-                                        <option value="lowercase">
-                                            lowercase
-                                        </option>
-
-                                        <option value="title">
-                                            Title Case
-                                        </option>
-
-                                    </select>
-
-                                </label>
-
-
-                                <label class="field">
-
-                                    <span>
-                                        Style
-                                    </span>
-
-                                    <select id="bookSpineFontStyle">
-
-                                        <option value="normal">
-                                            Normal
-                                        </option>
-
-                                        <option value="italic">
-                                            Italic
-                                        </option>
-
-                                    </select>
-
-                                </label>
-
-
-                                <label class="field">
-
-                                    <span>
-                                        Position
-                                    </span>
-
-                                    <select id="bookSpineTextAlign">
-
-                                        <option value="top">
-                                            Top
-                                        </option>
-
-                                        <option value="center">
-                                            Center
-                                        </option>
-
-                                        <option value="bottom">
-                                            Bottom
-                                        </option>
-
-                                    </select>
-
-                                </label>
-
-
-                                <label class="field">
-
-                                    <span>
-                                        Title plaque
-                                    </span>
-
-                                    <select id="bookSpineTitlePanel">
-
-                                        <option value="none">
-                                            None
-                                        </option>
-
-                                        <option value="simple">
-                                            Simple
-                                        </option>
-
-                                        <option value="bordered">
-                                            Bordered
-                                        </option>
-
-                                        <option value="ornate">
-                                            Ornate
-                                        </option>
-
-                                        <option value="dark">
-                                            Dark
-                                        </option>
-
-                                        <option value="light">
-                                            Light
-                                        </option>
-
-                                    </select>
-
-                                </label>
-
-
-                                <label class="field">
-
-                                    <span>
-                                        Height
-                                    </span>
-
-                                    <select id="bookHeight">
-
-                                        <option value="small">
-                                            Short
-                                        </option>
-
-                                        <option value="medium">
-                                            Medium
-                                        </option>
-
-                                        <option value="tall">
-                                            Tall
-                                        </option>
-
-                                    </select>
-
-                                </label>
-
-
-                                <label class="field">
-
-                                    <span>
-                                        Thickness
-                                    </span>
-
-                                    <select id="bookThickness">
-
-                                        <option value="slim">
-                                            Slim
-                                        </option>
-
-                                        <option value="medium">
-                                            Medium
-                                        </option>
-
-                                        <option value="chunky">
-                                            Chunky
-                                        </option>
-
-                                    </select>
-
-                                </label>
-
-                            </div>
-
-                        </div>
+                        </label>
 
                     </div>
 
@@ -3793,6 +3476,15 @@
 
 
             <footer class="drawer-footer">
+
+                <button
+                    id="deleteBookButton"
+                    type="button"
+                    class="danger-button"
+                    hidden
+                >
+                    Delete
+                </button>
 
                 <button
                     id="cancelBookButton"
@@ -3828,140 +3520,50 @@
         hidden
     >
 
-        <button
-            id="closeBookReveal"
-            type="button"
-            class="book-reveal-close"
-            aria-label="Close book"
-        >
-            ×
-        </button>
+        <div class="book-reveal-card">
 
-
-        <div class="book-reveal-inner">
+            <button
+                id="closeBookReveal"
+                type="button"
+                class="book-reveal-close"
+            >
+                ×
+            </button>
 
             <div
-                id="revealBookCover"
-                class="reveal-book-cover"
+                id="bookRevealCover"
+                class="book-reveal-cover"
             ></div>
 
-
-            <div class="reveal-book-details">
+            <div class="book-reveal-copy">
 
                 <span
-                    id="revealBookStatus"
+                    id="bookRevealStatus"
                     class="page-eyebrow"
                 >
                     Book
                 </span>
 
-                <h1 id="revealBookTitle">
+                <h2 id="bookRevealTitle">
                     Book Title
-                </h1>
+                </h2>
 
-                <p
-                    id="revealBookAuthor"
-                    class="reveal-book-author"
-                >
+                <p id="bookRevealAuthor">
                     Author
                 </p>
 
-
-                <div class="reveal-meta-grid">
-
-                    <div>
-
-                        <span>
-                            Started
-                        </span>
-
-                        <strong id="revealBookStarted">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Finished
-                        </span>
-
-                        <strong id="revealBookFinished">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Pages
-                        </span>
-
-                        <strong id="revealBookPages">
-                            —
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Rating
-                        </span>
-
-                        <strong id="revealBookRating">
-                            —
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="reveal-progress">
-
-                    <div class="progress-heading">
-
-                        <span>
-                            Progress
-                        </span>
-
-                        <strong id="revealBookPercent">
-                            0%
-                        </strong>
-
-                    </div>
-
-                    <div class="progress-track">
-
-                        <div
-                            id="revealBookProgress"
-                            class="progress-fill"
-                            style="width: 0%"
-                        ></div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="reveal-actions">
+                <div class="book-reveal-actions">
 
                     <button
-                        id="openRevealJournal"
+                        id="bookRevealOpenJournal"
                         type="button"
                         class="primary-button"
                     >
-                        Open Book Journal
+                        Open Journal
                     </button>
 
                     <button
-                        id="editRevealBook"
+                        id="bookRevealEdit"
                         type="button"
                         class="secondary-button"
                     >
@@ -3971,154 +3573,6 @@
                 </div>
 
             </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =====================================================
-         PROGRESS MODAL
-         ===================================================== -->
-
-    <div
-        id="progressModal"
-        class="modal"
-        hidden
-    >
-
-        <div class="modal-card">
-
-            <header class="modal-header">
-
-                <div>
-
-                    <span class="drawer-eyebrow">
-                        Reading
-                    </span>
-
-                    <h2>
-                        Update Progress
-                    </h2>
-
-                </div>
-
-                <button
-                    id="closeProgressModal"
-                    type="button"
-                    class="modal-close"
-                >
-                    ×
-                </button>
-
-            </header>
-
-
-            <form id="progressForm">
-
-                <input
-                    id="progressBookId"
-                    type="hidden"
-                >
-
-
-                <div class="modal-body">
-
-                    <h3 id="progressBookTitle">
-                        Book
-                    </h3>
-
-                    <p id="progressBookTotal">
-                        —
-                    </p>
-
-
-                    <label class="field">
-
-                        <span>
-                            Current page
-                        </span>
-
-                        <input
-                            id="progressCurrentPage"
-                            type="number"
-                            min="0"
-                        >
-
-                    </label>
-
-
-                    <div class="progress-preview">
-
-                        <div class="progress-heading">
-
-                            <span>
-                                Progress
-                            </span>
-
-                            <strong id="progressPreviewPercent">
-                                0%
-                            </strong>
-
-                        </div>
-
-                        <div class="progress-track">
-
-                            <div
-                                id="progressPreviewFill"
-                                class="progress-fill"
-                                style="width: 0%"
-                            ></div>
-
-                        </div>
-
-                    </div>
-
-
-                    <label class="setting-row">
-
-                        <span>
-
-                            <strong>
-                                Mark as finished
-                            </strong>
-
-                            <small>
-                                Complete the book and record today's date.
-                            </small>
-
-                        </span>
-
-                        <input
-                            id="progressMarkFinished"
-                            type="checkbox"
-                        >
-
-                    </label>
-
-                </div>
-
-
-                <footer class="modal-footer">
-
-                    <button
-                        id="cancelProgressButton"
-                        type="button"
-                        class="secondary-button"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        type="submit"
-                        class="primary-button"
-                    >
-                        Save Progress
-                    </button>
-
-                </footer>
-
-            </form>
 
         </div>
 
@@ -4531,30 +3985,26 @@
 
     <!-- =====================================================
          JAVASCRIPT
-
-         IMPORTANT:
-         app.js must load before feature modules so shared
-         Novellow state exists before modules capture it.
          ===================================================== -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="js/config.js?v=12"></script>
-<script src="js/helpers.js?v=12"></script>
+    <script src="js/config.js?v=12"></script>
+    <script src="js/helpers.js?v=12"></script>
 
-<script src="js/supabase.js?v=12"></script>
-<script src="js/auth.js?v=12"></script>
+    <script src="js/supabase.js?v=12"></script>
+    <script src="js/auth.js?v=12"></script>
 
-<script src="js/app.js?v=12"></script>
+    <script src="js/app.js?v=12"></script>
 
-<script src="js/books.js?v=12"></script>
-<script src="js/library.js?v=12"></script>
-<script src="js/reading.js?v=12"></script>
-<script src="js/journal.js?v=12"></script>
-<script src="js/quotes.js?v=12"></script>
-<script src="js/vocabulary.js?v=12"></script>
-<script src="js/stats.js?v=12"></script>
-    
+    <script src="js/books.js?v=12"></script>
+    <script src="js/library.js?v=12"></script>
+    <script src="js/reading.js?v=12"></script>
+    <script src="js/journal.js?v=12"></script>
+    <script src="js/quotes.js?v=12"></script>
+    <script src="js/vocabulary.js?v=12"></script>
+    <script src="js/stats.js?v=12"></script>
+
 </body>
 
 </html>
