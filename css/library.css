@@ -5853,3 +5853,129 @@ body[data-decoration-density="maximal"] .library-page::after {
     display:
         none !important;
 }
+/* =========================================================
+   MODAL / OVERLAY CLICK FIX
+   ========================================================= */
+
+
+/* The overlay should NEVER blur the page */
+
+#overlay.overlay {
+    position: fixed !important;
+
+    inset: 0 !important;
+
+    z-index: 2400 !important;
+
+    background:
+        rgba(12, 10, 11, 0.58) !important;
+
+    backdrop-filter:
+        none !important;
+
+    -webkit-backdrop-filter:
+        none !important;
+
+    filter:
+        none !important;
+}
+
+
+/* When hidden, the overlay must truly disappear
+   and cannot block clicking */
+
+#overlay[hidden],
+.overlay[hidden] {
+    display:
+        none !important;
+
+    visibility:
+        hidden !important;
+
+    opacity:
+        0 !important;
+
+    pointer-events:
+        none !important;
+}
+
+
+/* When visible, it can receive clicks */
+
+#overlay:not([hidden]) {
+    display:
+        block !important;
+
+    visibility:
+        visible !important;
+
+    opacity:
+        1 !important;
+
+    pointer-events:
+        auto !important;
+}
+
+
+/* =========================================================
+   MAKE SURE CLOSED WINDOWS CANNOT BLOCK THE PAGE
+   ========================================================= */
+
+#themeDrawer[hidden],
+#shelfDrawer[hidden],
+#bookDrawer[hidden],
+#bookReveal[hidden],
+#readingBook[hidden],
+#entryModal[hidden],
+#progressModal[hidden] {
+    display:
+        none !important;
+
+    visibility:
+        hidden !important;
+
+    opacity:
+        0 !important;
+
+    pointer-events:
+        none !important;
+}
+
+
+/* =========================================================
+   REMOVE ANY OLD PAGE-BLUR EFFECT
+   ========================================================= */
+
+body.modal-open .app-shell,
+body.modal-open .main-shell,
+body.modal-open .main-content,
+body.modal-open .library-page,
+body.modal-open .reading-now-section,
+body.modal-open .reading-stats-section {
+    filter:
+        none !important;
+
+    backdrop-filter:
+        none !important;
+
+    -webkit-backdrop-filter:
+        none !important;
+}
+
+
+/* =========================================================
+   NORMAL PAGE MUST ALWAYS BE CLICKABLE
+   ========================================================= */
+
+body:not(.modal-open) .app-shell,
+body:not(.modal-open) .main-shell,
+body:not(.modal-open) .main-content {
+    pointer-events:
+        auto !important;
+
+    filter:
+        none !important;
+
+    opacity:
+        1 !important;
+}
