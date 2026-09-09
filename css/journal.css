@@ -2,12 +2,12 @@
    NOVELLOW
    JOURNAL.CSS
 
-   Journal workspace
-   Book context
-   Contents navigation
-   Journal sections
-   Entry cards
-   Entry modal support
+   Journal library
+   Open book journal
+   Paper pages
+   Bookmark tabs
+   Journal entries
+   Theme-aware typography
    Responsive behavior
    ========================================================= */
 
@@ -22,58 +22,50 @@
 
 
 /* =========================================================
-   JOURNAL BOOK SELECTOR
+   JOURNAL LIBRARY
    ========================================================= */
 
-.journal-book-picker {
-    margin-bottom: 26px;
-}
-
-
-#journalBookSelect {
-    width: min(100%, 460px);
-}
-
-
-/* =========================================================
-   JOURNAL WORKSPACE
-   ========================================================= */
-
-.journal-workspace {
+.journal-library {
     display: grid;
 
     grid-template-columns:
-        290px minmax(0, 1fr);
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
 
-    gap: 26px;
-
-    align-items: start;
+    gap: 24px;
 }
 
 
 /* =========================================================
-   BOOK SIDEBAR
+   JOURNAL BOOK CARD
    ========================================================= */
 
-.journal-book-panel {
-    position: sticky;
+.journal-book-card {
+    position: relative;
 
-    top: 92px;
+    min-width: 0;
 
-    padding: 18px;
+    display: flex;
 
-    border:
-        1px solid
-        var(--border-soft);
+    flex-direction: column;
 
-    border-radius:
-        var(--radius-large);
+    gap: 13px;
 
-    background:
-        var(--panel);
+    cursor: pointer;
+}
+
+
+.journal-book-card:hover
+.journal-book-cover {
+    transform:
+        translateY(-7px)
+        rotate(-1deg);
 
     box-shadow:
-        var(--shadow-soft);
+        0 24px 34px
+        rgba(0, 0, 0, 0.26);
 }
 
 
@@ -81,12 +73,26 @@
    JOURNAL BOOK COVER
    ========================================================= */
 
-.journal-book-cover {
-    width:
-        min(190px, 100%);
+.journal-book-cover-wrap {
+    position: relative;
 
-    margin:
-        0 auto 18px;
+    display: flex;
+
+    justify-content: center;
+
+    padding:
+        9px 10px 4px;
+}
+
+
+.journal-book-cover {
+    position: relative;
+
+    width:
+        min(
+            190px,
+            100%
+        );
 
     aspect-ratio:
         2 / 3;
@@ -94,506 +100,58 @@
     overflow: hidden;
 
     border-radius:
-        6px 11px 11px 6px;
+        5px 12px 12px 5px;
 
-    box-shadow:
-        0 18px 30px
-        rgba(0, 0, 0, 0.24);
-}
-
-
-.journal-book-cover
-.generated-cover {
-    width: 100%;
-    height: 100%;
-}
-
-
-/* =========================================================
-   BOOK STATUS
-   ========================================================= */
-
-.journal-book-status {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 6px;
-
-    margin-bottom: 8px;
-
-    color:
-        var(--accent-light);
-
-    font-size:
-        0.48rem;
-
-    font-weight:
-        700;
-
-    letter-spacing:
-        0.1em;
-
-    text-transform:
-        uppercase;
-}
-
-
-/* =========================================================
-   BOOK TITLE
-   ========================================================= */
-
-.journal-book-panel h2 {
-    margin-bottom: 4px;
-
-    color:
-        var(--paper);
-
-    font-family:
-        var(--font-display);
-
-    font-size:
-        2rem;
-
-    font-weight:
-        600;
-
-    letter-spacing:
-        -0.035em;
-
-    line-height:
-        0.98;
-}
-
-
-.journal-book-author {
-    margin-bottom: 18px;
-
-    color:
-        var(--text-soft);
-
-    font-family:
-        var(--font-display);
-
-    font-size:
-        1rem;
-}
-
-
-/* =========================================================
-   BOOK META
-   ========================================================= */
-
-.journal-book-meta {
-    display: grid;
-
-    gap: 8px;
-}
-
-
-.journal-book-meta > div {
-    display: flex;
-
-    justify-content: space-between;
-
-    gap: 16px;
-
-    padding:
-        9px 0;
-
-    border-bottom:
-        1px solid
-        var(--border-soft);
-}
-
-
-.journal-book-meta > div:last-child {
-    border-bottom: 0;
-}
-
-
-.journal-book-meta span {
-    color:
-        var(--muted);
-
-    font-size:
-        0.49rem;
-
-    font-weight:
-        700;
-
-    letter-spacing:
-        0.06em;
-
-    text-transform:
-        uppercase;
-}
-
-
-.journal-book-meta strong {
-    color:
-        var(--paper);
-
-    font-size:
-        0.55rem;
-
-    font-weight:
-        600;
-
-    text-align:
-        right;
-}
-
-
-/* =========================================================
-   JOURNAL CONTENT AREA
-   ========================================================= */
-
-.journal-main {
-    min-width: 0;
-
-    border:
-        1px solid
-        var(--border-soft);
-
-    border-radius:
-        var(--radius-large);
-
-    background:
-        var(--panel);
-
-    box-shadow:
-        var(--shadow-soft);
-}
-
-
-/* =========================================================
-   JOURNAL CONTENTS PAGE
-   ========================================================= */
-
-.journal-contents {
-    padding:
-        clamp(
-            22px,
-            4vw,
-            38px
-        );
-}
-
-
-.journal-contents-header {
-    margin-bottom: 28px;
-}
-
-
-.journal-contents-header h2 {
-    margin-bottom: 5px;
-
-    color:
-        var(--paper);
-
-    font-family:
-        var(--font-display);
-
-    font-size:
-        clamp(
-            2.5rem,
-            5vw,
-            4.5rem
-        );
-
-    font-weight:
-        500;
-
-    letter-spacing:
-        -0.045em;
-
-    line-height:
-        0.95;
-}
-
-
-.journal-contents-header p {
-    max-width:
-        620px;
-
-    color:
-        var(--muted);
-
-    font-size:
-        0.63rem;
-
-    line-height:
-        1.6;
-}
-
-
-/* =========================================================
-   JOURNAL CONTENTS BUTTONS
-   ========================================================= */
-
-.journal-section-list {
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            2,
-            minmax(0, 1fr)
-        );
-
-    gap: 10px;
-}
-
-
-.journal-section-button {
-    position: relative;
-
-    min-height:
-        110px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: flex-start;
-    justify-content: flex-end;
-
-    padding: 18px;
-
-    overflow: hidden;
-
-    border:
-        1px solid
-        var(--border-soft);
-
-    border-radius:
-        var(--radius-medium);
-
-    background:
-        var(--bg-2);
-
-    color:
-        var(--paper);
-
-    text-align: left;
+    transform-origin:
+        center bottom;
 
     transition:
-        transform 0.16s ease,
-        border-color 0.16s ease,
-        background-color 0.16s ease;
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+
+    box-shadow:
+        0 15px 23px
+        rgba(0, 0, 0, 0.19);
 }
 
 
-.journal-section-button:hover {
-    transform:
-        translateY(-2px);
-
-    border-color:
-        var(--border);
-
-    background:
-        var(--panel-2);
-}
-
-
-.journal-section-button::before {
-    content: attr(data-section-number);
+.journal-book-cover::after {
+    content: "";
 
     position: absolute;
 
-    top: 12px;
-    right: 15px;
+    top: 0;
+    bottom: 0;
+    left: 7px;
 
-    color:
-        var(--muted-light);
-
-    font-family:
-        var(--font-display);
-
-    font-size:
-        1.15rem;
-}
-
-
-.journal-section-button strong {
-    margin-bottom: 3px;
-
-    font-family:
-        var(--font-display);
-
-    font-size:
-        1.35rem;
-
-    font-weight:
-        600;
-}
-
-
-.journal-section-button span {
-    color:
-        var(--muted);
-
-    font-size:
-        0.52rem;
-
-    line-height:
-        1.45;
-}
-
-
-/* =========================================================
-   JOURNAL SECTION
-   ========================================================= */
-
-.journal-section {
-    padding:
-        clamp(
-            22px,
-            4vw,
-            38px
-        );
-}
-
-
-/* =========================================================
-   SECTION HEADER
-   ========================================================= */
-
-.journal-section-header {
-    display: flex;
-
-    align-items: flex-end;
-    justify-content: space-between;
-
-    gap: 18px;
-
-    margin-bottom: 28px;
-
-    padding-bottom: 18px;
-
-    border-bottom:
-        1px solid
-        var(--border-soft);
-}
-
-
-.journal-section-heading {
-    min-width: 0;
-}
-
-
-.journal-section-heading
-.page-eyebrow {
-    margin-bottom: 6px;
-}
-
-
-.journal-section-heading h2 {
-    margin: 0;
-
-    color:
-        var(--paper);
-
-    font-family:
-        var(--font-display);
-
-    font-size:
-        clamp(
-            2.4rem,
-            5vw,
-            4.3rem
-        );
-
-    font-weight:
-        500;
-
-    letter-spacing:
-        -0.045em;
-
-    line-height:
-        0.95;
-}
-
-
-/* =========================================================
-   BACK BUTTON
-   ========================================================= */
-
-.journal-back-button {
-    align-self:
-        flex-start;
-
-    flex:
-        0 0 auto;
-}
-
-
-/* =========================================================
-   ENTRY LIST
-   ========================================================= */
-
-.journal-entries {
-    display: grid;
-
-    gap: 14px;
-}
-
-
-/* =========================================================
-   JOURNAL ENTRY CARD
-   ========================================================= */
-
-.journal-entry-card {
-    position: relative;
-
-    padding:
-        19px 20px;
-
-    border:
-        1px solid
-        var(--border-soft);
-
-    border-radius:
-        var(--radius-medium);
+    width: 2px;
 
     background:
-        var(--bg-2);
+        rgba(0, 0, 0, 0.18);
 
     box-shadow:
-        0 6px 16px
-        rgba(0, 0, 0, 0.08);
-}
+        3px 0
+        rgba(255, 255, 255, 0.05);
 
-
-.journal-entry-card:hover {
-    border-color:
-        var(--border);
+    pointer-events: none;
 }
 
 
 /* =========================================================
-   ENTRY HEADER
+   JOURNAL BOOK META
    ========================================================= */
 
-.journal-entry-header {
-    display: flex;
-
-    align-items: flex-start;
-    justify-content: space-between;
-
-    gap: 16px;
-
-    margin-bottom: 11px;
-}
-
-
-.journal-entry-heading {
+.journal-book-meta {
     min-width: 0;
+
+    text-align: center;
 }
 
 
-.journal-entry-heading h3 {
-    margin-bottom: 3px;
+.journal-book-meta h3 {
+    margin: 0;
+
+    overflow: hidden;
 
     color:
         var(--paper);
@@ -602,141 +160,65 @@
         var(--font-display);
 
     font-size:
-        1.5rem;
+        1.4rem;
 
     font-weight:
         600;
+
+    letter-spacing:
+        -0.03em;
 
     line-height:
         1.05;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
 }
 
 
-.journal-entry-date {
-    color:
-        var(--muted-light);
+.journal-book-meta p {
+    margin:
+        4px 0 0;
 
-    font-size:
-        0.47rem;
-}
-
-
-/* =========================================================
-   ENTRY ACTIONS
-   ========================================================= */
-
-.journal-entry-actions {
-    display: flex;
-
-    gap: 5px;
-
-    flex:
-        0 0 auto;
-}
-
-
-.journal-entry-action {
-    min-width:
-        31px;
-
-    min-height:
-        29px;
-
-    display: grid;
-
-    place-items: center;
-
-    padding:
-        0 8px;
-
-    border:
-        1px solid
-        var(--border-soft);
-
-    border-radius:
-        6px;
-
-    background:
-        var(--panel);
+    overflow: hidden;
 
     color:
         var(--muted);
 
-    font-size:
-        0.47rem;
-
-    font-weight:
-        700;
-}
-
-
-.journal-entry-action:hover {
-    border-color:
-        var(--border);
-
-    background:
-        var(--panel-2);
-
-    color:
-        var(--paper);
-}
-
-
-.journal-entry-action.danger:hover {
-    color:
-        #e0a6a6;
-}
-
-
-/* =========================================================
-   ENTRY BODY
-   ========================================================= */
-
-.journal-entry-body {
-    color:
-        var(--text-soft);
-
     font-family:
-        var(--font-display);
+        var(--font-body);
 
     font-size:
-        1rem;
+        0.54rem;
 
-    line-height:
-        1.65;
+    text-overflow: ellipsis;
 
-    white-space:
-        pre-wrap;
-}
-
-
-.journal-entry-body p + p {
-    margin-top:
-        0.8em;
+    white-space: nowrap;
 }
 
 
 /* =========================================================
-   ENTRY META
+   JOURNAL COUNTS
    ========================================================= */
 
-.journal-entry-meta {
+.journal-book-counts {
     display: flex;
 
-    align-items: center;
+    justify-content: center;
 
     gap: 7px;
 
     margin-top:
-        14px;
+        8px;
 
     flex-wrap: wrap;
 }
 
 
-.journal-entry-meta span {
+.journal-count-pill {
     padding:
-        4px 7px;
+        4px 8px;
 
     border:
         1px solid
@@ -751,18 +233,1126 @@
     color:
         var(--muted);
 
+    font-family:
+        var(--font-ui);
+
     font-size:
         0.44rem;
+
+    font-weight:
+        700;
 }
 
 
 /* =========================================================
-   EMPTY SECTION
+   OPEN BOOK WORKSPACE
+   ========================================================= */
+
+.open-book-workspace {
+    position: relative;
+
+    margin-top:
+        6px;
+}
+
+
+/* =========================================================
+   OPEN BOOK TOOLBAR
+   ========================================================= */
+
+.open-book-toolbar {
+    display: grid;
+
+    grid-template-columns:
+        auto
+        minmax(0, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 18px;
+
+    margin-bottom:
+        20px;
+
+    padding:
+        13px 15px;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        var(--radius-medium);
+
+    background:
+        var(--panel);
+
+    box-shadow:
+        0 8px 18px
+        rgba(0, 0, 0, 0.09);
+}
+
+
+/* =========================================================
+   OPEN BOOK IDENTITY
+   ========================================================= */
+
+.open-book-identity {
+    min-width: 0;
+
+    text-align: center;
+}
+
+
+.open-book-identity span {
+    display: block;
+
+    margin-bottom:
+        2px;
+
+    color:
+        var(--accent-light);
+
+    font-family:
+        var(--font-ui);
+
+    font-size:
+        0.44rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.09em;
+
+    text-transform:
+        uppercase;
+}
+
+
+.open-book-identity strong {
+    display: block;
+
+    overflow: hidden;
+
+    color:
+        var(--paper);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.3rem;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        -0.02em;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+.open-book-identity small {
+    display: block;
+
+    overflow: hidden;
+
+    margin-top:
+        2px;
+
+    color:
+        var(--muted);
+
+    font-family:
+        var(--font-body);
+
+    font-size:
+        0.49rem;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   JOURNAL BOOKMARKS
+   ========================================================= */
+
+.journal-bookmarks {
+    position: relative;
+
+    z-index: 30;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 4px;
+
+    padding:
+        0 24px;
+
+    overflow-x: auto;
+
+    scrollbar-width:
+        none;
+}
+
+
+.journal-bookmarks::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* =========================================================
+   BOOKMARK TAB
+   ========================================================= */
+
+.journal-bookmark {
+    position: relative;
+
+    flex:
+        0 0 auto;
+
+    min-height:
+        45px;
+
+    padding:
+        9px 12px 12px;
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--accent) 30%,
+            var(--border-soft)
+        );
+
+    border-bottom:
+        0;
+
+    border-radius:
+        8px 8px 0 0;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--accent) 24%,
+            var(--panel)
+        );
+
+    color:
+        color-mix(
+            in srgb,
+            var(--paper) 80%,
+            transparent
+        );
+
+    font-family:
+        var(--font-ui);
+
+    font-size:
+        0.46rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.04em;
+
+    opacity:
+        0.78;
+
+    transform:
+        translateY(6px);
+
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease,
+        background-color 0.15s ease;
+}
+
+
+.journal-bookmark:nth-child(2n) {
+    background:
+        color-mix(
+            in srgb,
+            var(--accent-2) 19%,
+            var(--panel)
+        );
+}
+
+
+.journal-bookmark:nth-child(3n) {
+    background:
+        color-mix(
+            in srgb,
+            var(--accent-light) 14%,
+            var(--panel)
+        );
+}
+
+
+.journal-bookmark:hover {
+    opacity: 1;
+
+    transform:
+        translateY(3px);
+}
+
+
+.journal-bookmark.active {
+    z-index: 5;
+
+    opacity: 1;
+
+    transform:
+        translateY(0);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--accent) 36%,
+            var(--panel)
+        );
+
+    color:
+        var(--paper);
+}
+
+
+/* =========================================================
+   OPEN JOURNAL BOOK
+   ========================================================= */
+
+.open-journal-book {
+    --journal-paper:
+        #e8ddc8;
+
+    --journal-paper-2:
+        #dfd1b9;
+
+    --journal-ink:
+        #39302e;
+
+    --journal-muted:
+        #71645e;
+
+    --journal-rule:
+        rgba(77, 65, 58, 0.12);
+
+    --journal-margin:
+        rgba(157, 86, 79, 0.22);
+
+
+    position: relative;
+
+    isolation: isolate;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        26px
+        minmax(0, 1fr);
+
+    width:
+        min(
+            1180px,
+            100%
+        );
+
+    min-height:
+        690px;
+
+    margin:
+        0 auto;
+
+    padding:
+        24px 30px 30px;
+
+    border-radius:
+        18px 18px 24px 24px;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--wood-dark) 82%,
+            black
+        );
+
+    box-shadow:
+        0 38px 70px
+        rgba(0, 0, 0, 0.30),
+
+        inset 0 2px
+        rgba(255, 255, 255, 0.05);
+}
+
+
+/* =========================================================
+   BOOK COVER EDGE
+   ========================================================= */
+
+.open-book-cover-edge {
+    position: absolute;
+
+    z-index: 1;
+
+    inset:
+        7px 8px 6px;
+
+    border-radius:
+        14px 14px 20px 20px;
+
+    border:
+        1px solid
+        rgba(0, 0, 0, 0.24);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--accent) 24%,
+            var(--wood-dark)
+        );
+
+    box-shadow:
+        inset 0 0 0 3px
+        rgba(255, 255, 255, 0.025);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   PAPER PAGE
+   ========================================================= */
+
+.journal-paper-page {
+    position: relative;
+
+    z-index: 8;
+
+    min-width: 0;
+
+    min-height:
+        635px;
+
+    overflow: hidden;
+
+    color:
+        var(--journal-ink);
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0 31px,
+            var(--journal-rule) 31px 32px
+        ),
+        var(--journal-paper);
+
+    box-shadow:
+        0 6px 16px
+        rgba(0, 0, 0, 0.18);
+}
+
+
+/* =========================================================
+   LEFT PAGE
+   ========================================================= */
+
+.journal-left-page {
+    border-radius:
+        12px 2px 2px 12px;
+
+    box-shadow:
+        inset -20px 0 24px
+        rgba(70, 55, 44, 0.07),
+
+        inset 3px 0
+        rgba(255, 255, 255, 0.20),
+
+        0 8px 18px
+        rgba(0, 0, 0, 0.18);
+}
+
+
+/* =========================================================
+   RIGHT PAGE
+   ========================================================= */
+
+.journal-right-page {
+    border-radius:
+        2px 12px 12px 2px;
+
+    box-shadow:
+        inset 20px 0 24px
+        rgba(70, 55, 44, 0.07),
+
+        inset -3px 0
+        rgba(255, 255, 255, 0.20),
+
+        0 8px 18px
+        rgba(0, 0, 0, 0.18);
+}
+
+
+/* =========================================================
+   JOURNAL MARGIN LINE
+   ========================================================= */
+
+.journal-left-page::before,
+.journal-right-page::before {
+    content: "";
+
+    position: absolute;
+
+    z-index: 2;
+
+    top: 0;
+    bottom: 0;
+
+    width: 1px;
+
+    background:
+        var(--journal-margin);
+
+    pointer-events: none;
+}
+
+
+.journal-left-page::before {
+    left: 54px;
+}
+
+
+.journal-right-page::before {
+    right: 54px;
+}
+
+
+/* =========================================================
+   PAPER FIBER / AGE
+   ========================================================= */
+
+.journal-paper-page::after {
+    content: "";
+
+    position: absolute;
+
+    z-index: 1;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity:
+        0.20;
+
+    background:
+        radial-gradient(
+            circle at 12% 18%,
+            rgba(86, 67, 53, 0.07)
+            0 1px,
+            transparent 1.5px
+        ),
+        radial-gradient(
+            circle at 68% 42%,
+            rgba(86, 67, 53, 0.05)
+            0 1px,
+            transparent 1.5px
+        ),
+        radial-gradient(
+            circle at 33% 78%,
+            rgba(86, 67, 53, 0.04)
+            0 1px,
+            transparent 1.5px
+        );
+
+    background-size:
+        130px 130px,
+        170px 170px,
+        210px 210px;
+}
+
+
+/* =========================================================
+   PAGE INNER
+   ========================================================= */
+
+.journal-page-inner {
+    position: relative;
+
+    z-index: 4;
+
+    min-height:
+        635px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding:
+        42px 48px 32px;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.journal-page-header {
+    flex:
+        0 0 auto;
+
+    margin-bottom:
+        25px;
+}
+
+
+.journal-page-header span {
+    display: block;
+
+    margin-bottom:
+        6px;
+
+    color:
+        var(--journal-muted);
+
+    font-family:
+        var(--font-ui);
+
+    font-size:
+        0.45rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.12em;
+
+    text-transform:
+        uppercase;
+}
+
+
+.journal-page-header h2 {
+    margin: 0;
+
+    color:
+        var(--journal-ink);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        clamp(
+            2.1rem,
+            4vw,
+            3.6rem
+        );
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        -0.035em;
+
+    line-height:
+        0.95;
+}
+
+
+/* =========================================================
+   PAGE CONTENT
+   ========================================================= */
+
+.journal-page-content {
+    position: relative;
+
+    z-index: 5;
+
+    flex:
+        1 1 auto;
+
+    min-height: 0;
+
+    color:
+        var(--journal-ink);
+
+    font-family:
+        var(--font-journal);
+
+    font-size:
+        1rem;
+
+    line-height:
+        1.75;
+}
+
+
+/* =========================================================
+   BOOK GUTTER
+   ========================================================= */
+
+.journal-book-gutter {
+    position: relative;
+
+    z-index: 12;
+
+    min-height:
+        635px;
+
+    background:
+        linear-gradient(
+            to right,
+            rgba(51, 38, 31, 0.22),
+            rgba(255, 255, 255, 0.08) 42%,
+            rgba(51, 38, 31, 0.18)
+        );
+
+    box-shadow:
+        inset 5px 0 7px
+        rgba(0, 0, 0, 0.12),
+
+        inset -5px 0 7px
+        rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================================
+   PAGE STACKS
+   ========================================================= */
+
+.journal-page-stack {
+    position: absolute;
+
+    z-index: 5;
+
+    bottom: 19px;
+
+    height:
+        calc(100% - 44px);
+
+    width: 14px;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            #d7c9b1 0 2px,
+            #cdbda4 2px 3px
+        );
+
+    opacity:
+        0.72;
+
+    pointer-events:
+        none;
+}
+
+
+.journal-page-stack-left {
+    left: 20px;
+
+    border-radius:
+        7px 0 0 7px;
+}
+
+
+.journal-page-stack-right {
+    right: 20px;
+
+    border-radius:
+        0 7px 7px 0;
+}
+
+
+/* =========================================================
+   PAGE FOOTER
+   ========================================================= */
+
+.journal-page-footer {
+    flex:
+        0 0 auto;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    margin-top:
+        26px;
+
+    padding-top:
+        12px;
+
+    color:
+        var(--journal-muted);
+
+    font-family:
+        var(--font-ui);
+
+    font-size:
+        0.46rem;
+}
+
+
+/* =========================================================
+   WRITE BUTTON
+   ========================================================= */
+
+.journal-write-button {
+    min-height:
+        31px;
+
+    padding:
+        0 11px;
+
+    border:
+        1px solid
+        rgba(67, 53, 46, 0.20);
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(255, 255, 255, 0.16);
+
+    color:
+        var(--journal-ink);
+
+    font-family:
+        var(--font-ui);
+
+    font-size:
+        0.45rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.04em;
+
+    transition:
+        transform 0.15s ease,
+        background-color 0.15s ease;
+}
+
+
+.journal-write-button:hover {
+    transform:
+        translateY(-1px);
+
+    background:
+        rgba(255, 255, 255, 0.28);
+}
+
+
+/* =========================================================
+   OVERVIEW PAGE
+   ========================================================= */
+
+.journal-overview {
+    display: grid;
+
+    gap: 18px;
+}
+
+
+.journal-overview-cover {
+    width:
+        min(
+            190px,
+            72%
+        );
+
+    aspect-ratio:
+        2 / 3;
+
+    margin:
+        0 auto;
+
+    overflow: hidden;
+
+    border-radius:
+        4px 10px 10px 4px;
+
+    box-shadow:
+        0 12px 20px
+        rgba(66, 48, 38, 0.18);
+}
+
+
+.journal-overview-details {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 10px;
+}
+
+
+.journal-overview-detail {
+    padding:
+        10px 11px;
+
+    border:
+        1px solid
+        rgba(80, 64, 53, 0.13);
+
+    border-radius:
+        6px;
+
+    background:
+        rgba(255, 255, 255, 0.12);
+}
+
+
+.journal-overview-detail span {
+    display: block;
+
+    margin-bottom:
+        2px;
+
+    color:
+        var(--journal-muted);
+
+    font-family:
+        var(--font-ui);
+
+    font-size:
+        0.42rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.08em;
+
+    text-transform:
+        uppercase;
+}
+
+
+.journal-overview-detail strong {
+    color:
+        var(--journal-ink);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1rem;
+
+    font-weight:
+        600;
+}
+
+
+/* =========================================================
+   SECTION INTRO
+   ========================================================= */
+
+.journal-section-intro {
+    margin-bottom:
+        22px;
+
+    padding-bottom:
+        14px;
+
+    border-bottom:
+        1px solid
+        rgba(70, 55, 46, 0.13);
+
+    color:
+        var(--journal-muted);
+
+    font-family:
+        var(--font-journal);
+
+    font-size:
+        0.94rem;
+
+    font-style:
+        italic;
+
+    line-height:
+        1.6;
+}
+
+
+/* =========================================================
+   JOURNAL ENTRY LIST
+   ========================================================= */
+
+.journal-entry-list {
+    display: grid;
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   JOURNAL ENTRY
+   ========================================================= */
+
+.journal-entry-card {
+    position: relative;
+
+    padding:
+        3px 0 16px;
+
+    border-bottom:
+        1px solid
+        rgba(66, 53, 46, 0.13);
+}
+
+
+.journal-entry-card:last-child {
+    border-bottom:
+        0;
+}
+
+
+.journal-entry-card h3 {
+    margin:
+        0 0 6px;
+
+    color:
+        var(--journal-ink);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.35rem;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.1;
+}
+
+
+.journal-entry-meta {
+    display: flex;
+
+    gap: 7px;
+
+    margin-bottom:
+        8px;
+
+    flex-wrap: wrap;
+
+    color:
+        var(--journal-muted);
+
+    font-family:
+        var(--font-ui);
+
+    font-size:
+        0.42rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.04em;
+}
+
+
+.journal-entry-body {
+    color:
+        var(--journal-ink);
+
+    font-family:
+        var(--font-journal);
+
+    font-size:
+        0.96rem;
+
+    line-height:
+        1.7;
+
+    white-space:
+        pre-wrap;
+}
+
+
+/* =========================================================
+   ENTRY ACTIONS
+   ========================================================= */
+
+.journal-entry-actions {
+    display: flex;
+
+    gap: 6px;
+
+    margin-top:
+        10px;
+}
+
+
+.journal-entry-action {
+    min-height:
+        28px;
+
+    padding:
+        0 9px;
+
+    border:
+        1px solid
+        rgba(65, 52, 45, 0.15);
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(255, 255, 255, 0.13);
+
+    color:
+        var(--journal-muted);
+
+    font-family:
+        var(--font-ui);
+
+    font-size:
+        0.4rem;
+
+    font-weight:
+        700;
+}
+
+
+.journal-entry-action:hover {
+    background:
+        rgba(255, 255, 255, 0.22);
+
+    color:
+        var(--journal-ink);
+}
+
+
+/* =========================================================
+   EMPTY JOURNAL SECTION
    ========================================================= */
 
 .journal-section-empty {
     min-height:
-        220px;
+        260px;
 
     display: flex;
 
@@ -771,27 +1361,154 @@
     align-items: center;
     justify-content: center;
 
-    padding: 30px;
+    padding:
+        30px 20px;
 
-    text-align: center;
-
-    border:
-        1px dashed
-        var(--border-soft);
-
-    border-radius:
-        var(--radius-medium);
-
-    background:
-        var(--bg-2);
+    text-align:
+        center;
 }
 
 
 .journal-section-empty strong {
-    margin-bottom: 5px;
+    color:
+        var(--journal-ink);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.55rem;
+
+    font-weight:
+        600;
+}
+
+
+.journal-section-empty p {
+    max-width:
+        340px;
+
+    margin:
+        7px 0 0;
 
     color:
-        var(--paper);
+        var(--journal-muted);
+
+    font-family:
+        var(--font-journal);
+
+    font-size:
+        0.92rem;
+
+    font-style:
+        italic;
+
+    line-height:
+        1.55;
+}
+
+
+/* =========================================================
+   QUOTE ENTRY INSIDE BOOK
+   ========================================================= */
+
+.journal-quote-entry {
+    position: relative;
+
+    margin:
+        0 0 20px;
+
+    padding:
+        7px 0 16px 23px;
+
+    border-left:
+        2px solid
+        rgba(116, 81, 67, 0.30);
+}
+
+
+.journal-quote-entry::before {
+    content: "“";
+
+    position: absolute;
+
+    top: -7px;
+    left: 4px;
+
+    color:
+        rgba(90, 67, 56, 0.28);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        2.5rem;
+
+    line-height: 1;
+}
+
+
+.journal-quote-text {
+    color:
+        var(--journal-ink);
+
+    font-family:
+        var(--font-journal);
+
+    font-size:
+        1.06rem;
+
+    font-style:
+        italic;
+
+    line-height:
+        1.65;
+}
+
+
+.journal-quote-location {
+    margin-top:
+        7px;
+
+    color:
+        var(--journal-muted);
+
+    font-family:
+        var(--font-ui);
+
+    font-size:
+        0.42rem;
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   VOCABULARY ENTRY INSIDE BOOK
+   ========================================================= */
+
+.journal-word-entry {
+    margin-bottom:
+        16px;
+
+    padding-bottom:
+        14px;
+
+    border-bottom:
+        1px dashed
+        rgba(70, 56, 47, 0.18);
+}
+
+
+.journal-word-entry strong {
+    display: block;
+
+    margin-bottom:
+        3px;
+
+    color:
+        var(--journal-ink);
 
     font-family:
         var(--font-display);
@@ -804,134 +1521,467 @@
 }
 
 
-.journal-section-empty span {
-    max-width:
-        400px;
+.journal-word-entry em {
+    display: block;
+
+    margin-bottom:
+        6px;
 
     color:
-        var(--muted);
+        var(--journal-muted);
+
+    font-family:
+        var(--font-ui);
 
     font-size:
-        0.55rem;
+        0.42rem;
+}
+
+
+.journal-word-entry p {
+    margin: 0;
+
+    color:
+        var(--journal-ink);
+
+    font-family:
+        var(--font-journal);
+
+    font-size:
+        0.94rem;
 
     line-height:
-        1.5;
+        1.6;
 }
 
 
 /* =========================================================
-   JOURNAL ENTRY MODAL
+   QUESTIONS
    ========================================================= */
 
-#journalEntryModal
-.modal-card {
-    width:
-        min(
-            700px,
-            100%
-        );
-}
+.journal-question-entry {
+    position: relative;
 
+    padding:
+        0 0 16px 27px;
 
-#journalEntryFields {
-    display: grid;
+    margin-bottom:
+        17px;
 
-    gap: 14px;
-}
-
-
-/* =========================================================
-   LARGE TEXTAREA
-   ========================================================= */
-
-#journalEntryFields
-textarea {
-    min-height:
-        220px;
-
-    resize:
-        vertical;
-}
-
-
-/* =========================================================
-   REVIEW SECTION SPECIAL
-   ========================================================= */
-
-.journal-review-rating {
-    display: flex;
-
-    align-items: center;
-
-    gap: 6px;
-
-    color:
-        var(--accent-light);
-
-    font-size:
-        1rem;
-}
-
-
-/* =========================================================
-   CHARACTER / THEME ENTRY GRID
-   ========================================================= */
-
-.journal-compact-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            2,
-            minmax(0, 1fr)
-        );
-
-    gap: 12px;
-}
-
-
-/* =========================================================
-   OVERVIEW NOTES
-   ========================================================= */
-
-.journal-overview-card {
-    padding: 18px;
-
-    border:
+    border-bottom:
         1px solid
-        var(--border-soft);
-
-    border-radius:
-        var(--radius-medium);
-
-    background:
-        var(--bg-2);
+        rgba(70, 56, 47, 0.13);
 }
 
 
-.journal-overview-card h3 {
-    margin-bottom: 7px;
+.journal-question-entry::before {
+    content: "?";
+
+    position: absolute;
+
+    left: 0;
+    top: -2px;
 
     color:
-        var(--paper);
+        rgba(109, 76, 67, 0.58);
 
     font-family:
         var(--font-display);
 
     font-size:
-        1.3rem;
+        1.55rem;
+
+    font-weight:
+        700;
 }
 
 
-.journal-overview-card p {
+/* =========================================================
+   CHARACTERS
+   ========================================================= */
+
+.journal-character-entry {
+    display: grid;
+
+    grid-template-columns:
+        40px minmax(0, 1fr);
+
+    gap: 12px;
+
+    margin-bottom:
+        16px;
+
+    padding-bottom:
+        14px;
+
+    border-bottom:
+        1px solid
+        rgba(69, 55, 46, 0.13);
+}
+
+
+.journal-character-initial {
+    width: 40px;
+    height: 40px;
+
+    display: grid;
+
+    place-items: center;
+
+    border:
+        1px solid
+        rgba(72, 57, 49, 0.18);
+
+    border-radius:
+        50%;
+
     color:
-        var(--text-soft);
+        var(--journal-ink);
+
+    font-family:
+        var(--font-display);
 
     font-size:
-        0.63rem;
+        1.25rem;
+
+    font-weight:
+        600;
+}
+
+
+.journal-character-entry h3 {
+    margin:
+        0 0 4px;
+
+    color:
+        var(--journal-ink);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.25rem;
+}
+
+
+/* =========================================================
+   THEMES
+   ========================================================= */
+
+.journal-theme-entry {
+    display: inline-block;
+
+    margin:
+        0 7px 8px 0;
+
+    padding:
+        6px 10px;
+
+    border:
+        1px solid
+        rgba(71, 56, 47, 0.18);
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(255, 255, 255, 0.11);
+
+    color:
+        var(--journal-ink);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        0.93rem;
+}
+
+
+/* =========================================================
+   REVIEW
+   ========================================================= */
+
+.journal-review-rating {
+    margin-bottom:
+        18px;
+
+    color:
+        #8f653f;
+
+    font-size:
+        1.35rem;
+
+    letter-spacing:
+        0.12em;
+}
+
+
+.journal-review-body {
+    color:
+        var(--journal-ink);
+
+    font-family:
+        var(--font-journal);
+
+    font-size:
+        1rem;
 
     line-height:
-        1.65;
+        1.75;
+
+    white-space:
+        pre-wrap;
+}
+
+
+/* =========================================================
+   THEME — HAUNTED
+   ========================================================= */
+
+body.theme-haunted
+.open-journal-book {
+    --journal-paper:
+        #e7dcc4;
+
+    --journal-paper-2:
+        #d8c8ad;
+
+    --journal-ink:
+        #3b302d;
+
+    --journal-muted:
+        #74625b;
+
+    --journal-rule:
+        rgba(76, 58, 51, 0.11);
+
+    --journal-margin:
+        rgba(133, 72, 73, 0.18);
+}
+
+
+body.theme-haunted
+.open-journal-book {
+    border-radius:
+        9px 9px 15px 15px;
+
+    background:
+        #37271f;
+}
+
+
+body.theme-haunted
+.journal-paper-page {
+    border-radius:
+        3px;
+}
+
+
+body.theme-haunted
+.journal-bookmark {
+    border-radius:
+        3px 3px 0 0;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.08em;
+}
+
+
+/* =========================================================
+   THEME — AUTUMN
+   ========================================================= */
+
+body.theme-autumn
+.open-journal-book {
+    --journal-paper:
+        #efe1c7;
+
+    --journal-paper-2:
+        #e3d1b0;
+
+    --journal-ink:
+        #46362a;
+
+    --journal-muted:
+        #806b55;
+
+    --journal-rule:
+        rgba(120, 82, 53, 0.11);
+
+    --journal-margin:
+        rgba(172, 91, 59, 0.17);
+
+    background:
+        #6d4b30;
+}
+
+
+body.theme-autumn
+.journal-paper-page {
+    border-radius:
+        10px;
+}
+
+
+body.theme-autumn
+.journal-bookmark {
+    border-radius:
+        12px 12px 0 0;
+}
+
+
+/* =========================================================
+   THEME — FOREST
+   ========================================================= */
+
+body.theme-forest
+.open-journal-book {
+    --journal-paper:
+        #e5e3ca;
+
+    --journal-paper-2:
+        #d6d5b9;
+
+    --journal-ink:
+        #384033;
+
+    --journal-muted:
+        #65705a;
+
+    --journal-rule:
+        rgba(67, 80, 57, 0.11);
+
+    --journal-margin:
+        rgba(92, 115, 79, 0.19);
+
+    background:
+        #3d4231;
+}
+
+
+body.theme-forest
+.journal-paper-page {
+    border-radius:
+        13px;
+}
+
+
+body.theme-forest
+.journal-bookmark {
+    border-radius:
+        14px 14px 0 0;
+}
+
+
+/* =========================================================
+   THEME — RETRO HORROR
+   ========================================================= */
+
+body.theme-retro
+.open-journal-book {
+    --journal-paper:
+        #dfd1b4;
+
+    --journal-paper-2:
+        #cdbb9c;
+
+    --journal-ink:
+        #332c2a;
+
+    --journal-muted:
+        #6e5f57;
+
+    --journal-rule:
+        rgba(73, 57, 52, 0.13);
+
+    --journal-margin:
+        rgba(153, 59, 58, 0.22);
+
+    border-radius:
+        2px;
+
+    background:
+        #33292a;
+
+    box-shadow:
+        10px 10px 0
+        rgba(0, 0, 0, 0.24);
+}
+
+
+body.theme-retro
+.journal-paper-page,
+body.theme-retro
+.journal-bookmark {
+    border-radius:
+        1px;
+}
+
+
+body.theme-retro
+.journal-page-header h2 {
+    font-family:
+        var(--font-display);
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.01em;
+}
+
+
+/* =========================================================
+   THEME — PASTEL GHOSTS
+   ========================================================= */
+
+body.theme-ghosts
+.open-journal-book {
+    --journal-paper:
+        #f6eee7;
+
+    --journal-paper-2:
+        #eaded7;
+
+    --journal-ink:
+        #55464c;
+
+    --journal-muted:
+        #86727b;
+
+    --journal-rule:
+        rgba(111, 87, 96, 0.09);
+
+    --journal-margin:
+        rgba(183, 121, 142, 0.16);
+
+    border-radius:
+        28px;
+
+    background:
+        #aaa08f;
+
+    box-shadow:
+        0 30px 55px
+        rgba(91, 73, 79, 0.18);
+}
+
+
+body.theme-ghosts
+.journal-paper-page {
+    border-radius:
+        18px;
+}
+
+
+body.theme-ghosts
+.journal-bookmark {
+    border-radius:
+        18px 18px 0 0;
 }
 
 
@@ -939,72 +1989,49 @@ textarea {
    TABLET
    ========================================================= */
 
-@media (max-width: 980px) {
+@media (max-width: 1050px) {
 
-    .journal-workspace {
+    .journal-library {
         grid-template-columns:
-            230px minmax(0, 1fr);
-
-        gap: 18px;
+            repeat(
+                3,
+                minmax(0, 1fr)
+            );
     }
 
 
-    .journal-book-panel {
-        top: 80px;
+    .open-journal-book {
+        min-height:
+            630px;
+
+        padding:
+            20px 22px 26px;
     }
 
 
-    .journal-book-panel h2 {
-        font-size:
-            1.7rem;
+    .journal-paper-page,
+    .journal-page-inner,
+    .journal-book-gutter {
+        min-height:
+            575px;
+    }
+
+
+    .journal-page-inner {
+        padding:
+            36px 34px 28px;
     }
 
 }
 
 
 /* =========================================================
-   MOBILE
+   MOBILE BOOK MODE
    ========================================================= */
 
 @media (max-width: 760px) {
 
-    .journal-workspace {
-        grid-template-columns:
-            1fr;
-    }
-
-
-    .journal-book-panel {
-        position:
-            relative;
-
-        top: auto;
-
-        display: grid;
-
-        grid-template-columns:
-            115px minmax(0, 1fr);
-
-        gap: 16px;
-
-        align-items: center;
-    }
-
-
-    .journal-book-cover {
-        width: 115px;
-
-        margin:
-            0;
-    }
-
-
-    .journal-book-panel-content {
-        min-width: 0;
-    }
-
-
-    .journal-book-meta {
+    .journal-library {
         grid-template-columns:
             repeat(
                 2,
@@ -1012,28 +2039,122 @@ textarea {
             );
 
         gap:
-            0 12px;
+            20px 12px;
     }
 
 
-    .journal-section-list {
+    .open-book-toolbar {
         grid-template-columns:
-            1fr;
+            1fr 1fr;
+
+        gap:
+            10px;
     }
 
 
-    .journal-section-header {
-        align-items:
-            flex-start;
+    .open-book-identity {
+        grid-column:
+            1 / -1;
 
-        flex-direction:
-            column;
+        grid-row:
+            1;
+
+        order:
+            -1;
     }
 
 
-    .journal-compact-grid {
-        grid-template-columns:
-            1fr;
+    .journal-bookmarks {
+        padding:
+            0 8px;
+    }
+
+
+    .journal-bookmark {
+        min-height:
+            40px;
+
+        padding:
+            8px 10px 10px;
+    }
+
+
+    /*
+       Mobile intentionally becomes a single-page reader.
+       The left page is hidden and the right page becomes
+       the active journal page.
+    */
+
+    .open-journal-book {
+        display: block;
+
+        min-height:
+            620px;
+
+        padding:
+            16px 13px 22px;
+
+        border-radius:
+            18px;
+    }
+
+
+    .journal-left-page,
+    .journal-book-gutter,
+    .journal-page-stack-left {
+        display:
+            none;
+    }
+
+
+    .journal-right-page {
+        min-height:
+            575px;
+
+        border-radius:
+            10px;
+
+        box-shadow:
+            0 8px 18px
+            rgba(0, 0, 0, 0.19);
+    }
+
+
+    .journal-page-inner {
+        min-height:
+            575px;
+
+        padding:
+            38px 35px 29px;
+    }
+
+
+    .journal-right-page::before {
+        right:
+            auto;
+
+        left:
+            40px;
+    }
+
+
+    .journal-page-stack-right {
+        left: 17px;
+        right: 17px;
+        bottom: 10px;
+
+        width: auto;
+        height: 8px;
+
+        border-radius:
+            0 0 7px 7px;
+
+        background:
+            repeating-linear-gradient(
+                to right,
+                #d7c9b1 0 2px,
+                #cdbda4 2px 3px
+            );
     }
 
 }
@@ -1045,66 +2166,117 @@ textarea {
 
 @media (max-width: 430px) {
 
-    .journal-book-panel {
+    .journal-library {
         grid-template-columns:
-            90px minmax(0, 1fr);
-
-        padding:
-            13px;
+            1fr 1fr;
     }
 
 
     .journal-book-cover {
         width:
-            90px;
+            min(
+                150px,
+                100%
+            );
     }
 
 
-    .journal-book-panel h2 {
+    .journal-book-meta h3 {
         font-size:
-            1.35rem;
+            1.15rem;
     }
 
 
-    .journal-book-author {
+    .journal-count-pill {
         font-size:
-            0.86rem;
+            0.39rem;
+
+        padding:
+            3px 6px;
     }
 
 
-    .journal-book-meta {
+    .open-book-toolbar {
+        padding:
+            10px;
+    }
+
+
+    .open-book-toolbar
+    .secondary-button {
+        min-width: 0;
+
+        padding:
+            0 9px;
+
+        font-size:
+            0.42rem;
+    }
+
+
+    .journal-bookmarks {
+        margin-left:
+            -6px;
+
+        margin-right:
+            -6px;
+    }
+
+
+    .journal-bookmark {
+        padding-left:
+            9px;
+
+        padding-right:
+            9px;
+
+        font-size:
+            0.42rem;
+    }
+
+
+    .open-journal-book {
+        margin-left:
+            -5px;
+
+        margin-right:
+            -5px;
+
+        width:
+            calc(100% + 10px);
+
+        padding:
+            10px 7px 17px;
+    }
+
+
+    .journal-page-inner {
+        padding:
+            33px 26px 25px;
+    }
+
+
+    .journal-right-page::before {
+        left:
+            30px;
+    }
+
+
+    .journal-page-header h2 {
+        font-size:
+            2rem;
+    }
+
+
+    .journal-page-content {
+        font-size:
+            0.94rem;
+    }
+
+
+    .journal-overview-details {
         grid-template-columns:
             1fr;
-    }
-
-
-    .journal-contents,
-    .journal-section {
-        padding:
-            18px 14px;
-    }
-
-
-    .journal-section-heading h2 {
-        font-size:
-            2.4rem;
-    }
-
-
-    .journal-entry-header {
-        flex-direction:
-            column;
-    }
-
-
-    .journal-entry-actions {
-        width: 100%;
-    }
-
-
-    .journal-entry-action {
-        flex:
-            1 1 auto;
     }
 
 }
@@ -1115,14 +2287,15 @@ textarea {
    ========================================================= */
 
 .reduce-motion
-.journal-section-button {
-    transition:
-        none !important;
+.journal-book-card:hover
+.journal-book-cover {
+    transform:
+        none;
 }
 
 
 .reduce-motion
-.journal-section-button:hover {
-    transform:
-        none;
+.journal-bookmark {
+    transition:
+        none !important;
 }
