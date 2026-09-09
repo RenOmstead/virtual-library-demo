@@ -1,10 +1,18 @@
 /* =========================================================
    NOVELLOW
    SUPABASE.JS
+   VERSION 13
 
-   Supabase client
    Authentication
-   Profile access
+   Profiles
+
+   Library database:
+   - Shelves
+   - Books
+   - Journal entries
+   - Quotes
+   - Vocabulary
+   - User settings
    ========================================================= */
 
 (() => {
@@ -13,7 +21,7 @@
 
 
     /* =====================================================
-       GLOBAL NAMESPACE
+       NAMESPACE
        ===================================================== */
 
     window.NOVELLOW =
@@ -38,7 +46,7 @@
 
 
     /* =====================================================
-       CHECK LIBRARY
+       CLIENT
        ===================================================== */
 
     if (
@@ -48,52 +56,104 @@
     ) {
 
         console.error(
-            "Novellow: Supabase browser library did not load."
+            "Novellow: Supabase library is not loaded."
         );
-
-
-        Novellow.supabase =
-            null;
-
 
         return;
 
     }
 
 
-    /* =====================================================
-       CREATE CLIENT
-       ===================================================== */
-
     const client =
         window.supabase.createClient(
-
             SUPABASE_URL,
-
             SUPABASE_ANON_KEY,
-
             {
-
                 auth: {
-
-                    persistSession:
-                        true,
-
-                    autoRefreshToken:
-                        true,
-
-                    detectSessionInUrl:
-                        true
-
+                    persistSession: true,
+                    autoRefreshToken: true,
+                    detectSessionInUrl: true
                 }
-
             }
-
         );
 
 
     /* =====================================================
-       GET SESSION
+       GENERIC HELPERS
+       ===================================================== */
+
+    function throwIfError(
+        error,
+        context = "Supabase request"
+    ) {
+
+        if (!error) {
+
+            return;
+
+        }
+
+
+        console.error(
+            `Novellow: ${context} failed.`,
+            error
+        );
+
+
+        throw error;
+
+    }
+
+
+    function cleanObject(object) {
+
+        return Object.fromEntries(
+            Object.entries(
+                object
+            ).filter(
+                ([, value]) =>
+                    value !== undefined
+            )
+        );
+
+    }
+
+
+    async function requireUser() {
+
+        const {
+            data,
+            error
+        } =
+            await client.auth.getUser();
+
+
+        throwIfError(
+            error,
+            "Get current user"
+        );
+
+
+        const user =
+            data?.user;
+
+
+        if (!user) {
+
+            throw new Error(
+                "You must be signed in to use your Novellow library."
+            );
+
+        }
+
+
+        return user;
+
+    }
+
+
+    /* =====================================================
+       AUTH
        ===================================================== */
 
     async function getSession() {
@@ -102,21 +162,13 @@
             data,
             error
         } =
-            await client.auth
-                .getSession();
+            await client.auth.getSession();
 
 
-        if (error) {
-
-            console.error(
-                "Novellow: session lookup failed:",
-                error
-            );
-
-
-            throw error;
-
-        }
+        throwIfError(
+            error,
+            "Get session"
+        );
 
 
         return (
@@ -127,31 +179,19 @@
     }
 
 
-    /* =====================================================
-       GET USER
-       ===================================================== */
-
     async function getUser() {
 
         const {
             data,
             error
         } =
-            await client.auth
-                .getUser();
+            await client.auth.getUser();
 
 
-        if (error) {
-
-            console.error(
-                "Novellow: user lookup failed:",
-                error
-            );
-
-
-            return null;
-
-        }
+        throwIfError(
+            error,
+            "Get user"
+        );
 
 
         return (
@@ -162,70 +202,53 @@
     }
 
 
-    /* =====================================================
-       SIGN UP
-       ===================================================== */
+    async function getAuthSnapshot() {
+
+        const session =
+            await getSession();
+
+
+        return {
+
+            session,
+
+            user:
+                session?.user ||
+                null
+
+        };
+
+    }
+
 
     async function signUp({
         email,
         password,
-        displayName = ""
+        displayName
     }) {
-
-        const cleanEmail =
-            String(
-                email ||
-                ""
-            )
-                .trim()
-                .toLowerCase();
-
-
-        const cleanDisplayName =
-            String(
-                displayName ||
-                ""
-            )
-                .trim();
-
 
         const {
             data,
             error
         } =
-            await client.auth
-                .signUp({
+            await client.auth.signUp({
+                email,
+                password,
 
-                    email:
-                        cleanEmail,
-
-                    password,
-
-                    options: {
-
-                        data: {
-
-                            display_name:
-                                cleanDisplayName
-
-                        }
-
+                options: {
+                    data: {
+                        display_name:
+                            displayName ||
+                            ""
                     }
-
-                });
-
-
-        if (error) {
-
-            console.error(
-                "Novellow: signup failed:",
-                error
-            );
+                }
+            });
 
 
-            throw error;
-
-        }
+        throwIfError(
+            error,
+            "Sign up"
+        );
 
 
         return data;
@@ -233,23 +256,10 @@
     }
 
 
-    /* =====================================================
-       SIGN IN
-       ===================================================== */
-
     async function signIn({
         email,
         password
     }) {
-
-        const cleanEmail =
-            String(
-                email ||
-                ""
-            )
-                .trim()
-                .toLowerCase();
-
 
         const {
             data,
@@ -257,26 +267,15 @@
         } =
             await client.auth
                 .signInWithPassword({
-
-                    email:
-                        cleanEmail,
-
+                    email,
                     password
-
                 });
 
 
-        if (error) {
-
-            console.error(
-                "Novellow: sign in failed:",
-                error
-            );
-
-
-            throw error;
-
-        }
+        throwIfError(
+            error,
+            "Sign in"
+        );
 
 
         return data;
@@ -284,54 +283,25 @@
     }
 
 
-    /* =====================================================
-       SIGN OUT
-       ===================================================== */
-
     async function signOut() {
 
         const {
             error
         } =
-            await client.auth
-                .signOut();
+            await client.auth.signOut();
 
 
-        if (error) {
-
-            console.error(
-                "Novellow: sign out failed:",
-                error
-            );
-
-
-            throw error;
-
-        }
-
-
-        return true;
+        throwIfError(
+            error,
+            "Sign out"
+        );
 
     }
 
 
-    /* =====================================================
-       AUTH STATE LISTENER
-       ===================================================== */
-
     function onAuthStateChange(
         callback
     ) {
-
-        if (
-            typeof callback !==
-            "function"
-        ) {
-
-            return null;
-
-        }
-
 
         return client.auth
             .onAuthStateChange(
@@ -342,19 +312,12 @@
 
 
     /* =====================================================
-       GET PROFILE
+       PROFILE
        ===================================================== */
 
     async function getProfile(
         userId
     ) {
-
-        if (!userId) {
-
-            return null;
-
-        }
-
 
         const {
             data,
@@ -374,17 +337,10 @@
                 .maybeSingle();
 
 
-        if (error) {
-
-            console.error(
-                "Novellow: profile lookup failed:",
-                error
-            );
-
-
-            throw error;
-
-        }
+        throwIfError(
+            error,
+            "Load profile"
+        );
 
 
         return (
@@ -395,115 +351,101 @@
     }
 
 
-    /* =====================================================
-       UPDATE PROFILE
-       ===================================================== */
+    async function ensureProfile(
+        user
+    ) {
+
+        if (!user) {
+
+            return null;
+
+        }
+
+
+        const existing =
+            await getProfile(
+                user.id
+            );
+
+
+        if (existing) {
+
+            return existing;
+
+        }
+
+
+        const displayName =
+            user.user_metadata
+                ?.display_name ||
+            user.email
+                ?.split("@")[0] ||
+            "Reader";
+
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "profiles"
+                )
+                .upsert(
+                    {
+                        id:
+                            user.id,
+
+                        display_name:
+                            displayName,
+
+                        library_name:
+                            "My Library"
+                    },
+                    {
+                        onConflict:
+                            "id"
+                    }
+                )
+                .select(
+                    "*"
+                )
+                .single();
+
+
+        throwIfError(
+            error,
+            "Create profile"
+        );
+
+
+        return data;
+
+    }
+
 
     async function updateProfile(
         userId,
-        updates = {}
+        updates
     ) {
 
-        if (!userId) {
+        const payload =
+            cleanObject({
+                display_name:
+                    updates.display_name,
 
-            throw new Error(
-                "A user ID is required to update a profile."
-            );
+                username:
+                    updates.username,
 
-        }
+                avatar_url:
+                    updates.avatar_url,
 
+                bio:
+                    updates.bio,
 
-        const allowedUpdates =
-            {};
-
-
-        if (
-            Object.prototype.hasOwnProperty.call(
-                updates,
-                "display_name"
-            )
-        ) {
-
-            allowedUpdates.display_name =
-                String(
-                    updates.display_name ||
-                    ""
-                )
-                    .trim();
-
-        }
-
-
-        if (
-            Object.prototype.hasOwnProperty.call(
-                updates,
-                "username"
-            )
-        ) {
-
-            const username =
-                String(
-                    updates.username ||
-                    ""
-                )
-                    .trim()
-                    .toLowerCase();
-
-
-            allowedUpdates.username =
-                username ||
-                null;
-
-        }
-
-
-        if (
-            Object.prototype.hasOwnProperty.call(
-                updates,
-                "avatar_url"
-            )
-        ) {
-
-            allowedUpdates.avatar_url =
-                updates.avatar_url ||
-                null;
-
-        }
-
-
-        if (
-            Object.prototype.hasOwnProperty.call(
-                updates,
-                "bio"
-            )
-        ) {
-
-            allowedUpdates.bio =
-                String(
-                    updates.bio ||
-                    ""
-                )
-                    .trim();
-
-        }
-
-
-        if (
-            Object.prototype.hasOwnProperty.call(
-                updates,
-                "library_name"
-            )
-        ) {
-
-            allowedUpdates.library_name =
-                String(
-                    updates.library_name ||
-                    ""
-                )
-                    .trim() ||
-                "My Library";
-
-        }
+                library_name:
+                    updates.library_name
+            });
 
 
         const {
@@ -515,27 +457,22 @@
                     "profiles"
                 )
                 .update(
-                    allowedUpdates
+                    payload
                 )
                 .eq(
                     "id",
                     userId
                 )
-                .select()
+                .select(
+                    "*"
+                )
                 .single();
 
 
-        if (error) {
-
-            console.error(
-                "Novellow: profile update failed:",
-                error
-            );
-
-
-            throw error;
-
-        }
+        throwIfError(
+            error,
+            "Update profile"
+        );
 
 
         return data;
@@ -544,42 +481,13 @@
 
 
     /* =====================================================
-       ENSURE PROFILE EXISTS
+       SHELVES
        ===================================================== */
 
-    async function ensureProfile(
-        user
-    ) {
+    async function getShelves() {
 
-        if (
-            !user?.id
-        ) {
-
-            return null;
-
-        }
-
-
-        let profile =
-            await getProfile(
-                user.id
-            );
-
-
-        if (profile) {
-
-            return profile;
-
-        }
-
-
-        const displayName =
-            String(
-                user.user_metadata
-                    ?.display_name ||
-                ""
-            )
-                .trim();
+        const user =
+            await requireUser();
 
 
         const {
@@ -588,53 +496,1139 @@
         } =
             await client
                 .from(
-                    "profiles"
+                    "shelves"
                 )
-                .insert({
+                .select(
+                    "*"
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                )
+                .order(
+                    "position",
+                    {
+                        ascending:
+                            true
+                    }
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:
+                            true
+                    }
+                );
 
-                    id:
-                        user.id,
 
-                    display_name:
-                        displayName,
+        throwIfError(
+            error,
+            "Load shelves"
+        );
 
-                    library_name:
-                        "My Library"
 
-                })
-                .select()
+        return (
+            data ||
+            []
+        );
+
+    }
+
+
+    async function saveShelf(
+        shelf
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        const payload =
+            cleanObject({
+                id:
+                    shelf.id,
+
+                user_id:
+                    user.id,
+
+                name:
+                    shelf.name ||
+                    "Shelf",
+
+                description:
+                    shelf.description ||
+                    "",
+
+                material:
+                    shelf.material ||
+                    "wood",
+
+                mood:
+                    shelf.mood ||
+                    "",
+
+                layout:
+                    shelf.layout ||
+                    "",
+
+                sort_mode:
+                    shelf.sortMode ||
+                    shelf.sort_mode ||
+                    "manual",
+
+                position:
+                    Number(
+                        shelf.position ||
+                        0
+                    ),
+
+                decorations:
+                    shelf.decorations ||
+                    {}
+            });
+
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "shelves"
+                )
+                .upsert(
+                    payload,
+                    {
+                        onConflict:
+                            "id"
+                    }
+                )
+                .select(
+                    "*"
+                )
                 .single();
 
 
-        if (error) {
+        throwIfError(
+            error,
+            "Save shelf"
+        );
 
-            /*
-             * The database signup trigger should normally create
-             * the profile first. If another request created it
-             * between our SELECT and INSERT, simply fetch it again.
-             */
 
-            if (
-                error.code ===
-                "23505"
-            ) {
+        return data;
 
-                return await getProfile(
+    }
+
+
+    async function deleteShelf(
+        shelfId
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        const {
+            error
+        } =
+            await client
+                .from(
+                    "shelves"
+                )
+                .delete()
+                .eq(
+                    "id",
+                    shelfId
+                )
+                .eq(
+                    "user_id",
                     user.id
                 );
 
-            }
+
+        throwIfError(
+            error,
+            "Delete shelf"
+        );
+
+    }
 
 
-            console.error(
-                "Novellow: profile creation failed:",
-                error
+    /* =====================================================
+       BOOKS
+       ===================================================== */
+
+    async function getBooks() {
+
+        const user =
+            await requireUser();
+
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "books"
+                )
+                .select(
+                    "*"
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                )
+                .order(
+                    "position",
+                    {
+                        ascending:
+                            true
+                    }
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:
+                            true
+                    }
+                );
+
+
+        throwIfError(
+            error,
+            "Load books"
+        );
+
+
+        return (
+            data ||
+            []
+        );
+
+    }
+
+
+    async function getBook(
+        bookId
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "books"
+                )
+                .select(
+                    "*"
+                )
+                .eq(
+                    "id",
+                    bookId
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                )
+                .maybeSingle();
+
+
+        throwIfError(
+            error,
+            "Load book"
+        );
+
+
+        return (
+            data ||
+            null
+        );
+
+    }
+
+
+    async function saveBook(
+        book
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        const shelfId =
+            book.shelf_id ||
+            book.shelfId ||
+            null;
+
+
+        const totalPages =
+            Number(
+                book.total_pages ??
+                book.pages ??
+                0
             );
 
 
-            throw error;
+        const currentPage =
+            Number(
+                book.current_page ??
+                book.currentPage ??
+                0
+            );
+
+
+        const timesRead =
+            Number(
+                book.times_read ??
+                book.timesRead ??
+                0
+            );
+
+
+        const publicationYearRaw =
+            book.publication_year ??
+            book.year ??
+            null;
+
+
+        const publicationYear =
+            publicationYearRaw ===
+                "" ||
+            publicationYearRaw ===
+                null
+                ? null
+                : Number(
+                    publicationYearRaw
+                );
+
+
+        const ratingRaw =
+            book.rating;
+
+
+        const rating =
+            ratingRaw ===
+                "" ||
+            ratingRaw ===
+                null ||
+            Number(
+                ratingRaw
+            ) === 0
+                ? null
+                : Number(
+                    ratingRaw
+                );
+
+
+        const payload =
+            cleanObject({
+                id:
+                    book.id,
+
+                user_id:
+                    user.id,
+
+                shelf_id:
+                    shelfId,
+
+                title:
+                    book.title ||
+                    "Untitled Book",
+
+                author:
+                    book.author ||
+                    "",
+
+                genre:
+                    book.genre ||
+                    "",
+
+                publication_year:
+                    Number.isFinite(
+                        publicationYear
+                    )
+                        ? publicationYear
+                        : null,
+
+                isbn:
+                    book.isbn ||
+                    "",
+
+                series:
+                    book.series ||
+                    "",
+
+                total_pages:
+                    Number.isFinite(
+                        totalPages
+                    )
+                        ? totalPages
+                        : 0,
+
+                current_page:
+                    Number.isFinite(
+                        currentPage
+                    )
+                        ? currentPage
+                        : 0,
+
+                status:
+                    book.status ||
+                    "want",
+
+                rating,
+
+                started_at:
+                    book.started_at ||
+                    book.started ||
+                    null,
+
+                finished_at:
+                    book.finished_at ||
+                    book.finished ||
+                    null,
+
+                times_read:
+                    Number.isFinite(
+                        timesRead
+                    )
+                        ? timesRead
+                        : 0,
+
+                cover_url:
+                    book.cover_url ||
+                    "",
+
+                design:
+                    book.design ||
+                    {},
+
+                position:
+                    Number(
+                        book.position ||
+                        0
+                    )
+            });
+
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "books"
+                )
+                .upsert(
+                    payload,
+                    {
+                        onConflict:
+                            "id"
+                    }
+                )
+                .select(
+                    "*"
+                )
+                .single();
+
+
+        throwIfError(
+            error,
+            "Save book"
+        );
+
+
+        return data;
+
+    }
+
+
+    async function deleteBook(
+        bookId
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        const {
+            error
+        } =
+            await client
+                .from(
+                    "books"
+                )
+                .delete()
+                .eq(
+                    "id",
+                    bookId
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                );
+
+
+        throwIfError(
+            error,
+            "Delete book"
+        );
+
+    }
+
+
+    /* =====================================================
+       JOURNAL ENTRIES
+       ===================================================== */
+
+    async function getJournalEntries(
+        bookId = null
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        let query =
+            client
+                .from(
+                    "journal_entries"
+                )
+                .select(
+                    "*"
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:
+                            true
+                    }
+                );
+
+
+        if (bookId) {
+
+            query =
+                query.eq(
+                    "book_id",
+                    bookId
+                );
 
         }
+
+
+        const {
+            data,
+            error
+        } =
+            await query;
+
+
+        throwIfError(
+            error,
+            "Load journal entries"
+        );
+
+
+        return (
+            data ||
+            []
+        );
+
+    }
+
+
+    async function saveJournalEntry(
+        entry
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        const payload =
+            cleanObject({
+                id:
+                    entry.id,
+
+                user_id:
+                    user.id,
+
+                book_id:
+                    entry.book_id ||
+                    entry.bookId,
+
+                section:
+                    entry.section ||
+                    "notes",
+
+                title:
+                    entry.title ||
+                    "",
+
+                body:
+                    entry.body ||
+                    "",
+
+                page_number:
+                    entry.page_number ??
+                    entry.pageNumber ??
+                    null,
+
+                chapter:
+                    entry.chapter ||
+                    "",
+
+                metadata:
+                    entry.metadata ||
+                    {}
+            });
+
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "journal_entries"
+                )
+                .upsert(
+                    payload,
+                    {
+                        onConflict:
+                            "id"
+                    }
+                )
+                .select(
+                    "*"
+                )
+                .single();
+
+
+        throwIfError(
+            error,
+            "Save journal entry"
+        );
+
+
+        return data;
+
+    }
+
+
+    async function deleteJournalEntry(
+        entryId
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        const {
+            error
+        } =
+            await client
+                .from(
+                    "journal_entries"
+                )
+                .delete()
+                .eq(
+                    "id",
+                    entryId
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                );
+
+
+        throwIfError(
+            error,
+            "Delete journal entry"
+        );
+
+    }
+
+
+    /* =====================================================
+       QUOTES
+       ===================================================== */
+
+    async function getQuotes(
+        bookId = null
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        let query =
+            client
+                .from(
+                    "quotes"
+                )
+                .select(
+                    "*"
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:
+                            true
+                    }
+                );
+
+
+        if (bookId) {
+
+            query =
+                query.eq(
+                    "book_id",
+                    bookId
+                );
+
+        }
+
+
+        const {
+            data,
+            error
+        } =
+            await query;
+
+
+        throwIfError(
+            error,
+            "Load quotes"
+        );
+
+
+        return (
+            data ||
+            []
+        );
+
+    }
+
+
+    async function saveQuote(
+        quote
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        const payload =
+            cleanObject({
+                id:
+                    quote.id,
+
+                user_id:
+                    user.id,
+
+                book_id:
+                    quote.book_id ||
+                    quote.bookId,
+
+                quote_text:
+                    quote.quote_text ||
+                    quote.text ||
+                    quote.quote ||
+                    "",
+
+                page_number:
+                    quote.page_number ??
+                    quote.pageNumber ??
+                    null,
+
+                chapter:
+                    quote.chapter ||
+                    "",
+
+                thoughts:
+                    quote.thoughts ||
+                    ""
+            });
+
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "quotes"
+                )
+                .upsert(
+                    payload,
+                    {
+                        onConflict:
+                            "id"
+                    }
+                )
+                .select(
+                    "*"
+                )
+                .single();
+
+
+        throwIfError(
+            error,
+            "Save quote"
+        );
+
+
+        return data;
+
+    }
+
+
+    async function deleteQuote(
+        quoteId
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        const {
+            error
+        } =
+            await client
+                .from(
+                    "quotes"
+                )
+                .delete()
+                .eq(
+                    "id",
+                    quoteId
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                );
+
+
+        throwIfError(
+            error,
+            "Delete quote"
+        );
+
+    }
+
+
+    /* =====================================================
+       VOCABULARY
+       ===================================================== */
+
+    async function getVocabulary(
+        bookId = null
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        let query =
+            client
+                .from(
+                    "vocabulary"
+                )
+                .select(
+                    "*"
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:
+                            true
+                    }
+                );
+
+
+        if (bookId) {
+
+            query =
+                query.eq(
+                    "book_id",
+                    bookId
+                );
+
+        }
+
+
+        const {
+            data,
+            error
+        } =
+            await query;
+
+
+        throwIfError(
+            error,
+            "Load vocabulary"
+        );
+
+
+        return (
+            data ||
+            []
+        );
+
+    }
+
+
+    async function saveVocabularyEntry(
+        entry
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        const payload =
+            cleanObject({
+                id:
+                    entry.id,
+
+                user_id:
+                    user.id,
+
+                book_id:
+                    entry.book_id ||
+                    entry.bookId,
+
+                word:
+                    entry.word ||
+                    "",
+
+                definition:
+                    entry.definition ||
+                    "",
+
+                part_of_speech:
+                    entry.part_of_speech ||
+                    entry.partOfSpeech ||
+                    "",
+
+                context:
+                    entry.context ||
+                    "",
+
+                page_number:
+                    entry.page_number ??
+                    entry.pageNumber ??
+                    null
+            });
+
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "vocabulary"
+                )
+                .upsert(
+                    payload,
+                    {
+                        onConflict:
+                            "id"
+                    }
+                )
+                .select(
+                    "*"
+                )
+                .single();
+
+
+        throwIfError(
+            error,
+            "Save vocabulary entry"
+        );
+
+
+        return data;
+
+    }
+
+
+    async function deleteVocabularyEntry(
+        entryId
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        const {
+            error
+        } =
+            await client
+                .from(
+                    "vocabulary"
+                )
+                .delete()
+                .eq(
+                    "id",
+                    entryId
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                );
+
+
+        throwIfError(
+            error,
+            "Delete vocabulary entry"
+        );
+
+    }
+
+
+    /* =====================================================
+       USER SETTINGS
+       ===================================================== */
+
+    async function getUserSettings() {
+
+        const user =
+            await requireUser();
+
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "user_settings"
+                )
+                .select(
+                    "*"
+                )
+                .eq(
+                    "user_id",
+                    user.id
+                )
+                .maybeSingle();
+
+
+        throwIfError(
+            error,
+            "Load user settings"
+        );
+
+
+        return (
+            data ||
+            null
+        );
+
+    }
+
+
+    async function saveUserSettings(
+        settings
+    ) {
+
+        const user =
+            await requireUser();
+
+
+        const payload =
+            cleanObject({
+                user_id:
+                    user.id,
+
+                theme:
+                    settings.theme ||
+                    "haunted",
+
+                decoration_density:
+                    settings.decorationDensity ||
+                    settings.decoration_density ||
+                    "medium",
+
+                annual_reading_goal:
+                    Number(
+                        settings.annualReadingGoal ??
+                        settings.annual_reading_goal ??
+                        0
+                    ),
+
+                ambience_sound:
+                    Boolean(
+                        settings.ambienceSound ??
+                        settings.ambience_sound ??
+                        false
+                    ),
+
+                ambience_animation:
+                    Boolean(
+                        settings.ambienceAnimation ??
+                        settings.ambience_animation ??
+                        true
+                    ),
+
+                default_shelf_sort:
+                    settings.defaultShelfSort ||
+                    settings.default_shelf_sort ||
+                    "manual",
+
+                settings:
+                    settings.settings ||
+                    {}
+            });
+
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "user_settings"
+                )
+                .upsert(
+                    payload,
+                    {
+                        onConflict:
+                            "user_id"
+                    }
+                )
+                .select(
+                    "*"
+                )
+                .single();
+
+
+        throwIfError(
+            error,
+            "Save user settings"
+        );
 
 
         return data;
@@ -643,50 +1637,38 @@
 
 
     /* =====================================================
-       CURRENT AUTH SNAPSHOT
+       COMPLETE LIBRARY LOAD
+
+       Eventually app.js will call this once after login.
        ===================================================== */
 
-    async function getAuthSnapshot() {
+    async function loadLibrary() {
 
-        const session =
-            await getSession();
-
-
-        if (
-            !session?.user
-        ) {
-
-            return {
-
-                session:
-                    null,
-
-                user:
-                    null,
-
-                profile:
-                    null
-
-            };
-
-        }
-
-
-        const profile =
-            await ensureProfile(
-                session.user
-            );
+        const [
+            shelves,
+            books,
+            journalEntries,
+            quotes,
+            vocabulary,
+            settings
+        ] =
+            await Promise.all([
+                getShelves(),
+                getBooks(),
+                getJournalEntries(),
+                getQuotes(),
+                getVocabulary(),
+                getUserSettings()
+            ]);
 
 
         return {
-
-            session,
-
-            user:
-                session.user,
-
-            profile
-
+            shelves,
+            books,
+            journalEntries,
+            quotes,
+            vocabulary,
+            settings
         };
 
     }
@@ -700,32 +1682,54 @@
 
         client,
 
+        /* Auth */
         getSession,
-
         getUser,
-
         getAuthSnapshot,
-
         signUp,
-
         signIn,
-
         signOut,
-
         onAuthStateChange,
 
+        /* Profile */
         getProfile,
-
         ensureProfile,
+        updateProfile,
 
-        updateProfile
+        /* Library */
+        loadLibrary,
+
+        /* Shelves */
+        getShelves,
+        saveShelf,
+        deleteShelf,
+
+        /* Books */
+        getBooks,
+        getBook,
+        saveBook,
+        deleteBook,
+
+        /* Journal */
+        getJournalEntries,
+        saveJournalEntry,
+        deleteJournalEntry,
+
+        /* Quotes */
+        getQuotes,
+        saveQuote,
+        deleteQuote,
+
+        /* Vocabulary */
+        getVocabulary,
+        saveVocabularyEntry,
+        deleteVocabularyEntry,
+
+        /* Settings */
+        getUserSettings,
+        saveUserSettings
 
     };
-
-
-    console.log(
-        "Novellow: Supabase connected."
-    );
 
 
 })();
