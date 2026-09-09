@@ -41,10 +41,214 @@
          SIDEBAR
     ============================================ -->
 
-    <aside id="sidebar">
+<aside id="sidebar">
 
-    </aside>
+    <!-- Logo -->
 
+    <div class="sidebar-logo">
+
+        <button id="logoButton" class="logo-button">
+
+            <div class="logo-icon">
+
+                📚
+
+            </div>
+
+            <div class="logo-text">
+
+                <h1>Novellow</h1>
+
+                <span>Your Personal Library</span>
+
+            </div>
+
+        </button>
+
+    </div>
+
+
+
+    <!-- Quick Actions -->
+
+    <section class="sidebar-section">
+
+        <button id="addBookBtn"
+                class="primary-btn full-width">
+
+            + Add Book
+
+        </button>
+
+        <button id="addShelfBtn"
+                class="secondary-btn full-width">
+
+            + New Shelf
+
+        </button>
+
+    </section>
+
+
+
+    <!-- Search -->
+
+    <section class="sidebar-section">
+
+        <label class="sidebar-label">
+
+            Search Library
+
+        </label>
+
+        <div class="sidebar-search">
+
+            <input
+                type="search"
+                id="librarySearch"
+                placeholder="Search books...">
+
+        </div>
+
+    </section>
+
+
+
+    <!-- Navigation -->
+
+    <nav class="sidebar-nav">
+
+        <button class="nav-item active"
+                data-page="library">
+
+            <span class="nav-icon">📚</span>
+
+            <span>Library</span>
+
+        </button>
+
+
+
+        <button class="nav-item"
+                data-page="reading">
+
+            <span class="nav-icon">📖</span>
+
+            <span>Reading</span>
+
+        </button>
+
+
+
+        <button class="nav-item"
+                data-page="journal">
+
+            <span class="nav-icon">📝</span>
+
+            <span>Journal</span>
+
+        </button>
+
+
+
+        <button class="nav-item"
+                data-page="quotes">
+
+            <span class="nav-icon">💬</span>
+
+            <span>Quotes</span>
+
+        </button>
+
+
+
+        <button class="nav-item"
+                data-page="vocabulary">
+
+            <span class="nav-icon">🔤</span>
+
+            <span>Vocabulary</span>
+
+        </button>
+
+
+
+        <button class="nav-item"
+                data-page="statistics">
+
+            <span class="nav-icon">📊</span>
+
+            <span>Statistics</span>
+
+        </button>
+
+
+
+        <button class="nav-item"
+                data-page="settings">
+
+            <span class="nav-icon">⚙️</span>
+
+            <span>Settings</span>
+
+        </button>
+
+    </nav>
+
+
+
+    <!-- Continue Reading -->
+
+    <section class="sidebar-section">
+
+        <div class="mini-reading-card">
+
+            <span class="mini-label">
+
+                Continue Reading
+
+            </span>
+
+            <h3>
+
+                No Book Selected
+
+            </h3>
+
+            <div class="mini-progress">
+
+                <div class="mini-progress-fill"></div>
+
+            </div>
+
+            <button class="text-btn">
+
+                Open →
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- Footer -->
+
+    <footer class="sidebar-footer">
+
+        <button id="themeButton"
+                class="icon-btn">
+
+            🎨
+
+            Themes
+
+        </button>
+
+    </footer>
+
+</aside>
 
     <!-- ===========================================
          MAIN APPLICATION
@@ -52,25 +256,707 @@
 
     <div id="mainApplication">
 
-        <!-- Header -->
+      <!-- ===========================================
+     HEADER
+============================================ -->
 
-        <header id="appHeader">
+<header id="appHeader">
 
-        </header>
+    <!-- Left Side -->
+
+    <div class="header-left">
+
+        <div class="page-title">
+
+            <h2 id="pageTitle">
+
+                Library
+
+            </h2>
+
+            <p id="pageSubtitle">
+
+                Build the library you've always wanted.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Center Search -->
+
+    <div class="header-search">
+
+        <div class="search-wrapper">
+
+            <svg class="search-icon"
+                 viewBox="0 0 24 24"
+                 aria-hidden="true">
+
+                <circle
+                    cx="11"
+                    cy="11"
+                    r="7">
+
+                </circle>
+
+                <line
+                    x1="16.5"
+                    y1="16.5"
+                    x2="21"
+                    y2="21">
+
+                </line>
+
+            </svg>
+
+            <input
+                id="globalSearch"
+                type="search"
+                placeholder="Search books, authors, shelves...">
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Right Side -->
+
+    <div class="header-actions">
+
+        <button
+            class="header-btn"
+            id="notificationsButton"
+            title="Notifications">
+
+            🔔
+
+        </button>
+
+
+
+        <button
+            class="header-btn"
+            id="themeToggleButton"
+            title="Themes">
+
+            🎨
+
+        </button>
+
+
+
+        <button
+            class="profile-button"
+            id="profileButton">
+
+            <div class="profile-avatar">
+
+                📖
+
+            </div>
+
+            <div class="profile-details">
+
+                <strong>
+
+                    My Library
+
+                </strong>
+
+                <span>
+
+                    Reader
+
+                </span>
+
+            </div>
+
+        </button>
+
+    </div>
+
+</header>
 
 
         <!-- Main Content -->
 
-        <main id="mainContent">
+       <!-- ===========================================
+     MAIN CONTENT
+============================================ -->
 
-        </main>
+<main id="mainContent">
+
+    <!-- ===========================================
+         LIBRARY PAGE
+    ============================================ -->
+
+    <section
+        id="libraryPage"
+        class="page active-page">
+
+        <!-- Welcome -->
+
+        <section class="library-welcome">
+
+            <div class="welcome-text">
+
+                <h1>
+
+                    Welcome to Your Library
+
+                </h1>
+
+                <p>
+
+                    Every shelf tells a story. Organize your books,
+                    decorate your shelves, and build a library that's
+                    completely your own.
+
+                </p>
+
+            </div>
+
+            <button
+                class="primary-btn">
+
+                + Add Book
+
+            </button>
+
+        </section>
+
+
+
+        <!-- Continue Reading -->
+
+        <section class="continue-reading">
+
+            <div class="continue-book">
+
+                <div class="continue-cover">
+
+                </div>
+
+                <div class="continue-details">
+
+                    <span class="section-label">
+
+                        Continue Reading
+
+                    </span>
+
+                    <h2>
+
+                        No Current Book
+
+                    </h2>
+
+                    <p>
+
+                        Choose a book from your library to begin
+                        your next adventure.
+
+                    </p>
+
+                    <div class="progress-bar">
+
+                        <div class="progress-fill">
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="secondary-btn">
+
+                        Open Book
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- Library Shelves -->
+
+        <section
+            id="libraryShelves">
+
+            <!-- Shelf 1 -->
+
+            <article
+                class="bookshelf">
+
+                <header
+                    class="shelf-header">
+
+                    <div>
+
+                        <h2>
+
+                            Classics
+
+                        </h2>
+
+                        <p>
+
+                            Timeless stories worth revisiting.
+
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="text-btn">
+
+                        Edit Shelf
+
+                    </button>
+
+                </header>
+
+                <div
+                    class="shelf-decorations">
+
+                    🌿
+
+                </div>
+
+                <div
+                    class="book-row">
+
+                </div>
+
+                <div
+                    class="wood-shelf">
+
+                </div>
+
+            </article>
+
+
+
+            <!-- Shelf 2 -->
+
+            <article
+                class="bookshelf">
+
+                <header
+                    class="shelf-header">
+
+                    <div>
+
+                        <h2>
+
+                            Fantasy
+
+                        </h2>
+
+                        <p>
+
+                            Magical worlds and unforgettable adventures.
+
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="text-btn">
+
+                        Edit Shelf
+
+                    </button>
+
+                </header>
+
+                <div
+                    class="shelf-decorations">
+
+                    🕯️
+
+                </div>
+
+                <div
+                    class="book-row">
+
+                </div>
+
+                <div
+                    class="wood-shelf">
+
+                </div>
+
+            </article>
+
+
+
+            <!-- Shelf 3 -->
+
+            <article
+                class="bookshelf">
+
+                <header
+                    class="shelf-header">
+
+                    <div>
+
+                        <h2>
+
+                            Want To Read
+
+                        </h2>
+
+                        <p>
+
+                            Future adventures waiting patiently.
+
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="text-btn">
+
+                        Edit Shelf
+
+                    </button>
+
+                </header>
+
+                <div
+                    class="shelf-decorations">
+
+                    🐈
+
+                </div>
+
+                <div
+                    class="book-row">
+
+                </div>
+
+                <div
+                    class="wood-shelf">
+
+                </div>
+
+            </article>
+
+        </section>
+
+    </section>
+
+</main>
+
+<!-- ===========================================
+     READING PAGE
+=========================================== -->
+
+<section
+    id="readingPage"
+    class="page">
+
+    <div class="page-header">
+
+        <h1>Reading</h1>
+
+        <p>
+            Track your current reads, reading sessions,
+            and progress.
+        </p>
 
     </div>
 
-</div>
+    <section class="reading-layout">
 
+        <article class="current-reading-card">
 
+            <div class="reading-cover">
 
+            </div>
+
+            <div class="reading-info">
+
+                <span class="section-label">
+                    CURRENT BOOK
+                </span>
+
+                <h2>No Book Selected</h2>
+
+                <p>
+                    Select a book from your library to begin reading.
+                </p>
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill"></div>
+
+                </div>
+
+                <button class="primary-btn">
+
+                    Continue Reading
+
+                </button>
+
+            </div>
+
+        </article>
+
+        <article class="reading-session-card">
+
+            <h3>Today's Session</h3>
+
+            <p>No reading session recorded.</p>
+
+            <button class="secondary-btn">
+
+                Start Session
+
+            </button>
+
+        </article>
+
+        <article class="reading-goal-card">
+
+            <h3>Reading Goal</h3>
+
+            <p>0 of 50 books completed</p>
+
+            <div class="progress-bar">
+
+                <div class="progress-fill"></div>
+
+            </div>
+
+        </article>
+
+    </section>
+
+</section>
+
+        <!-- ===========================================
+     JOURNAL PAGE
+=========================================== -->
+
+<section
+    id="journalPage"
+    class="page">
+
+    <div class="page-header">
+
+        <h1>Reading Journal</h1>
+
+        <p>
+            Capture your thoughts, reflections, characters,
+            and memorable moments from every book.
+        </p>
+
+    </div>
+
+    <div class="journal-layout">
+
+        <!-- Journal Entries -->
+
+        <section class="journal-column">
+
+            <article class="journal-card">
+
+                <h2>Journal Entries</h2>
+
+                <p class="empty-message">
+
+                    No journal entries yet.
+
+                </p>
+
+            </article>
+
+        </section>
+
+        <!-- Notes -->
+
+        <section class="journal-column">
+
+            <article class="journal-card">
+
+                <h2>Quick Notes</h2>
+
+                <textarea
+                    placeholder="Write anything you'd like to remember..."></textarea>
+
+            </article>
+
+            <article class="journal-card">
+
+                <h2>Characters</h2>
+
+                <div class="empty-list">
+
+                </div>
+
+            </article>
+
+            <article class="journal-card">
+
+                <h2>Themes</h2>
+
+                <div class="empty-list">
+
+                </div>
+
+            </article>
+
+        </section>
+
+    </div>
+
+</section>
+
+        <!-- ===========================================
+     QUOTES PAGE
+=========================================== -->
+
+<section
+    id="quotesPage"
+    class="page">
+
+    <div class="page-header">
+
+        <h1>Favorite Quotes</h1>
+
+        <p>
+
+            Save the passages that stay with you.
+
+        </p>
+
+    </div>
+
+    <section class="quotes-grid">
+
+        <article class="quote-card empty">
+
+            <h2>No Quotes Yet</h2>
+
+            <p>
+
+                Highlight meaningful passages while reading.
+
+            </p>
+
+        </article>
+
+    </section>
+
+</section>
+
+       <!-- ===========================================
+     VOCABULARY PAGE
+=========================================== -->
+
+<section
+    id="vocabularyPage"
+    class="page">
+
+    <div class="page-header">
+
+        <h1>Vocabulary</h1>
+
+        <p>
+
+            Build your own personal dictionary while you read.
+
+        </p>
+
+    </div>
+
+    <section class="vocabulary-grid">
+
+        <article class="vocabulary-card empty">
+
+            <h2>No Words Saved</h2>
+
+            <p>
+
+                Save unfamiliar words from your books.
+
+            </p>
+
+        </article>
+
+    </section>
+
+</section>
+
+       <!-- ===========================================
+     STATISTICS PAGE
+=========================================== -->
+
+<section
+    id="statisticsPage"
+    class="page">
+
+    <div class="page-header">
+
+        <h1>Reading Statistics</h1>
+
+        <p>
+
+            Watch your library grow over time.
+
+        </p>
+
+    </div>
+
+    <section class="statistics-grid">
+
+        <article class="stat-card">
+
+            <h2>Total Books</h2>
+
+            <span class="stat-number">0</span>
+
+        </article>
+
+        <article class="stat-card">
+
+            <h2>Books Read</h2>
+
+            <span class="stat-number">0</span>
+
+        </article>
+
+        <article class="stat-card">
+
+            <h2>Pages Read</h2>
+
+            <span class="stat-number">0</span>
+
+        </article>
+
+        <article class="stat-card">
+
+            <h2>Favorite Genre</h2>
+
+            <span class="stat-number">—</span>
+
+        </article>
+
+    </section>
+
+</section>
+
+        
 <!-- ===========================================
      DRAWERS
 ============================================ -->
