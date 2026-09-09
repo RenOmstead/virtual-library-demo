@@ -1,1 +1,659 @@
+/* =========================================================
+   NOVELLOW
+   VOCABULARY.CSS
 
+   Vocabulary collection
+   Search
+   Word cards
+   Definitions
+   Context notes
+   Word modal
+   Responsive behavior
+   ========================================================= */
+
+
+/* =========================================================
+   VOCABULARY PAGE
+   ========================================================= */
+
+#vocabulary {
+    position: relative;
+}
+
+
+/* =========================================================
+   VOCABULARY TOOLBAR
+   ========================================================= */
+
+.vocabulary-toolbar {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    margin-bottom: 26px;
+
+    flex-wrap: wrap;
+}
+
+
+.vocabulary-toolbar
+.search-field {
+    flex:
+        1 1 320px;
+}
+
+
+.vocabulary-toolbar
+.primary-button {
+    flex:
+        0 0 auto;
+}
+
+
+/* =========================================================
+   VOCABULARY GRID
+   ========================================================= */
+
+.vocabulary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   WORD CARD
+   ========================================================= */
+
+.word-card {
+    position: relative;
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-height:
+        270px;
+
+    padding:
+        20px;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        var(--radius-large);
+
+    background:
+        var(--panel);
+
+    box-shadow:
+        0 10px 24px
+        rgba(0, 0, 0, 0.10);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.16s ease,
+        border-color 0.16s ease,
+        background-color 0.16s ease,
+        box-shadow 0.16s ease;
+}
+
+
+.word-card:hover {
+    transform:
+        translateY(-3px);
+
+    border-color:
+        var(--border);
+
+    background:
+        var(--panel-2);
+
+    box-shadow:
+        0 16px 30px
+        rgba(0, 0, 0, 0.14);
+}
+
+
+/* =========================================================
+   DECORATIVE INITIAL
+   ========================================================= */
+
+.word-card::before {
+    content: attr(data-initial);
+
+    position: absolute;
+
+    top: -18px;
+    right: 10px;
+
+    color:
+        var(--accent);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        7.5rem;
+
+    font-weight:
+        600;
+
+    line-height:
+        1;
+
+    opacity:
+        0.07;
+
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   WORD HEADER
+   ========================================================= */
+
+.word-card-header {
+    position: relative;
+
+    z-index: 2;
+
+    margin-bottom:
+        17px;
+
+    padding-bottom:
+        14px;
+
+    border-bottom:
+        1px solid
+        var(--border-soft);
+}
+
+
+.word-card-word {
+    margin-bottom:
+        3px;
+
+    color:
+        var(--paper);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        clamp(
+            2rem,
+            3vw,
+            2.8rem
+        );
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        -0.04em;
+
+    line-height:
+        0.95;
+}
+
+
+.word-card-part {
+    color:
+        var(--accent-light);
+
+    font-size:
+        0.47rem;
+
+    font-style:
+        italic;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        0.04em;
+}
+
+
+/* =========================================================
+   DEFINITION
+   ========================================================= */
+
+.word-card-definition {
+    position: relative;
+
+    z-index: 2;
+
+    flex:
+        1 1 auto;
+
+    color:
+        var(--text-soft);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.04rem;
+
+    line-height:
+        1.55;
+
+    white-space:
+        pre-wrap;
+}
+
+
+/* =========================================================
+   CONTEXT
+   ========================================================= */
+
+.word-card-context {
+    position: relative;
+
+    z-index: 2;
+
+    margin-top:
+        14px;
+
+    padding:
+        11px 12px;
+
+    border-left:
+        2px solid
+        color-mix(
+            in srgb,
+            var(--accent) 50%,
+            transparent
+        );
+
+    background:
+        var(--bg-2);
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.55rem;
+
+    line-height:
+        1.5;
+
+    white-space:
+        pre-wrap;
+}
+
+
+/* =========================================================
+   WORD SOURCE
+   ========================================================= */
+
+.word-card-source {
+    position: relative;
+
+    z-index: 2;
+
+    margin-top:
+        15px;
+
+    padding-top:
+        12px;
+
+    border-top:
+        1px solid
+        var(--border-soft);
+}
+
+
+.word-card-book {
+    display: block;
+
+    margin-bottom:
+        2px;
+
+    color:
+        var(--accent-light);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        0.9rem;
+
+    font-weight:
+        600;
+}
+
+
+.word-card-location {
+    color:
+        var(--muted-light);
+
+    font-size:
+        0.47rem;
+}
+
+
+/* =========================================================
+   CARD ACTIONS
+   ========================================================= */
+
+.word-card-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 6px;
+
+    margin-top:
+        14px;
+}
+
+
+.word-card-action {
+    min-height:
+        31px;
+
+    padding:
+        0 10px;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        7px;
+
+    background:
+        var(--bg-2);
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.47rem;
+
+    font-weight:
+        700;
+
+    transition:
+        border-color 0.15s ease,
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.word-card-action:hover {
+    border-color:
+        var(--border);
+
+    background:
+        var(--panel-3);
+
+    color:
+        var(--paper);
+}
+
+
+.word-card-action.danger:hover {
+    color:
+        #e1a4a4;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+#vocabularyEmptyState {
+    margin-top:
+        10px;
+}
+
+
+/* =========================================================
+   NO SEARCH RESULTS
+   ========================================================= */
+
+.vocabulary-search-message {
+    grid-column:
+        1 / -1;
+
+    min-height:
+        180px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding:
+        28px;
+
+    border:
+        1px dashed
+        var(--border-soft);
+
+    border-radius:
+        var(--radius-large);
+
+    background:
+        var(--panel);
+
+    color:
+        var(--muted);
+
+    text-align:
+        center;
+
+    font-size:
+        0.6rem;
+}
+
+
+/* =========================================================
+   WORD MODAL
+   ========================================================= */
+
+#wordModal
+.modal-card {
+    width:
+        min(
+            680px,
+            100%
+        );
+}
+
+
+/* =========================================================
+   DEFINITION FIELD
+   ========================================================= */
+
+#wordDefinition {
+    min-height:
+        150px;
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1rem;
+
+    line-height:
+        1.55;
+}
+
+
+/* =========================================================
+   CONTEXT FIELD
+   ========================================================= */
+
+#wordContext {
+    min-height:
+        130px;
+}
+
+
+/* =========================================================
+   WORD + PART OF SPEECH ROW
+   ========================================================= */
+
+.word-primary-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.4fr)
+        minmax(160px, 0.6fr);
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   BOOK + PAGE ROW
+   ========================================================= */
+
+.word-source-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(120px, 0.35fr);
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .vocabulary-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .vocabulary-toolbar {
+        align-items:
+            stretch;
+    }
+
+
+    .vocabulary-toolbar
+    .search-field,
+    .vocabulary-toolbar
+    .primary-button {
+        width: 100%;
+
+        flex:
+            1 1 100%;
+    }
+
+
+    .vocabulary-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .word-card {
+        min-height:
+            235px;
+
+        padding:
+            18px 16px 16px;
+    }
+
+
+    .word-primary-grid,
+    .word-source-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 430px) {
+
+    .word-card-word {
+        font-size:
+            2rem;
+    }
+
+
+    .word-card-definition {
+        font-size:
+            0.95rem;
+    }
+
+
+    .word-card-actions {
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+
+    .word-card-action {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+.reduce-motion
+.word-card {
+    transition:
+        none !important;
+}
+
+
+.reduce-motion
+.word-card:hover {
+    transform:
+        none;
+}
