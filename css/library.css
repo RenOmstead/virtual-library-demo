@@ -1,16 +1,29 @@
 /* ==========================================================
+   NOVELLOW
    LIBRARY.CSS
-   ========================================================== */
+========================================================== */
 
 
 
 /* ==========================================================
    LIBRARY PAGE
-   ========================================================== */
+========================================================== */
 
-#librarySection{
+#libraryPage{
 
-    max-width:1800px;
+    width:100%;
+
+}
+
+
+
+/* ==========================================================
+   LIBRARY CONTENT
+========================================================== */
+
+.library-container{
+
+    max-width:1700px;
 
     margin:0 auto;
 
@@ -19,80 +32,100 @@
 
 
 /* ==========================================================
-   LIBRARY HEADER
-   ========================================================== */
+   CONTINUE READING
+========================================================== */
 
-.library-header{
+.continue-reading{
 
-    margin-bottom:3rem;
-
-}
-
-.library-header h2{
-
-    font-size:3rem;
-
-    margin-bottom:.5rem;
+    margin-bottom:4rem;
 
 }
 
-.library-header p{
+.continue-book{
 
-    max-width:700px;
+    display:grid;
 
-}
+    grid-template-columns:180px 1fr;
 
-
-
-/* ==========================================================
-   TOOLBAR
-   ========================================================== */
-
-.library-toolbar{
-
-    display:flex;
-
-    flex-wrap:wrap;
+    gap:2rem;
 
     align-items:center;
 
-    gap:1rem;
-
-    margin-bottom:3rem;
-
-    padding:1.5rem;
+    padding:2rem;
 
     background:var(--surface);
 
-    border:1px solid var(--border);
+    border-radius:28px;
 
-    border-radius:24px;
+    border:1px solid var(--border);
 
     box-shadow:var(--shadow-sm);
 
 }
 
-.toolbar-search{
+.continue-cover{
 
-    flex:1;
+    width:160px;
 
-    min-width:300px;
+    aspect-ratio:2/3;
+
+    border-radius:16px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            var(--primary),
+
+            var(--primary-light)
+
+        );
 
 }
 
-.toolbar-search input{
-
-    width:100%;
-
-}
-
-.toolbar-filters{
+.continue-details{
 
     display:flex;
 
+    flex-direction:column;
+
     gap:1rem;
 
-    flex-wrap:wrap;
+}
+
+.section-label{
+
+    font-size:.8rem;
+
+    font-weight:600;
+
+    letter-spacing:.08em;
+
+    text-transform:uppercase;
+
+    color:var(--text-light);
+
+}
+
+.continue-details h2{
+
+    font-family:
+
+        "Cormorant Garamond",
+
+        serif;
+
+    font-size:2.4rem;
+
+}
+
+.continue-details p{
+
+    max-width:600px;
+
+    color:var(--text-secondary);
 
 }
 
@@ -100,7 +133,7 @@
 
 /* ==========================================================
    SHELVES
-   ========================================================== */
+========================================================== */
 
 #libraryShelves{
 
@@ -108,19 +141,17 @@
 
     flex-direction:column;
 
-    gap:5rem;
+    gap:4rem;
 
-}
-
-
-
-/* ==========================================================
-   BOOKSHELF
-   ========================================================== */
+   /* ==========================================================
+   BOOKSHELVES
+========================================================== */
 
 .bookshelf{
 
     position:relative;
+
+    margin-bottom:5rem;
 
 }
 
@@ -128,7 +159,7 @@
 
 /* ==========================================================
    SHELF HEADER
-   ========================================================== */
+========================================================== */
 
 .shelf-header{
 
@@ -140,45 +171,63 @@
 
     gap:2rem;
 
-    margin-bottom:1.5rem;
+    margin-bottom:1.25rem;
 
 }
 
-.shelf-name{
+.shelf-header h2{
 
-    font-size:2rem;
+    font-family:"Cormorant Garamond",serif;
+
+    font-size:2.3rem;
+
+    font-weight:600;
+
+    color:var(--text-primary);
 
 }
 
-.shelf-description{
+.shelf-header p{
 
     margin-top:.35rem;
 
-    color:var(--text-muted);
+    color:var(--text-secondary);
 
 }
 
-.shelf-actions{
+.shelf-header .text-btn{
 
-    display:flex;
+    opacity:.75;
 
-    gap:.75rem;
+}
+
+.shelf-header .text-btn:hover{
+
+    opacity:1;
 
 }
 
 
 
 /* ==========================================================
-   DECORATIONS
-   ========================================================== */
+   SHELF DECORATIONS
+========================================================== */
 
 .shelf-decorations{
 
-    position:relative;
+    display:flex;
 
-    min-height:45px;
+    align-items:flex-end;
 
-    margin-bottom:.5rem;
+    gap:.85rem;
+
+    min-height:42px;
+
+    margin-bottom:.65rem;
+
+    padding-left:.5rem;
+
+    font-size:1.4rem;
 
 }
 
@@ -186,39 +235,179 @@
 
 /* ==========================================================
    BOOK ROW
-   ========================================================== */
+========================================================== */
 
 .book-row{
-
-    position:relative;
 
     display:flex;
 
     align-items:flex-end;
 
-    gap:0;
+    gap:4px;
 
-    min-height:260px;
+    min-height:240px;
 
-    padding:0 2rem;
+    padding:
+
+        0
+
+        2rem
+
+        0
+
+        2rem;
 
 }
 
 
 
 /* ==========================================================
-   EMPTY LIBRARY
-   ========================================================== */
+   WOODEN SHELF
+========================================================== */
 
-#emptyLibrary{
+.wood-shelf{
 
-    margin-top:5rem;
+    position:relative;
+
+    width:100%;
+
+    height:22px;
+
+    border-radius:8px;
+
+    background:
+
+        linear-gradient(
+
+            to bottom,
+
+            #C28E60,
+
+            #A56E44 40%,
+
+            #8B5A37 70%,
+
+            #714629
+
+        );
+
+    box-shadow:
+
+        inset
+
+        0 2px
+
+        rgba(255,255,255,.18),
+
+        inset
+
+        0 -3px
+
+        rgba(0,0,0,.18),
+
+        0 10px 18px
+
+        rgba(0,0,0,.15);
 
 }
 
+
+
 /* ==========================================================
+   WOOD GRAIN
+========================================================== */
+
+.wood-shelf::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    border-radius:inherit;
+
+    opacity:.18;
+
+    background:
+
+        repeating-linear-gradient(
+
+            90deg,
+
+            rgba(255,255,255,.25),
+
+            rgba(255,255,255,.25) 2px,
+
+            transparent 2px,
+
+            transparent 12px
+
+        );
+
+}
+
+
+
+/* ==========================================================
+   SHELF FRONT EDGE
+========================================================== */
+
+.wood-shelf::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    right:0;
+
+    bottom:-5px;
+
+    height:8px;
+
+    border-radius:0 0 8px 8px;
+
+    background:#6D4328;
+
+}
+
+
+
+/* ==========================================================
+   SHELF SHADOW
+========================================================== */
+
+.bookshelf::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:4%;
+
+    right:4%;
+
+    bottom:-18px;
+
+    height:24px;
+
+    border-radius:50%;
+
+    background:
+
+        rgba(0,0,0,.12);
+
+    filter:blur(10px);
+
+    pointer-events:none;
+
+}
+
+   /* ==========================================================
    BOOK
-   ========================================================== */
+========================================================== */
 
 .book{
 
@@ -236,7 +425,9 @@
 
         transform .25s ease,
 
-        filter .25s ease;
+        filter .25s ease,
+
+        box-shadow .25s ease;
 
 }
 
@@ -244,9 +435,9 @@
 
     transform:
 
-        translateY(-8px);
+        translateY(-10px);
 
-    z-index:20;
+    z-index:10;
 
 }
 
@@ -254,11 +445,19 @@
 
 /* ==========================================================
    SPINE
-   ========================================================== */
+========================================================== */
 
 .book-spine{
 
     position:relative;
+
+    width:100%;
+
+    height:100%;
+
+    border-radius:8px 8px 2px 2px;
+
+    overflow:hidden;
 
     display:flex;
 
@@ -266,35 +465,79 @@
 
     align-items:center;
 
-    overflow:hidden;
-
-    border-radius:4px 4px 0 0;
-
     box-shadow:
 
-        inset 2px 0 rgba(255,255,255,.08),
+        inset 2px 0 rgba(255,255,255,.18),
 
-        inset -3px 0 rgba(0,0,0,.25),
+        inset -3px 0 rgba(0,0,0,.15),
 
-        3px 4px 8px rgba(0,0,0,.35);
+        3px 5px 10px rgba(0,0,0,.12);
 
 }
 
 
 
 /* ==========================================================
-   SPINE TITLE
-   ========================================================== */
+   BOOK TOP
+========================================================== */
+
+.book::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-5px;
+
+    left:4px;
+
+    right:4px;
+
+    height:8px;
+
+    border-radius:6px 6px 0 0;
+
+    background:rgba(255,255,255,.22);
+
+}
+
+
+
+/* ==========================================================
+   PAGE EDGE
+========================================================== */
+
+.book::after{
+
+    content:"";
+
+    position:absolute;
+
+    right:3px;
+
+    top:10px;
+
+    bottom:8px;
+
+    width:4px;
+
+    border-radius:2px;
+
+    background:rgba(255,255,255,.35);
+
+}
+
+
+
+/* ==========================================================
+   TITLE
+========================================================== */
 
 .book-title{
 
-    writing-mode:
+    writing-mode:vertical-rl;
 
-        vertical-rl;
-
-    transform:
-
-        rotate(180deg);
+    transform:rotate(180deg);
 
     white-space:nowrap;
 
@@ -302,7 +545,7 @@
 
     text-overflow:ellipsis;
 
-    padding:12px 4px;
+    padding:14px 5px;
 
     font-family:
 
@@ -310,9 +553,11 @@
 
         serif;
 
+    font-size:.95rem;
+
     font-weight:600;
 
-    letter-spacing:.06em;
+    letter-spacing:.05em;
 
     text-align:center;
 
@@ -324,155 +569,43 @@
 
 /* ==========================================================
    AUTHOR
-   ========================================================== */
+========================================================== */
 
 .book-author{
 
     position:absolute;
 
-    bottom:12px;
+    bottom:10px;
 
     left:50%;
 
     transform:
 
         translateX(-50%)
+
         rotate(180deg);
 
-    writing-mode:
+    writing-mode:vertical-rl;
 
-        vertical-rl;
+    font-size:.62rem;
 
-    font-size:.65rem;
-
-    opacity:.7;
+    opacity:.75;
 
 }
 
 
 
 /* ==========================================================
-   TOP OF BOOK
-   ========================================================== */
+   FAVORITE STAR
+========================================================== */
 
-.book::before{
-
-    content:"";
+.favorite-star{
 
     position:absolute;
-
-    top:-4px;
-
-    left:2px;
-
-    right:2px;
-
-    height:6px;
-
-    border-radius:3px 3px 0 0;
-
-    background:
-
-        rgba(255,255,255,.12);
-
-}
-
-
-
-/* ==========================================================
-   PAGE EDGE
-   ========================================================== */
-
-.book::after{
-
-    content:"";
-
-    position:absolute;
-
-    right:2px;
 
     top:8px;
 
-    bottom:4px;
-
-    width:4px;
-
-    background:
-
-        rgba(255,255,255,.25);
-
-    border-radius:2px;
-
-}
-
-
-
-/* ==========================================================
-   BOOK HOVER
-   ========================================================== */
-
-.book:hover .book-spine{
-
-    filter:
-
-        brightness(1.08);
-
-}
-
-
-
-/* ==========================================================
-   SELECTED BOOK
-   ========================================================== */
-
-.book.selected{
-
-    transform:
-
-        translateY(-16px)
-        scale(1.03);
-
-}
-
-
-
-/* ==========================================================
-   CURRENTLY READING
-   ========================================================== */
-
-.book.reading{
-
-    z-index:5;
-
-}
-
-.book.reading::after{
-
-    background:
-
-        var(--accent);
-
-}
-
-
-
-/* ==========================================================
-   FAVORITE
-   ========================================================== */
-
-.book.favorite{
-
-    position:relative;
-
-}
-
-.book.favorite .favorite-star{
-
-    position:absolute;
-
-    top:6px;
-
-    right:-10px;
+    right:-8px;
 
     width:18px;
 
@@ -480,9 +613,19 @@
 
     border-radius:50%;
 
-    background:gold;
+    background:#F6C453;
 
-    box-shadow:0 2px 6px rgba(0,0,0,.3);
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:.65rem;
+
+    box-shadow:
+
+        0 4px 8px rgba(0,0,0,.15);
 
 }
 
@@ -490,95 +633,173 @@
 
 /* ==========================================================
    BOOK SHADOW
-   ========================================================== */
+========================================================== */
 
 .book-shadow{
 
     position:absolute;
 
-    bottom:-8px;
+    bottom:-10px;
 
     left:10%;
 
     width:80%;
 
-    height:12px;
-
-    background:
-
-        rgba(0,0,0,.35);
-
-    filter:blur(5px);
+    height:10px;
 
     border-radius:50%;
 
+    background:rgba(0,0,0,.18);
+
+    filter:blur(6px);
+
 }
 
+
+
 /* ==========================================================
-   WOODEN SHELVES
-   ========================================================== */
+   HOVER
+========================================================== */
 
-.wood-shelf{
+.book:hover .book-spine{
 
-    position:relative;
+    filter:
 
-    width:100%;
+        brightness(1.05);
 
-    height:18px;
+}
 
-    border-radius:4px;
+.book:hover .book-shadow{
 
-    margin-top:-2px;
+    opacity:.55;
+
+}
+
+
+
+/* ==========================================================
+   SELECTED BOOK
+========================================================== */
+
+.book.selected{
+
+    transform:
+
+        translateY(-16px)
+
+        scale(1.04);
+
+}
+
+
+
+/* ==========================================================
+   CURRENTLY READING
+========================================================== */
+
+.book.current-reading{
+
+    z-index:8;
+
+}
+
+.book.current-reading::after{
+
+    background:var(--accent);
+
+}
+
+
+
+/* ==========================================================
+   BOOK SIZES
+========================================================== */
+
+.book.height-xs{ height:170px; }
+
+.book.height-sm{ height:195px; }
+
+.book.height-md{ height:220px; }
+
+.book.height-lg{ height:250px; }
+
+.book.height-xl{ height:285px; }
+
+
+
+.book.width-xs{ width:28px; }
+
+.book.width-sm{ width:36px; }
+
+.book.width-md{ width:46px; }
+
+.book.width-lg{ width:58px; }
+
+.book.width-xl{ width:72px; }
+
+   /* ==========================================================
+   BOOK MATERIALS
+========================================================== */
+
+.book.leather .book-spine{
 
     background:
         linear-gradient(
-            to bottom,
-            #7c5a40 0%,
-            #65452e 20%,
-            #5b3c27 50%,
-            #4b311f 100%
-        );
-
-    box-shadow:
-
-        inset 0 2px rgba(255,255,255,.08),
-
-        inset 0 -3px rgba(0,0,0,.25),
-
-        0 8px 18px rgba(0,0,0,.35);
-
-}
-
-
-
-/* ==========================================================
-   WOOD GRAIN
-   ========================================================== */
-
-.wood-shelf::before{
-
-    content:"";
-
-    position:absolute;
-
-    inset:0;
-
-    opacity:.22;
-
-    background-image:
-
-        repeating-linear-gradient(
-
             90deg,
+            rgba(255,255,255,.08),
+            transparent 20%
+        ),
+        linear-gradient(
+            180deg,
+            #7A5235,
+            #5D3E29
+        );
 
-            rgba(255,255,255,.08) 0px,
+}
 
-            rgba(255,255,255,.08) 2px,
+.book.cloth .book-spine{
 
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.05),
+            rgba(255,255,255,.05) 2px,
             transparent 2px,
+            transparent 4px
+        ),
+        linear-gradient(
+            180deg,
+            #6F7F8D,
+            #58636E
+        );
 
-            transparent 12px
+}
 
+.book.paperback .book-spine{
+
+    background:
+        linear-gradient(
+            180deg,
+            #D7A16B,
+            #C58B55
+        );
+
+}
+
+.book.linen .book-spine{
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,.05),
+            rgba(255,255,255,.05) 2px,
+            transparent 2px,
+            transparent 5px
+        ),
+        linear-gradient(
+            180deg,
+            #8A6E94,
+            #71577D
         );
 
 }
@@ -586,126 +807,174 @@
 
 
 /* ==========================================================
-   SHELF FRONT
-   ========================================================== */
+   FOIL STRIPES
+========================================================== */
 
-.wood-shelf::after{
+.book.gold .book-spine{
+
+    border-left:3px solid #D7B24A;
+
+    border-right:3px solid #D7B24A;
+
+}
+
+.book.silver .book-spine{
+
+    border-left:3px solid #D5D8DC;
+
+    border-right:3px solid #D5D8DC;
+
+}
+
+.book.copper .book-spine{
+
+    border-left:3px solid #B56A44;
+
+    border-right:3px solid #B56A44;
+
+}
+
+
+
+/* ==========================================================
+   TITLE PANELS
+========================================================== */
+
+.book-panel{
+
+    position:absolute;
+
+    left:5px;
+
+    right:5px;
+
+    top:22%;
+
+    bottom:22%;
+
+    border-radius:6px;
+
+    border:1px solid rgba(255,255,255,.25);
+
+}
+
+.book.double-panel .book-panel{
+
+    top:16%;
+
+    bottom:16%;
+
+}
+
+.book.double-panel .book-panel::after{
 
     content:"";
 
     position:absolute;
 
-    left:0;
+    left:6px;
 
-    right:0;
+    right:6px;
 
-    bottom:-6px;
+    top:14px;
 
-    height:8px;
+    bottom:14px;
+
+    border:1px solid rgba(255,255,255,.22);
+
+    border-radius:4px;
+
+}
+
+
+
+/* ==========================================================
+   ORNAMENT
+========================================================== */
+
+.book-ornament{
+
+    position:absolute;
+
+    left:50%;
+
+    top:14px;
+
+    transform:translateX(-50%);
+
+    font-size:.75rem;
+
+    opacity:.85;
+
+    pointer-events:none;
+
+}
+
+
+
+/* ==========================================================
+   BOOKMARK RIBBON
+========================================================== */
+
+.book-ribbon{
+
+    position:absolute;
+
+    left:50%;
+
+    bottom:-8px;
+
+    width:8px;
+
+    height:30px;
+
+    transform:translateX(-50%);
 
     border-radius:0 0 4px 4px;
 
-    background:#382316;
+    background:#B33939;
 
 }
 
 
 
 /* ==========================================================
-   SHELF SHADOW
-   ========================================================== */
+   WEAR
+========================================================== */
 
-.bookshelf{
+.book.worn{
 
-    position:relative;
-
-}
-
-.bookshelf::after{
-
-    content:"";
-
-    position:absolute;
-
-    left:5%;
-
-    right:5%;
-
-    bottom:-18px;
-
-    height:24px;
-
-    border-radius:50%;
-
-    background:rgba(0,0,0,.28);
-
-    filter:blur(12px);
+    filter:saturate(.92);
 
 }
 
+.book.worn .book-spine{
 
-
-/* ==========================================================
-   BOOK ALIGNMENT
-   ========================================================== */
-
-.book-row{
-
-    align-items:flex-end;
+    opacity:.94;
 
 }
 
+.book.worn::before{
 
-
-/* ==========================================================
-   BOOK SPACING
-   ========================================================== */
-
-.book{
-
-    margin-right:-2px;
+    opacity:.35;
 
 }
 
-.book:hover{
+.book.antique{
 
-    margin-right:6px;
-
-    margin-left:6px;
+    filter:sepia(.18);
 
 }
 
+.book.antique .book-spine{
 
+    box-shadow:
 
-/* ==========================================================
-   BOOK LEANING
-   ========================================================== */
+        inset 2px 0 rgba(255,255,255,.10),
 
-.book.lean-left{
+        inset -3px 0 rgba(0,0,0,.18),
 
-    transform:rotate(-3deg);
-
-}
-
-.book.lean-right{
-
-    transform:rotate(3deg);
-
-}
-
-.book.lean-left:hover{
-
-    transform:
-        rotate(-3deg)
-        translateY(-10px);
-
-}
-
-.book.lean-right:hover{
-
-    transform:
-        rotate(3deg)
-        translateY(-10px);
+        4px 6px 14px rgba(0,0,0,.18);
 
 }
 
@@ -713,7 +982,7 @@
 
 /* ==========================================================
    BOOK STACKS
-   ========================================================== */
+========================================================== */
 
 .book-stack{
 
@@ -723,55 +992,317 @@
 
     justify-content:flex-end;
 
-    margin-right:12px;
+    gap:4px;
+
+    margin:0 .75rem;
 
 }
 
 .book-stack .book{
 
-    transform:rotate(90deg);
+    transform:rotate(-90deg);
 
-    transform-origin:bottom left;
+    transform-origin:center;
+
+    margin-bottom:28px;
+
+}
+
+.book-stack .book:hover{
+
+    transform:rotate(-90deg) translateY(-6px);
 
 }
 
 
 
 /* ==========================================================
-   SHELF LABEL
-   ========================================================== */
+   LEANING BOOKS
+========================================================== */
 
-.shelf-name{
+.book.lean-left{
+
+    transform:rotate(-5deg);
+
+}
+
+.book.lean-right{
+
+    transform:rotate(5deg);
+
+}
+
+.book.lean-left:hover{
+
+    transform:rotate(-5deg) translateY(-10px);
+
+}
+
+.book.lean-right:hover{
+
+    transform:rotate(5deg) translateY(-10px);
+
+}
+
+   /* ==========================================================
+   SHELF DECORATIONS
+========================================================== */
+
+.shelf-decoration{
 
     position:relative;
 
-    display:inline-block;
+    display:flex;
+
+    align-items:flex-end;
+
+    justify-content:center;
+
+    flex-shrink:0;
+
+    transition:all .25s ease;
+
+    cursor:grab;
 
 }
 
-.shelf-name::after{
+.shelf-decoration:hover{
 
-    content:"";
+    transform:translateY(-4px) scale(1.05);
 
-    position:absolute;
+}
 
-    left:0;
+.shelf-decoration:active{
 
-    bottom:-8px;
-
-    width:60px;
-
-    height:2px;
-
-    background:var(--accent);
+    cursor:grabbing;
 
 }
 
 
 
 /* ==========================================================
-   DECORATION LAYER
-   ========================================================== */
+   PLANT
+========================================================== */
+
+.decoration-plant{
+
+    width:42px;
+
+    height:58px;
+
+}
+
+.decoration-plant::before{
+
+    content:"🪴";
+
+    font-size:2rem;
+
+}
+
+
+
+/* ==========================================================
+   CANDLE
+========================================================== */
+
+.decoration-candle{
+
+    width:28px;
+
+    height:54px;
+
+}
+
+.decoration-candle::before{
+
+    content:"🕯️";
+
+    font-size:1.9rem;
+
+}
+
+
+
+/* ==========================================================
+   CAT
+========================================================== */
+
+.decoration-cat{
+
+    width:48px;
+
+    height:52px;
+
+}
+
+.decoration-cat::before{
+
+    content:"🐈";
+
+    font-size:2rem;
+
+}
+
+
+
+/* ==========================================================
+   MUSHROOM
+========================================================== */
+
+.decoration-mushroom{
+
+    width:38px;
+
+    height:42px;
+
+}
+
+.decoration-mushroom::before{
+
+    content:"🍄";
+
+    font-size:1.7rem;
+
+}
+
+
+
+/* ==========================================================
+   SKULL
+========================================================== */
+
+.decoration-skull{
+
+    width:36px;
+
+    height:40px;
+
+}
+
+.decoration-skull::before{
+
+    content:"💀";
+
+    font-size:1.5rem;
+
+}
+
+
+
+/* ==========================================================
+   CRYSTAL
+========================================================== */
+
+.decoration-crystal{
+
+    width:34px;
+
+    height:40px;
+
+}
+
+.decoration-crystal::before{
+
+    content:"🔮";
+
+    font-size:1.6rem;
+
+}
+
+
+
+/* ==========================================================
+   COFFEE
+========================================================== */
+
+.decoration-coffee{
+
+    width:36px;
+
+    height:42px;
+
+}
+
+.decoration-coffee::before{
+
+    content:"☕";
+
+    font-size:1.6rem;
+
+}
+
+
+
+/* ==========================================================
+   STACK OF BOOKS
+========================================================== */
+
+.decoration-books{
+
+    width:58px;
+
+    height:44px;
+
+}
+
+.decoration-books::before{
+
+    content:"📚";
+
+    font-size:2rem;
+
+}
+
+
+
+/* ==========================================================
+   LANTERN
+========================================================== */
+
+.decoration-lantern{
+
+    width:36px;
+
+    height:48px;
+
+}
+
+.decoration-lantern::before{
+
+    content:"🏮";
+
+    font-size:1.7rem;
+
+}
+
+
+
+/* ==========================================================
+   GLOBE
+========================================================== */
+
+.decoration-globe{
+
+    width:42px;
+
+    height:46px;
+
+}
+
+.decoration-globe::before{
+
+    content:"🌎";
+
+    font-size:1.8rem;
+
+}
+
+
+
+/* ==========================================================
+   DECORATION SPACING
+========================================================== */
 
 .shelf-decorations{
 
@@ -781,585 +1312,27 @@
 
     gap:1rem;
 
+    padding-left:1rem;
+
     margin-bottom:.75rem;
 
-    min-height:52px;
-
-}
-
-/* ==========================================================
-   BOOK SPINE STYLES
-   ========================================================== */
-
-.book-spine{
-
-    position:relative;
-
-    overflow:hidden;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
+    min-height:60px;
 
 }
 
 
 
 /* ==========================================================
-   LEATHER
-   ========================================================== */
-
-.spine-leather{
-
-    background:
-
-        linear-gradient(
-            90deg,
-            rgba(255,255,255,.08),
-            transparent 20%,
-            transparent 80%,
-            rgba(0,0,0,.18)
-        ),
-
-        linear-gradient(
-            180deg,
-            #733828,
-            #5d291d
-        );
-
-}
-
-.spine-leather::before{
-
-    content:"";
-
-    position:absolute;
-
-    inset:0;
-
-    opacity:.12;
-
-    background:
-
-        repeating-linear-gradient(
-
-            0deg,
-
-            transparent 0,
-
-            transparent 6px,
-
-            rgba(255,255,255,.12) 7px,
-
-            transparent 8px
-
-        );
-
-}
-
-
-
-/* ==========================================================
-   CLOTH
-   ========================================================== */
-
-.spine-cloth{
-
-    background:#35546d;
-
-}
-
-.spine-cloth::before{
-
-    content:"";
-
-    position:absolute;
-
-    inset:0;
-
-    opacity:.12;
-
-    background-image:
-
-        repeating-linear-gradient(
-
-            90deg,
-
-            rgba(255,255,255,.15),
-
-            rgba(255,255,255,.15) 1px,
-
-            transparent 1px,
-
-            transparent 4px
-
-        ),
-
-        repeating-linear-gradient(
-
-            0deg,
-
-            rgba(0,0,0,.15),
-
-            rgba(0,0,0,.15) 1px,
-
-            transparent 1px,
-
-            transparent 4px
-
-        );
-
-}
-
-
-
-/* ==========================================================
-   LINEN
-   ========================================================== */
-
-.spine-linen{
-
-    background:#7b735f;
-
-}
-
-.spine-linen::before{
-
-    content:"";
-
-    position:absolute;
-
-    inset:0;
-
-    opacity:.16;
-
-    background-image:
-
-        repeating-linear-gradient(
-
-            45deg,
-
-            rgba(255,255,255,.2),
-
-            rgba(255,255,255,.2) 2px,
-
-            transparent 2px,
-
-            transparent 6px
-
-        );
-
-}
-
-
-
-/* ==========================================================
-   PAPERBACK
-   ========================================================== */
-
-.spine-paperback{
-
-    background:
-
-        linear-gradient(
-
-            180deg,
-
-            #d2c3a5,
-
-            #c8b693
-
-        );
-
-}
-
-
-
-/* ==========================================================
-   MODERN
-   ========================================================== */
-
-.spine-modern{
-
-    background:
-
-        linear-gradient(
-
-            180deg,
-
-            #292d35,
-
-            #202329
-
-        );
-
-}
-
-
-
-/* ==========================================================
-   VICTORIAN
-   ========================================================== */
-
-.spine-victorian{
-
-    background:
-
-        linear-gradient(
-
-            180deg,
-
-            #23352f,
-
-            #16241f
-
-        );
-
-}
-
-
-
-/* ==========================================================
-   GOLD FOIL
-   ========================================================== */
-
-.gold-foil{
-
-    color:#f5d47c;
-
-    text-shadow:
-
-        0 0 3px rgba(255,223,120,.25);
-
-}
-
-
-
-/* ==========================================================
-   SILVER FOIL
-   ========================================================== */
-
-.silver-foil{
-
-    color:#d8dbe3;
-
-}
-
-
-
-/* ==========================================================
-   COPPER FOIL
-   ========================================================== */
-
-.copper-foil{
-
-    color:#ca8957;
-
-}
-
-
-
-/* ==========================================================
-   TITLE PANEL
-   ========================================================== */
-
-.title-panel{
-
-    position:absolute;
-
-    left:12%;
-
-    right:12%;
-
-    top:12%;
-
-    bottom:12%;
-
-    border-radius:4px;
-
-    border:1px solid rgba(255,255,255,.2);
-
-}
-
-
-
-/* ==========================================================
-   DOUBLE PANEL
-   ========================================================== */
-
-.double-panel::after{
-
-    content:"";
-
-    position:absolute;
-
-    inset:6px;
-
-    border:1px solid rgba(255,255,255,.15);
-
-}
-
-
-
-/* ==========================================================
-   ORNAMENT
-   ========================================================== */
-
-.book-ornament{
-
-    position:absolute;
-
-    top:12px;
-
-    left:50%;
-
-    transform:translateX(-50%);
-
-    width:14px;
-
-    height:14px;
-
-    border-radius:50%;
-
-    background:currentColor;
-
-    opacity:.75;
-
-}
-
-
-
-/* ==========================================================
-   DIVIDER
-   ========================================================== */
-
-.book-divider{
-
-    position:absolute;
-
-    left:15%;
-
-    right:15%;
-
-    height:1px;
-
-    background:currentColor;
-
-    opacity:.35;
-
-}
-
-
-
-/* ==========================================================
-   AGED BOOK
-   ========================================================== */
-
-.book-aged{
-
-    filter:
-
-        saturate(.8)
-
-        brightness(.92);
-
-}
-
-
-
-/* ==========================================================
-   NEW BOOK
-   ========================================================== */
-
-.book-new{
-
-    filter:
-
-        brightness(1.05);
-
-}
-
-/* ==========================================================
-   REALISM & ATMOSPHERE
-   ========================================================== */
-
-
-
-/* ==========================================================
-   BOOK HEIGHT VARIATIONS
-   ========================================================== */
-
-.book.height-xs{
-
-    height:170px;
-
-}
-
-.book.height-sm{
-
-    height:195px;
-
-}
-
-.book.height-md{
-
-    height:220px;
-
-}
-
-.book.height-lg{
-
-    height:250px;
-
-}
-
-.book.height-xl{
-
-    height:285px;
-
-}
-
-
-
-/* ==========================================================
-   BOOK THICKNESS
-   ========================================================== */
-
-.book.width-xs{
-
-    width:28px;
-
-}
-
-.book.width-sm{
-
-    width:36px;
-
-}
-
-.book.width-md{
-
-    width:46px;
-
-}
-
-.book.width-lg{
-
-    width:58px;
-
-}
-
-.book.width-xl{
-
-    width:72px;
-
-}
-
-
-
-/* ==========================================================
-   BOOK EDGE WEAR
-   ========================================================== */
-
-.book-worn::before{
-
-    opacity:.55;
-
-}
-
-.book-worn::after{
-
-    opacity:.45;
-
-}
-
-
-
-/* ==========================================================
-   OLD BOOK
-   ========================================================== */
-
-.book-antique{
-
-    filter:
-
-        brightness(.9)
-
-        saturate(.75);
-
-}
-
-
-
-/* ==========================================================
-   COLLECTOR'S EDITION
-   ========================================================== */
-
-.book-collector{
-
-    box-shadow:
-
-        0 8px 18px rgba(0,0,0,.35),
-
-        0 0 0 1px rgba(255,220,140,.18);
-
-}
-
-
-
-/* ==========================================================
-   BOOK STACKS
-   ========================================================== */
-
-.horizontal-stack{
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:flex-end;
-
-    margin-right:16px;
-
-}
-
-.horizontal-stack .book{
-
-    width:140px;
-
-    height:34px;
-
-    margin-bottom:3px;
-
-    transform:none;
-
-}
-
-.horizontal-stack .book-title{
-
-    writing-mode:horizontal-tb;
-
-    transform:none;
-
-    padding:0;
-
-}
-
-
-
-/* ==========================================================
-   BOOK ENDS
-   ========================================================== */
+   BOOKENDS
+========================================================== */
 
 .bookend{
 
-    width:20px;
+    width:16px;
 
-    height:185px;
+    height:140px;
 
-    border-radius:4px;
+    border-radius:4px 4px 0 0;
 
     background:
 
@@ -1367,35 +1340,21 @@
 
             180deg,
 
-            #545454,
+            #444,
 
-            #2f2f2f
+            #222
 
         );
 
     box-shadow:
 
-        var(--shadow-sm);
+        inset 1px 0 rgba(255,255,255,.18);
 
 }
 
+.bookend.right{
 
-
-/* ==========================================================
-   BOOK HOVER GLOW
-   ========================================================== */
-
-.book:hover{
-
-    filter:
-
-        brightness(1.08);
-
-}
-
-.book:hover .book-shadow{
-
-    opacity:.6;
+    margin-left:auto;
 
 }
 
@@ -1403,45 +1362,127 @@
 
 /* ==========================================================
    SHELF LIGHTING
-   ========================================================== */
+========================================================== */
 
-.bookshelf::before{
+.bookshelf{
 
-    content:"";
+    transition:all .35s ease;
 
-    position:absolute;
+}
 
-    left:0;
+.bookshelf:hover{
 
-    right:0;
+    transform:translateY(-2px);
 
-    top:30px;
+}
 
-    height:180px;
+.bookshelf:hover .wood-shelf{
 
-    background:
+    filter:brightness(1.02);
 
-        linear-gradient(
+}
 
-            to bottom,
+.bookshelf:hover .book{
 
-            rgba(255,248,225,.05),
+    filter:brightness(1.04);
 
-            transparent
+}
 
-        );
+   /* ==========================================================
+   LIBRARY POLISH
+========================================================== */
 
-    pointer-events:none;
+/* Shelf Fade In */
+
+.bookshelf{
+
+    opacity:0;
+
+    transform:translateY(24px);
+
+    animation:shelfFade .5s ease forwards;
+
+}
+
+.bookshelf:nth-child(1){
+
+    animation-delay:.05s;
+
+}
+
+.bookshelf:nth-child(2){
+
+    animation-delay:.12s;
+
+}
+
+.bookshelf:nth-child(3){
+
+    animation-delay:.19s;
+
+}
+
+.bookshelf:nth-child(4){
+
+    animation-delay:.26s;
+
+}
+
+.bookshelf:nth-child(5){
+
+    animation-delay:.33s;
 
 }
 
 
 
 /* ==========================================================
-   DECORATIONS
-   ========================================================== */
+   BOOK HOVER
+========================================================== */
 
-.shelf-decoration{
+.book{
+
+    transform-origin:bottom center;
+
+}
+
+.book:hover{
+
+    z-index:100;
+
+}
+
+.book:hover .book-title{
+
+    color:#ffffff;
+
+}
+
+
+
+/* ==========================================================
+   SHELF HOVER
+========================================================== */
+
+.bookshelf:hover .wood-shelf{
+
+    box-shadow:
+
+        inset 0 2px rgba(255,255,255,.18),
+
+        inset 0 -3px rgba(0,0,0,.18),
+
+        0 16px 28px rgba(0,0,0,.16);
+
+}
+
+
+
+/* ==========================================================
+   EMPTY SHELF
+========================================================== */
+
+.empty-shelf{
 
     display:flex;
 
@@ -1449,198 +1490,224 @@
 
     align-items:center;
 
-    flex-shrink:0;
+    height:220px;
 
-    transition:.25s ease;
+    border:2px dashed var(--border);
 
-    user-select:none;
+    border-radius:18px;
+
+    color:var(--text-light);
+
+    background:
+
+        rgba(255,255,255,.35);
 
 }
 
-.shelf-decoration:hover{
+.empty-shelf p{
+
+    font-style:italic;
+
+}
+
+
+
+/* ==========================================================
+   ADD SHELF BUTTON
+========================================================== */
+
+.add-shelf{
+
+    display:flex;
+
+    justify-content:center;
+
+    margin-top:3rem;
+
+}
+
+.add-shelf button{
+
+    min-width:220px;
+
+}
+
+
+
+/* ==========================================================
+   CUSTOM SCROLLING
+========================================================== */
+
+.book-row{
+
+    overflow-x:auto;
+
+    overflow-y:hidden;
+
+    scrollbar-width:none;
+
+}
+
+.book-row::-webkit-scrollbar{
+
+    display:none;
+
+}
+
+
+
+/* ==========================================================
+   BOOK TRANSITIONS
+========================================================== */
+
+.book,
+.book-spine,
+.book-title{
+
+    transition:
+
+        transform .25s ease,
+
+        background .25s ease,
+
+        box-shadow .25s ease,
+
+        color .25s ease;
+
+}
+
+
+
+/* ==========================================================
+   ACTIVE BOOK
+========================================================== */
+
+.book.active{
 
     transform:
 
-        translateY(-4px)
+        translateY(-14px)
 
-        rotate(-2deg);
+        scale(1.03);
+
+}
+
+.book.active .book-spine{
+
+    box-shadow:
+
+        0 10px 24px rgba(0,0,0,.25);
 
 }
 
 
 
 /* ==========================================================
-   CANDLE
-   ========================================================== */
+   CONTINUE READING
+========================================================== */
 
-.decoration-candle{
+.continue-book{
 
-    width:18px;
+    transition:
 
-    height:46px;
+        transform .3s ease,
 
-    border-radius:3px;
-
-    background:#efe6cf;
-
-    position:relative;
+        box-shadow .3s ease;
 
 }
 
-.decoration-candle::before{
+.continue-book:hover{
 
-    content:"";
+    transform:translateY(-4px);
 
-    position:absolute;
-
-    top:-10px;
-
-    left:50%;
-
-    transform:translateX(-50%);
-
-    width:8px;
-
-    height:12px;
-
-    border-radius:50%;
-
-    background:#ffcb63;
-
-    filter:blur(.5px);
+    box-shadow:var(--shadow-md);
 
 }
 
 
 
 /* ==========================================================
-   PLANT
-   ========================================================== */
+   LIBRARY ANIMATION
+========================================================== */
 
-.decoration-plant{
-
-    width:34px;
-
-    height:34px;
-
-    border-radius:50%;
-
-    background:#36533c;
-
-}
-
-
-
-/* ==========================================================
-   SKULL
-   ========================================================== */
-
-.decoration-skull{
-
-    width:28px;
-
-    height:28px;
-
-    border-radius:50%;
-
-    background:#d7d2c7;
-
-}
-
-
-
-/* ==========================================================
-   GHOST
-   ========================================================== */
-
-.decoration-ghost{
-
-    width:26px;
-
-    height:34px;
-
-    border-radius:14px 14px 8px 8px;
-
-    background:rgba(255,255,255,.88);
-
-}
-
-
-
-/* ==========================================================
-   PUMPKIN
-   ========================================================== */
-
-.decoration-pumpkin{
-
-    width:28px;
-
-    height:28px;
-
-    border-radius:50%;
-
-    background:#bf6b24;
-
-}
-
-
-
-/* ==========================================================
-   MUSHROOM
-   ========================================================== */
-
-.decoration-mushroom{
-
-    width:22px;
-
-    height:22px;
-
-    border-radius:50%;
-
-    background:#b65f51;
-
-}
-
-
-
-/* ==========================================================
-   BOOK ANIMATION
-   ========================================================== */
-
-.book{
-
-    animation:
-
-        settle .45s ease;
-
-}
-
-
-
-/* ==========================================================
-   KEYFRAMES
-   ========================================================== */
-
-@keyframes settle{
+@keyframes shelfFade{
 
     from{
 
-        transform:
-
-            translateY(18px);
-
         opacity:0;
+
+        transform:translateY(24px);
 
     }
 
     to{
 
-        transform:
-
-            translateY(0);
-
         opacity:1;
 
+        transform:translateY(0);
+
     }
+
+}
+
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width:1100px){
+
+    .continue-book{
+
+        grid-template-columns:140px 1fr;
+
+    }
+
+    .book-row{
+
+        min-height:200px;
+
+    }
+
+}
+
+@media (max-width:768px){
+
+    .continue-book{
+
+        grid-template-columns:1fr;
+
+        text-align:center;
+
+    }
+
+    .continue-cover{
+
+        margin:0 auto;
+
+    }
+
+    .shelf-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+    .book-row{
+
+        padding:0 1rem;
+
+    }
+
+    .bookshelf{
+
+        margin-bottom:3.5rem;
+
+    }
+
+}
 
 }
