@@ -1,16 +1,30 @@
 /* =========================================================
    NOVELLOW
    BOOKS.JS
-   Version 15
+   VERSION 16
 
    Book creation
    Book editing
+   Shelf placement
    Book deletion
-   Shelf rendering
-   Full spine designer
-   Cover generation
-   Book reveal
    Journal handoff
+
+   Advanced physical spine designer:
+   - Binding material
+   - Spine curve
+   - Raised bands
+   - Band thickness
+   - Foil finish
+   - Separate ornaments
+   - Borders
+   - Labels
+   - Wear
+   - Texture
+   - Depth
+   - Sheen
+   - Edge wear
+   - Typography
+   - Proportions
    ========================================================= */
 
 (() => {
@@ -19,7 +33,7 @@
 
 
     /* =====================================================
-       GLOBALS
+       GLOBAL NAMESPACE
        ===================================================== */
 
     window.NOVELLOW =
@@ -45,7 +59,7 @@
 
 
     /* =====================================================
-       BASIC HELPERS
+       ELEMENT HELPERS
        ===================================================== */
 
     function byId(id) {
@@ -56,6 +70,127 @@
 
     }
 
+
+    function value(
+        id,
+        fallback = ""
+    ) {
+
+        const element =
+            byId(id);
+
+
+        if (!element) {
+
+            return fallback;
+
+        }
+
+
+        return (
+            element.value ??
+            fallback
+        );
+
+    }
+
+
+    function checked(
+        id,
+        fallback = false
+    ) {
+
+        const element =
+            byId(id);
+
+
+        if (!element) {
+
+            return fallback;
+
+        }
+
+
+        return Boolean(
+            element.checked
+        );
+
+    }
+
+
+    function setValue(
+        id,
+        nextValue
+    ) {
+
+        const element =
+            byId(id);
+
+
+        if (!element) {
+
+            return;
+
+        }
+
+
+        element.value =
+            nextValue ??
+            "";
+
+    }
+
+
+    function setChecked(
+        id,
+        nextValue
+    ) {
+
+        const element =
+            byId(id);
+
+
+        if (!element) {
+
+            return;
+
+        }
+
+
+        element.checked =
+            Boolean(
+                nextValue
+            );
+
+    }
+
+
+    function setText(
+        id,
+        text
+    ) {
+
+        const element =
+            byId(id);
+
+
+        if (!element) {
+
+            return;
+
+        }
+
+
+        element.textContent =
+            text ??
+            "";
+
+    }
+
+
+    /* =====================================================
+       STATE
+       ===================================================== */
 
     function getState() {
 
@@ -110,7 +245,8 @@
     function getBookById(bookId) {
 
         if (
-            H.getBookById
+            typeof H.getBookById ===
+            "function"
         ) {
 
             const found =
@@ -128,70 +264,21 @@
         }
 
 
-        return getBooks().find(
-            book =>
-                String(book.id) ===
-                String(bookId)
-        ) || null;
-
-    }
-
-
-    function value(id) {
-
         return (
-            byId(id)?.value ??
-            ""
+            getBooks().find(
+                book =>
+                    String(book.id) ===
+                    String(bookId)
+            ) ||
+            null
         );
 
     }
 
 
-    function setValue(
-        id,
-        nextValue
-    ) {
-
-        const element =
-            byId(id);
-
-
-        if (!element) {
-
-            return;
-
-        }
-
-
-        element.value =
-            nextValue ??
-            "";
-
-    }
-
-
-    function setText(
-        id,
-        text
-    ) {
-
-        const element =
-            byId(id);
-
-
-        if (!element) {
-
-            return;
-
-        }
-
-
-        element.textContent =
-            text ??
-            "";
-
-    }
-
+    /* =====================================================
+       GENERAL HELPERS
+       ===================================================== */
 
     function createId(prefix) {
 
@@ -256,28 +343,27 @@
         }
 
 
-        const element =
+        const temp =
             document.createElement(
                 "div"
             );
 
 
-        element.textContent =
+        temp.textContent =
             String(
                 input ??
                 ""
             );
 
 
-        return element.innerHTML;
+        return temp.innerHTML;
 
     }
 
 
     function showToast(
         message,
-        type =
-            "success"
+        type = "success"
     ) {
 
         if (
@@ -295,56 +381,381 @@
         }
 
 
-        const toast =
-            byId(
-                "toast"
+        console.log(
+            message
+        );
+
+    }
+
+
+    function numberValue(
+        id,
+        fallback = 0
+    ) {
+
+        const raw =
+            Number(
+                value(
+                    id,
+                    fallback
+                )
             );
 
 
-        if (!toast) {
+        return Number.isFinite(raw)
+            ? raw
+            : fallback;
 
-            console.log(
-                message
+    }
+
+
+    function cssNumber(
+        valueToClamp,
+        minimum,
+        maximum,
+        fallback
+    ) {
+
+        const parsed =
+            Number(
+                valueToClamp
             );
 
-            return;
+
+        if (
+            !Number.isFinite(
+                parsed
+            )
+        ) {
+
+            return fallback;
 
         }
 
 
-        toast.textContent =
-            message;
-
-
-        toast.dataset.type =
-            type;
-
-
-        toast.hidden =
-            false;
-
-
-        clearTimeout(
-            showToast.timeout
+        return Math.min(
+            maximum,
+            Math.max(
+                minimum,
+                parsed
+            )
         );
-
-
-        showToast.timeout =
-            setTimeout(
-                () => {
-
-                    toast.hidden =
-                        true;
-
-                },
-                2500
-            );
 
     }
 
 
     /* =====================================================
-       INITIALIZATION
+       DEFAULT DESIGN MODEL
+
+       Everything about the physical book lives here.
+
+       Existing books that don't have one of these values
+       automatically receive a safe default.
+       ===================================================== */
+
+    function getDefaultDesign() {
+
+        return {
+
+            /* Base visual family */
+            style:
+                "classic",
+
+            /* Physical binding material */
+            material:
+                "linen",
+
+            /* Base colors */
+            spineColor:
+                "#793f55",
+
+            textColor:
+                "#f1e3cf",
+
+            accentColor:
+                "#c39a67",
+
+            /* Foil / print finish */
+            foil:
+                "gold",
+
+            /* Overall spine geometry */
+            curve:
+                "soft",
+
+            height:
+                "medium",
+
+            thickness:
+                "medium",
+
+            /* Raised horizontal binding bands */
+            raisedBands:
+                "2",
+
+            bandThickness:
+                "medium",
+
+            /* Decorative edge framework */
+            borderStyle:
+                "none",
+
+            /* Primary legacy ornament */
+            ornament:
+                "auto",
+
+            /* More detailed ornaments */
+            topOrnament:
+                "auto",
+
+            bottomOrnament:
+                "auto",
+
+            /* Title plate */
+            titlePanel:
+                "none",
+
+            labelShape:
+                "none",
+
+            labelColor:
+                "#4a2d34",
+
+            /* Typography */
+            font:
+                "bookish",
+
+            fontSize:
+                "medium",
+
+            fontWeight:
+                "regular",
+
+            letterSpacing:
+                "normal",
+
+            letterCase:
+                "typed",
+
+            fontStyle:
+                "normal",
+
+            textAlign:
+                "center",
+
+            /* Material personality */
+            texture:
+                "medium",
+
+            wear:
+                "none",
+
+            edgeWear:
+                "none",
+
+            depth:
+                "medium",
+
+            sheen:
+                "matte"
+
+        };
+
+    }
+
+
+    /* =====================================================
+       NORMALIZE ADVANCED DESIGN
+
+       This is intentionally independent of helper.js so the
+       new design fields survive even if helper.js has not
+       been upgraded yet.
+       ===================================================== */
+
+    function normalizeAdvancedDesign(
+        input = {}
+    ) {
+
+        const defaults =
+            getDefaultDesign();
+
+
+        const helperNormalized =
+            typeof H.normalizeBookDesign ===
+                "function"
+                ? H.normalizeBookDesign(
+                    input
+                )
+                : input;
+
+
+        const source = {
+
+            ...input,
+
+            ...helperNormalized
+
+        };
+
+
+        return {
+
+            style:
+                source.style ||
+                defaults.style,
+
+            material:
+                source.material ||
+                source.bindingMaterial ||
+                defaults.material,
+
+            spineColor:
+                source.spineColor ||
+                source.spine_color ||
+                defaults.spineColor,
+
+            textColor:
+                source.textColor ||
+                source.text_color ||
+                defaults.textColor,
+
+            accentColor:
+                source.accentColor ||
+                source.accent_color ||
+                defaults.accentColor,
+
+            foil:
+                source.foil ||
+                source.foilStyle ||
+                defaults.foil,
+
+            curve:
+                source.curve ||
+                source.spineCurve ||
+                defaults.curve,
+
+            height:
+                source.height ||
+                defaults.height,
+
+            thickness:
+                source.thickness ||
+                defaults.thickness,
+
+            raisedBands:
+                String(
+                    source.raisedBands ??
+                    source.raised_bands ??
+                    defaults.raisedBands
+                ),
+
+            bandThickness:
+                source.bandThickness ||
+                source.band_thickness ||
+                defaults.bandThickness,
+
+            borderStyle:
+                source.borderStyle ||
+                source.border_style ||
+                defaults.borderStyle,
+
+            ornament:
+                source.ornament ||
+                defaults.ornament,
+
+            topOrnament:
+                source.topOrnament ||
+                source.top_ornament ||
+                source.ornament ||
+                defaults.topOrnament,
+
+            bottomOrnament:
+                source.bottomOrnament ||
+                source.bottom_ornament ||
+                source.ornament ||
+                defaults.bottomOrnament,
+
+            titlePanel:
+                source.titlePanel ||
+                source.title_panel ||
+                defaults.titlePanel,
+
+            labelShape:
+                source.labelShape ||
+                source.label_shape ||
+                defaults.labelShape,
+
+            labelColor:
+                source.labelColor ||
+                source.label_color ||
+                defaults.labelColor,
+
+            font:
+                source.font ||
+                defaults.font,
+
+            fontSize:
+                source.fontSize ||
+                source.font_size ||
+                defaults.fontSize,
+
+            fontWeight:
+                source.fontWeight ||
+                source.font_weight ||
+                defaults.fontWeight,
+
+            letterSpacing:
+                source.letterSpacing ||
+                source.letter_spacing ||
+                defaults.letterSpacing,
+
+            letterCase:
+                source.letterCase ||
+                source.letter_case ||
+                defaults.letterCase,
+
+            fontStyle:
+                source.fontStyle ||
+                source.font_style ||
+                defaults.fontStyle,
+
+            textAlign:
+                source.textAlign ||
+                source.text_align ||
+                defaults.textAlign,
+
+            texture:
+                source.texture ||
+                source.textureStrength ||
+                defaults.texture,
+
+            wear:
+                source.wear ||
+                source.wearLevel ||
+                defaults.wear,
+
+            edgeWear:
+                source.edgeWear ||
+                source.edge_wear ||
+                defaults.edgeWear,
+
+            depth:
+                source.depth ||
+                source.depthStrength ||
+                defaults.depth,
+
+            sheen:
+                source.sheen ||
+                source.finish ||
+                defaults.sheen
+
+        };
+
+    }
+
+
+    /* =====================================================
+       INITIALIZE
        ===================================================== */
 
     function init() {
@@ -374,7 +785,7 @@
 
 
     /* =====================================================
-       BOOK DRAWER
+       BOOK DRAWER BINDINGS
        ===================================================== */
 
     function bindBookDrawer() {
@@ -409,16 +820,16 @@
             "click",
             () => {
 
-                const bookId =
+                const id =
                     value(
                         "editingBookId"
                     );
 
 
-                if (bookId) {
+                if (id) {
 
                     deleteBook(
-                        bookId
+                        id
                     );
 
                 }
@@ -427,20 +838,12 @@
         );
 
 
-        const coverUpload =
-            byId(
-                "bookCoverUpload"
-            );
-
-
-        if (coverUpload) {
-
-            coverUpload.addEventListener(
-                "change",
-                handleCoverUpload
-            );
-
-        }
+        byId(
+            "bookCoverUpload"
+        )?.addEventListener(
+            "change",
+            handleCoverUpload
+        );
 
     }
 
@@ -450,8 +853,7 @@
        ===================================================== */
 
     function openAddDrawer(
-        shelfId =
-            ""
+        shelfId = ""
     ) {
 
         resetBookForm();
@@ -504,7 +906,10 @@
         }
 
 
-        applyDefaultDesign();
+        populateDesignFields(
+            getDefaultDesign()
+        );
+
 
         updateSpinePreview();
 
@@ -608,7 +1013,6 @@
         setValue(
             "bookISBN",
             book.isbn ||
-            book.ISBN ||
             ""
         );
 
@@ -690,12 +1094,10 @@
 
 
         populateDesignFields(
-            book.design ||
-            {}
+            normalizeAdvancedDesign(
+                book.design
+            )
         );
-
-
-        updateSpinePreview();
 
 
         const deleteButton =
@@ -712,6 +1114,8 @@
         }
 
 
+        updateSpinePreview();
+
         openDrawer();
 
     }
@@ -723,6 +1127,21 @@
 
     function openDrawer() {
 
+        if (
+            typeof Novellow.app
+                ?.openPanel ===
+            "function"
+        ) {
+
+            Novellow.app.openPanel(
+                "bookDrawer"
+            );
+
+            return;
+
+        }
+
+
         const drawer =
             byId(
                 "bookDrawer"
@@ -732,7 +1151,7 @@
         if (!drawer) {
 
             console.error(
-                "Novellow: bookDrawer was not found."
+                "Novellow: #bookDrawer was not found."
             );
 
             return;
@@ -758,7 +1177,6 @@
 
             overlay.hidden =
                 false;
-
 
             overlay.style.pointerEvents =
                 "auto";
@@ -798,19 +1216,11 @@
     }
 
 
-    /* =====================================================
-       RESET BOOK FORM
-       ===================================================== */
-
     function resetBookForm() {
 
-        const form =
-            byId(
-                "bookForm"
-            );
-
-
-        form?.reset();
+        byId(
+            "bookForm"
+        )?.reset();
 
 
         setValue(
@@ -850,219 +1260,437 @@
 
 
     /* =====================================================
-       FULL DEFAULT SPINE DESIGN
+       POPULATE DESIGN CONTROLS
+
+       Missing HTML elements are intentionally ignored.
+       This means Version 16 can be installed before we add
+       all of the advanced designer controls.
        ===================================================== */
 
-    function applyDefaultDesign() {
-
-        const defaults =
-            Novellow.config
-                ?.defaultBookDesign ||
-            window.NOVELLOW_CONFIG
-                ?.defaultBookDesign ||
-            {};
-
-
-        populateDesignFields(
-            {
-
-                style:
-                    defaults.style ||
-                    "classic",
-
-                spineColor:
-                    defaults.spineColor ||
-                    "#793f55",
-
-                textColor:
-                    defaults.textColor ||
-                    "#f1e3cf",
-
-                accentColor:
-                    defaults.accentColor ||
-                    "#c39a67",
-
-                ornament:
-                    defaults.ornament ||
-                    "auto",
-
-                font:
-                    defaults.font ||
-                    "bookish",
-
-                fontSize:
-                    defaults.fontSize ||
-                    "medium",
-
-                fontWeight:
-                    defaults.fontWeight ||
-                    "regular",
-
-                letterSpacing:
-                    defaults.letterSpacing ||
-                    "normal",
-
-                letterCase:
-                    defaults.letterCase ||
-                    "typed",
-
-                fontStyle:
-                    defaults.fontStyle ||
-                    "normal",
-
-                textAlign:
-                    defaults.textAlign ||
-                    "center",
-
-                titlePanel:
-                    defaults.titlePanel ||
-                    "none",
-
-                height:
-                    defaults.height ||
-                    "medium",
-
-                thickness:
-                    defaults.thickness ||
-                    "medium"
-
-            }
-        );
-
-    }
-
-
     function populateDesignFields(
-        design
+        incomingDesign
     ) {
 
-        const normalized =
-            H.normalizeBookDesign?.(
-                design
-            ) ||
-            design ||
-            {};
+        const design =
+            normalizeAdvancedDesign(
+                incomingDesign
+            );
 
+
+        /* Existing controls */
 
         setValue(
             "bookStyle",
-            normalized.style ||
-            "classic"
+            design.style
         );
 
 
         setValue(
             "bookSpineStyle",
-            normalized.style ||
-            "classic"
+            design.style
         );
 
 
         setValue(
             "bookSpineColor",
-            normalized.spineColor ||
-            normalized.spine_color ||
-            "#793f55"
+            design.spineColor
         );
 
 
         setValue(
             "bookTextColor",
-            normalized.textColor ||
-            normalized.text_color ||
-            "#f1e3cf"
+            design.textColor
         );
 
 
         setValue(
             "bookAccentColor",
-            normalized.accentColor ||
-            normalized.accent_color ||
-            "#c39a67"
+            design.accentColor
         );
 
 
         setValue(
             "bookSpineOrnament",
-            normalized.ornament ||
-            "auto"
+            design.ornament
         );
 
 
         setValue(
             "bookSpineFont",
-            normalized.font ||
-            "bookish"
+            design.font
         );
 
 
         setValue(
             "bookSpineFontSize",
-            normalized.fontSize ||
-            "medium"
+            design.fontSize
         );
 
 
         setValue(
             "bookSpineFontWeight",
-            normalized.fontWeight ||
-            "regular"
+            design.fontWeight
         );
 
 
         setValue(
             "bookSpineLetterSpacing",
-            normalized.letterSpacing ||
-            "normal"
+            design.letterSpacing
         );
 
 
         setValue(
             "bookSpineCase",
-            normalized.letterCase ||
-            "typed"
+            design.letterCase
         );
 
 
         setValue(
             "bookSpineFontStyle",
-            normalized.fontStyle ||
-            "normal"
+            design.fontStyle
         );
 
 
         setValue(
             "bookSpineTextAlign",
-            normalized.textAlign ||
-            "center"
+            design.textAlign
         );
 
 
         setValue(
             "bookSpineTitlePanel",
-            normalized.titlePanel ||
-            "none"
+            design.titlePanel
         );
 
 
         setValue(
             "bookHeight",
-            normalized.height ||
-            "medium"
+            design.height
         );
 
 
         setValue(
             "bookThickness",
-            normalized.thickness ||
-            "medium"
+            design.thickness
+        );
+
+
+        /* New advanced controls */
+
+        setValue(
+            "bookBindingMaterial",
+            design.material
+        );
+
+
+        setValue(
+            "bookSpineCurve",
+            design.curve
+        );
+
+
+        setValue(
+            "bookRaisedBands",
+            design.raisedBands
+        );
+
+
+        setValue(
+            "bookBandThickness",
+            design.bandThickness
+        );
+
+
+        setValue(
+            "bookFoilStyle",
+            design.foil
+        );
+
+
+        setValue(
+            "bookTopOrnament",
+            design.topOrnament
+        );
+
+
+        setValue(
+            "bookBottomOrnament",
+            design.bottomOrnament
+        );
+
+
+        setValue(
+            "bookBorderStyle",
+            design.borderStyle
+        );
+
+
+        setValue(
+            "bookLabelShape",
+            design.labelShape
+        );
+
+
+        setValue(
+            "bookLabelColor",
+            design.labelColor
+        );
+
+
+        setValue(
+            "bookTextureStrength",
+            design.texture
+        );
+
+
+        setValue(
+            "bookWearLevel",
+            design.wear
+        );
+
+
+        setValue(
+            "bookEdgeWear",
+            design.edgeWear
+        );
+
+
+        setValue(
+            "bookDepthStrength",
+            design.depth
+        );
+
+
+        setValue(
+            "bookSheen",
+            design.sheen
         );
 
     }
 
 
     /* =====================================================
-       BOOK SUBMIT
+       COLLECT DESIGN FROM FORM
+       ===================================================== */
+
+    function collectBookDesign() {
+
+        const defaults =
+            getDefaultDesign();
+
+
+        const style =
+            value(
+                "bookStyle",
+                ""
+            ) ||
+            value(
+                "bookSpineStyle",
+                defaults.style
+            );
+
+
+        const design = {
+
+            /* Existing */
+
+            style,
+
+            spineColor:
+                value(
+                    "bookSpineColor",
+                    defaults.spineColor
+                ),
+
+            textColor:
+                value(
+                    "bookTextColor",
+                    defaults.textColor
+                ),
+
+            accentColor:
+                value(
+                    "bookAccentColor",
+                    defaults.accentColor
+                ),
+
+            ornament:
+                value(
+                    "bookSpineOrnament",
+                    defaults.ornament
+                ),
+
+            font:
+                value(
+                    "bookSpineFont",
+                    defaults.font
+                ),
+
+            fontSize:
+                value(
+                    "bookSpineFontSize",
+                    defaults.fontSize
+                ),
+
+            fontWeight:
+                value(
+                    "bookSpineFontWeight",
+                    defaults.fontWeight
+                ),
+
+            letterSpacing:
+                value(
+                    "bookSpineLetterSpacing",
+                    defaults.letterSpacing
+                ),
+
+            letterCase:
+                value(
+                    "bookSpineCase",
+                    defaults.letterCase
+                ),
+
+            fontStyle:
+                value(
+                    "bookSpineFontStyle",
+                    defaults.fontStyle
+                ),
+
+            textAlign:
+                value(
+                    "bookSpineTextAlign",
+                    defaults.textAlign
+                ),
+
+            titlePanel:
+                value(
+                    "bookSpineTitlePanel",
+                    defaults.titlePanel
+                ),
+
+            height:
+                value(
+                    "bookHeight",
+                    defaults.height
+                ),
+
+            thickness:
+                value(
+                    "bookThickness",
+                    defaults.thickness
+                ),
+
+
+            /* New physical attributes */
+
+            material:
+                value(
+                    "bookBindingMaterial",
+                    defaults.material
+                ),
+
+            curve:
+                value(
+                    "bookSpineCurve",
+                    defaults.curve
+                ),
+
+            raisedBands:
+                value(
+                    "bookRaisedBands",
+                    defaults.raisedBands
+                ),
+
+            bandThickness:
+                value(
+                    "bookBandThickness",
+                    defaults.bandThickness
+                ),
+
+            foil:
+                value(
+                    "bookFoilStyle",
+                    defaults.foil
+                ),
+
+            topOrnament:
+                value(
+                    "bookTopOrnament",
+                    value(
+                        "bookSpineOrnament",
+                        defaults.topOrnament
+                    )
+                ),
+
+            bottomOrnament:
+                value(
+                    "bookBottomOrnament",
+                    value(
+                        "bookSpineOrnament",
+                        defaults.bottomOrnament
+                    )
+                ),
+
+            borderStyle:
+                value(
+                    "bookBorderStyle",
+                    defaults.borderStyle
+                ),
+
+            labelShape:
+                value(
+                    "bookLabelShape",
+                    defaults.labelShape
+                ),
+
+            labelColor:
+                value(
+                    "bookLabelColor",
+                    defaults.labelColor
+                ),
+
+            texture:
+                value(
+                    "bookTextureStrength",
+                    defaults.texture
+                ),
+
+            wear:
+                value(
+                    "bookWearLevel",
+                    defaults.wear
+                ),
+
+            edgeWear:
+                value(
+                    "bookEdgeWear",
+                    defaults.edgeWear
+                ),
+
+            depth:
+                value(
+                    "bookDepthStrength",
+                    defaults.depth
+                ),
+
+            sheen:
+                value(
+                    "bookSheen",
+                    defaults.sheen
+                )
+
+        };
+
+
+        return normalizeAdvancedDesign(
+            design
+        );
+
+    }
+
+
+    /* =====================================================
+       SAVE BOOK
        ===================================================== */
 
     function handleBookSubmit(
@@ -1118,7 +1746,7 @@
             nowISO();
 
 
-        const bookData = {
+        const rawBook = {
 
             ...existing,
 
@@ -1157,18 +1785,16 @@
                     : null,
 
             pages:
-                Number(
-                    value(
-                        "bookPages"
-                    )
-                ) || 0,
+                numberValue(
+                    "bookPages",
+                    0
+                ),
 
             total_pages:
-                Number(
-                    value(
-                        "bookPages"
-                    )
-                ) || 0,
+                numberValue(
+                    "bookPages",
+                    0
+                ),
 
             isbn:
                 value(
@@ -1181,8 +1807,8 @@
                 ).trim(),
 
             /*
-               Keep both names while the old frontend
-               and new Supabase schema coexist.
+               Maintain both forms while localStorage and
+               Supabase coexist.
             */
 
             shelfId,
@@ -1193,30 +1819,27 @@
 
             status:
                 value(
-                    "bookStatus"
-                ) ||
-                "want",
+                    "bookStatus",
+                    "want"
+                ),
 
             rating:
-                Number(
-                    value(
-                        "bookRating"
-                    )
-                ) || 0,
+                numberValue(
+                    "bookRating",
+                    0
+                ),
 
             timesRead:
-                Number(
-                    value(
-                        "bookTimesRead"
-                    )
-                ) || 0,
+                numberValue(
+                    "bookTimesRead",
+                    0
+                ),
 
             times_read:
-                Number(
-                    value(
-                        "bookTimesRead"
-                    )
-                ) || 0,
+                numberValue(
+                    "bookTimesRead",
+                    0
+                ),
 
             started:
                 value(
@@ -1241,18 +1864,16 @@
                 null,
 
             currentPage:
-                Number(
-                    value(
-                        "bookCurrentPage"
-                    )
-                ) || 0,
+                numberValue(
+                    "bookCurrentPage",
+                    0
+                ),
 
             current_page:
-                Number(
-                    value(
-                        "bookCurrentPage"
-                    )
-                ) || 0,
+                numberValue(
+                    "bookCurrentPage",
+                    0
+                ),
 
             cover:
                 state.pendingCoverData ||
@@ -1282,37 +1903,39 @@
         };
 
 
-        const book =
-            H.normalizeBook?.(
-                bookData
-            ) ||
-            bookData;
-
-
         /*
-           Make absolutely sure shelf identity survives
-           normalization.
+           Allow helper.js to normalize standard book data,
+           but restore advanced design afterwards so helper
+           normalization cannot accidentally strip it.
         */
 
-        book.shelfId =
-            shelfId;
+        const normalized =
+            typeof H.normalizeBook ===
+                "function"
+                ? H.normalizeBook(
+                    rawBook
+                )
+                : rawBook;
 
 
-        book.shelf_id =
-            shelfId ||
-            null;
+        const book = {
 
+            ...rawBook,
 
-        if (
-            !Array.isArray(
-                state.books
-            )
-        ) {
+            ...normalized,
 
-            state.books =
-                [];
+            shelfId,
 
-        }
+            shelf_id:
+                shelfId ||
+                null,
+
+            design:
+                normalizeAdvancedDesign(
+                    rawBook.design
+                )
+
+        };
 
 
         if (existing) {
@@ -1368,160 +1991,48 @@
 
 
     /* =====================================================
-       FULL SPINE DESIGN COLLECTION
-       ===================================================== */
-
-    function collectBookDesign() {
-
-        const rawDesign = {
-
-            style:
-                value(
-                    "bookStyle"
-                ) ||
-                value(
-                    "bookSpineStyle"
-                ) ||
-                "classic",
-
-            spineColor:
-                value(
-                    "bookSpineColor"
-                ) ||
-                "#793f55",
-
-            textColor:
-                value(
-                    "bookTextColor"
-                ) ||
-                "#f1e3cf",
-
-            accentColor:
-                value(
-                    "bookAccentColor"
-                ) ||
-                "#c39a67",
-
-            ornament:
-                value(
-                    "bookSpineOrnament"
-                ) ||
-                "auto",
-
-            font:
-                value(
-                    "bookSpineFont"
-                ) ||
-                "bookish",
-
-            fontSize:
-                value(
-                    "bookSpineFontSize"
-                ) ||
-                "medium",
-
-            fontWeight:
-                value(
-                    "bookSpineFontWeight"
-                ) ||
-                "regular",
-
-            letterSpacing:
-                value(
-                    "bookSpineLetterSpacing"
-                ) ||
-                "normal",
-
-            letterCase:
-                value(
-                    "bookSpineCase"
-                ) ||
-                "typed",
-
-            fontStyle:
-                value(
-                    "bookSpineFontStyle"
-                ) ||
-                "normal",
-
-            textAlign:
-                value(
-                    "bookSpineTextAlign"
-                ) ||
-                "center",
-
-            titlePanel:
-                value(
-                    "bookSpineTitlePanel"
-                ) ||
-                "none",
-
-            height:
-                value(
-                    "bookHeight"
-                ) ||
-                "medium",
-
-            thickness:
-                value(
-                    "bookThickness"
-                ) ||
-                "medium"
-
-        };
-
-
-        return (
-            H.normalizeBookDesign?.(
-                rawDesign
-            ) ||
-            rawDesign
-        );
-
-    }
-
-
-    /* =====================================================
-       LIVE SPINE PREVIEW
+       LIVE DESIGNER BINDINGS
        ===================================================== */
 
     function bindLivePreview() {
 
         const ids = [
 
+            /* Existing */
             "bookTitle",
-
             "bookStyle",
-
             "bookSpineStyle",
-
             "bookSpineColor",
-
             "bookTextColor",
-
             "bookAccentColor",
-
             "bookSpineOrnament",
-
             "bookSpineFont",
-
             "bookSpineFontSize",
-
             "bookSpineFontWeight",
-
             "bookSpineLetterSpacing",
-
             "bookSpineCase",
-
             "bookSpineFontStyle",
-
             "bookSpineTextAlign",
-
             "bookSpineTitlePanel",
-
             "bookHeight",
+            "bookThickness",
 
-            "bookThickness"
+            /* New */
+            "bookBindingMaterial",
+            "bookSpineCurve",
+            "bookRaisedBands",
+            "bookBandThickness",
+            "bookFoilStyle",
+            "bookTopOrnament",
+            "bookBottomOrnament",
+            "bookBorderStyle",
+            "bookLabelShape",
+            "bookLabelColor",
+            "bookTextureStrength",
+            "bookWearLevel",
+            "bookEdgeWear",
+            "bookDepthStrength",
+            "bookSheen"
 
         ];
 
@@ -1557,11 +2068,18 @@
     }
 
 
+    /* =====================================================
+       LIVE PREVIEW
+       ===================================================== */
+
     function updateSpinePreview() {
 
         const preview =
             byId(
                 "bookSpinePreview"
+            ) ||
+            byId(
+                "spinePreviewBook"
             );
 
 
@@ -1576,75 +2094,48 @@
             collectBookDesign();
 
 
+        /* CSS colors */
+
         preview.style.setProperty(
             "--book-color",
-            design.spineColor ||
-            "#793f55"
+            design.spineColor
         );
 
 
         preview.style.setProperty(
             "--book-text",
-            design.textColor ||
-            "#f1e3cf"
+            design.textColor
         );
 
 
         preview.style.setProperty(
             "--book-accent",
-            design.accentColor ||
-            "#c39a67"
+            getFoilColor(
+                design
+            )
         );
 
 
-        preview.dataset.style =
-            design.style ||
-            "classic";
+        preview.style.setProperty(
+            "--book-label-color",
+            design.labelColor
+        );
 
 
-        preview.dataset.height =
-            design.height ||
-            "medium";
+        /* Data attributes */
+
+        setDesignDataAttributes(
+            preview,
+            design
+        );
 
 
-        preview.dataset.thickness =
-            design.thickness ||
-            "medium";
+        /* Preview classes */
 
-
-        preview.dataset.font =
-            design.font ||
-            "bookish";
-
-
-        preview.dataset.fontSize =
-            design.fontSize ||
-            "medium";
-
-
-        preview.dataset.fontWeight =
-            design.fontWeight ||
-            "regular";
-
-
-        preview.dataset.letterSpacing =
-            design.letterSpacing ||
-            "normal";
-
-
-        preview.dataset.fontStyle =
-            design.fontStyle ||
-            "normal";
-
-
-        preview.dataset.textAlign =
-            design.textAlign ||
-            "center";
-
-
-        preview.dataset.titlePanel =
-            design.titlePanel ||
-            "none";
+        preview.className =
+            buildPreviewClassList(
+                design
+            );
 
 
         const rawTitle =
@@ -1721,37 +2212,766 @@
 
             ornament.textContent =
                 getOrnament(
-                    design
+                    design.bottomOrnament,
+                    design.style
                 );
 
         }
 
 
-        const titlePanel =
+        const topOrnament =
+            byId(
+                "bookSpinePreviewTopOrnament"
+            );
+
+
+        if (topOrnament) {
+
+            topOrnament.textContent =
+                getOrnament(
+                    design.topOrnament,
+                    design.style
+                );
+
+        }
+
+
+        const bottomOrnament =
+            byId(
+                "bookSpinePreviewBottomOrnament"
+            );
+
+
+        if (bottomOrnament) {
+
+            bottomOrnament.textContent =
+                getOrnament(
+                    design.bottomOrnament,
+                    design.style
+                );
+
+        }
+
+
+        const panel =
             byId(
                 "bookSpinePreviewTitlePanel"
             );
 
 
-        if (titlePanel) {
+        if (panel) {
 
-            titlePanel.className =
-                "spine-preview-title-panel";
+            panel.className =
+                [
+                    "spine-preview-title-panel",
+
+                    `preview-panel-${design.titlePanel}`,
+
+                    `preview-label-${design.labelShape}`
+
+                ].join(
+                    " "
+                );
 
 
-            if (
-                design.titlePanel &&
-                design.titlePanel !==
-                    "none"
-            ) {
+            panel.style.setProperty(
+                "--book-label-color",
+                design.labelColor
+            );
 
-                titlePanel.classList.add(
-                    `preview-panel-${design.titlePanel}`
+        }
+
+
+        renderPreviewBands(
+            preview,
+            design
+        );
+
+    }
+
+
+    /* =====================================================
+       DATA ATTRIBUTES
+       ===================================================== */
+
+    function setDesignDataAttributes(
+        element,
+        design
+    ) {
+
+        element.dataset.style =
+            design.style;
+
+        element.dataset.material =
+            design.material;
+
+        element.dataset.curve =
+            design.curve;
+
+        element.dataset.height =
+            design.height;
+
+        element.dataset.thickness =
+            design.thickness;
+
+        element.dataset.raisedBands =
+            design.raisedBands;
+
+        element.dataset.bandThickness =
+            design.bandThickness;
+
+        element.dataset.foil =
+            design.foil;
+
+        element.dataset.border =
+            design.borderStyle;
+
+        element.dataset.texture =
+            design.texture;
+
+        element.dataset.wear =
+            design.wear;
+
+        element.dataset.edgeWear =
+            design.edgeWear;
+
+        element.dataset.depth =
+            design.depth;
+
+        element.dataset.sheen =
+            design.sheen;
+
+        element.dataset.labelShape =
+            design.labelShape;
+
+    }
+
+
+    /* =====================================================
+       CREATE SHELF BOOK
+       ===================================================== */
+
+    function createShelfBookElement(
+        book
+    ) {
+
+        const design =
+            normalizeAdvancedDesign(
+                book.design
+            );
+
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.type =
+            "button";
+
+
+        button.className =
+            buildBookClassList(
+                design
+            );
+
+
+        button.dataset.bookId =
+            book.id;
+
+
+        button.setAttribute(
+            "aria-label",
+            `Open ${book.title || "book"}`
+        );
+
+
+        button.style.setProperty(
+            "--book-color",
+            design.spineColor
+        );
+
+
+        button.style.setProperty(
+            "--book-text",
+            design.textColor
+        );
+
+
+        button.style.setProperty(
+            "--book-accent",
+            getFoilColor(
+                design
+            )
+        );
+
+
+        button.style.setProperty(
+            "--book-label-color",
+            design.labelColor
+        );
+
+
+        setDesignDataAttributes(
+            button,
+            design
+        );
+
+
+        const title =
+            applyTextCase(
+                book.title ||
+                "Untitled",
+                design.letterCase
+            );
+
+
+        const topSymbol =
+            getOrnament(
+                design.topOrnament,
+                design.style
+            );
+
+
+        const bottomSymbol =
+            getOrnament(
+                design.bottomOrnament,
+                design.style
+            );
+
+
+        button.innerHTML =
+            `
+                <span
+                    class="spine-material-layer"
+                    aria-hidden="true"
+                ></span>
+
+                <span
+                    class="spine-depth-layer"
+                    aria-hidden="true"
+                ></span>
+
+                <span
+                    class="spine-wear-layer"
+                    aria-hidden="true"
+                ></span>
+
+                <span
+                    class="spine-border-layer"
+                    aria-hidden="true"
+                ></span>
+
+                ${createRaisedBandsMarkup(
+                    design
+                )}
+
+                <span class="spine-inner">
+
+                    <span
+                        class="spine-top-ornament"
+                        aria-hidden="true"
+                    >
+                        ${escapeHTML(
+                            topSymbol
+                        )}
+                    </span>
+
+                    <span
+                        class="
+                            spine-title-panel
+                            spine-label-${escapeHTML(
+                                design.labelShape
+                            )}
+                        "
+                    >
+
+                        <span class="spine-title">
+                            ${escapeHTML(
+                                title
+                            )}
+                        </span>
+
+                    </span>
+
+                    <span
+                        class="spine-bottom-ornament spine-ornament"
+                        aria-hidden="true"
+                    >
+                        ${escapeHTML(
+                            bottomSymbol
+                        )}
+                    </span>
+
+                </span>
+            `;
+
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+
+                getState().selectedBookId =
+                    book.id;
+
+
+                navigateToJournal(
+                    book.id
                 );
 
             }
+        );
+
+
+        return button;
+
+    }
+
+
+    /* =====================================================
+       BOOK CLASS LIST
+       ===================================================== */
+
+    function buildBookClassList(
+        design
+    ) {
+
+        return [
+
+            "book-spine",
+
+            `book-style-${design.style}`,
+
+            `book-material-${design.material}`,
+
+            `book-curve-${design.curve}`,
+
+            `book-height-${design.height}`,
+
+            `book-thickness-${design.thickness}`,
+
+            `book-raised-bands-${design.raisedBands}`,
+
+            `book-band-${design.bandThickness}`,
+
+            `book-foil-${design.foil}`,
+
+            `book-border-${design.borderStyle}`,
+
+            `book-label-${design.labelShape}`,
+
+            `book-texture-${design.texture}`,
+
+            `book-wear-${design.wear}`,
+
+            `book-edge-wear-${design.edgeWear}`,
+
+            `book-depth-${design.depth}`,
+
+            `book-sheen-${design.sheen}`,
+
+            `book-font-${design.font}`,
+
+            `book-font-size-${design.fontSize}`,
+
+            `book-font-weight-${design.fontWeight}`,
+
+            `book-letter-spacing-${design.letterSpacing}`,
+
+            `book-font-style-${design.fontStyle}`,
+
+            `book-text-align-${design.textAlign}`,
+
+            `book-title-panel-${design.titlePanel}`
+
+        ].join(
+            " "
+        );
+
+    }
+
+
+    function buildPreviewClassList(
+        design
+    ) {
+
+        return [
+
+            "book-spine-preview",
+
+            "spine-preview-book",
+
+            `book-style-${design.style}`,
+
+            `book-material-${design.material}`,
+
+            `book-curve-${design.curve}`,
+
+            `book-height-${design.height}`,
+
+            `book-thickness-${design.thickness}`,
+
+            `book-raised-bands-${design.raisedBands}`,
+
+            `book-band-${design.bandThickness}`,
+
+            `book-foil-${design.foil}`,
+
+            `book-border-${design.borderStyle}`,
+
+            `book-label-${design.labelShape}`,
+
+            `book-texture-${design.texture}`,
+
+            `book-wear-${design.wear}`,
+
+            `book-edge-wear-${design.edgeWear}`,
+
+            `book-depth-${design.depth}`,
+
+            `book-sheen-${design.sheen}`
+
+        ].join(
+            " "
+        );
+
+    }
+
+
+    /* =====================================================
+       RAISED BANDS
+       ===================================================== */
+
+    function createRaisedBandsMarkup(
+        design
+    ) {
+
+        const count =
+            cssNumber(
+                design.raisedBands,
+                0,
+                4,
+                0
+            );
+
+
+        if (!count) {
+
+            return "";
 
         }
+
+
+        let markup =
+            `<span class="raised-band-layer" aria-hidden="true">`;
+
+
+        for (
+            let i = 0;
+            i < count;
+            i += 1
+        ) {
+
+            markup +=
+                `<span class="raised-band raised-band-${i + 1}"></span>`;
+
+        }
+
+
+        markup +=
+            `</span>`;
+
+
+        return markup;
+
+    }
+
+
+    function renderPreviewBands(
+        preview,
+        design
+    ) {
+
+        preview
+            .querySelector(
+                ".raised-band-layer"
+            )
+            ?.remove();
+
+
+        const count =
+            cssNumber(
+                design.raisedBands,
+                0,
+                4,
+                0
+            );
+
+
+        if (!count) {
+
+            return;
+
+        }
+
+
+        const layer =
+            document.createElement(
+                "span"
+            );
+
+
+        layer.className =
+            "raised-band-layer";
+
+
+        layer.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        for (
+            let i = 0;
+            i < count;
+            i += 1
+        ) {
+
+            const band =
+                document.createElement(
+                    "span"
+                );
+
+
+            band.className =
+                `raised-band raised-band-${i + 1}`;
+
+
+            layer.appendChild(
+                band
+            );
+
+        }
+
+
+        preview.appendChild(
+            layer
+        );
+
+    }
+
+
+    /* =====================================================
+       FOIL COLORS
+       ===================================================== */
+
+    function getFoilColor(
+        design
+    ) {
+
+        switch (
+            design.foil
+        ) {
+
+            case "silver":
+
+                return "#d6d4cf";
+
+
+            case "copper":
+
+                return "#bd7c58";
+
+
+            case "rose-gold":
+
+                return "#c98f87";
+
+
+            case "cream":
+
+                return "#eadbc3";
+
+
+            case "ink":
+
+                return design.accentColor;
+
+
+            case "black":
+
+                return "#241c1e";
+
+
+            case "gold":
+            default:
+
+                return design.accentColor ||
+                    "#c39a67";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       ORNAMENTS
+       ===================================================== */
+
+    function getOrnament(
+        ornament,
+        style = "classic"
+    ) {
+
+        const map = {
+
+            none:
+                "",
+
+            auto:
+                "",
+
+            star:
+                "✦",
+
+            tinyStar:
+                "⋆",
+
+            diamond:
+                "◆",
+
+            smallDiamond:
+                "◇",
+
+            moon:
+                "☾",
+
+            sun:
+                "☼",
+
+            flower:
+                "❀",
+
+            blossom:
+                "✿",
+
+            leaf:
+                "❧",
+
+            vine:
+                "❦",
+
+            flourish:
+                "❧",
+
+            cross:
+                "✣",
+
+            gothic:
+                "✥",
+
+            clover:
+                "♧",
+
+            heart:
+                "♡",
+
+            shell:
+                "❈",
+
+            sparkle:
+                "✧",
+
+            dot:
+                "•",
+
+            doubleDot:
+                "••",
+
+            line:
+                "—"
+
+        };
+
+
+        if (
+            ornament &&
+            ornament !==
+                "auto"
+        ) {
+
+            return (
+                map[
+                    ornament
+                ] ||
+                ornament
+            );
+
+        }
+
+
+        const styleMap = {
+
+            classic:
+                "✦",
+
+            cloth:
+                "◆",
+
+            ornate:
+                "❦",
+
+            paperback:
+                "•",
+
+            modern:
+                "",
+
+            gothic:
+                "✥",
+
+            vintage:
+                "❧",
+
+            deco:
+                "◆",
+
+            retro:
+                "★",
+
+            leather:
+                "◆",
+
+            botanical:
+                "❦",
+
+            celestial:
+                "☾",
+
+            floral:
+                "❀",
+
+            storybook:
+                "✧",
+
+            academia:
+                "✦"
+
+        };
+
+
+        return (
+            styleMap[
+                style
+            ] ||
+            "✦"
+        );
 
     }
 
@@ -1779,28 +2999,15 @@
 
         try {
 
-            let data =
-                null;
-
-
-            if (
+            const data =
                 typeof H.fileToDataURL ===
-                "function"
-            ) {
-
-                data =
-                    await H.fileToDataURL(
+                    "function"
+                    ? await H.fileToDataURL(
+                        file
+                    )
+                    : await fileToDataURL(
                         file
                     );
-
-            } else {
-
-                data =
-                    await fileToDataURL(
-                        file
-                    );
-
-            }
 
 
             getState().pendingCoverData =
@@ -1869,8 +3076,7 @@
        ===================================================== */
 
     function populateShelfSelect(
-        selectedId =
-            ""
+        selectedId = ""
     ) {
 
         const select =
@@ -1968,181 +3174,6 @@
 
 
     /* =====================================================
-       CREATE SHELF BOOK ELEMENT
-       ===================================================== */
-
-    function createShelfBookElement(
-        book
-    ) {
-
-        const design =
-            H.normalizeBookDesign?.(
-                book.design
-            ) ||
-            book.design ||
-            {};
-
-
-        const button =
-            document.createElement(
-                "button"
-            );
-
-
-        button.type =
-            "button";
-
-
-        button.className =
-            buildBookClassList(
-                design
-            );
-
-
-        button.dataset.bookId =
-            book.id;
-
-
-        button.setAttribute(
-            "aria-label",
-            `Open ${book.title || "book"}`
-        );
-
-
-        button.style.setProperty(
-            "--book-color",
-            design.spineColor ||
-            "#793f55"
-        );
-
-
-        button.style.setProperty(
-            "--book-text",
-            design.textColor ||
-            "#f1e3cf"
-        );
-
-
-        button.style.setProperty(
-            "--book-accent",
-            design.accentColor ||
-            "#c39a67"
-        );
-
-
-        const title =
-            applyTextCase(
-                book.title ||
-                "Untitled",
-                design.letterCase
-            );
-
-
-        const ornament =
-            getOrnament(
-                design
-            );
-
-
-        button.innerHTML =
-            `
-                <span
-                    class="binding-band top"
-                    aria-hidden="true"
-                ></span>
-
-                <span class="spine-inner">
-
-                    <span class="spine-title-panel">
-
-                        <span class="spine-title">
-                            ${escapeHTML(
-                                title
-                            )}
-                        </span>
-
-                    </span>
-
-                    <span
-                        class="spine-ornament"
-                        aria-hidden="true"
-                    >
-                        ${escapeHTML(
-                            ornament
-                        )}
-                    </span>
-
-                </span>
-
-                <span
-                    class="binding-band bottom"
-                    aria-hidden="true"
-                ></span>
-            `;
-
-
-        button.addEventListener(
-            "click",
-            event => {
-
-                event.preventDefault();
-
-                event.stopPropagation();
-
-
-                getState().selectedBookId =
-                    book.id;
-
-
-                navigateToJournal(
-                    book.id
-                );
-
-            }
-        );
-
-
-        return button;
-
-    }
-
-
-    function buildBookClassList(
-        design
-    ) {
-
-        return [
-
-            "book-spine",
-
-            `book-style-${design.style || "classic"}`,
-
-            `book-height-${design.height || "medium"}`,
-
-            `book-thickness-${design.thickness || "medium"}`,
-
-            `book-font-${design.font || "bookish"}`,
-
-            `book-font-size-${design.fontSize || "medium"}`,
-
-            `book-font-weight-${design.fontWeight || "regular"}`,
-
-            `book-letter-spacing-${design.letterSpacing || "normal"}`,
-
-            `book-font-style-${design.fontStyle || "normal"}`,
-
-            `book-text-align-${design.textAlign || "center"}`,
-
-            `book-title-panel-${design.titlePanel || "none"}`
-
-        ].join(
-            " "
-        );
-
-    }
-
-
-    /* =====================================================
        GENERATED COVER
        ===================================================== */
 
@@ -2200,11 +3231,9 @@
 
 
         const design =
-            H.normalizeBookDesign?.(
+            normalizeAdvancedDesign(
                 book.design
-            ) ||
-            book.design ||
-            {};
+            );
 
 
         const generated =
@@ -2214,27 +3243,35 @@
 
 
         generated.className =
-            "generated-cover";
+            [
+                "generated-cover",
+                `cover-material-${design.material}`,
+                `cover-wear-${design.wear}`,
+                `cover-border-${design.borderStyle}`,
+                `cover-sheen-${design.sheen}`
+
+            ].join(
+                " "
+            );
 
 
         generated.style.setProperty(
             "--cover-color",
-            design.spineColor ||
-            "#793f55"
+            design.spineColor
         );
 
 
         generated.style.setProperty(
             "--cover-text",
-            design.textColor ||
-            "#f1e3cf"
+            design.textColor
         );
 
 
         generated.style.setProperty(
             "--cover-accent",
-            design.accentColor ||
-            "#c39a67"
+            getFoilColor(
+                design
+            )
         );
 
 
@@ -2260,9 +3297,9 @@
                 >
                     ${escapeHTML(
                         getOrnament(
-                            design
-                        ) ||
-                        "✦"
+                            design.topOrnament,
+                            design.style
+                        )
                     )}
                 </div>
             `;
@@ -2345,33 +3382,6 @@
             }
         );
 
-
-        const reveal =
-            byId(
-                "bookReveal"
-            );
-
-
-        if (reveal) {
-
-            reveal.addEventListener(
-                "click",
-                event => {
-
-                    if (
-                        event.target ===
-                        reveal
-                    ) {
-
-                        closeReveal();
-
-                    }
-
-                }
-            );
-
-        }
-
     }
 
 
@@ -2383,18 +3393,9 @@
         ids.forEach(
             id => {
 
-                const element =
-                    byId(id);
-
-
-                if (!element) {
-
-                    return;
-
-                }
-
-
-                element.addEventListener(
+                byId(
+                    id
+                )?.addEventListener(
                     "click",
                     callback
                 );
@@ -2575,12 +3576,6 @@
             bookId;
 
 
-        /*
-           Current app.js exposes navigateTo.
-           Older code sometimes exposed navigate.
-           Support both during rebuild.
-        */
-
         if (
             typeof Novellow.app
                 ?.navigateTo ===
@@ -2592,22 +3587,22 @@
             );
 
         } else if (
-            typeof Novellow.app
-                ?.navigate ===
-            "function"
-        ) {
-
-            Novellow.app.navigate(
-                "journal"
-            );
-
-        } else if (
             typeof Novellow.navigation
                 ?.navigateTo ===
             "function"
         ) {
 
             Novellow.navigation.navigateTo(
+                "journal"
+            );
+
+        } else if (
+            typeof Novellow.app
+                ?.navigate ===
+            "function"
+        ) {
+
+            Novellow.app.navigate(
                 "journal"
             );
 
@@ -2630,7 +3625,7 @@
 
 
     /* =====================================================
-       DELETE BOOK
+       DELETE
        ===================================================== */
 
     function deleteBook(
@@ -2651,7 +3646,8 @@
 
 
         const confirmed =
-            H.confirmAction
+            typeof H.confirmAction ===
+                "function"
                 ? H.confirmAction(
                     `Delete "${book.title}" from your library?`
                 )
@@ -2672,7 +3668,7 @@
 
 
         state.books =
-            getBooks().filter(
+            state.books.filter(
                 item =>
                     String(item.id) !==
                     String(bookId)
@@ -2691,7 +3687,6 @@
                         String(
                             quote.bookId ||
                             quote.book_id ||
-                            quote.book ||
                             ""
                         ) !==
                         String(bookId)
@@ -2708,28 +3703,16 @@
 
             state.vocabulary =
                 state.vocabulary.filter(
-                    word =>
+                    entry =>
                         String(
-                            word.bookId ||
-                            word.book_id ||
-                            word.book ||
+                            entry.bookId ||
+                            entry.book_id ||
                             ""
                         ) !==
                         String(bookId)
                 );
 
         }
-
-
-        saveBooks();
-
-
-        Novellow.storage
-            ?.saveQuotes?.();
-
-
-        Novellow.storage
-            ?.saveVocabulary?.();
 
 
         if (
@@ -2743,6 +3726,17 @@
                 null;
 
         }
+
+
+        saveBooks();
+
+
+        Novellow.storage
+            ?.saveQuotes?.();
+
+
+        Novellow.storage
+            ?.saveVocabulary?.();
 
 
         closeDrawer();
@@ -2761,7 +3755,7 @@
 
 
     /* =====================================================
-       SAVE BOOKS
+       SAVE
        ===================================================== */
 
     function saveBooks() {
@@ -2802,7 +3796,7 @@
 
 
     /* =====================================================
-       REFRESH CONNECTED VIEWS
+       REFRESH
        ===================================================== */
 
     function refreshConnectedViews() {
@@ -2839,23 +3833,19 @@
 
     function syncOverlay() {
 
-        const panelIds = [
+        const drawerIds = [
 
             "themeDrawer",
-
             "settingsDrawer",
-
             "profileDrawer",
-
             "shelfDrawer",
-
             "bookDrawer"
 
         ];
 
 
-        const anyDrawerOpen =
-            panelIds.some(
+        const anyOpen =
+            drawerIds.some(
                 id => {
 
                     const element =
@@ -2880,11 +3870,11 @@
         if (overlay) {
 
             overlay.hidden =
-                !anyDrawerOpen;
+                !anyOpen;
 
 
             overlay.style.pointerEvents =
-                anyDrawerOpen
+                anyOpen
                     ? "auto"
                     : "none";
 
@@ -2893,14 +3883,14 @@
 
         document.body.classList.toggle(
             "modal-open",
-            anyDrawerOpen
+            anyOpen
         );
 
     }
 
 
     /* =====================================================
-       TEXT CASE
+       TYPOGRAPHY HELPERS
        ===================================================== */
 
     function applyTextCase(
@@ -2908,38 +3898,29 @@
         letterCase
     ) {
 
-        if (
-            typeof H.applyTextCase ===
-            "function"
-        ) {
-
-            return H.applyTextCase(
-                text,
-                letterCase
-            );
-
-        }
-
-
         switch (
             letterCase
         ) {
 
             case "uppercase":
 
-                return text
-                    .toUpperCase();
+                return String(
+                    text
+                ).toUpperCase();
 
 
             case "lowercase":
 
-                return text
-                    .toLowerCase();
+                return String(
+                    text
+                ).toLowerCase();
 
 
             case "title":
 
-                return text
+                return String(
+                    text
+                )
                     .toLowerCase()
                     .replace(
                         /\b\w/g,
@@ -2951,131 +3932,14 @@
 
             default:
 
-                return text;
+                return String(
+                    text
+                );
 
         }
 
     }
 
-
-    /* =====================================================
-       ORNAMENTS
-       ===================================================== */
-
-    function getOrnament(
-        design
-    ) {
-
-        if (
-            typeof H.getOrnamentSymbol ===
-            "function"
-        ) {
-
-            return (
-                H.getOrnamentSymbol(
-                    design.ornament,
-                    design.style
-                ) ||
-                ""
-            );
-
-        }
-
-
-        const ornament =
-            design.ornament;
-
-
-        const map = {
-
-            none:
-                "",
-
-            star:
-                "✦",
-
-            diamond:
-                "◆",
-
-            moon:
-                "☾",
-
-            flower:
-                "❀",
-
-            cross:
-                "✣",
-
-            flourish:
-                "❦",
-
-            dot:
-                "•"
-
-        };
-
-
-        if (
-            ornament &&
-            ornament !==
-                "auto"
-        ) {
-
-            return (
-                map[
-                    ornament
-                ] ||
-                ornament
-            );
-
-        }
-
-
-        const styleMap = {
-
-            classic:
-                "✦",
-
-            cloth:
-                "◆",
-
-            ornate:
-                "❦",
-
-            paperback:
-                "•",
-
-            modern:
-                "◇",
-
-            gothic:
-                "✣",
-
-            vintage:
-                "❧",
-
-            deco:
-                "◆",
-
-            retro:
-                "★"
-
-        };
-
-
-        return (
-            styleMap[
-                design.style
-            ] ||
-            "✦"
-        );
-
-    }
-
-
-    /* =====================================================
-       FONT MAPPING
-       ===================================================== */
 
     function mapFontWeight(
         weight
@@ -3186,7 +4050,7 @@
                 "'Times New Roman', Georgia, serif",
 
             bookish:
-                "var(--font-book, 'Cormorant Garamond', Georgia, serif)",
+                "var(--font-book, Georgia, serif)",
 
             elegant:
                 "'Cormorant Garamond', Georgia, serif",
@@ -3204,13 +4068,13 @@
                 "Impact, Haettenschweiler, sans-serif",
 
             storybook:
-                "var(--font-display, 'Cormorant Garamond', Georgia, serif)",
+                "var(--font-display, Georgia, serif)",
 
             handwritten:
-                "'Comic Sans MS', 'Bradley Hand', cursive",
+                "'Bradley Hand', 'Segoe Print', cursive",
 
             gothic:
-                "Georgia, serif",
+                "Georgia, 'Times New Roman', serif",
 
             deco:
                 "'Arial Narrow', Arial, sans-serif",
@@ -3238,21 +4102,6 @@
     function formatStatus(
         status
     ) {
-
-        if (
-            typeof H.getStatusName ===
-            "function"
-        ) {
-
-            return (
-                H.getStatusName(
-                    status
-                ) ||
-                "Book"
-            );
-
-        }
-
 
         const map = {
 
@@ -3316,6 +4165,10 @@
         updateSpinePreview,
 
         collectBookDesign,
+
+        normalizeAdvancedDesign,
+
+        getDefaultDesign,
 
         refreshConnectedViews
 
