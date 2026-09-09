@@ -1,1 +1,792 @@
+/* =========================================================
+   NOVELLOW
+   STATS.CSS
 
+   Reading statistics
+   Summary cards
+   Status breakdown
+   Genre breakdown
+   Monthly reading history
+   Responsive behavior
+   ========================================================= */
+
+
+/* =========================================================
+   STATS PAGE
+   ========================================================= */
+
+#stats {
+    position: relative;
+}
+
+
+/* =========================================================
+   SUMMARY GRID
+   ========================================================= */
+
+.stats-summary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
+
+    gap: 16px;
+
+    margin-bottom: 32px;
+}
+
+
+/* =========================================================
+   SUMMARY CARD
+   ========================================================= */
+
+.stats-card {
+    position: relative;
+
+    min-width: 0;
+
+    min-height: 150px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    gap: 16px;
+
+    padding: 18px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        var(--radius-large);
+
+    background:
+        var(--panel);
+
+    box-shadow:
+        0 9px 22px
+        rgba(0, 0, 0, 0.10);
+}
+
+
+.stats-card::after {
+    content: "";
+
+    position: absolute;
+
+    right: -18px;
+    bottom: -28px;
+
+    width: 90px;
+    height: 90px;
+
+    border:
+        16px solid
+        color-mix(
+            in srgb,
+            var(--accent) 9%,
+            transparent
+        );
+
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   STAT LABEL
+   ========================================================= */
+
+.stats-card-label {
+    position: relative;
+
+    z-index: 2;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.49rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.09em;
+
+    text-transform:
+        uppercase;
+}
+
+
+/* =========================================================
+   STAT VALUE
+   ========================================================= */
+
+.stats-card-value {
+    position: relative;
+
+    z-index: 2;
+
+    color:
+        var(--paper);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        clamp(
+            2.5rem,
+            5vw,
+            4rem
+        );
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        -0.045em;
+
+    line-height: 0.9;
+}
+
+
+/* =========================================================
+   STAT NOTE
+   ========================================================= */
+
+.stats-card-note {
+    position: relative;
+
+    z-index: 2;
+
+    color:
+        var(--muted-light);
+
+    font-size:
+        0.48rem;
+
+    line-height:
+        1.45;
+}
+
+
+/* =========================================================
+   STATS SECTION
+   ========================================================= */
+
+.stats-section {
+    margin-top: 30px;
+}
+
+
+.stats-section + .stats-section {
+    margin-top: 34px;
+}
+
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
+.stats-section-header {
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 16px;
+}
+
+
+.stats-section-header h2 {
+    margin: 0;
+
+    color:
+        var(--paper);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        clamp(
+            2rem,
+            4vw,
+            3.2rem
+        );
+
+    font-weight:
+        500;
+
+    letter-spacing:
+        -0.04em;
+}
+
+
+.stats-section-header p {
+    max-width: 560px;
+
+    margin: 0;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.56rem;
+
+    line-height:
+        1.5;
+}
+
+
+/* =========================================================
+   STATUS GRID
+   ========================================================= */
+
+.stats-status-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   STATUS CARD
+   ========================================================= */
+
+.stats-status-card {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    min-height: 82px;
+
+    padding: 14px 15px;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        var(--radius-medium);
+
+    background:
+        var(--panel);
+
+    box-shadow:
+        0 6px 16px
+        rgba(0, 0, 0, 0.08);
+}
+
+
+.stats-status-copy {
+    min-width: 0;
+}
+
+
+.stats-status-copy span {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.48rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.07em;
+
+    text-transform:
+        uppercase;
+}
+
+
+.stats-status-copy strong {
+    color:
+        var(--paper);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.25rem;
+
+    font-weight:
+        600;
+}
+
+
+.stats-status-number {
+    flex: 0 0 auto;
+
+    color:
+        var(--accent-light);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        2rem;
+
+    font-weight:
+        600;
+}
+
+
+/* =========================================================
+   TWO COLUMN STATS LAYOUT
+   ========================================================= */
+
+.stats-two-column {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 18px;
+
+    align-items: start;
+}
+
+
+/* =========================================================
+   DATA PANEL
+   ========================================================= */
+
+.stats-panel {
+    min-width: 0;
+
+    padding: 18px;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        var(--radius-large);
+
+    background:
+        var(--panel);
+
+    box-shadow:
+        0 8px 20px
+        rgba(0, 0, 0, 0.09);
+}
+
+
+.stats-panel h3 {
+    margin-bottom: 15px;
+
+    color:
+        var(--paper);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.6rem;
+
+    font-weight:
+        600;
+}
+
+
+/* =========================================================
+   GENRE LIST
+   ========================================================= */
+
+.genre-stats {
+    display: grid;
+
+    gap: 11px;
+}
+
+
+.genre-stat-row {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+
+    gap:
+        7px 12px;
+
+    align-items: center;
+}
+
+
+.genre-stat-name {
+    min-width: 0;
+
+    color:
+        var(--text-soft);
+
+    font-size:
+        0.56rem;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.genre-stat-count {
+    color:
+        var(--accent-light);
+
+    font-size:
+        0.52rem;
+
+    font-weight:
+        700;
+}
+
+
+.genre-stat-bar {
+    grid-column:
+        1 / -1;
+
+    height: 7px;
+
+    overflow: hidden;
+
+    border-radius:
+        999px;
+
+    background:
+        var(--bg-2);
+}
+
+
+.genre-stat-fill {
+    height: 100%;
+
+    width: 0;
+
+    border-radius:
+        inherit;
+
+    background:
+        var(--accent);
+}
+
+
+/* =========================================================
+   MONTHLY STATS
+   ========================================================= */
+
+.monthly-stats {
+    display: grid;
+
+    gap: 9px;
+}
+
+
+.month-stat-row {
+    display: grid;
+
+    grid-template-columns:
+        72px
+        minmax(0, 1fr)
+        34px;
+
+    gap: 10px;
+
+    align-items: center;
+}
+
+
+.month-stat-label {
+    color:
+        var(--muted);
+
+    font-size:
+        0.51rem;
+
+    font-weight:
+        700;
+}
+
+
+.month-stat-track {
+    height: 10px;
+
+    overflow: hidden;
+
+    border-radius:
+        999px;
+
+    background:
+        var(--bg-2);
+}
+
+
+.month-stat-fill {
+    width: 0;
+    height: 100%;
+
+    border-radius:
+        inherit;
+
+    background:
+        var(--accent);
+}
+
+
+.month-stat-count {
+    color:
+        var(--accent-light);
+
+    font-size:
+        0.52rem;
+
+    font-weight:
+        700;
+
+    text-align: right;
+}
+
+
+/* =========================================================
+   EMPTY DATA
+   ========================================================= */
+
+.stats-empty {
+    min-height:
+        170px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 28px;
+
+    border:
+        1px dashed
+        var(--border-soft);
+
+    border-radius:
+        var(--radius-medium);
+
+    background:
+        var(--bg-2);
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.56rem;
+
+    line-height:
+        1.5;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   READING GOAL
+   ========================================================= */
+
+.reading-goal-card {
+    margin-top: 18px;
+
+    padding: 18px;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        var(--radius-large);
+
+    background:
+        var(--panel);
+}
+
+
+.reading-goal-header {
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 11px;
+}
+
+
+.reading-goal-header strong {
+    color:
+        var(--paper);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.45rem;
+}
+
+
+.reading-goal-header span {
+    color:
+        var(--accent-light);
+
+    font-size:
+        0.56rem;
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1050px) {
+
+    .stats-summary-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+
+    .stats-status-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .stats-summary-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+        gap: 10px;
+    }
+
+
+    .stats-card {
+        min-height:
+            125px;
+
+        padding:
+            15px;
+    }
+
+
+    .stats-card-value {
+        font-size:
+            2.5rem;
+    }
+
+
+    .stats-section-header {
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .stats-status-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .stats-two-column {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 430px) {
+
+    .stats-summary-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .stats-card {
+        min-height:
+            115px;
+    }
+
+
+    .month-stat-row {
+        grid-template-columns:
+            58px
+            minmax(0, 1fr)
+            28px;
+
+        gap:
+            8px;
+    }
+
+
+    .stats-panel {
+        padding:
+            15px;
+    }
+
+}
