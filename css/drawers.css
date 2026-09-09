@@ -1,1 +1,747 @@
+/* =========================================================
+   NOVELLOW
+   DRAWERS.CSS
 
+   Theme drawer
+   Settings drawer
+   Shelf drawer
+   Book drawer
+   Drawer-specific form styling
+   ========================================================= */
+
+
+/* =========================================================
+   GENERIC DRAWER POLISH
+   ========================================================= */
+
+.drawer {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+
+.drawer-header {
+    position: relative;
+}
+
+
+.drawer-header::after {
+    content: "";
+
+    position: absolute;
+
+    left: 24px;
+    right: 24px;
+    bottom: 0;
+
+    height: 1px;
+
+    background:
+        var(--border-soft);
+}
+
+
+.drawer-body {
+    position: relative;
+}
+
+
+.drawer-footer {
+    box-shadow:
+        0 -10px 26px
+        rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================================
+   THEME DRAWER
+   ========================================================= */
+
+.theme-drawer {
+    width:
+        min(720px, 100vw);
+}
+
+
+.theme-drawer
+.drawer-body {
+    padding-top:
+        22px;
+}
+
+
+.theme-drawer
+.drawer-intro {
+    max-width:
+        580px;
+}
+
+
+/* =========================================================
+   THEME CARDS
+   ========================================================= */
+
+.theme-card {
+    min-height:
+        168px;
+}
+
+
+.theme-card.active {
+    position: relative;
+}
+
+
+.theme-card.active::after {
+    content: "Selected";
+
+    position: absolute;
+
+    top: 17px;
+    right: 17px;
+
+    padding:
+        4px 7px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        999px;
+
+    background:
+        var(--bg-2);
+
+    color:
+        var(--accent-light);
+
+    font-size:
+        0.42rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.08em;
+
+    text-transform:
+        uppercase;
+}
+
+
+/* =========================================================
+   SETTINGS DRAWER
+   ========================================================= */
+
+.settings-drawer {
+    width:
+        min(620px, 100vw);
+}
+
+
+.settings-action-list {
+    align-items:
+        stretch;
+}
+
+
+.settings-action-list
+.secondary-button {
+    flex:
+        1 1 160px;
+}
+
+
+/* =========================================================
+   SHELF DRAWER
+   ========================================================= */
+
+.shelf-drawer {
+    width:
+        min(640px, 100vw);
+}
+
+
+.shelf-drawer
+.drawer-section {
+    position: relative;
+}
+
+
+.shelf-drawer
+.drawer-section-heading {
+    max-width:
+        520px;
+}
+
+
+/* =========================================================
+   SHELF FORM
+   ========================================================= */
+
+#shelfForm
+textarea {
+    min-height:
+        120px;
+}
+
+
+/* =========================================================
+   SHELF MATERIAL / MOOD GROUPS
+   ========================================================= */
+
+#shelfMaterial,
+#shelfMood,
+#shelfLayout,
+#shelfSort {
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   DECORATION OPTIONS
+   ========================================================= */
+
+.decoration-options {
+    margin-top:
+        4px;
+}
+
+
+.decoration-options
+label {
+    position: relative;
+}
+
+
+.decoration-options
+label:has(input:checked) {
+    border-color:
+        var(--accent);
+
+    background:
+        var(--panel-2);
+
+    color:
+        var(--paper);
+}
+
+
+.decoration-options
+label:has(input:checked)::after {
+    content: "✓";
+
+    margin-left:
+        auto;
+
+    color:
+        var(--accent-light);
+
+    font-size:
+        0.68rem;
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   BOOK DRAWER
+   ========================================================= */
+
+.book-drawer {
+    width:
+        min(820px, 100vw);
+}
+
+
+.book-drawer
+.drawer-body {
+    padding-bottom:
+        48px;
+}
+
+
+/* =========================================================
+   BOOK DRAWER SECTIONS
+   ========================================================= */
+
+.book-drawer
+.drawer-section {
+    position: relative;
+}
+
+
+.book-drawer
+.drawer-section + .drawer-section {
+    margin-top:
+        2px;
+}
+
+
+/* =========================================================
+   BOOK DESIGN SECTION
+   ========================================================= */
+
+.spine-design-section {
+    padding-top:
+        28px;
+}
+
+
+.spine-editor {
+    margin-top:
+        4px;
+}
+
+
+/* =========================================================
+   SPINE PREVIEW CARD
+   ========================================================= */
+
+.spine-preview-area {
+    position: sticky;
+
+    top: 0;
+
+    align-self:
+        start;
+
+    min-height:
+        360px;
+}
+
+
+.spine-preview-area::before {
+    content: "";
+
+    position: absolute;
+
+    left: 20%;
+    right: 20%;
+    bottom: 17px;
+
+    height: 18px;
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(0, 0, 0, 0.18);
+
+    filter:
+        blur(10px);
+
+    pointer-events:
+        none;
+}
+
+
+.spine-preview-book {
+    z-index: 2;
+}
+
+
+/* =========================================================
+   LIVE PREVIEW TITLE PANELS
+   ========================================================= */
+
+.preview-panel-simple {
+    background:
+        rgba(255, 255, 255, 0.08);
+
+    border-radius:
+        3px;
+}
+
+
+.preview-panel-bordered {
+    border:
+        1px solid
+        var(--book-accent);
+
+    border-radius:
+        3px;
+}
+
+
+.preview-panel-ornate {
+    border:
+        3px double
+        var(--book-accent);
+
+    border-radius:
+        4px;
+}
+
+
+.preview-panel-dark {
+    background:
+        rgba(0, 0, 0, 0.22);
+
+    border-radius:
+        3px;
+}
+
+
+.preview-panel-light {
+    background:
+        rgba(255, 255, 255, 0.16);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.12);
+
+    border-radius:
+        3px;
+}
+
+
+/* =========================================================
+   BOOK DESIGN OPTIONS
+   ========================================================= */
+
+.spine-options
+.form-grid {
+    align-items:
+        start;
+}
+
+
+.spine-options
+.field {
+    min-width:
+        0;
+}
+
+
+/* =========================================================
+   COLOR INPUTS
+   ========================================================= */
+
+.color-field
+input[type="color"] {
+    height:
+        48px;
+
+    min-height:
+        48px;
+
+    padding:
+        4px;
+
+    border-radius:
+        9px;
+
+    background:
+        var(--panel);
+}
+
+
+.color-field
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+
+.color-field
+input[type="color"]::-webkit-color-swatch {
+    border:
+        0;
+
+    border-radius:
+        6px;
+}
+
+
+.color-field
+input[type="color"]::-moz-color-swatch {
+    border:
+        0;
+
+    border-radius:
+        6px;
+}
+
+
+/* =========================================================
+   BOOK COVER UPLOAD
+   ========================================================= */
+
+#bookCoverUpload {
+    width: 100%;
+}
+
+
+.upload-field {
+    position: relative;
+
+    overflow: hidden;
+}
+
+
+.upload-field::before {
+    content: "Cover";
+
+    position: absolute;
+
+    top: 10px;
+    left: 12px;
+
+    color:
+        var(--muted-light);
+
+    font-size:
+        0.45rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.12em;
+
+    text-transform:
+        uppercase;
+}
+
+
+/* =========================================================
+   FORM SUBTLETIES
+   ========================================================= */
+
+.book-drawer
+.field input,
+.book-drawer
+.field select,
+.book-drawer
+.field textarea,
+.shelf-drawer
+.field input,
+.shelf-drawer
+.field select,
+.shelf-drawer
+.field textarea {
+    background:
+        color-mix(
+            in srgb,
+            var(--bg-2) 92%,
+            black
+        );
+}
+
+
+.book-drawer
+.field input:focus,
+.book-drawer
+.field select:focus,
+.book-drawer
+.field textarea:focus,
+.shelf-drawer
+.field input:focus,
+.shelf-drawer
+.field select:focus,
+.shelf-drawer
+.field textarea:focus {
+    background:
+        var(--panel);
+}
+
+
+/* =========================================================
+   DRAWER SECTION DIVIDERS
+   ========================================================= */
+
+.book-drawer
+.drawer-section-heading,
+.shelf-drawer
+.drawer-section-heading,
+.settings-drawer
+.drawer-section-heading,
+.theme-drawer
+.drawer-section-heading {
+    position: relative;
+}
+
+
+.book-drawer
+.drawer-section-heading::after,
+.shelf-drawer
+.drawer-section-heading::after {
+    content: "";
+
+    display: block;
+
+    width: 34px;
+    height: 2px;
+
+    margin-top:
+        10px;
+
+    background:
+        var(--accent);
+
+    opacity:
+        0.65;
+}
+
+
+/* =========================================================
+   SAVE FOOTER
+   ========================================================= */
+
+.book-drawer
+.drawer-footer,
+.shelf-drawer
+.drawer-footer {
+    min-height:
+        72px;
+}
+
+
+.book-drawer
+.drawer-footer
+.primary-button,
+.shelf-drawer
+.drawer-footer
+.primary-button {
+    min-width:
+        130px;
+}
+
+
+/* =========================================================
+   INPUT STATES
+   ========================================================= */
+
+.drawer
+input:invalid:not(:placeholder-shown),
+.drawer
+textarea:invalid:not(:placeholder-shown) {
+    border-color:
+        rgba(186, 91, 91, 0.55);
+}
+
+
+/* =========================================================
+   SMALL HELP TEXT
+   ========================================================= */
+
+.drawer-help {
+    margin-top:
+        6px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.54rem;
+
+    line-height:
+        1.5;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .theme-drawer,
+    .settings-drawer,
+    .shelf-drawer,
+    .book-drawer {
+        width:
+            100vw;
+    }
+
+
+    .theme-card {
+        min-height:
+            auto;
+    }
+
+
+    .theme-card.active::after {
+        top:
+            14px;
+
+        right:
+            14px;
+    }
+
+
+    .spine-preview-area {
+        position: relative;
+
+        top: auto;
+
+        min-height:
+            300px;
+    }
+
+
+    .book-drawer
+    .drawer-body {
+        padding-bottom:
+            36px;
+    }
+
+
+    .book-drawer
+    .drawer-footer,
+    .shelf-drawer
+    .drawer-footer {
+        min-height:
+            64px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 430px) {
+
+    .drawer-header::after {
+        left:
+            16px;
+
+        right:
+            16px;
+    }
+
+
+    .book-drawer
+    .drawer-section-heading::after,
+    .shelf-drawer
+    .drawer-section-heading::after {
+        width:
+            26px;
+    }
+
+
+    .settings-action-list {
+        flex-direction:
+            column;
+    }
+
+
+    .settings-action-list
+    .secondary-button {
+        width: 100%;
+
+        flex:
+            none;
+    }
+
+
+    .spine-preview-area {
+        min-height:
+            275px;
+    }
+
+}
