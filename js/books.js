@@ -1,3 +1,212 @@
+/* =========================================================
+   NOVELLOW
+   SAFE STORAGE RECOVERY
+
+   Temporary compatibility migration.
+   Does NOT delete any existing data.
+   ========================================================= */
+
+(() => {
+
+    "use strict";
+
+
+    function safelyRead(key) {
+
+        try {
+
+            const raw =
+                localStorage.getItem(
+                    key
+                );
+
+
+            if (!raw) {
+                return [];
+            }
+
+
+            const parsed =
+                JSON.parse(
+                    raw
+                );
+
+
+            return Array.isArray(
+                parsed
+            )
+                ? parsed
+                : [];
+
+        } catch (error) {
+
+            console.warn(
+                `Could not read ${key}`,
+                error
+            );
+
+
+            return [];
+
+        }
+
+    }
+
+
+    function safelyWrite(
+        key,
+        value
+    ) {
+
+        try {
+
+            localStorage.setItem(
+                key,
+                JSON.stringify(
+                    value
+                )
+            );
+
+        } catch (error) {
+
+            console.warn(
+                `Could not write ${key}`,
+                error
+            );
+
+        }
+
+    }
+
+
+    function mergeById(
+        ...collections
+    ) {
+
+        const merged =
+            new Map();
+
+
+        collections
+            .flat()
+            .filter(Boolean)
+            .forEach(
+                item => {
+
+                    const id =
+                        item.id ||
+                        `legacy-${Math.random()
+                            .toString(36)
+                            .slice(2)}`;
+
+
+                    if (
+                        !merged.has(
+                            id
+                        )
+                    ) {
+
+                        merged.set(
+                            id,
+                            item
+                        );
+
+                        return;
+
+                    }
+
+
+                    merged.set(
+                        id,
+                        {
+                            ...merged.get(
+                                id
+                            ),
+                            ...item
+                        }
+                    );
+
+                }
+            );
+
+
+        return [
+            ...merged.values()
+        ];
+
+    }
+
+
+    /* =====================================================
+       BOOKS
+       ===================================================== */
+
+    const novellowBooks =
+        safelyRead(
+            "novellow_books"
+        );
+
+
+    const shelfmarkBooks =
+        safelyRead(
+            "shelfmark_books"
+        );
+
+
+    const recoveredBooks =
+        mergeById(
+            shelfmarkBooks,
+            novellowBooks
+        );
+
+
+    if (
+        recoveredBooks.length
+    ) {
+
+        safelyWrite(
+            "novellow_books",
+            recoveredBooks
+        );
+
+    }
+
+
+    /* =====================================================
+       SHELVES
+       ===================================================== */
+
+    const novellowShelves =
+        safelyRead(
+            "novellow_shelves"
+        );
+
+
+    const shelfmarkShelves =
+        safelyRead(
+            "shelfmark_shelves"
+        );
+
+
+    const recoveredShelves =
+        mergeById(
+            shelfmarkShelves,
+            novellowShelves
+        );
+
+
+    if (
+        recoveredShelves.length
+    ) {
+
+        safelyWrite(
+            "novellow_shelves",
+            recoveredShelves
+        );
+
+    }
+
+})();
 /* ========================================================
    NOVELLOW
    BOOKS.JS
