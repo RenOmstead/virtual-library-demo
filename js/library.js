@@ -1308,16 +1308,49 @@ function openBookDrawer(
 
 function closeAllPanels() {
 
-    [
+    const panels = [
         "themeDrawer",
         "shelfDrawer",
         "bookDrawer"
-    ].forEach(
-        hideElement
+    ];
+
+
+    panels.forEach(
+        id => {
+
+            const element =
+                document.getElementById(id);
+
+
+            if (element) {
+
+                element.hidden =
+                    true;
+
+                element.style.pointerEvents =
+                    "none";
+
+            }
+
+        }
     );
 
 
-    hideOverlay();
+    const overlay =
+        document.getElementById(
+            "overlay"
+        );
+
+
+    if (overlay) {
+
+        overlay.hidden =
+            true;
+
+        overlay.style.pointerEvents =
+            "none";
+
+    }
 
 
     document.body.classList.remove(
