@@ -2606,3 +2606,691 @@ body.reduce-motion * {
     transition-duration:
         0.001ms !important;
 }
+/* =========================================================
+   SHELFMARK
+   THEME MODAL CONTROL FIXES
+   ========================================================= */
+
+
+/* =========================================================
+   AMBIENT SETTINGS GRID
+   ========================================================= */
+
+#themeDrawer .setting-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 10px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   AMBIENT SETTING CARD
+   ========================================================= */
+
+#themeDrawer .toggle-setting {
+    min-width: 0;
+    min-height: 76px;
+
+    display: flex;
+
+    flex-direction: row;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 18px;
+
+    padding:
+        15px 17px;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius: 11px;
+
+    background:
+        var(--panel-2);
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.18s ease,
+        background-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+
+#themeDrawer .toggle-setting:hover {
+    transform:
+        translateY(-1px);
+
+    border-color:
+        var(--border);
+
+    background:
+        #30252a;
+}
+
+
+/* =========================================================
+   AMBIENT SETTING TEXT
+   ========================================================= */
+
+#themeDrawer .toggle-setting > span {
+    min-width: 0;
+
+    flex:
+        1 1 auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+
+#themeDrawer .toggle-setting strong {
+    color:
+        var(--text);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        0.75rem;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+}
+
+
+#themeDrawer .toggle-setting small {
+    color:
+        var(--muted);
+
+    font-size:
+        0.52rem;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   TOGGLE SWITCH
+   Overrides generic input styles.
+   ========================================================= */
+
+#themeDrawer .toggle-setting input[type="checkbox"] {
+    position: relative;
+
+    flex:
+        0 0 38px;
+
+    width:
+        38px !important;
+
+    height:
+        22px !important;
+
+    min-width:
+        38px !important;
+
+    min-height:
+        22px !important;
+
+    max-width:
+        38px !important;
+
+    max-height:
+        22px !important;
+
+    margin:
+        0 !important;
+
+    padding:
+        0 !important;
+
+    border:
+        1px solid
+        var(--border) !important;
+
+    border-radius:
+        999px !important;
+
+    outline:
+        none !important;
+
+    appearance:
+        none !important;
+
+    -webkit-appearance:
+        none !important;
+
+    background:
+        #151215 !important;
+
+    cursor: pointer;
+
+    box-shadow:
+        none !important;
+
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease;
+}
+
+
+/* =========================================================
+   TOGGLE KNOB
+   ========================================================= */
+
+#themeDrawer .toggle-setting input[type="checkbox"]::before {
+    content: "";
+
+    position: absolute;
+
+    top: 3px;
+    left: 3px;
+
+    width: 14px;
+    height: 14px;
+
+    border-radius: 50%;
+
+    background:
+        #a89596;
+
+    box-shadow:
+        0 1px 3px
+        rgba(0, 0, 0, 0.28);
+
+    transition:
+        transform 0.18s ease,
+        background-color 0.18s ease;
+}
+
+
+/* =========================================================
+   TOGGLE CHECKED
+   ========================================================= */
+
+#themeDrawer .toggle-setting input[type="checkbox"]:checked {
+    border-color:
+        #9d4962 !important;
+
+    background:
+        #663044 !important;
+}
+
+
+#themeDrawer .toggle-setting input[type="checkbox"]:checked::before {
+    transform:
+        translateX(16px);
+
+    background:
+        #f2e6d2;
+}
+
+
+/* =========================================================
+   DECORATION DENSITY GRID
+   ========================================================= */
+
+#themeDrawer .radio-card-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 10px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   DENSITY CARD
+   ========================================================= */
+
+#themeDrawer .radio-card {
+    position: relative;
+
+    min-width: 0;
+    min-height: 108px;
+
+    display: grid;
+
+    grid-template-columns:
+        22px
+        minmax(0, 1fr);
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding:
+        17px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius: 11px;
+
+    background:
+        var(--panel-2);
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.18s ease,
+        background-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+
+#themeDrawer .radio-card:hover {
+    transform:
+        translateY(-1px);
+
+    border-color:
+        var(--border);
+
+    background:
+        #30252a;
+}
+
+
+/* =========================================================
+   DENSITY RADIO BUTTON
+   Prevents giant circles.
+   ========================================================= */
+
+#themeDrawer .radio-card input[type="radio"] {
+    position: relative;
+
+    flex:
+        0 0 18px;
+
+    width:
+        18px !important;
+
+    height:
+        18px !important;
+
+    min-width:
+        18px !important;
+
+    min-height:
+        18px !important;
+
+    max-width:
+        18px !important;
+
+    max-height:
+        18px !important;
+
+    margin:
+        2px 0 0 !important;
+
+    padding:
+        0 !important;
+
+    border:
+        1px solid
+        #77666c !important;
+
+    border-radius:
+        50% !important;
+
+    appearance:
+        none !important;
+
+    -webkit-appearance:
+        none !important;
+
+    background:
+        #171416 !important;
+
+    cursor: pointer;
+
+    box-shadow:
+        none !important;
+}
+
+
+/* =========================================================
+   RADIO INNER DOT
+   ========================================================= */
+
+#themeDrawer .radio-card input[type="radio"]::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 4px;
+
+    border-radius: 50%;
+
+    background:
+        transparent;
+
+    transition:
+        background-color 0.15s ease;
+}
+
+
+#themeDrawer .radio-card input[type="radio"]:checked {
+    border-color:
+        #b75c78 !important;
+}
+
+
+#themeDrawer .radio-card input[type="radio"]:checked::after {
+    background:
+        #b75c78;
+}
+
+
+/* =========================================================
+   DENSITY CARD COPY
+   ========================================================= */
+
+#themeDrawer .radio-card > span {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+
+#themeDrawer .radio-card strong {
+    display: block;
+
+    color:
+        var(--text);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        0.76rem;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    white-space: normal;
+
+    word-break: normal;
+}
+
+
+#themeDrawer .radio-card small {
+    display: block;
+
+    max-width: 180px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.52rem;
+
+    line-height: 1.45;
+
+    white-space: normal;
+
+    overflow-wrap: normal;
+
+    word-break: normal;
+}
+
+
+/* =========================================================
+   SELECTED DENSITY CARD
+   ========================================================= */
+
+#themeDrawer .radio-card:has(
+    input[type="radio"]:checked
+) {
+    border-color:
+        #8d435b;
+
+    background:
+        #302129;
+}
+
+
+/* =========================================================
+   THEME MODAL FOOTER
+   ========================================================= */
+
+#themeDrawer .theme-modal-actions {
+    position: sticky;
+
+    z-index: 50;
+
+    bottom: 0;
+
+    min-height: 72px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    padding:
+        14px 26px;
+
+    border-top:
+        1px solid
+        var(--border);
+
+    background:
+        #1d181b;
+
+    box-shadow:
+        0 -10px 24px
+        rgba(0, 0, 0, 0.16);
+}
+
+
+/* =========================================================
+   FOOTER MESSAGE
+   ========================================================= */
+
+#themeDrawer .theme-modal-actions::before {
+    content:
+        "Changes are saved automatically.";
+
+    color:
+        var(--muted);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        0.54rem;
+
+    font-style: italic;
+}
+
+
+/* =========================================================
+   DONE BUTTON
+   ========================================================= */
+
+#themeDrawer .theme-modal-actions .primary-button {
+    min-width:
+        130px;
+
+    min-height:
+        42px;
+
+    padding:
+        0 22px;
+
+    border:
+        1px solid
+        #a85870 !important;
+
+    border-radius:
+        8px;
+
+    background:
+        #823b52 !important;
+
+    color:
+        #fff0df !important;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        0.65rem;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 13px
+        rgba(0, 0, 0, 0.20);
+
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+
+#themeDrawer .theme-modal-actions .primary-button:hover {
+    transform:
+        translateY(-1px);
+
+    background:
+        #93475f !important;
+
+    border-color:
+        #b7617b !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    #themeDrawer .setting-list {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    #themeDrawer .radio-card-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    #themeDrawer .radio-card {
+        min-height:
+            82px;
+    }
+
+
+    #themeDrawer .theme-modal-actions {
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+        gap: 10px;
+
+        padding:
+            12px 14px 14px;
+    }
+
+
+    #themeDrawer .theme-modal-actions::before {
+        text-align:
+            center;
+    }
+
+
+    #themeDrawer .theme-modal-actions .primary-button {
+        width:
+            100%;
+
+        min-width:
+            0;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 430px) {
+
+    #themeDrawer .toggle-setting {
+        min-height:
+            70px;
+
+        padding:
+            13px;
+    }
+
+
+    #themeDrawer .radio-card {
+        padding:
+            14px;
+    }
+
+
+    #themeDrawer .radio-card strong {
+        font-size:
+            0.72rem;
+    }
+
+
+    #themeDrawer .radio-card small {
+        font-size:
+            0.5rem;
+    }
+
+}
