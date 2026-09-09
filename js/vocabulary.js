@@ -2,12 +2,11 @@
    NOVELLOW
    VOCABULARY.JS
 
-   Vocabulary collection
-   Add word
-   Edit word
-   Delete word
+   Global vocabulary collection
+   Book-linked words
+   Journal integration
    Search
-   Book association
+   Add / edit / delete
    ========================================================= */
 
 
@@ -17,13 +16,8 @@
 
 
     /* =====================================================
-       CONFIG / HELPERS
+       GLOBALS
        ===================================================== */
-
-    const CONFIG =
-        window.NOVELLOW_CONFIG ||
-        {};
-
 
     window.NOVELLOW =
         window.NOVELLOW ||
@@ -45,7 +39,7 @@
 
     function init() {
 
-        bindVocabularyControls();
+        bindControls();
 
         populateBookSelect();
 
@@ -60,7 +54,29 @@
 
     function getState() {
 
-        return Novellow.state;
+        return Novellow.state || {};
+
+    }
+
+
+    function getWords() {
+
+        return Array.isArray(
+            getState().vocabulary
+        )
+            ? getState().vocabulary
+            : [];
+
+    }
+
+
+    function getBooks() {
+
+        return Array.isArray(
+            getState().books
+        )
+            ? getState().books
+            : [];
 
     }
 
@@ -69,11 +85,15 @@
        BIND CONTROLS
        ===================================================== */
 
-    function bindVocabularyControls() {
+    function bindControls() {
 
         H.bindClick?.(
             "addWordButton",
-            openAddModal
+            () => {
+
+                openAddModal();
+
+            }
         );
 
 
@@ -176,25 +196,17 @@
             );
 
 
-        const state =
-            getState();
-
-
         const words =
-            Array.isArray(
-                state.vocabulary
-            )
-                ? state.vocabulary
-                : [];
+            getWords();
 
 
         const searchTerm =
-            H.normalizeSearch?.(
+            normalizeSearch(
                 H.getById?.(
                     "wordSearch"
                 )?.value ||
                 ""
-            ) || "";
+            );
 
 
         const filtered =
@@ -207,7 +219,7 @@
                         )
                 )
                 .sort(
-                    compareWords
+                    alphabetical
                 );
 
 
@@ -305,7 +317,7 @@
 
 
         const haystack =
-            H.normalizeSearch?.(
+            normalizeSearch(
                 [
                     word.word,
                     word.definition,
@@ -317,7 +329,7 @@
                 ]
                     .filter(Boolean)
                     .join(" ")
-            ) || "";
+            );
 
 
         return haystack.includes(
@@ -328,34 +340,7 @@
 
 
     /* =====================================================
-       SORT
-       ===================================================== */
-
-    function compareWords(
-        a,
-        b
-    ) {
-
-        return String(
-            a.word ||
-            ""
-        ).localeCompare(
-            String(
-                b.word ||
-                ""
-            ),
-            undefined,
-            {
-                sensitivity:
-                    "base"
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       CREATE CARD
+       CREATE GLOBAL WORD CARD
        ===================================================== */
 
     function createWordCard(
@@ -372,7 +357,7 @@
             "word-card";
 
 
-        const initial =
+        card.dataset.initial =
             String(
                 word.word ||
                 "?"
@@ -381,10 +366,6 @@
                 .charAt(0)
                 .toUpperCase() ||
             "?";
-
-
-        card.dataset.initial =
-            initial;
 
 
         const book =
@@ -399,7 +380,7 @@
                 <div class="word-card-header">
 
                     <h3 class="word-card-word">
-                        ${H.escapeHTML?.(
+                        ${escape(
                             word.word
                         )}
                     </h3>
@@ -408,7 +389,7 @@
                         word.partOfSpeech
                             ? `
                                 <span class="word-card-part">
-                                    ${H.escapeHTML?.(
+                                    ${escape(
                                         word.partOfSpeech
                                     )}
                                 </span>
@@ -419,7 +400,7 @@
                 </div>
 
                 <div class="word-card-definition">
-                    ${H.escapeHTML?.(
+                    ${escape(
                         word.definition
                     )}
                 </div>
@@ -428,7 +409,7 @@
                     word.context
                         ? `
                             <div class="word-card-context">
-                                ${H.escapeHTML?.(
+                                ${escape(
                                     word.context
                                 )}
                             </div>
@@ -439,20 +420,17 @@
                 <div class="word-card-source">
 
                     <span class="word-card-book">
-                        ${
-                            H.escapeHTML?.(
-                                book?.title ||
-                                "Unlinked word"
-                            )
-                        }
+                        ${escape(
+                            book?.title ||
+                            "Unlinked word"
+                        )}
                     </span>
 
                     ${
                         word.page
                             ? `
                                 <div class="word-card-location">
-                                    Page
-                                    ${H.escapeHTML?.(
+                                    Page ${escape(
                                         String(
                                             word.page
                                         )
@@ -463,6 +441,20 @@
                     }
 
                     <div class="word-card-actions">
+
+                        ${
+                            book
+                                ? `
+                                    <button
+                                        type="button"
+                                        class="word-card-action"
+                                        data-word-open-book="${word.id}"
+                                    >
+                                        Open Book
+                                    </button>
+                                `
+                                : ""
+                        }
 
                         <button
                             type="button"
@@ -484,6 +476,38 @@
 
                 </div>
             `;
+
+
+        if (book) {
+
+            card.querySelector(
+                `[data-word-open-book="${word.id}"]`
+            )?.addEventListener(
+                "click",
+                () => {
+
+                    Novellow.app
+                        ?.navigate?.(
+                            "journal"
+                        );
+
+
+                    requestAnimationFrame(
+                        () => {
+
+                            Novellow.journal
+                                ?.openBook?.(
+                                    book.id,
+                                    "vocabulary"
+                                );
+
+                        }
+                    );
+
+                }
+            );
+
+        }
 
 
         card.querySelector(
@@ -520,10 +544,13 @@
 
 
     /* =====================================================
-       OPEN ADD MODAL
+       ADD MODAL
        ===================================================== */
 
-    function openAddModal() {
+    function openAddModal(
+        bookId =
+            ""
+    ) {
 
         resetForm();
 
@@ -534,9 +561,20 @@
         );
 
 
-        setInputValue(
-            "editingWordId",
-            ""
+        const preferredBookId =
+            bookId ||
+            getState().selectedBookId ||
+            "";
+
+
+        populateBookSelect(
+            preferredBookId
+        );
+
+
+        setValue(
+            "wordBook",
+            preferredBookId
         );
 
 
@@ -546,7 +584,7 @@
 
 
     /* =====================================================
-       OPEN EDIT MODAL
+       EDIT MODAL
        ===================================================== */
 
     function openEditModal(
@@ -560,7 +598,14 @@
 
 
         if (!word) {
+
+            H.showToast?.(
+                "That word could not be found.",
+                "error"
+            );
+
             return;
+
         }
 
 
@@ -573,52 +618,54 @@
         );
 
 
-        setInputValue(
+        setValue(
             "editingWordId",
             word.id
         );
 
 
-        setInputValue(
+        setValue(
             "wordText",
             word.word
         );
 
 
-        setInputValue(
+        setValue(
             "wordDefinition",
             word.definition
         );
 
 
-        populateBookSelect(
-            word.bookId ||
-            word.book ||
-            ""
-        );
-
-
-        setInputValue(
-            "wordBook",
-            word.bookId ||
-            word.book ||
-            ""
-        );
-
-
-        setInputValue(
-            "wordPage",
-            word.page
-        );
-
-
-        setInputValue(
+        setValue(
             "wordPartOfSpeech",
             word.partOfSpeech
         );
 
 
-        setInputValue(
+        const bookId =
+            word.bookId ||
+            word.book ||
+            "";
+
+
+        populateBookSelect(
+            bookId
+        );
+
+
+        setValue(
+            "wordBook",
+            bookId
+        );
+
+
+        setValue(
+            "wordPage",
+            word.page
+        );
+
+
+        setValue(
             "wordContext",
             word.context
         );
@@ -708,7 +755,7 @@
         form?.reset();
 
 
-        setInputValue(
+        setValue(
             "editingWordId",
             ""
         );
@@ -734,8 +781,20 @@
             getState();
 
 
+        if (
+            !Array.isArray(
+                state.vocabulary
+            )
+        ) {
+
+            state.vocabulary =
+                [];
+
+        }
+
+
         const editingId =
-            getInputValue(
+            value(
                 "editingWordId"
             );
 
@@ -749,13 +808,13 @@
 
 
         const wordText =
-            getInputValue(
+            value(
                 "wordText"
             ).trim();
 
 
         const definition =
-            getInputValue(
+            value(
                 "wordDefinition"
             ).trim();
 
@@ -784,6 +843,18 @@
         }
 
 
+        const bookId =
+            value(
+                "wordBook"
+            );
+
+
+        const now =
+            H.nowISO?.() ||
+            new Date()
+                .toISOString();
+
+
         const word =
             H.normalizeWord?.({
 
@@ -791,45 +862,86 @@
 
                 id:
                     existing?.id ||
-                    undefined,
+                    H.createId?.(
+                        "word"
+                    ),
 
                 word:
                     wordText,
 
                 definition,
 
-                bookId:
-                    getInputValue(
-                        "wordBook"
-                    ),
+                partOfSpeech:
+                    value(
+                        "wordPartOfSpeech"
+                    ).trim(),
+
+                bookId,
 
                 book:
-                    getInputValue(
-                        "wordBook"
-                    ),
+                    bookId,
 
                 page:
-                    getInputValue(
+                    value(
                         "wordPage"
                     ),
 
+                context:
+                    value(
+                        "wordContext"
+                    ).trim(),
+
+                createdAt:
+                    existing?.createdAt ||
+                    now,
+
+                updatedAt:
+                    now
+
+            }) || {
+
+                ...existing,
+
+                id:
+                    existing?.id ||
+                    H.createId?.(
+                        "word"
+                    ) ||
+                    `word-${Date.now()}`,
+
+                word:
+                    wordText,
+
+                definition,
+
                 partOfSpeech:
-                    getInputValue(
+                    value(
                         "wordPartOfSpeech"
+                    ).trim(),
+
+                bookId,
+
+                book:
+                    bookId,
+
+                page:
+                    value(
+                        "wordPage"
                     ),
 
                 context:
-                    getInputValue(
+                    value(
                         "wordContext"
-                    ),
+                    ).trim(),
 
                 createdAt:
-                    existing?.createdAt,
+                    existing?.createdAt ||
+                    now,
 
                 updatedAt:
-                    H.nowISO?.()
+                    now
 
-            });
+            };
 
 
         if (existing) {
@@ -874,23 +986,17 @@
         }
 
 
-        Novellow.storage
-            ?.saveVocabulary?.();
-
+        saveVocabulary();
 
         closeModal();
 
-        render();
-
-
-        Novellow.stats
-            ?.render?.();
+        refreshConnectedViews();
 
     }
 
 
     /* =====================================================
-       DELETE WORD
+       DELETE
        ===================================================== */
 
     function deleteWord(
@@ -924,22 +1030,16 @@
 
 
         state.vocabulary =
-            state.vocabulary.filter(
+            getWords().filter(
                 item =>
                     item.id !==
                     wordId
             );
 
 
-        Novellow.storage
-            ?.saveVocabulary?.();
+        saveVocabulary();
 
-
-        render();
-
-
-        Novellow.stats
-            ?.render?.();
+        refreshConnectedViews();
 
 
         H.showToast?.(
@@ -1000,14 +1100,22 @@
 
 
         const books =
-            [
-                ...(getState().books || [])
-            ].sort(
-                (a, b) =>
-                    a.title.localeCompare(
-                        b.title
-                    )
-            );
+            [...getBooks()]
+                .sort(
+                    (a, b) => {
+
+                        return String(
+                            a.title ||
+                            ""
+                        ).localeCompare(
+                            String(
+                                b.title ||
+                                ""
+                            )
+                        );
+
+                    }
+                );
 
 
         books.forEach(
@@ -1026,7 +1134,8 @@
                 option.textContent =
                     book.author
                         ? `${book.title} — ${book.author}`
-                        : book.title;
+                        : book.title ||
+                            "Untitled Book";
 
 
                 select.appendChild(
@@ -1059,23 +1168,119 @@
 
 
     /* =====================================================
+       SAVE
+       ===================================================== */
+
+    function saveVocabulary() {
+
+        Novellow.storage
+            ?.saveVocabulary?.();
+
+    }
+
+
+    /* =====================================================
+       REFRESH CONNECTED VIEWS
+       ===================================================== */
+
+    function refreshConnectedViews() {
+
+        render();
+
+
+        Novellow.journal
+            ?.renderOpenBook?.();
+
+
+        Novellow.journal
+            ?.renderJournalLibrary?.();
+
+
+        Novellow.stats
+            ?.render?.();
+
+    }
+
+
+    /* =====================================================
+       SORT
+       ===================================================== */
+
+    function alphabetical(
+        a,
+        b
+    ) {
+
+        return String(
+            a.word ||
+            ""
+        ).localeCompare(
+            String(
+                b.word ||
+                ""
+            ),
+            undefined,
+            {
+                sensitivity:
+                    "base"
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       SEARCH NORMALIZER
+       ===================================================== */
+
+    function normalizeSearch(
+        input
+    ) {
+
+        if (
+            H.normalizeSearch
+        ) {
+
+            return H.normalizeSearch(
+                input
+            );
+
+        }
+
+
+        return String(
+            input ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+    }
+
+
+    /* =====================================================
        BODY LOCK
        ===================================================== */
 
     function syncBodyLock() {
 
+        const ids = [
+
+            "themeDrawer",
+            "settingsDrawer",
+            "shelfDrawer",
+            "bookDrawer",
+            "bookReveal",
+            "progressModal",
+            "journalEntryModal",
+            "quoteModal",
+            "wordModal"
+
+        ];
+
+
         const anyOpen =
-            [
-                "themeDrawer",
-                "settingsDrawer",
-                "shelfDrawer",
-                "bookDrawer",
-                "bookReveal",
-                "progressModal",
-                "journalEntryModal",
-                "quoteModal",
-                "wordModal"
-            ].some(
+            ids.some(
                 id => {
 
                     const element =
@@ -1102,12 +1307,12 @@
 
 
     /* =====================================================
-       INPUT HELPERS
+       VALUE HELPERS
        ===================================================== */
 
-    function setInputValue(
+    function setValue(
         id,
-        value
+        nextValue
     ) {
 
         const element =
@@ -1122,12 +1327,13 @@
 
 
         element.value =
-            value ?? "";
+            nextValue ??
+            "";
 
     }
 
 
-    function getInputValue(
+    function value(
         id
     ) {
 
@@ -1137,6 +1343,46 @@
             )?.value ??
             ""
         );
+
+    }
+
+
+    /* =====================================================
+       ESCAPE
+       ===================================================== */
+
+    function escape(
+        input
+    ) {
+
+        if (
+            H.escapeHTML
+        ) {
+
+            return H.escapeHTML(
+                String(
+                    input ??
+                    ""
+                )
+            );
+
+        }
+
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.textContent =
+            String(
+                input ??
+                ""
+            );
+
+
+        return div.innerHTML;
 
     }
 
