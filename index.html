@@ -150,7 +150,353 @@
 
 <div id="app">
 
-    <!-- Sidebar will be inserted here -->
+  
+    <!-- ==========================================================
+     SECTION 03 - SIDEBAR
+========================================================== -->
+
+<aside id="sidebar">
+
+    <!-- =======================================
+         LOGO
+    ======================================== -->
+
+    <div class="sidebar-logo">
+
+        <div class="logo-icon">
+
+            <span>S</span>
+
+        </div>
+
+        <div class="logo-text">
+
+            <h1>Shelfmark</h1>
+
+            <p>Your Personal Library</p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =======================================
+         USER CARD
+    ======================================== -->
+
+    <section class="sidebar-user">
+
+        <div class="user-avatar">
+
+            📚
+
+        </div>
+
+        <div class="user-details">
+
+            <h3 id="userName">
+
+                Welcome Reader
+
+            </h3>
+
+            <p id="booksOwned">
+
+                0 Books
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =======================================
+         READING GOAL
+    ======================================== -->
+
+    <section class="reading-goal-card">
+
+        <div class="goal-header">
+
+            <span>Reading Goal</span>
+
+            <span id="goalPercent">
+
+                0%
+
+            </span>
+
+        </div>
+
+        <div class="goal-progress">
+
+            <div id="goalBar"></div>
+
+        </div>
+
+        <p id="goalText">
+
+            0 of 20 books completed
+
+        </p>
+
+    </section>
+
+
+
+    <!-- =======================================
+         NAVIGATION
+    ======================================== -->
+
+    <nav id="navigation">
+
+        <button
+            class="nav-button active"
+            data-section="home"
+        >
+
+            <span class="nav-icon">
+
+                🏠
+
+            </span>
+
+            <span>
+
+                Home
+
+            </span>
+
+        </button>
+
+
+
+        <button
+            class="nav-button"
+            data-section="library"
+        >
+
+            <span class="nav-icon">
+
+                📚
+
+            </span>
+
+            <span>
+
+                Library
+
+            </span>
+
+        </button>
+
+
+
+        <button
+            class="nav-button"
+            data-section="reading"
+        >
+
+            <span class="nav-icon">
+
+                📖
+
+            </span>
+
+            <span>
+
+                Reading
+
+            </span>
+
+        </button>
+
+
+
+        <button
+            class="nav-button"
+            data-section="journal"
+        >
+
+            <span class="nav-icon">
+
+                ✍️
+
+            </span>
+
+            <span>
+
+                Journal
+
+            </span>
+
+        </button>
+
+
+
+        <button
+            class="nav-button"
+            data-section="quotes"
+        >
+
+            <span class="nav-icon">
+
+                ❝
+
+            </span>
+
+            <span>
+
+                Quotes
+
+            </span>
+
+        </button>
+
+
+
+        <button
+            class="nav-button"
+            data-section="vocabulary"
+        >
+
+            <span class="nav-icon">
+
+                🔖
+
+            </span>
+
+            <span>
+
+                Vocabulary
+
+            </span>
+
+        </button>
+
+
+
+        <button
+            class="nav-button"
+            data-section="stats"
+        >
+
+            <span class="nav-icon">
+
+                📊
+
+            </span>
+
+            <span>
+
+                Statistics
+
+            </span>
+
+        </button>
+
+
+
+        <button
+            class="nav-button"
+            data-section="settings"
+        >
+
+            <span class="nav-icon">
+
+                ⚙️
+
+            </span>
+
+            <span>
+
+                Settings
+
+            </span>
+
+        </button>
+
+    </nav>
+
+
+
+    <!-- =======================================
+         QUICK ACTIONS
+    ======================================== -->
+
+    <section class="sidebar-actions">
+
+        <button id="addBookButton">
+
+            + Add Book
+
+        </button>
+
+        <button id="addShelfButton">
+
+            + New Shelf
+
+        </button>
+
+    </section>
+
+
+
+    <!-- =======================================
+         THEME
+    ======================================== -->
+
+    <section class="theme-preview-card">
+
+        <div>
+
+            <p class="theme-label">
+
+                Current Theme
+
+            </p>
+
+            <h3 id="currentThemeName">
+
+                Haunted Library
+
+            </h3>
+
+        </div>
+
+        <button id="openThemeDrawer">
+
+            Change
+
+        </button>
+
+    </section>
+
+
+
+    <!-- =======================================
+         FOOTER
+    ======================================== -->
+
+    <footer id="sidebarFooter">
+
+        <small>
+
+            Shelfmark v2
+
+        </small>
+
+    </footer>
+
+</aside>
+
+<!-- ==========================================================
+     END SECTION 03 - SIDEBAR
+========================================================== -->
+
 
 
 
@@ -4237,350 +4583,4 @@
 
 <!-- ==========================================================
      END SECTION 02 - APPLICATION SHELL
-========================================================== -->
-
-    <!-- ==========================================================
-     SECTION 03 - SIDEBAR
-========================================================== -->
-
-<aside id="sidebar">
-
-    <!-- =======================================
-         LOGO
-    ======================================== -->
-
-    <div class="sidebar-logo">
-
-        <div class="logo-icon">
-
-            <span>S</span>
-
-        </div>
-
-        <div class="logo-text">
-
-            <h1>Shelfmark</h1>
-
-            <p>Your Personal Library</p>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- =======================================
-         USER CARD
-    ======================================== -->
-
-    <section class="sidebar-user">
-
-        <div class="user-avatar">
-
-            📚
-
-        </div>
-
-        <div class="user-details">
-
-            <h3 id="userName">
-
-                Welcome Reader
-
-            </h3>
-
-            <p id="booksOwned">
-
-                0 Books
-
-            </p>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =======================================
-         READING GOAL
-    ======================================== -->
-
-    <section class="reading-goal-card">
-
-        <div class="goal-header">
-
-            <span>Reading Goal</span>
-
-            <span id="goalPercent">
-
-                0%
-
-            </span>
-
-        </div>
-
-        <div class="goal-progress">
-
-            <div id="goalBar"></div>
-
-        </div>
-
-        <p id="goalText">
-
-            0 of 20 books completed
-
-        </p>
-
-    </section>
-
-
-
-    <!-- =======================================
-         NAVIGATION
-    ======================================== -->
-
-    <nav id="navigation">
-
-        <button
-            class="nav-button active"
-            data-section="home"
-        >
-
-            <span class="nav-icon">
-
-                🏠
-
-            </span>
-
-            <span>
-
-                Home
-
-            </span>
-
-        </button>
-
-
-
-        <button
-            class="nav-button"
-            data-section="library"
-        >
-
-            <span class="nav-icon">
-
-                📚
-
-            </span>
-
-            <span>
-
-                Library
-
-            </span>
-
-        </button>
-
-
-
-        <button
-            class="nav-button"
-            data-section="reading"
-        >
-
-            <span class="nav-icon">
-
-                📖
-
-            </span>
-
-            <span>
-
-                Reading
-
-            </span>
-
-        </button>
-
-
-
-        <button
-            class="nav-button"
-            data-section="journal"
-        >
-
-            <span class="nav-icon">
-
-                ✍️
-
-            </span>
-
-            <span>
-
-                Journal
-
-            </span>
-
-        </button>
-
-
-
-        <button
-            class="nav-button"
-            data-section="quotes"
-        >
-
-            <span class="nav-icon">
-
-                ❝
-
-            </span>
-
-            <span>
-
-                Quotes
-
-            </span>
-
-        </button>
-
-
-
-        <button
-            class="nav-button"
-            data-section="vocabulary"
-        >
-
-            <span class="nav-icon">
-
-                🔖
-
-            </span>
-
-            <span>
-
-                Vocabulary
-
-            </span>
-
-        </button>
-
-
-
-        <button
-            class="nav-button"
-            data-section="stats"
-        >
-
-            <span class="nav-icon">
-
-                📊
-
-            </span>
-
-            <span>
-
-                Statistics
-
-            </span>
-
-        </button>
-
-
-
-        <button
-            class="nav-button"
-            data-section="settings"
-        >
-
-            <span class="nav-icon">
-
-                ⚙️
-
-            </span>
-
-            <span>
-
-                Settings
-
-            </span>
-
-        </button>
-
-    </nav>
-
-
-
-    <!-- =======================================
-         QUICK ACTIONS
-    ======================================== -->
-
-    <section class="sidebar-actions">
-
-        <button id="addBookButton">
-
-            + Add Book
-
-        </button>
-
-        <button id="addShelfButton">
-
-            + New Shelf
-
-        </button>
-
-    </section>
-
-
-
-    <!-- =======================================
-         THEME
-    ======================================== -->
-
-    <section class="theme-preview-card">
-
-        <div>
-
-            <p class="theme-label">
-
-                Current Theme
-
-            </p>
-
-            <h3 id="currentThemeName">
-
-                Haunted Library
-
-            </h3>
-
-        </div>
-
-        <button id="openThemeDrawer">
-
-            Change
-
-        </button>
-
-    </section>
-
-
-
-    <!-- =======================================
-         FOOTER
-    ======================================== -->
-
-    <footer id="sidebarFooter">
-
-        <small>
-
-            Shelfmark v2
-
-        </small>
-
-    </footer>
-
-</aside>
-
-<!-- ==========================================================
-     END SECTION 03 - SIDEBAR
 ========================================================== -->
