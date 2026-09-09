@@ -1,1 +1,610 @@
+/* =========================================================
+   NOVELLOW
+   QUOTES.CSS
 
+   Quote collection
+   Search
+   Quote cards
+   Quote metadata
+   Quote modal
+   Responsive behavior
+   ========================================================= */
+
+
+/* =========================================================
+   QUOTES PAGE
+   ========================================================= */
+
+#quotes {
+    position: relative;
+}
+
+
+/* =========================================================
+   QUOTE TOOLBAR
+   ========================================================= */
+
+.quotes-toolbar {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    margin-bottom: 26px;
+
+    flex-wrap: wrap;
+}
+
+
+.quotes-toolbar
+.search-field {
+    flex:
+        1 1 320px;
+}
+
+
+.quotes-toolbar
+.primary-button {
+    flex:
+        0 0 auto;
+}
+
+
+/* =========================================================
+   QUOTE GRID
+   ========================================================= */
+
+.quote-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   QUOTE CARD
+   ========================================================= */
+
+.quote-card {
+    position: relative;
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-height:
+        280px;
+
+    padding:
+        22px 20px 18px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        var(--radius-large);
+
+    background:
+        var(--panel);
+
+    box-shadow:
+        0 10px 24px
+        rgba(0, 0, 0, 0.10);
+
+    transition:
+        transform 0.16s ease,
+        border-color 0.16s ease,
+        background-color 0.16s ease,
+        box-shadow 0.16s ease;
+}
+
+
+.quote-card:hover {
+    transform:
+        translateY(-3px);
+
+    border-color:
+        var(--border);
+
+    background:
+        var(--panel-2);
+
+    box-shadow:
+        0 16px 30px
+        rgba(0, 0, 0, 0.14);
+}
+
+
+/* =========================================================
+   LARGE QUOTE MARK
+   ========================================================= */
+
+.quote-card::before {
+    content: "“";
+
+    position: absolute;
+
+    top: 3px;
+    left: 12px;
+
+    color:
+        var(--accent);
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size:
+        5rem;
+
+    line-height:
+        1;
+
+    opacity:
+        0.16;
+
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   QUOTE TEXT
+   ========================================================= */
+
+.quote-card-text {
+    position: relative;
+
+    z-index: 2;
+
+    flex:
+        1 1 auto;
+
+    padding-top:
+        18px;
+
+    color:
+        var(--paper);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        clamp(
+            1.2rem,
+            2vw,
+            1.55rem
+        );
+
+    font-weight:
+        500;
+
+    line-height:
+        1.42;
+
+    white-space:
+        pre-wrap;
+}
+
+
+/* =========================================================
+   SOURCE / BOOK
+   ========================================================= */
+
+.quote-card-source {
+    position: relative;
+
+    z-index: 2;
+
+    margin-top:
+        22px;
+
+    padding-top:
+        14px;
+
+    border-top:
+        1px solid
+        var(--border-soft);
+}
+
+
+.quote-card-book {
+    display: block;
+
+    margin-bottom:
+        3px;
+
+    color:
+        var(--accent-light);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1rem;
+
+    font-weight:
+        600;
+}
+
+
+.quote-card-location {
+    color:
+        var(--muted);
+
+    font-size:
+        0.5rem;
+
+    line-height:
+        1.5;
+}
+
+
+/* =========================================================
+   QUOTE THOUGHTS
+   ========================================================= */
+
+.quote-card-thoughts {
+    margin-top:
+        13px;
+
+    padding:
+        11px 12px;
+
+    border-left:
+        2px solid
+        color-mix(
+            in srgb,
+            var(--accent) 55%,
+            transparent
+        );
+
+    background:
+        var(--bg-2);
+
+    color:
+        var(--text-soft);
+
+    font-size:
+        0.57rem;
+
+    line-height:
+        1.55;
+
+    white-space:
+        pre-wrap;
+}
+
+
+/* =========================================================
+   QUOTE CARD ACTIONS
+   ========================================================= */
+
+.quote-card-actions {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 6px;
+
+    margin-top:
+        14px;
+}
+
+
+.quote-card-action {
+    min-height:
+        31px;
+
+    padding:
+        0 10px;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        7px;
+
+    background:
+        var(--bg-2);
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.47rem;
+
+    font-weight:
+        700;
+
+    transition:
+        border-color 0.15s ease,
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+
+.quote-card-action:hover {
+    border-color:
+        var(--border);
+
+    background:
+        var(--panel-3);
+
+    color:
+        var(--paper);
+}
+
+
+.quote-card-action.danger:hover {
+    color:
+        #e1a4a4;
+}
+
+
+/* =========================================================
+   QUOTE EMPTY STATE
+   ========================================================= */
+
+#quotesEmptyState {
+    margin-top:
+        10px;
+}
+
+
+/* =========================================================
+   SEARCH RESULT INFO
+   ========================================================= */
+
+.quote-search-message {
+    grid-column:
+        1 / -1;
+
+    min-height:
+        180px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding:
+        28px;
+
+    border:
+        1px dashed
+        var(--border-soft);
+
+    border-radius:
+        var(--radius-large);
+
+    background:
+        var(--panel);
+
+    color:
+        var(--muted);
+
+    text-align:
+        center;
+
+    font-size:
+        0.6rem;
+}
+
+
+/* =========================================================
+   QUOTE MODAL
+   ========================================================= */
+
+#quoteModal
+.modal-card {
+    width:
+        min(
+            680px,
+            100%
+        );
+}
+
+
+/* =========================================================
+   QUOTE TEXTAREA
+   ========================================================= */
+
+#quoteText {
+    min-height:
+        180px;
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1rem;
+
+    line-height:
+        1.55;
+}
+
+
+#quoteThoughts {
+    min-height:
+        120px;
+}
+
+
+/* =========================================================
+   QUOTE BOOK SELECT
+   ========================================================= */
+
+#quoteBook {
+    width: 100%;
+}
+
+
+/* =========================================================
+   QUOTE LOCATION ROW
+   ========================================================= */
+
+.quote-location-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   FEATURED / LONG QUOTE
+   ========================================================= */
+
+.quote-card.is-long {
+    grid-column:
+        span 2;
+}
+
+
+.quote-card.is-long
+.quote-card-text {
+    font-size:
+        clamp(
+            1.3rem,
+            2.4vw,
+            1.8rem
+        );
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .quote-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .quotes-toolbar {
+        align-items:
+            stretch;
+    }
+
+
+    .quotes-toolbar
+    .search-field,
+    .quotes-toolbar
+    .primary-button {
+        width: 100%;
+
+        flex:
+            1 1 100%;
+    }
+
+
+    .quote-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .quote-card.is-long {
+        grid-column:
+            auto;
+    }
+
+
+    .quote-card {
+        min-height:
+            240px;
+
+        padding:
+            20px 17px 16px;
+    }
+
+
+    .quote-location-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 430px) {
+
+    .quote-card-text {
+        font-size:
+            1.15rem;
+    }
+
+
+    .quote-card-actions {
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+
+    .quote-card-action {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+.reduce-motion
+.quote-card {
+    transition:
+        none !important;
+}
+
+
+.reduce-motion
+.quote-card:hover {
+    transform:
+        none;
+}
