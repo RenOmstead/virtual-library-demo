@@ -3,990 +3,4464 @@
 
 <head>
 
+    <!-- =====================================================
+         DOCUMENT
+         ===================================================== -->
+
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
 
-    <title>Novellow</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <!-- Fonts -->
+    <meta
+        name="description"
+        content="Novellow — your personal virtual library, reading tracker, and literary journal."
+    >
 
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
+    <meta
+        name="theme-color"
+        content="#181315"
+    >
 
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
+    <title>Novellow | Your Personal Library</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
 
-    <!-- CSS -->
+    <!-- =====================================================
+         FONTS
+         ===================================================== -->
 
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/library.css">
-    <link rel="stylesheet" href="css/reading.css">
-    <link rel="stylesheet" href="css/journal.css">
-    <link rel="stylesheet" href="css/quotes.css">
-    <link rel="stylesheet" href="css/vocabulary.css">
-    <link rel="stylesheet" href="css/statistics.css">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         CSS
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/main.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/themes.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/library.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/books.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/drawers.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/reading.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/journal.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/quotes.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/vocabulary.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/stats.css"
+    >
 
 </head>
 
-<body>
 
-<div id="app">
+<body class="theme-haunted">
 
-    <!-- ===========================================
-         SIDEBAR
-    ============================================ -->
 
-<aside id="sidebar">
+    <!-- =====================================================
+         LOADING SCREEN
+         ===================================================== -->
 
-    <!-- Logo -->
+    <div
+        id="loadingScreen"
+        class="loading-screen"
+    >
 
-    <div class="sidebar-logo">
+        <div class="loading-content">
 
-        <button id="logoButton" class="logo-button">
-
-            <div class="logo-icon">
-
-                📚
-
+            <div class="loading-mark">
+                <span>N</span>
             </div>
 
-            <div class="logo-text">
-
-                <h1>Novellow</h1>
-
-                <span>Your Personal Library</span>
-
-            </div>
-
-        </button>
-
-    </div>
-
-
-
-    <!-- Quick Actions -->
-
-    <section class="sidebar-section">
-
-        <button id="addBookBtn"
-                class="primary-btn full-width">
-
-            + Add Book
-
-        </button>
-
-        <button id="addShelfBtn"
-                class="secondary-btn full-width">
-
-            + New Shelf
-
-        </button>
-
-    </section>
-
-
-
-    <!-- Search -->
-
-    <section class="sidebar-section">
-
-        <label class="sidebar-label">
-
-            Search Library
-
-        </label>
-
-        <div class="sidebar-search">
-
-            <input
-                type="search"
-                id="librarySearch"
-                placeholder="Search books...">
-
-        </div>
-
-    </section>
-
-
-
-    <!-- Navigation -->
-
-    <nav class="sidebar-nav">
-
-        <button class="nav-item active"
-                data-page="library">
-
-            <span class="nav-icon">📚</span>
-
-            <span>Library</span>
-
-        </button>
-
-
-
-        <button class="nav-item"
-                data-page="reading">
-
-            <span class="nav-icon">📖</span>
-
-            <span>Reading</span>
-
-        </button>
-
-
-
-        <button class="nav-item"
-                data-page="journal">
-
-            <span class="nav-icon">📝</span>
-
-            <span>Journal</span>
-
-        </button>
-
-
-
-        <button class="nav-item"
-                data-page="quotes">
-
-            <span class="nav-icon">💬</span>
-
-            <span>Quotes</span>
-
-        </button>
-
-
-
-        <button class="nav-item"
-                data-page="vocabulary">
-
-            <span class="nav-icon">🔤</span>
-
-            <span>Vocabulary</span>
-
-        </button>
-
-
-
-        <button class="nav-item"
-                data-page="statistics">
-
-            <span class="nav-icon">📊</span>
-
-            <span>Statistics</span>
-
-        </button>
-
-
-
-        <button class="nav-item"
-                data-page="settings">
-
-            <span class="nav-icon">⚙️</span>
-
-            <span>Settings</span>
-
-        </button>
-
-    </nav>
-
-
-
-    <!-- Continue Reading -->
-
-    <section class="sidebar-section">
-
-        <div class="mini-reading-card">
-
-            <span class="mini-label">
-
-                Continue Reading
-
-            </span>
-
-            <h3>
-
-                No Book Selected
-
-            </h3>
-
-            <div class="mini-progress">
-
-                <div class="mini-progress-fill"></div>
-
-            </div>
-
-            <button class="text-btn">
-
-                Open →
-
-            </button>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- Footer -->
-
-    <footer class="sidebar-footer">
-
-        <button id="themeButton"
-                class="icon-btn">
-
-            🎨
-
-            Themes
-
-        </button>
-
-    </footer>
-
-</aside>
-
-    <!-- ===========================================
-         MAIN APPLICATION
-    ============================================ -->
-
-    <div id="mainApplication">
-
-      <!-- ===========================================
-     HEADER
-============================================ -->
-
-<header id="appHeader">
-
-    <!-- Left Side -->
-
-    <div class="header-left">
-
-        <div class="page-title">
-
-            <h2 id="pageTitle">
-
-                Library
-
-            </h2>
-
-            <p id="pageSubtitle">
-
-                Build the library you've always wanted.
-
+            <h1>
+                Novellow
+            </h1>
+
+            <p>
+                Your library is waking up.
             </p>
 
-        </div>
+            <div class="loading-dots">
 
-    </div>
-
-
-
-    <!-- Center Search -->
-
-    <div class="header-search">
-
-        <div class="search-wrapper">
-
-            <svg class="search-icon"
-                 viewBox="0 0 24 24"
-                 aria-hidden="true">
-
-                <circle
-                    cx="11"
-                    cy="11"
-                    r="7">
-
-                </circle>
-
-                <line
-                    x1="16.5"
-                    y1="16.5"
-                    x2="21"
-                    y2="21">
-
-                </line>
-
-            </svg>
-
-            <input
-                id="globalSearch"
-                type="search"
-                placeholder="Search books, authors, shelves...">
-
-        </div>
-
-    </div>
-
-
-
-    <!-- Right Side -->
-
-    <div class="header-actions">
-
-        <button
-            class="header-btn"
-            id="notificationsButton"
-            title="Notifications">
-
-            🔔
-
-        </button>
-
-
-
-        <button
-            class="header-btn"
-            id="themeToggleButton"
-            title="Themes">
-
-            🎨
-
-        </button>
-
-
-
-        <button
-            class="profile-button"
-            id="profileButton">
-
-            <div class="profile-avatar">
-
-                📖
+                <span></span>
+                <span></span>
+                <span></span>
 
             </div>
 
-            <div class="profile-details">
+        </div>
 
-                <strong>
+    </div>
 
-                    My Library
 
-                </strong>
+    <!-- =====================================================
+         APP
+         ===================================================== -->
 
-                <span>
+    <div
+        id="app"
+        class="app-shell"
+    >
 
-                    Reader
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <header class="site-header">
+
+
+            <!-- =============================================
+                 BRAND
+                 ============================================= -->
+
+            <a
+                href="#library"
+                class="brand"
+                aria-label="Novellow home"
+            >
+
+                <span class="brand-mark">
+                    N
+                </span>
+
+                <span class="brand-copy">
+
+                    <strong>
+                        Novellow
+                    </strong>
+
+                    <small>
+                        a library of your own
+                    </small>
 
                 </span>
 
+            </a>
+
+
+            <!-- =============================================
+                 NAVIGATION
+                 ============================================= -->
+
+            <nav
+                class="main-nav"
+                aria-label="Main navigation"
+            >
+
+                <button
+                    class="nav-button active"
+                    type="button"
+                    data-section="library"
+                >
+
+                    <span
+                        class="nav-icon nav-icon-library"
+                        aria-hidden="true"
+                    ></span>
+
+                    <span>
+                        Library
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="nav-button"
+                    type="button"
+                    data-section="reading"
+                >
+
+                    <span
+                        class="nav-icon nav-icon-reading"
+                        aria-hidden="true"
+                    ></span>
+
+                    <span>
+                        Reading
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="nav-button"
+                    type="button"
+                    data-section="journal"
+                >
+
+                    <span
+                        class="nav-icon nav-icon-journal"
+                        aria-hidden="true"
+                    ></span>
+
+                    <span>
+                        Journal
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="nav-button"
+                    type="button"
+                    data-section="quotes"
+                >
+
+                    <span
+                        class="nav-icon nav-icon-quotes"
+                        aria-hidden="true"
+                    ></span>
+
+                    <span>
+                        Quotes
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="nav-button"
+                    type="button"
+                    data-section="vocabulary"
+                >
+
+                    <span
+                        class="nav-icon nav-icon-words"
+                        aria-hidden="true"
+                    ></span>
+
+                    <span>
+                        Words
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="nav-button"
+                    type="button"
+                    data-section="stats"
+                >
+
+                    <span
+                        class="nav-icon nav-icon-stats"
+                        aria-hidden="true"
+                    ></span>
+
+                    <span>
+                        Stats
+                    </span>
+
+                </button>
+
+            </nav>
+
+
+            <!-- =============================================
+                 HEADER ACTIONS
+                 ============================================= -->
+
+            <div class="header-actions">
+
+                <button
+                    id="openThemeDrawer"
+                    class="header-icon-button"
+                    type="button"
+                    aria-label="Change library theme"
+                    title="Theme"
+                >
+
+                    <span
+                        class="theme-button-icon"
+                        aria-hidden="true"
+                    ></span>
+
+                </button>
+
+
+                <button
+                    id="openSettingsDrawer"
+                    class="header-icon-button"
+                    type="button"
+                    aria-label="Open settings"
+                    title="Settings"
+                >
+
+                    <span
+                        class="settings-button-icon"
+                        aria-hidden="true"
+                    ></span>
+
+                </button>
+
+
+                <button
+                    id="headerAddBook"
+                    class="primary-button header-add-book"
+                    type="button"
+                >
+                    + Add Book
+                </button>
+
             </div>
 
-        </button>
-
-    </div>
-
-</header>
+        </header>
 
 
-        <!-- Main Content -->
+        <!-- =================================================
+             MOBILE NAV
+             ================================================= -->
 
-       <!-- ===========================================
-     MAIN CONTENT
-============================================ -->
-
-<main id="mainContent">
-
-    <!-- ===========================================
-         LIBRARY PAGE
-    ============================================ -->
-
-    <section
-        id="libraryPage"
-        class="page active-page">
-
-        <!-- Welcome -->
-
-        <section class="library-welcome">
-
-            <div class="welcome-text">
-
-                <h1>
-
-                    Welcome to Your Library
-
-                </h1>
-
-                <p>
-
-                    Every shelf tells a story. Organize your books,
-                    decorate your shelves, and build a library that's
-                    completely your own.
-
-                </p>
-
-            </div>
+        <nav
+            class="mobile-nav"
+            aria-label="Mobile navigation"
+        >
 
             <button
-                class="primary-btn">
-
-                + Add Book
-
+                class="mobile-nav-button active"
+                type="button"
+                data-section="library"
+            >
+                <span class="mobile-icon icon-library"></span>
+                <small>Library</small>
             </button>
 
-        </section>
+
+            <button
+                class="mobile-nav-button"
+                type="button"
+                data-section="reading"
+            >
+                <span class="mobile-icon icon-reading"></span>
+                <small>Reading</small>
+            </button>
 
 
+            <button
+                class="mobile-nav-button mobile-add-button"
+                id="mobileAddBook"
+                type="button"
+                aria-label="Add book"
+            >
+                <span>+</span>
+            </button>
 
-        <!-- Continue Reading -->
 
-        <section class="continue-reading">
+            <button
+                class="mobile-nav-button"
+                type="button"
+                data-section="journal"
+            >
+                <span class="mobile-icon icon-journal"></span>
+                <small>Journal</small>
+            </button>
 
-            <div class="continue-book">
 
-                <div class="continue-cover">
+            <button
+                class="mobile-nav-button"
+                type="button"
+                data-section="stats"
+            >
+                <span class="mobile-icon icon-stats"></span>
+                <small>Stats</small>
+            </button>
+
+        </nav>
+
+
+        <!-- =================================================
+             MAIN
+             ================================================= -->
+
+        <main
+            id="mainContent"
+            class="main-content"
+        >
+
+
+            <!-- =================================================
+                 LIBRARY
+                 ================================================= -->
+
+            <section
+                id="library"
+                class="app-section active-section"
+                data-app-section="library"
+            >
+
+
+                <!-- =============================================
+                     LIBRARY HERO
+                     ============================================= -->
+
+                <div class="page-hero library-hero">
+
+                    <div class="page-hero-copy">
+
+                        <span class="page-eyebrow">
+                            MY LIBRARY
+                        </span>
+
+                        <h1>
+                            Stories worth
+                            <em>keeping close.</em>
+                        </h1>
+
+                        <p>
+                            Build shelves, collect books, decorate your
+                            reading room, and keep a little record of
+                            every story that stays with you.
+                        </p>
+
+                    </div>
+
+
+                    <div class="library-summary">
+
+                        <article>
+
+                            <strong id="libraryBookCount">
+                                0
+                            </strong>
+
+                            <span>
+                                books
+                            </span>
+
+                        </article>
+
+
+                        <article>
+
+                            <strong id="libraryShelfCount">
+                                0
+                            </strong>
+
+                            <span>
+                                shelves
+                            </span>
+
+                        </article>
+
+
+                        <article>
+
+                            <strong id="libraryReadingCount">
+                                0
+                            </strong>
+
+                            <span>
+                                reading
+                            </span>
+
+                        </article>
+
+                    </div>
 
                 </div>
 
-                <div class="continue-details">
 
-                    <span class="section-label">
+                <!-- =============================================
+                     LIBRARY TOOLBAR
+                     ============================================= -->
 
-                        Continue Reading
+                <div class="library-toolbar">
 
-                    </span>
+                    <div class="library-toolbar-left">
 
-                    <h2>
+                        <label
+                            class="search-field"
+                            for="librarySearch"
+                        >
 
-                        No Current Book
+                            <span
+                                class="search-icon"
+                                aria-hidden="true"
+                            ></span>
 
-                    </h2>
+                            <input
+                                id="librarySearch"
+                                type="search"
+                                autocomplete="off"
+                                placeholder="Search your library..."
+                            >
 
-                    <p>
+                        </label>
 
-                        Choose a book from your library to begin
-                        your next adventure.
 
-                    </p>
+                        <select
+                            id="libraryStatusFilter"
+                            class="toolbar-select"
+                            aria-label="Filter books by reading status"
+                        >
 
-                    <div class="progress-bar">
+                            <option value="">
+                                All Books
+                            </option>
 
-                        <div class="progress-fill">
+                            <option value="reading">
+                                Currently Reading
+                            </option>
+
+                            <option value="want">
+                                Want to Read
+                            </option>
+
+                            <option value="finished">
+                                Finished
+                            </option>
+
+                            <option value="paused">
+                                Paused
+                            </option>
+
+                            <option value="dnf">
+                                Did Not Finish
+                            </option>
+
+                            <option value="reference">
+                                Reference
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="library-toolbar-actions">
+
+                        <button
+                            id="addShelfButton"
+                            class="secondary-button"
+                            type="button"
+                        >
+                            + Add Shelf
+                        </button>
+
+
+                        <button
+                            id="libraryAddBook"
+                            class="primary-button"
+                            type="button"
+                        >
+                            + Add Book
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     SHELVES
+                     ============================================= -->
+
+                <div
+                    id="shelfContainer"
+                    class="shelf-container"
+                >
+                </div>
+
+
+                <!-- =============================================
+                     EMPTY LIBRARY
+                     ============================================= -->
+
+                <div
+                    id="libraryEmptyState"
+                    class="empty-state library-empty-state"
+                    hidden
+                >
+
+                    <div class="empty-state-illustration">
+
+                        <div class="empty-books">
+
+                            <span></span>
+                            <span></span>
+                            <span></span>
 
                         </div>
 
                     </div>
 
-                    <button
-                        class="secondary-btn">
 
-                        Open Book
+                    <span class="page-eyebrow">
+                        A QUIET LITTLE ROOM
+                    </span>
 
-                    </button>
+                    <h2>
+                        Your library is waiting.
+                    </h2>
+
+                    <p>
+                        Create your first shelf and start filling it
+                        with stories.
+                    </p>
+
+
+                    <div class="empty-state-actions">
+
+                        <button
+                            id="emptyAddShelf"
+                            class="primary-button"
+                            type="button"
+                        >
+                            Create My First Shelf
+                        </button>
+
+
+                        <button
+                            id="emptyAddBook"
+                            class="secondary-button"
+                            type="button"
+                        >
+                            Add a Book
+                        </button>
+
+                    </div>
 
                 </div>
 
-            </div>
-
-        </section>
+            </section>
 
 
+            <!-- =================================================
+                 READING NOW
+                 ================================================= -->
 
-        <!-- Library Shelves -->
+            <section
+                id="reading"
+                class="app-section"
+                data-app-section="reading"
+                hidden
+            >
 
-        <section
-            id="libraryShelves">
+                <div class="page-hero">
 
-            <!-- Shelf 1 -->
+                    <div class="page-hero-copy">
 
-            <article
-                class="bookshelf">
+                        <span class="page-eyebrow">
+                            READING NOW
+                        </span>
 
-                <header
-                    class="shelf-header">
-
-                    <div>
-
-                        <h2>
-
-                            Classics
-
-                        </h2>
+                        <h1>
+                            Books keeping me
+                            <em>company lately.</em>
+                        </h1>
 
                         <p>
-
-                            Timeless stories worth revisiting.
-
+                            Track your place, see what you have in
+                            progress, and return to the books you
+                            haven't finished talking to yet.
                         </p>
 
                     </div>
 
-                    <button
-                        class="text-btn">
 
-                        Edit Shelf
+                    <div class="reading-summary">
 
-                    </button>
+                        <article>
 
-                </header>
+                            <strong id="currentlyReadingCount">
+                                0
+                            </strong>
 
-                <div
-                    class="shelf-decorations">
+                            <span>
+                                current reads
+                            </span>
 
-                    🌿
+                        </article>
+
+
+                        <article>
+
+                            <strong id="readingAverageProgress">
+                                0%
+                            </strong>
+
+                            <span>
+                                average progress
+                            </span>
+
+                        </article>
+
+
+                        <article>
+
+                            <strong id="readingPagesRemaining">
+                                0
+                            </strong>
+
+                            <span>
+                                pages remaining
+                            </span>
+
+                        </article>
+
+                    </div>
 
                 </div>
 
-                <div
-                    class="book-row">
 
-                </div>
+                <!-- =============================================
+                     FEATURED CURRENT READ
+                     ============================================= -->
 
-                <div
-                    class="wood-shelf">
+                <section
+                    id="featuredReading"
+                    class="featured-reading"
+                    hidden
+                >
 
-                </div>
+                    <div class="featured-book-cover-wrap">
 
-            </article>
+                        <div
+                            id="featuredReadingCover"
+                            class="featured-book-cover"
+                        >
+                        </div>
+
+                    </div>
 
 
+                    <div class="featured-reading-content">
 
-            <!-- Shelf 2 -->
+                        <span class="page-eyebrow">
+                            CURRENTLY READING
+                        </span>
 
-            <article
-                class="bookshelf">
-
-                <header
-                    class="shelf-header">
-
-                    <div>
-
-                        <h2>
-
-                            Fantasy
-
+                        <h2 id="featuredReadingTitle">
+                            Book Title
                         </h2>
 
+                        <p
+                            id="featuredReadingAuthor"
+                            class="featured-reading-author"
+                        >
+                            Author
+                        </p>
+
+
+                        <div class="featured-reading-meta">
+
+                            <div>
+
+                                <span>
+                                    Started
+                                </span>
+
+                                <strong id="featuredReadingStarted">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Current Page
+                                </span>
+
+                                <strong id="featuredReadingPages">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="reading-progress-block">
+
+                            <div class="progress-label">
+
+                                <span>
+                                    Reading progress
+                                </span>
+
+                                <strong id="featuredReadingPercent">
+                                    0%
+                                </strong>
+
+                            </div>
+
+
+                            <div class="progress-track">
+
+                                <div
+                                    id="featuredReadingProgress"
+                                    class="progress-fill"
+                                >
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="featured-reading-actions">
+
+                            <button
+                                id="featuredOpenJournal"
+                                class="primary-button"
+                                type="button"
+                            >
+                                Open Reading Journal
+                            </button>
+
+
+                            <button
+                                id="featuredUpdateProgress"
+                                class="secondary-button"
+                                type="button"
+                            >
+                                Update Progress
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     CURRENT READING GRID
+                     ============================================= -->
+
+                <section class="reading-list">
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <span class="page-eyebrow">
+                                ON MY NIGHTSTAND
+                            </span>
+
+                            <h2>
+                                Currently Reading
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="readingGrid"
+                        class="reading-grid"
+                    >
+                    </div>
+
+                </section>
+
+
+                <div
+                    id="readingEmptyState"
+                    class="empty-state"
+                    hidden
+                >
+
+                    <span class="page-eyebrow">
+                        NOTHING OPEN YET
+                    </span>
+
+                    <h2>
+                        Choose your next story.
+                    </h2>
+
+                    <p>
+                        Books marked as currently reading will
+                        appear here.
+                    </p>
+
+                    <button
+                        id="readingAddBook"
+                        class="primary-button"
+                        type="button"
+                    >
+                        Add a Book
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 JOURNAL
+                 ================================================= -->
+
+            <section
+                id="journal"
+                class="app-section"
+                data-app-section="journal"
+                hidden
+            >
+
+                <div class="page-hero">
+
+                    <div class="page-hero-copy">
+
+                        <span class="page-eyebrow">
+                            READING JOURNAL
+                        </span>
+
+                        <h1>
+                            Thoughts worth
+                            <em>writing down.</em>
+                        </h1>
+
                         <p>
-
-                            Magical worlds and unforgettable adventures.
-
+                            Notes, observations, questions, characters,
+                            themes, and everything else a book leaves
+                            behind.
                         </p>
 
                     </div>
 
-                    <button
-                        class="text-btn">
+                </div>
 
-                        Edit Shelf
 
-                    </button>
+                <!-- =============================================
+                     JOURNAL BOOK SELECT
+                     ============================================= -->
 
-                </header>
+                <div class="journal-toolbar">
 
-                <div
-                    class="shelf-decorations">
+                    <label class="field">
 
-                    🕯️
+                        <span>
+                            Choose a Book
+                        </span>
+
+                        <select id="journalBookSelect">
+
+                            <option value="">
+                                Select a book...
+                            </option>
+
+                        </select>
+
+                    </label>
 
                 </div>
 
+
+                <!-- =============================================
+                     JOURNAL EMPTY
+                     ============================================= -->
+
                 <div
-                    class="book-row">
+                    id="journalEmptyState"
+                    class="empty-state"
+                >
+
+                    <span class="page-eyebrow">
+                        PICK A BOOK
+                    </span>
+
+                    <h2>
+                        Open a reading journal.
+                    </h2>
+
+                    <p>
+                        Choose one of your books above to see its
+                        notes, quotes, thoughts, and reading record.
+                    </p>
 
                 </div>
 
+
+                <!-- =============================================
+                     JOURNAL WORKSPACE
+                     ============================================= -->
+
                 <div
-                    class="wood-shelf">
+                    id="journalWorkspace"
+                    class="journal-workspace"
+                    hidden
+                >
 
-                </div>
+                    <aside class="journal-book-panel">
 
-            </article>
+                        <div
+                            id="journalBookCover"
+                            class="journal-book-cover"
+                        >
+                        </div>
 
+                        <span
+                            id="journalBookStatus"
+                            class="status-label"
+                        >
+                            Book
+                        </span>
 
-
-            <!-- Shelf 3 -->
-
-            <article
-                class="bookshelf">
-
-                <header
-                    class="shelf-header">
-
-                    <div>
-
-                        <h2>
-
-                            Want To Read
-
+                        <h2 id="journalBookTitle">
+                            Book Title
                         </h2>
 
+                        <p id="journalBookAuthor">
+                            Author
+                        </p>
+
+
+                        <div class="journal-book-details">
+
+                            <div>
+
+                                <span>
+                                    Started
+                                </span>
+
+                                <strong id="journalBookStarted">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Finished
+                                </span>
+
+                                <strong id="journalBookFinished">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Pages
+                                </span>
+
+                                <strong id="journalBookPages">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </aside>
+
+
+                    <div class="journal-content">
+
+                        <div
+                            id="journalContents"
+                            class="journal-contents"
+                        >
+
+                            <span class="page-eyebrow">
+                                TABLE OF CONTENTS
+                            </span>
+
+                            <h2>
+                                Inside this book
+                            </h2>
+
+
+                            <div class="journal-content-grid">
+
+                                <button
+                                    type="button"
+                                    data-journal-section="overview"
+                                >
+                                    <span>01</span>
+                                    <strong>Overview</strong>
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    data-journal-section="notes"
+                                >
+                                    <span>02</span>
+                                    <strong>Notes</strong>
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    data-journal-section="thoughts"
+                                >
+                                    <span>03</span>
+                                    <strong>Thoughts</strong>
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    data-journal-section="characters"
+                                >
+                                    <span>04</span>
+                                    <strong>Characters</strong>
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    data-journal-section="themes"
+                                >
+                                    <span>05</span>
+                                    <strong>Themes</strong>
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    data-journal-section="questions"
+                                >
+                                    <span>06</span>
+                                    <strong>Questions</strong>
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    data-journal-section="review"
+                                >
+                                    <span>07</span>
+                                    <strong>Review</strong>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="journalSection"
+                            class="journal-section"
+                            hidden
+                        >
+
+                            <button
+                                id="journalBackButton"
+                                class="text-button"
+                                type="button"
+                            >
+                                ← Back to Contents
+                            </button>
+
+
+                            <div class="journal-section-heading">
+
+                                <div>
+
+                                    <span
+                                        id="journalSectionEyebrow"
+                                        class="page-eyebrow"
+                                    >
+                                        JOURNAL
+                                    </span>
+
+                                    <h2 id="journalSectionTitle">
+                                        Notes
+                                    </h2>
+
+                                </div>
+
+
+                                <button
+                                    id="addJournalEntry"
+                                    class="primary-button"
+                                    type="button"
+                                >
+                                    + Add Entry
+                                </button>
+
+                            </div>
+
+
+                            <div
+                                id="journalEntries"
+                                class="journal-entries"
+                            >
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 QUOTES
+                 ================================================= -->
+
+            <section
+                id="quotes"
+                class="app-section"
+                data-app-section="quotes"
+                hidden
+            >
+
+                <div class="page-hero">
+
+                    <div class="page-hero-copy">
+
+                        <span class="page-eyebrow">
+                            QUOTE COLLECTION
+                        </span>
+
+                        <h1>
+                            Lines I couldn't
+                            <em>leave behind.</em>
+                        </h1>
+
                         <p>
-
-                            Future adventures waiting patiently.
-
+                            Save the sentences, passages, and little
+                            pieces of language you want to remember.
                         </p>
 
                     </div>
 
+
                     <button
-                        class="text-btn">
-
-                        Edit Shelf
-
+                        id="addQuoteButton"
+                        class="primary-button hero-action-button"
+                        type="button"
+                    >
+                        + Save a Quote
                     </button>
 
-                </header>
+                </div>
 
-                <div
-                    class="shelf-decorations">
 
-                    🐈
+                <div class="collection-toolbar">
+
+                    <label class="search-field">
+
+                        <span class="search-icon"></span>
+
+                        <input
+                            id="quoteSearch"
+                            type="search"
+                            placeholder="Search quotes, authors, or books..."
+                        >
+
+                    </label>
 
                 </div>
 
+
                 <div
-                    class="book-row">
+                    id="quoteGrid"
+                    class="quote-grid"
+                >
+                </div>
+
+
+                <div
+                    id="quotesEmptyState"
+                    class="empty-state"
+                    hidden
+                >
+
+                    <span class="page-eyebrow">
+                        NOTHING SAVED YET
+                    </span>
+
+                    <h2>
+                        Keep a sentence.
+                    </h2>
+
+                    <p>
+                        Save a quote the next time a book says
+                        something you don't want to forget.
+                    </p>
 
                 </div>
 
-                <div
-                    class="wood-shelf">
+            </section>
+
+
+            <!-- =================================================
+                 VOCABULARY
+                 ================================================= -->
+
+            <section
+                id="vocabulary"
+                class="app-section"
+                data-app-section="vocabulary"
+                hidden
+            >
+
+                <div class="page-hero">
+
+                    <div class="page-hero-copy">
+
+                        <span class="page-eyebrow">
+                            WORD STUDY
+                        </span>
+
+                        <h1>
+                            Words worth
+                            <em>keeping.</em>
+                        </h1>
+
+                        <p>
+                            Collect unfamiliar, beautiful, strange,
+                            or useful words discovered while reading.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        id="addWordButton"
+                        class="primary-button hero-action-button"
+                        type="button"
+                    >
+                        + Add a Word
+                    </button>
 
                 </div>
 
-            </article>
 
-        </section>
+                <div class="collection-toolbar">
 
-    </section>
+                    <label class="search-field">
 
-</main>
+                        <span class="search-icon"></span>
 
-<!-- ===========================================
-     READING PAGE
-=========================================== -->
+                        <input
+                            id="wordSearch"
+                            type="search"
+                            placeholder="Search your words..."
+                        >
 
-<section
-    id="readingPage"
-    class="page">
+                    </label>
 
-    <div class="page-header">
+                </div>
 
-        <h1>Reading</h1>
 
-        <p>
-            Track your current reads, reading sessions,
-            and progress.
-        </p>
+                <div
+                    id="vocabularyGrid"
+                    class="vocabulary-grid"
+                >
+                </div>
+
+
+                <div
+                    id="vocabularyEmptyState"
+                    class="empty-state"
+                    hidden
+                >
+
+                    <span class="page-eyebrow">
+                        A BLANK DICTIONARY
+                    </span>
+
+                    <h2>
+                        Start collecting words.
+                    </h2>
+
+                    <p>
+                        When a book gives you a word worth remembering,
+                        keep it here.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 STATS
+                 ================================================= -->
+
+            <section
+                id="stats"
+                class="app-section"
+                data-app-section="stats"
+                hidden
+            >
+
+                <div class="page-hero">
+
+                    <div class="page-hero-copy">
+
+                        <span class="page-eyebrow">
+                            READING STATS
+                        </span>
+
+                        <h1>
+                            A little record of
+                            <em>where I've been.</em>
+                        </h1>
+
+                        <p>
+                            A quiet collection of numbers from your
+                            shelves, pages, genres, and reading habits.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     PRIMARY STATS
+                     ============================================= -->
+
+                <div class="stats-grid primary-stats-grid">
+
+                    <article class="stat-card">
+
+                        <span>
+                            01 · LIBRARY
+                        </span>
+
+                        <strong id="statsTotalBooks">
+                            0
+                        </strong>
+
+                        <p>
+                            books tucked onto your shelves
+                        </p>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <span>
+                            02 · FINISHED
+                        </span>
+
+                        <strong id="statsFinishedBooks">
+                            0
+                        </strong>
+
+                        <p>
+                            books read all the way through
+                        </p>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <span>
+                            03 · PAGES
+                        </span>
+
+                        <strong id="statsPagesRead">
+                            0
+                        </strong>
+
+                        <p>
+                            pages read across your library
+                        </p>
+
+                    </article>
+
+
+                    <article class="stat-card">
+
+                        <span>
+                            04 · RATING
+                        </span>
+
+                        <strong id="statsAverageRating">
+                            —
+                        </strong>
+
+                        <p>
+                            average rating so far
+                        </p>
+
+                    </article>
+
+                </div>
+
+
+                <!-- =============================================
+                     STATUS STATS
+                     ============================================= -->
+
+                <div class="status-stats-grid">
+
+                    <article>
+
+                        <strong id="statsReading">
+                            0
+                        </strong>
+
+                        <span>
+                            currently reading
+                        </span>
+
+                    </article>
+
+
+                    <article>
+
+                        <strong id="statsWantToRead">
+                            0
+                        </strong>
+
+                        <span>
+                            want to read
+                        </span>
+
+                    </article>
+
+
+                    <article>
+
+                        <strong id="statsPaused">
+                            0
+                        </strong>
+
+                        <span>
+                            paused
+                        </span>
+
+                    </article>
+
+
+                    <article>
+
+                        <strong id="statsDNF">
+                            0
+                        </strong>
+
+                        <span>
+                            did not finish
+                        </span>
+
+                    </article>
+
+
+                    <article>
+
+                        <strong id="statsReference">
+                            0
+                        </strong>
+
+                        <span>
+                            reference books
+                        </span>
+
+                    </article>
+
+
+                    <article>
+
+                        <strong id="statsRereads">
+                            0
+                        </strong>
+
+                        <span>
+                            rereads
+                        </span>
+
+                    </article>
+
+                </div>
+
+
+                <!-- =============================================
+                     LOWER STATS
+                     ============================================= -->
+
+                <div class="stats-panel-grid">
+
+                    <article class="stats-panel">
+
+                        <span class="page-eyebrow">
+                            FAVORITE CORNER
+                        </span>
+
+                        <h2>
+                            Genres I return to
+                        </h2>
+
+                        <div
+                            id="genreStats"
+                            class="genre-stats"
+                        >
+                        </div>
+
+                    </article>
+
+
+                    <article class="stats-panel">
+
+                        <span class="page-eyebrow">
+                            READING RHYTHM
+                        </span>
+
+                        <h2>
+                            Books finished this year
+                        </h2>
+
+                        <div
+                            id="monthlyStats"
+                            class="monthly-stats"
+                        >
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+        </main>
 
     </div>
 
-    <section class="reading-layout">
 
-        <article class="current-reading-card">
+    <!-- =====================================================
+         GLOBAL OVERLAY
+         ===================================================== -->
 
-            <div class="reading-cover">
+    <div
+        id="overlay"
+        class="overlay"
+        hidden
+    ></div>
+
+
+    <!-- =====================================================
+         THEME DRAWER
+         ===================================================== -->
+
+    <aside
+        id="themeDrawer"
+        class="drawer theme-drawer"
+        hidden
+    >
+
+        <div class="drawer-header">
+
+            <div>
+
+                <span class="page-eyebrow">
+                    YOUR READING ROOM
+                </span>
+
+                <h2>
+                    Themes
+                </h2>
 
             </div>
 
-            <div class="reading-info">
 
-                <span class="section-label">
-                    CURRENT BOOK
-                </span>
+            <button
+                id="closeThemeDrawer"
+                class="icon-button"
+                type="button"
+                aria-label="Close themes"
+            >
+                ×
+            </button>
 
-                <h2>No Book Selected</h2>
+        </div>
 
-                <p>
-                    Select a book from your library to begin reading.
-                </p>
 
-                <div class="progress-bar">
+        <div class="drawer-body">
 
-                    <div class="progress-fill"></div>
+            <p class="drawer-intro">
+                Change the mood of Novellow without changing
+                anything you've placed inside it.
+            </p>
 
-                </div>
 
-                <button class="primary-btn">
+            <div class="theme-grid">
 
-                    Continue Reading
+
+                <!-- HAUNTED -->
+
+                <button
+                    class="theme-card active"
+                    type="button"
+                    data-theme="haunted"
+                >
+
+                    <span class="theme-preview haunted-preview">
+
+                        <span class="preview-window"></span>
+                        <span class="preview-candle"></span>
+                        <span class="preview-books"></span>
+
+                    </span>
+
+                    <span class="theme-card-copy">
+
+                        <strong>
+                            Haunted Library
+                        </strong>
+
+                        <small>
+                            candlelight · rain · old books
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <!-- AUTUMN -->
+
+                <button
+                    class="theme-card"
+                    type="button"
+                    data-theme="autumn"
+                >
+
+                    <span class="theme-preview autumn-preview">
+
+                        <span class="preview-window"></span>
+                        <span class="preview-pumpkin"></span>
+                        <span class="preview-books"></span>
+
+                    </span>
+
+                    <span class="theme-card-copy">
+
+                        <strong>
+                            Autumn Bookshop
+                        </strong>
+
+                        <small>
+                            pumpkins · tea · warm evenings
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <!-- FOREST -->
+
+                <button
+                    class="theme-card"
+                    type="button"
+                    data-theme="forest"
+                >
+
+                    <span class="theme-preview forest-preview">
+
+                        <span class="preview-moon"></span>
+                        <span class="preview-mushroom"></span>
+                        <span class="preview-books"></span>
+
+                    </span>
+
+                    <span class="theme-card-copy">
+
+                        <strong>
+                            Enchanted Forest
+                        </strong>
+
+                        <small>
+                            moss · moonlight · strange little things
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <!-- RETRO -->
+
+                <button
+                    class="theme-card"
+                    type="button"
+                    data-theme="retro"
+                >
+
+                    <span class="theme-preview retro-preview">
+
+                        <span class="preview-tv"></span>
+                        <span class="preview-stars"></span>
+                        <span class="preview-books"></span>
+
+                    </span>
+
+                    <span class="theme-card-copy">
+
+                        <strong>
+                            Retro Horror
+                        </strong>
+
+                        <small>
+                            VHS · monsters · late-night broadcasts
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <!-- GHOSTS -->
+
+                <button
+                    class="theme-card"
+                    type="button"
+                    data-theme="ghosts"
+                >
+
+                    <span class="theme-preview ghosts-preview">
+
+                        <span class="preview-ghost"></span>
+                        <span class="preview-flowers"></span>
+                        <span class="preview-books"></span>
+
+                    </span>
+
+                    <span class="theme-card-copy">
+
+                        <strong>
+                            Pastel Ghosts
+                        </strong>
+
+                        <small>
+                            dusty pink · sage · friendly spirits
+                        </small>
+
+                    </span>
 
                 </button>
 
             </div>
 
-        </article>
 
-        <article class="reading-session-card">
+            <!-- =============================================
+                 ROOM SETTINGS
+                 ============================================= -->
 
-            <h3>Today's Session</h3>
+            <section class="drawer-section">
 
-            <p>No reading session recorded.</p>
+                <div class="drawer-section-heading">
 
-            <button class="secondary-btn">
+                    <span class="page-eyebrow">
+                        ROOM DETAILS
+                    </span>
 
-                Start Session
+                    <h3>
+                        Atmosphere
+                    </h3>
 
+                </div>
+
+
+                <div class="toggle-grid">
+
+                    <label class="toggle-card">
+
+                        <span>
+
+                            <strong>
+                                Candle Glow
+                            </strong>
+
+                            <small>
+                                Warm ambient lighting
+                            </small>
+
+                        </span>
+
+                        <input
+                            id="settingCandleGlow"
+                            type="checkbox"
+                            checked
+                        >
+
+                    </label>
+
+
+                    <label class="toggle-card">
+
+                        <span>
+
+                            <strong>
+                                Floating Dust
+                            </strong>
+
+                            <small>
+                                Soft particles in the room
+                            </small>
+
+                        </span>
+
+                        <input
+                            id="settingDust"
+                            type="checkbox"
+                            checked
+                        >
+
+                    </label>
+
+
+                    <label class="toggle-card">
+
+                        <span>
+
+                            <strong>
+                                Rainy Window
+                            </strong>
+
+                            <small>
+                                Rain outside the library
+                            </small>
+
+                        </span>
+
+                        <input
+                            id="settingRain"
+                            type="checkbox"
+                            checked
+                        >
+
+                    </label>
+
+
+                    <label class="toggle-card">
+
+                        <span>
+
+                            <strong>
+                                Ambient Oddities
+                            </strong>
+
+                            <small>
+                                Theme-specific room details
+                            </small>
+
+                        </span>
+
+                        <input
+                            id="settingOddities"
+                            type="checkbox"
+                            checked
+                        >
+
+                    </label>
+
+
+                    <label class="toggle-card">
+
+                        <span>
+
+                            <strong>
+                                Reduce Motion
+                            </strong>
+
+                            <small>
+                                Disable floating and flickering
+                            </small>
+
+                        </span>
+
+                        <input
+                            id="settingReducedMotion"
+                            type="checkbox"
+                        >
+
+                    </label>
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 DENSITY
+                 ============================================= -->
+
+            <section class="drawer-section">
+
+                <div class="drawer-section-heading">
+
+                    <span class="page-eyebrow">
+                        DECORATION DENSITY
+                    </span>
+
+                    <h3>
+                        How lived-in should it feel?
+                    </h3>
+
+                    <p>
+                        Your manually placed shelf decorations
+                        are never removed.
+                    </p>
+
+                </div>
+
+
+                <div class="density-grid">
+
+                    <label class="density-option">
+
+                        <input
+                            type="radio"
+                            name="decorationDensity"
+                            value="minimal"
+                        >
+
+                        <span>
+
+                            <strong>
+                                Tidy
+                            </strong>
+
+                            <small>
+                                Calm and uncluttered.
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="density-option">
+
+                        <input
+                            type="radio"
+                            name="decorationDensity"
+                            value="cozy"
+                            checked
+                        >
+
+                        <span>
+
+                            <strong>
+                                Cozy
+                            </strong>
+
+                            <small>
+                                A few extra little things.
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="density-option">
+
+                        <input
+                            type="radio"
+                            name="decorationDensity"
+                            value="maximal"
+                        >
+
+                        <span>
+
+                            <strong>
+                                Curio Cabinet
+                            </strong>
+
+                            <small>
+                                Weird, collected, wonderfully busy.
+                            </small>
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <div class="drawer-footer">
+
+            <button
+                id="themeDoneButton"
+                class="primary-button"
+                type="button"
+            >
+                Done
             </button>
 
-        </article>
+        </div>
 
-        <article class="reading-goal-card">
+    </aside>
 
-            <h3>Reading Goal</h3>
 
-            <p>0 of 50 books completed</p>
+    <!-- =====================================================
+         SETTINGS DRAWER
+         ===================================================== -->
 
-            <div class="progress-bar">
+    <aside
+        id="settingsDrawer"
+        class="drawer settings-drawer"
+        hidden
+    >
 
-                <div class="progress-fill"></div>
+        <div class="drawer-header">
+
+            <div>
+
+                <span class="page-eyebrow">
+                    NOVELLOW
+                </span>
+
+                <h2>
+                    Settings
+                </h2>
 
             </div>
 
-        </article>
 
-    </section>
+            <button
+                id="closeSettingsDrawer"
+                class="icon-button"
+                type="button"
+                aria-label="Close settings"
+            >
+                ×
+            </button>
 
-</section>
+        </div>
 
-        <!-- ===========================================
-     JOURNAL PAGE
-=========================================== -->
 
-<section
-    id="journalPage"
-    class="page">
+        <div class="drawer-body">
 
-    <div class="page-header">
 
-        <h1>Reading Journal</h1>
+            <section class="drawer-section">
 
-        <p>
-            Capture your thoughts, reflections, characters,
-            and memorable moments from every book.
-        </p>
+                <div class="drawer-section-heading">
 
-    </div>
+                    <span class="page-eyebrow">
+                        LIBRARY
+                    </span>
 
-    <div class="journal-layout">
+                    <h3>
+                        Defaults
+                    </h3>
 
-        <!-- Journal Entries -->
+                </div>
 
-        <section class="journal-column">
 
-            <article class="journal-card">
+                <div class="form-grid">
 
-                <h2>Journal Entries</h2>
+                    <label class="field">
 
-                <p class="empty-message">
+                        <span>
+                            Default Shelf Sort
+                        </span>
 
-                    No journal entries yet.
+                        <select id="defaultShelfSort">
 
+                            <option value="manual">
+                                Manual
+                            </option>
+
+                            <option value="title">
+                                Title
+                            </option>
+
+                            <option value="author">
+                                Author
+                            </option>
+
+                            <option value="recent">
+                                Recently Added
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <label class="field">
+
+                        <span>
+                            Annual Reading Goal
+                        </span>
+
+                        <input
+                            id="annualReadingGoal"
+                            type="number"
+                            min="1"
+                            value="20"
+                        >
+
+                    </label>
+
+                </div>
+
+            </section>
+
+
+            <section class="drawer-section">
+
+                <div class="drawer-section-heading">
+
+                    <span class="page-eyebrow">
+                        DATA
+                    </span>
+
+                    <h3>
+                        Your Library
+                    </h3>
+
+                </div>
+
+
+                <div class="settings-action-list">
+
+                    <button
+                        id="exportLibraryButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        Export Library
+                    </button>
+
+
+                    <button
+                        id="importLibraryButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        Import Library
+                    </button>
+
+
+                    <input
+                        id="importLibraryInput"
+                        type="file"
+                        accept=".json,application/json"
+                        hidden
+                    >
+
+                </div>
+
+            </section>
+
+
+            <section class="drawer-section danger-section">
+
+                <div class="drawer-section-heading">
+
+                    <span class="page-eyebrow">
+                        DANGER ZONE
+                    </span>
+
+                    <h3>
+                        Clear Library
+                    </h3>
+
+                    <p>
+                        This deletes your locally saved shelves,
+                        books, notes, words, and quotes.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="clearLibraryButton"
+                    class="danger-button"
+                    type="button"
+                >
+                    Clear Entire Library
+                </button>
+
+            </section>
+
+        </div>
+
+
+        <div class="drawer-footer">
+
+            <button
+                id="settingsDoneButton"
+                class="primary-button"
+                type="button"
+            >
+                Done
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         SHELF DRAWER
+         ===================================================== -->
+
+    <aside
+        id="shelfDrawer"
+        class="drawer shelf-drawer"
+        hidden
+    >
+
+        <div class="drawer-header">
+
+            <div>
+
+                <span class="page-eyebrow">
+                    BOOKSHELF
+                </span>
+
+                <h2 id="shelfDrawerTitle">
+                    Add a Shelf
+                </h2>
+
+            </div>
+
+
+            <button
+                id="closeShelfDrawer"
+                class="icon-button"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="shelfForm">
+
+            <input
+                id="editingShelfId"
+                type="hidden"
+            >
+
+
+            <div class="drawer-body">
+
+
+                <section class="drawer-section">
+
+                    <div class="form-grid">
+
+                        <label class="field full-field">
+
+                            <span>
+                                Shelf Name
+                            </span>
+
+                            <input
+                                id="shelfName"
+                                type="text"
+                                placeholder="The Haunted Classics"
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="field full-field">
+
+                            <span>
+                                Description
+                            </span>
+
+                            <textarea
+                                id="shelfDescription"
+                                rows="3"
+                                placeholder="Old favorites, strange stories, books best read after dark..."
+                            ></textarea>
+
+                        </label>
+
+                    </div>
+
+                </section>
+
+
+                <section class="drawer-section">
+
+                    <div class="drawer-section-heading">
+
+                        <span class="page-eyebrow">
+                            APPEARANCE
+                        </span>
+
+                        <h3>
+                            Shelf Style
+                        </h3>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <label class="field">
+
+                            <span>
+                                Material
+                            </span>
+
+                            <select id="shelfMaterial">
+
+                                <option value="walnut">
+                                    Walnut
+                                </option>
+
+                                <option value="honey">
+                                    Honey Oak
+                                </option>
+
+                                <option value="cream">
+                                    Antique Cream
+                                </option>
+
+                                <option value="sage">
+                                    Sage
+                                </option>
+
+                                <option value="rose">
+                                    Dusty Rose
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Mood
+                            </span>
+
+                            <select id="shelfMood">
+
+                                <option value="cozy">
+                                    Cozy
+                                </option>
+
+                                <option value="gothic">
+                                    Gothic
+                                </option>
+
+                                <option value="botanical">
+                                    Botanical
+                                </option>
+
+                                <option value="celestial">
+                                    Celestial
+                                </option>
+
+                                <option value="cottage">
+                                    Cottage
+                                </option>
+
+                                <option value="simple">
+                                    Simple
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Book Layout
+                            </span>
+
+                            <select id="shelfLayout">
+
+                                <option value="mixed">
+                                    Mixed
+                                </option>
+
+                                <option value="upright">
+                                    Upright
+                                </option>
+
+                                <option value="stacked">
+                                    Stacked
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Sort
+                            </span>
+
+                            <select id="shelfSort">
+
+                                <option value="manual">
+                                    Manual
+                                </option>
+
+                                <option value="title">
+                                    Title
+                                </option>
+
+                                <option value="author">
+                                    Author
+                                </option>
+
+                                <option value="rating">
+                                    Rating
+                                </option>
+
+                                <option value="finished">
+                                    Finished Date
+                                </option>
+
+                            </select>
+
+                        </label>
+
+                    </div>
+
+                </section>
+
+
+                <section class="drawer-section">
+
+                    <div class="drawer-section-heading">
+
+                        <span class="page-eyebrow">
+                            DECORATIONS
+                        </span>
+
+                        <h3>
+                            Little Things
+                        </h3>
+
+                        <p>
+                            Decorations can be dragged around after
+                            the shelf is created.
+                        </p>
+
+                    </div>
+
+
+                    <div class="decoration-options">
+
+                        <label>
+                            <input type="checkbox" value="cat">
+                            <span>Cat</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="ghost">
+                            <span>Ghost</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="bat">
+                            <span>Bat</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="raven">
+                            <span>Raven</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="goblin">
+                            <span>Goblin</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="mushroom">
+                            <span>Mushroom</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="plant">
+                            <span>Plant</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="flowers">
+                            <span>Flowers</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="pumpkin">
+                            <span>Pumpkin</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="candle">
+                            <span>Candle</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="mug">
+                            <span>Mug</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="potion">
+                            <span>Potion</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="crystal">
+                            <span>Crystal</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="moss">
+                            <span>Moss</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" value="stars">
+                            <span>Stars</span>
+                        </label>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <div class="drawer-footer form-footer">
+
+                <button
+                    id="cancelShelfButton"
+                    class="secondary-button"
+                    type="button"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    class="primary-button"
+                    type="submit"
+                >
+
+                    <span id="saveShelfButtonLabel">
+                        Save Shelf
+                    </span>
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </aside>
+
+
+    <!-- =====================================================
+         BOOK DRAWER
+         ===================================================== -->
+
+    <aside
+        id="bookDrawer"
+        class="drawer book-drawer"
+        hidden
+    >
+
+        <div class="drawer-header">
+
+            <div>
+
+                <span class="page-eyebrow">
+                    BOOK
+                </span>
+
+                <h2 id="bookDrawerTitle">
+                    Add a Book
+                </h2>
+
+            </div>
+
+
+            <button
+                id="closeBookDrawer"
+                class="icon-button"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="bookForm">
+
+            <input
+                id="editingBookId"
+                type="hidden"
+            >
+
+
+            <div class="drawer-body">
+
+
+                <!-- BOOK INFO -->
+
+                <section class="drawer-section">
+
+                    <div class="drawer-section-heading">
+
+                        <span class="page-eyebrow">
+                            DETAILS
+                        </span>
+
+                        <h3>
+                            About the Book
+                        </h3>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <label class="field full-field">
+
+                            <span>
+                                Title
+                            </span>
+
+                            <input
+                                id="bookTitle"
+                                type="text"
+                                required
+                            >
+
+                        </label>
+
+
+                        <label class="field full-field">
+
+                            <span>
+                                Author
+                            </span>
+
+                            <input
+                                id="bookAuthor"
+                                type="text"
+                            >
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Genre
+                            </span>
+
+                            <input
+                                id="bookGenre"
+                                type="text"
+                            >
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Publication Year
+                            </span>
+
+                            <input
+                                id="bookYear"
+                                type="number"
+                                min="0"
+                                max="9999"
+                            >
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Pages
+                            </span>
+
+                            <input
+                                id="bookPages"
+                                type="number"
+                                min="0"
+                            >
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                ISBN
+                            </span>
+
+                            <input
+                                id="bookISBN"
+                                type="text"
+                            >
+
+                        </label>
+
+
+                        <label class="field full-field">
+
+                            <span>
+                                Series
+                            </span>
+
+                            <input
+                                id="bookSeries"
+                                type="text"
+                            >
+
+                        </label>
+
+                    </div>
+
+                </section>
+
+
+                <!-- READING -->
+
+                <section class="drawer-section">
+
+                    <div class="drawer-section-heading">
+
+                        <span class="page-eyebrow">
+                            READING
+                        </span>
+
+                        <h3>
+                            Reading Details
+                        </h3>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <label class="field">
+
+                            <span>
+                                Shelf
+                            </span>
+
+                            <select id="bookShelf">
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Status
+                            </span>
+
+                            <select id="bookStatus">
+
+                                <option value="want">
+                                    Want to Read
+                                </option>
+
+                                <option value="reading">
+                                    Currently Reading
+                                </option>
+
+                                <option value="paused">
+                                    Paused
+                                </option>
+
+                                <option value="finished">
+                                    Finished
+                                </option>
+
+                                <option value="dnf">
+                                    Did Not Finish
+                                </option>
+
+                                <option value="reference">
+                                    Reference
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Rating
+                            </span>
+
+                            <select id="bookRating">
+
+                                <option value="0">
+                                    Not Rated
+                                </option>
+
+                                <option value="1">
+                                    ★
+                                </option>
+
+                                <option value="2">
+                                    ★★
+                                </option>
+
+                                <option value="3">
+                                    ★★★
+                                </option>
+
+                                <option value="4">
+                                    ★★★★
+                                </option>
+
+                                <option value="5">
+                                    ★★★★★
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Times Read
+                            </span>
+
+                            <input
+                                id="bookTimesRead"
+                                type="number"
+                                min="0"
+                                value="0"
+                            >
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Started
+                            </span>
+
+                            <input
+                                id="bookStarted"
+                                type="date"
+                            >
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Finished
+                            </span>
+
+                            <input
+                                id="bookFinished"
+                                type="date"
+                            >
+
+                        </label>
+
+
+                        <label class="field full-field">
+
+                            <span>
+                                Current Page
+                            </span>
+
+                            <input
+                                id="bookCurrentPage"
+                                type="number"
+                                min="0"
+                                value="0"
+                            >
+
+                        </label>
+
+                    </div>
+
+                </section>
+
+
+                <!-- COVER -->
+
+                <section class="drawer-section">
+
+                    <div class="drawer-section-heading">
+
+                        <span class="page-eyebrow">
+                            COVER
+                        </span>
+
+                        <h3>
+                            Book Cover
+                        </h3>
+
+                        <p>
+                            Optional. Novellow will create a styled
+                            cover if you don't upload one.
+                        </p>
+
+                    </div>
+
+
+                    <label class="upload-field">
+
+                        <span>
+                            Choose Cover Image
+                        </span>
+
+                        <input
+                            id="bookCoverUpload"
+                            type="file"
+                            accept="image/*"
+                        >
+
+                    </label>
+
+                </section>
+
+
+                <!-- SPINE DESIGN -->
+
+                <section class="drawer-section spine-design-section">
+
+                    <div class="drawer-section-heading">
+
+                        <span class="page-eyebrow">
+                            BOOK DESIGN
+                        </span>
+
+                        <h3>
+                            Create the Spine
+                        </h3>
+
+                        <p>
+                            The spine shown on your bookshelf is
+                            generated automatically.
+                        </p>
+
+                    </div>
+
+
+                    <div class="spine-editor">
+
+
+                        <!-- LIVE PREVIEW -->
+
+                        <div class="spine-preview-area">
+
+                            <span class="preview-label">
+                                LIVE PREVIEW
+                            </span>
+
+
+                            <div
+                                id="bookSpinePreview"
+                                class="spine-preview-book"
+                            >
+
+                                <div class="spine-preview-inner">
+
+                                    <div
+                                        id="bookSpinePreviewTitlePanel"
+                                        class="spine-preview-title-panel"
+                                    >
+
+                                        <span
+                                            id="bookSpinePreviewTitle"
+                                            class="spine-preview-title"
+                                        >
+                                            Book Title
+                                        </span>
+
+                                    </div>
+
+
+                                    <span
+                                        id="bookSpinePreviewOrnament"
+                                        class="spine-preview-ornament"
+                                    >
+                                        ✦
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- OPTIONS -->
+
+                        <div class="spine-options">
+
+                            <div class="form-grid">
+
+                                <label class="field">
+
+                                    <span>
+                                        Style
+                                    </span>
+
+                                    <select id="bookStyle">
+
+                                        <option value="classic">
+                                            Classic Cloth
+                                        </option>
+
+                                        <option value="gothic">
+                                            Gothic
+                                        </option>
+
+                                        <option value="botanical">
+                                            Botanical
+                                        </option>
+
+                                        <option value="celestial">
+                                            Celestial
+                                        </option>
+
+                                        <option value="floral">
+                                            Floral
+                                        </option>
+
+                                        <option value="pastel">
+                                            Pastel
+                                        </option>
+
+                                        <option value="minimal">
+                                            Minimal
+                                        </option>
+
+                                        <option value="leather">
+                                            Leather
+                                        </option>
+
+                                        <option value="academia">
+                                            Dark Academia
+                                        </option>
+
+                                        <option value="storybook">
+                                            Storybook
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field">
+
+                                    <span>
+                                        Ornament
+                                    </span>
+
+                                    <select id="bookSpineOrnament">
+
+                                        <option value="auto">
+                                            Auto
+                                        </option>
+
+                                        <option value="star">
+                                            Star
+                                        </option>
+
+                                        <option value="moon">
+                                            Moon
+                                        </option>
+
+                                        <option value="flower">
+                                            Flower
+                                        </option>
+
+                                        <option value="leaf">
+                                            Leaf
+                                        </option>
+
+                                        <option value="diamond">
+                                            Diamond
+                                        </option>
+
+                                        <option value="heart">
+                                            Heart
+                                        </option>
+
+                                        <option value="none">
+                                            None
+                                        </option>
+
+                                    </select>
+
+                                </label>
+
+
+                                <label class="field color-field">
+
+                                    <span>
+                                        Spine
+                                    </span>
+
+                                    <input
+                                        id="bookSpineColor"
+                                        type="color"
+                                        value="#793f55"
+                                    >
+
+                                </label>
+
+
+                                <label class="field color-field">
+
+                                    <span>
+                                        Lettering
+                                    </span>
+
+                                    <input
+                                        id="bookTextColor"
+                                        type="color"
+                                        value="#f1e3cf"
+                                    >
+
+                                </label>
+
+
+                                <label class="field color-field">
+
+                                    <span>
+                                        Accent
+                                    </span>
+
+                                    <input
+                                        id="bookAccentColor"
+                                        type="color"
+                                        value="#c39a67"
+                                    >
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- TYPOGRAPHY -->
+
+                <section class="drawer-section">
+
+                    <div class="drawer-section-heading">
+
+                        <span class="page-eyebrow">
+                            LETTERING
+                        </span>
+
+                        <h3>
+                            Spine Typography
+                        </h3>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <label class="field">
+
+                            <span>
+                                Font
+                            </span>
+
+                            <select id="bookSpineFont">
+
+                                <option value="serif">
+                                    Classic Serif
+                                </option>
+
+                                <option value="roman">
+                                    Roman
+                                </option>
+
+                                <option value="bookish">
+                                    Bookish
+                                </option>
+
+                                <option value="elegant">
+                                    Elegant
+                                </option>
+
+                                <option value="typewriter">
+                                    Typewriter
+                                </option>
+
+                                <option value="clean">
+                                    Clean
+                                </option>
+
+                                <option value="condensed">
+                                    Condensed
+                                </option>
+
+                                <option value="heavy">
+                                    Heavy
+                                </option>
+
+                                <option value="storybook">
+                                    Storybook
+                                </option>
+
+                                <option value="handwritten">
+                                    Handwritten
+                                </option>
+
+                                <option value="gothic">
+                                    Gothic
+                                </option>
+
+                                <option value="deco">
+                                    Art Deco
+                                </option>
+
+                                <option value="retro">
+                                    Retro
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Font Size
+                            </span>
+
+                            <select id="bookSpineFontSize">
+
+                                <option value="small">
+                                    Small
+                                </option>
+
+                                <option value="medium" selected>
+                                    Medium
+                                </option>
+
+                                <option value="large">
+                                    Large
+                                </option>
+
+                                <option value="xlarge">
+                                    Extra Large
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Weight
+                            </span>
+
+                            <select id="bookSpineFontWeight">
+
+                                <option value="light">
+                                    Light
+                                </option>
+
+                                <option value="regular" selected>
+                                    Regular
+                                </option>
+
+                                <option value="bold">
+                                    Bold
+                                </option>
+
+                                <option value="heavy">
+                                    Heavy
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Letter Spacing
+                            </span>
+
+                            <select id="bookSpineLetterSpacing">
+
+                                <option value="tight">
+                                    Tight
+                                </option>
+
+                                <option value="normal" selected>
+                                    Normal
+                                </option>
+
+                                <option value="wide">
+                                    Wide
+                                </option>
+
+                                <option value="extra-wide">
+                                    Extra Wide
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Case
+                            </span>
+
+                            <select id="bookSpineCase">
+
+                                <option value="typed">
+                                    As Typed
+                                </option>
+
+                                <option value="uppercase">
+                                    Uppercase
+                                </option>
+
+                                <option value="lowercase">
+                                    Lowercase
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Font Style
+                            </span>
+
+                            <select id="bookSpineFontStyle">
+
+                                <option value="normal">
+                                    Normal
+                                </option>
+
+                                <option value="italic">
+                                    Italic
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Title Position
+                            </span>
+
+                            <select id="bookSpineTextAlign">
+
+                                <option value="top">
+                                    Top
+                                </option>
+
+                                <option value="center" selected>
+                                    Center
+                                </option>
+
+                                <option value="bottom">
+                                    Bottom
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Title Panel
+                            </span>
+
+                            <select id="bookSpineTitlePanel">
+
+                                <option value="none">
+                                    None
+                                </option>
+
+                                <option value="simple">
+                                    Simple
+                                </option>
+
+                                <option value="bordered">
+                                    Bordered
+                                </option>
+
+                                <option value="ornate">
+                                    Ornate
+                                </option>
+
+                                <option value="dark">
+                                    Dark
+                                </option>
+
+                                <option value="light">
+                                    Light
+                                </option>
+
+                            </select>
+
+                        </label>
+
+                    </div>
+
+                </section>
+
+
+                <!-- SIZE -->
+
+                <section class="drawer-section">
+
+                    <div class="drawer-section-heading">
+
+                        <span class="page-eyebrow">
+                            SIZE
+                        </span>
+
+                        <h3>
+                            Book Dimensions
+                        </h3>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <label class="field">
+
+                            <span>
+                                Height
+                            </span>
+
+                            <select id="bookHeight">
+
+                                <option value="small">
+                                    Small
+                                </option>
+
+                                <option value="medium" selected>
+                                    Medium
+                                </option>
+
+                                <option value="tall">
+                                    Tall
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Thickness
+                            </span>
+
+                            <select id="bookThickness">
+
+                                <option value="slim">
+                                    Slim
+                                </option>
+
+                                <option value="medium" selected>
+                                    Medium
+                                </option>
+
+                                <option value="chunky">
+                                    Chunky
+                                </option>
+
+                            </select>
+
+                        </label>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <div class="drawer-footer form-footer">
+
+                <button
+                    id="cancelBookButton"
+                    class="secondary-button"
+                    type="button"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    class="primary-button"
+                    type="submit"
+                >
+
+                    <span id="saveBookButtonLabel">
+                        Save Book
+                    </span>
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </aside>
+
+
+    <!-- =====================================================
+         BOOK REVEAL
+         ===================================================== -->
+
+    <section
+        id="bookReveal"
+        class="book-reveal"
+        hidden
+    >
+
+        <button
+            id="closeBookReveal"
+            class="book-reveal-close"
+            type="button"
+            aria-label="Close book"
+        >
+            ×
+        </button>
+
+
+        <div class="book-reveal-inner">
+
+
+            <div
+                id="revealBookCover"
+                class="reveal-book-cover"
+            >
+            </div>
+
+
+            <div class="reveal-book-details">
+
+                <span
+                    id="revealBookStatus"
+                    class="page-eyebrow"
+                >
+                    BOOK
+                </span>
+
+                <h1 id="revealBookTitle">
+                    Book Title
+                </h1>
+
+                <p
+                    id="revealBookAuthor"
+                    class="reveal-book-author"
+                >
+                    Author
                 </p>
 
-            </article>
 
-        </section>
+                <div class="reveal-meta-grid">
 
-        <!-- Notes -->
+                    <div>
 
-        <section class="journal-column">
+                        <span>
+                            Started
+                        </span>
 
-            <article class="journal-card">
+                        <strong id="revealBookStarted">
+                            —
+                        </strong>
 
-                <h2>Quick Notes</h2>
+                    </div>
 
-                <textarea
-                    placeholder="Write anything you'd like to remember..."></textarea>
 
-            </article>
+                    <div>
 
-            <article class="journal-card">
+                        <span>
+                            Finished
+                        </span>
 
-                <h2>Characters</h2>
+                        <strong id="revealBookFinished">
+                            —
+                        </strong>
 
-                <div class="empty-list">
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Pages
+                        </span>
+
+                        <strong id="revealBookPages">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Rating
+                        </span>
+
+                        <strong id="revealBookRating">
+                            —
+                        </strong>
+
+                    </div>
 
                 </div>
 
-            </article>
 
-            <article class="journal-card">
+                <div class="reveal-progress">
 
-                <h2>Themes</h2>
+                    <div class="progress-label">
 
-                <div class="empty-list">
+                        <span>
+                            Reading Progress
+                        </span>
+
+                        <strong id="revealBookPercent">
+                            0%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="progress-track">
+
+                        <div
+                            id="revealBookProgress"
+                            class="progress-fill"
+                        >
+                        </div>
+
+                    </div>
 
                 </div>
 
-            </article>
 
-        </section>
+                <div class="reveal-actions">
 
-    </div>
+                    <button
+                        id="editRevealBook"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        Edit Book
+                    </button>
 
-</section>
 
-        <!-- ===========================================
-     QUOTES PAGE
-=========================================== -->
+                    <button
+                        id="openRevealJournal"
+                        class="primary-button"
+                        type="button"
+                    >
+                        Open Journal
+                    </button>
 
-<section
-    id="quotesPage"
-    class="page">
+                </div>
 
-    <div class="page-header">
+            </div>
 
-        <h1>Favorite Quotes</h1>
-
-        <p>
-
-            Save the passages that stay with you.
-
-        </p>
-
-    </div>
-
-    <section class="quotes-grid">
-
-        <article class="quote-card empty">
-
-            <h2>No Quotes Yet</h2>
-
-            <p>
-
-                Highlight meaningful passages while reading.
-
-            </p>
-
-        </article>
+        </div>
 
     </section>
 
-</section>
 
-       <!-- ===========================================
-     VOCABULARY PAGE
-=========================================== -->
+    <!-- =====================================================
+         PROGRESS MODAL
+         ===================================================== -->
 
-<section
-    id="vocabularyPage"
-    class="page">
+    <div
+        id="progressModal"
+        class="modal"
+        hidden
+    >
 
-    <div class="page-header">
+        <div class="modal-card">
 
-        <h1>Vocabulary</h1>
+            <div class="modal-header">
 
-        <p>
+                <div>
 
-            Build your own personal dictionary while you read.
+                    <span class="page-eyebrow">
+                        READING PROGRESS
+                    </span>
 
-        </p>
+                    <h2>
+                        Update Your Place
+                    </h2>
+
+                </div>
+
+
+                <button
+                    id="closeProgressModal"
+                    class="icon-button"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="progressForm">
+
+                <input
+                    id="progressBookId"
+                    type="hidden"
+                >
+
+
+                <div class="modal-body">
+
+                    <div class="progress-book-summary">
+
+                        <strong id="progressBookTitle">
+                            Book Title
+                        </strong>
+
+                        <span id="progressBookTotal">
+                            0 pages
+                        </span>
+
+                    </div>
+
+
+                    <label class="field">
+
+                        <span>
+                            Current Page
+                        </span>
+
+                        <input
+                            id="progressCurrentPage"
+                            type="number"
+                            min="0"
+                        >
+
+                    </label>
+
+
+                    <label class="toggle-card compact-toggle">
+
+                        <span>
+
+                            <strong>
+                                Mark as Finished
+                            </strong>
+
+                            <small>
+                                Move this book to your finished shelf.
+                            </small>
+
+                        </span>
+
+                        <input
+                            id="progressMarkFinished"
+                            type="checkbox"
+                        >
+
+                    </label>
+
+
+                    <div class="progress-preview">
+
+                        <div class="progress-track">
+
+                            <div
+                                id="progressPreviewFill"
+                                class="progress-fill"
+                            >
+                            </div>
+
+                        </div>
+
+                        <strong id="progressPreviewPercent">
+                            0%
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        id="cancelProgressButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        class="primary-button"
+                        type="submit"
+                    >
+                        Save Progress
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
 
     </div>
 
-    <section class="vocabulary-grid">
 
-        <article class="vocabulary-card empty">
+    <!-- =====================================================
+         JOURNAL ENTRY MODAL
+         ===================================================== -->
 
-            <h2>No Words Saved</h2>
+    <div
+        id="journalEntryModal"
+        class="modal"
+        hidden
+    >
 
-            <p>
+        <div class="modal-card">
 
-                Save unfamiliar words from your books.
+            <div class="modal-header">
 
-            </p>
+                <div>
 
-        </article>
+                    <span class="page-eyebrow">
+                        READING JOURNAL
+                    </span>
 
-    </section>
+                    <h2 id="journalEntryModalTitle">
+                        Add Entry
+                    </h2>
 
-</section>
+                </div>
 
-       <!-- ===========================================
-     STATISTICS PAGE
-=========================================== -->
 
-<section
-    id="statisticsPage"
-    class="page">
+                <button
+                    id="closeJournalEntryModal"
+                    class="icon-button"
+                    type="button"
+                >
+                    ×
+                </button>
 
-    <div class="page-header">
+            </div>
 
-        <h1>Reading Statistics</h1>
 
-        <p>
+            <form id="journalEntryForm">
 
-            Watch your library grow over time.
+                <input
+                    id="journalEntrySection"
+                    type="hidden"
+                >
 
-        </p>
+
+                <div
+                    id="journalEntryFields"
+                    class="modal-body"
+                >
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        id="cancelJournalEntry"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        class="primary-button"
+                        type="submit"
+                    >
+                        Save Entry
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
 
     </div>
 
-    <section class="statistics-grid">
 
-        <article class="stat-card">
+    <!-- =====================================================
+         QUOTE MODAL
+         ===================================================== -->
 
-            <h2>Total Books</h2>
+    <div
+        id="quoteModal"
+        class="modal"
+        hidden
+    >
 
-            <span class="stat-number">0</span>
+        <div class="modal-card">
 
-        </article>
+            <div class="modal-header">
 
-        <article class="stat-card">
+                <div>
 
-            <h2>Books Read</h2>
+                    <span class="page-eyebrow">
+                        QUOTE COLLECTION
+                    </span>
 
-            <span class="stat-number">0</span>
+                    <h2>
+                        Save a Quote
+                    </h2>
 
-        </article>
-
-        <article class="stat-card">
-
-            <h2>Pages Read</h2>
-
-            <span class="stat-number">0</span>
-
-        </article>
-
-        <article class="stat-card">
-
-            <h2>Favorite Genre</h2>
-
-            <span class="stat-number">—</span>
-
-        </article>
-
-    </section>
-
-</section>
-
-        
-<!-- ===========================================
-     DRAWERS
-============================================ -->
-
-<div id="drawerOverlay"></div>
-
-<div id="bookDrawer"></div>
-
-<div id="shelfDrawer"></div>
-
-<div id="themeDrawer"></div>
-
-<div id="settingsDrawer"></div>
+                </div>
 
 
+                <button
+                    id="closeQuoteModal"
+                    class="icon-button"
+                    type="button"
+                >
+                    ×
+                </button>
 
-<!-- ===========================================
-     SCRIPTS
-============================================ -->
+            </div>
 
-<script src="js/config.js"></script>
-<script src="js/helpers.js"></script>
-<script src="js/books.js"></script>
-<script src="js/library.js"></script>
-<script src="js/reading.js"></script>
-<script src="js/journal.js"></script>
-<script src="js/quotes.js"></script>
-<script src="js/vocabulary.js"></script>
-<script src="js/statistics.js"></script>
-<script src="js/app.js"></script>
+
+            <form id="quoteForm">
+
+                <input
+                    id="editingQuoteId"
+                    type="hidden"
+                >
+
+
+                <div class="modal-body">
+
+                    <label class="field">
+
+                        <span>
+                            Book
+                        </span>
+
+                        <select id="quoteBook">
+                        </select>
+
+                    </label>
+
+
+                    <label class="field">
+
+                        <span>
+                            Quote
+                        </span>
+
+                        <textarea
+                            id="quoteText"
+                            rows="6"
+                            required
+                        ></textarea>
+
+                    </label>
+
+
+                    <div class="form-grid">
+
+                        <label class="field">
+
+                            <span>
+                                Page
+                            </span>
+
+                            <input
+                                id="quotePage"
+                                type="number"
+                                min="0"
+                            >
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Chapter
+                            </span>
+
+                            <input
+                                id="quoteChapter"
+                                type="text"
+                            >
+
+                        </label>
+
+                    </div>
+
+
+                    <label class="field">
+
+                        <span>
+                            Why I Saved It
+                        </span>
+
+                        <textarea
+                            id="quoteThoughts"
+                            rows="4"
+                        ></textarea>
+
+                    </label>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        id="cancelQuoteButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        class="primary-button"
+                        type="submit"
+                    >
+                        Save Quote
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         VOCABULARY MODAL
+         ===================================================== -->
+
+    <div
+        id="wordModal"
+        class="modal"
+        hidden
+    >
+
+        <div class="modal-card">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="page-eyebrow">
+                        WORD STUDY
+                    </span>
+
+                    <h2>
+                        Add a Word
+                    </h2>
+
+                </div>
+
+
+                <button
+                    id="closeWordModal"
+                    class="icon-button"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="wordForm">
+
+                <input
+                    id="editingWordId"
+                    type="hidden"
+                >
+
+
+                <div class="modal-body">
+
+                    <label class="field">
+
+                        <span>
+                            Word
+                        </span>
+
+                        <input
+                            id="wordText"
+                            type="text"
+                            required
+                        >
+
+                    </label>
+
+
+                    <label class="field">
+
+                        <span>
+                            Definition
+                        </span>
+
+                        <textarea
+                            id="wordDefinition"
+                            rows="4"
+                        ></textarea>
+
+                    </label>
+
+
+                    <label class="field">
+
+                        <span>
+                            Book
+                        </span>
+
+                        <select id="wordBook">
+                        </select>
+
+                    </label>
+
+
+                    <div class="form-grid">
+
+                        <label class="field">
+
+                            <span>
+                                Page
+                            </span>
+
+                            <input
+                                id="wordPage"
+                                type="number"
+                                min="0"
+                            >
+
+                        </label>
+
+
+                        <label class="field">
+
+                            <span>
+                                Part of Speech
+                            </span>
+
+                            <input
+                                id="wordPartOfSpeech"
+                                type="text"
+                            >
+
+                        </label>
+
+                    </div>
+
+
+                    <label class="field">
+
+                        <span>
+                            Context
+                        </span>
+
+                        <textarea
+                            id="wordContext"
+                            rows="4"
+                        ></textarea>
+
+                    </label>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        id="cancelWordButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        class="primary-button"
+                        type="submit"
+                    >
+                        Save Word
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TOAST
+         ===================================================== -->
+
+    <div
+        id="toast"
+        class="toast"
+        role="status"
+        aria-live="polite"
+        hidden
+    >
+    </div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+
+         LOAD ORDER IS IMPORTANT.
+         ===================================================== -->
+
+    <script src="js/config.js"></script>
+
+    <script src="js/helpers.js"></script>
+
+    <script src="js/books.js"></script>
+
+    <script src="js/library.js"></script>
+
+    <script src="js/reading.js"></script>
+
+    <script src="js/journal.js"></script>
+
+    <script src="js/quotes.js"></script>
+
+    <script src="js/vocabulary.js"></script>
+
+    <script src="js/stats.js"></script>
+
+    <script src="js/app.js"></script>
+
 
 </body>
 
