@@ -3,14 +3,18 @@
    SUPABASE.JS
 
    Supabase client
-   Authentication helpers
-   Profile helpers
+   Authentication
+   Profile access
    ========================================================= */
 
 (() => {
 
     "use strict";
 
+
+    /* =====================================================
+       GLOBAL NAMESPACE
+       ===================================================== */
 
     window.NOVELLOW =
         window.NOVELLOW ||
@@ -22,40 +26,74 @@
 
 
     /* =====================================================
-       CONFIG
+       PROJECT CONFIG
        ===================================================== */
 
     const SUPABASE_URL =
         "https://eewnaqglzbfrlipgmrof.supabase.co";
 
 
-    const SUPABASE_PUBLISHABLE_KEY =
+    const SUPABASE_ANON_KEY =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVld25hcWdsemJmcmxpcGdtcm9mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5ODMzODQsImV4cCI6MjEwNDU1OTM4NH0.2UBWh3HFdvykUvB694FcjyvH2TrViqayu5gPIv9dmN0";
 
 
     /* =====================================================
-       CLIENT
+       CHECK LIBRARY
        ===================================================== */
 
-    if (!window.supabase) {
+    if (
+        !window.supabase ||
+        typeof window.supabase.createClient !==
+            "function"
+    ) {
 
         console.error(
-            "Supabase library is not loaded."
+            "Novellow: Supabase browser library did not load."
         );
 
+
+        Novellow.supabase =
+            null;
+
+
         return;
+
     }
 
 
+    /* =====================================================
+       CREATE CLIENT
+       ===================================================== */
+
     const client =
         window.supabase.createClient(
+
             SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY
+
+            SUPABASE_ANON_KEY,
+
+            {
+
+                auth: {
+
+                    persistSession:
+                        true,
+
+                    autoRefreshToken:
+                        true,
+
+                    detectSessionInUrl:
+                        true
+
+                }
+
+            }
+
         );
 
 
     /* =====================================================
-       SESSION
+       GET SESSION
        ===================================================== */
 
     async function getSession() {
@@ -64,22 +102,25 @@
             data,
             error
         } =
-            await client.auth.getSession();
+            await client.auth
+                .getSession();
 
 
         if (error) {
 
             console.error(
-                "Supabase session error:",
+                "Novellow: session lookup failed:",
                 error
             );
 
-            return null;
+
+            throw error;
+
         }
 
 
         return (
-            data.session ||
+            data?.session ||
             null
         );
 
@@ -87,7 +128,7 @@
 
 
     /* =====================================================
-       USER
+       GET USER
        ===================================================== */
 
     async function getUser() {
@@ -96,22 +137,25 @@
             data,
             error
         } =
-            await client.auth.getUser();
+            await client.auth
+                .getUser();
 
 
         if (error) {
 
             console.error(
-                "Supabase user error:",
+                "Novellow: user lookup failed:",
                 error
             );
 
+
             return null;
+
         }
 
 
         return (
-            data.user ||
+            data?.user ||
             null
         );
 
@@ -128,31 +172,56 @@
         displayName = ""
     }) {
 
+        const cleanEmail =
+            String(
+                email ||
+                ""
+            )
+                .trim()
+                .toLowerCase();
+
+
+        const cleanDisplayName =
+            String(
+                displayName ||
+                ""
+            )
+                .trim();
+
+
         const {
             data,
             error
         } =
-            await client.auth.signUp({
+            await client.auth
+                .signUp({
 
-                email,
+                    email:
+                        cleanEmail,
 
-                password,
+                    password,
 
-                options: {
+                    options: {
 
-                    data: {
+                        data: {
 
-                        display_name:
-                            displayName
+                            display_name:
+                                cleanDisplayName
+
+                        }
 
                     }
 
-                }
-
-            });
+                });
 
 
         if (error) {
+
+            console.error(
+                "Novellow: signup failed:",
+                error
+            );
+
 
             throw error;
 
@@ -173,6 +242,15 @@
         password
     }) {
 
+        const cleanEmail =
+            String(
+                email ||
+                ""
+            )
+                .trim()
+                .toLowerCase();
+
+
         const {
             data,
             error
@@ -180,7 +258,8 @@
             await client.auth
                 .signInWithPassword({
 
-                    email,
+                    email:
+                        cleanEmail,
 
                     password
 
@@ -188,6 +267,12 @@
 
 
         if (error) {
+
+            console.error(
+                "Novellow: sign in failed:",
+                error
+            );
+
 
             throw error;
 
@@ -208,25 +293,45 @@
         const {
             error
         } =
-            await client.auth.signOut();
+            await client.auth
+                .signOut();
 
 
         if (error) {
+
+            console.error(
+                "Novellow: sign out failed:",
+                error
+            );
+
 
             throw error;
 
         }
 
+
+        return true;
+
     }
 
 
     /* =====================================================
-       AUTH STATE
+       AUTH STATE LISTENER
        ===================================================== */
 
     function onAuthStateChange(
         callback
     ) {
+
+        if (
+            typeof callback !==
+            "function"
+        ) {
+
+            return null;
+
+        }
+
 
         return client.auth
             .onAuthStateChange(
@@ -237,12 +342,19 @@
 
 
     /* =====================================================
-       PROFILE
+       GET PROFILE
        ===================================================== */
 
     async function getProfile(
         userId
     ) {
+
+        if (!userId) {
+
+            return null;
+
+        }
+
 
         const {
             data,
@@ -265,23 +377,134 @@
         if (error) {
 
             console.error(
-                "Profile load error:",
+                "Novellow: profile lookup failed:",
                 error
             );
 
-            return null;
+
+            throw error;
+
         }
 
 
-        return data;
+        return (
+            data ||
+            null
+        );
 
     }
 
 
+    /* =====================================================
+       UPDATE PROFILE
+       ===================================================== */
+
     async function updateProfile(
         userId,
-        updates
+        updates = {}
     ) {
+
+        if (!userId) {
+
+            throw new Error(
+                "A user ID is required to update a profile."
+            );
+
+        }
+
+
+        const allowedUpdates =
+            {};
+
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                updates,
+                "display_name"
+            )
+        ) {
+
+            allowedUpdates.display_name =
+                String(
+                    updates.display_name ||
+                    ""
+                )
+                    .trim();
+
+        }
+
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                updates,
+                "username"
+            )
+        ) {
+
+            const username =
+                String(
+                    updates.username ||
+                    ""
+                )
+                    .trim()
+                    .toLowerCase();
+
+
+            allowedUpdates.username =
+                username ||
+                null;
+
+        }
+
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                updates,
+                "avatar_url"
+            )
+        ) {
+
+            allowedUpdates.avatar_url =
+                updates.avatar_url ||
+                null;
+
+        }
+
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                updates,
+                "bio"
+            )
+        ) {
+
+            allowedUpdates.bio =
+                String(
+                    updates.bio ||
+                    ""
+                )
+                    .trim();
+
+        }
+
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                updates,
+                "library_name"
+            )
+        ) {
+
+            allowedUpdates.library_name =
+                String(
+                    updates.library_name ||
+                    ""
+                )
+                    .trim() ||
+                "My Library";
+
+        }
+
 
         const {
             data,
@@ -292,7 +515,7 @@
                     "profiles"
                 )
                 .update(
-                    updates
+                    allowedUpdates
                 )
                 .eq(
                     "id",
@@ -304,12 +527,167 @@
 
         if (error) {
 
+            console.error(
+                "Novellow: profile update failed:",
+                error
+            );
+
+
             throw error;
 
         }
 
 
         return data;
+
+    }
+
+
+    /* =====================================================
+       ENSURE PROFILE EXISTS
+       ===================================================== */
+
+    async function ensureProfile(
+        user
+    ) {
+
+        if (
+            !user?.id
+        ) {
+
+            return null;
+
+        }
+
+
+        let profile =
+            await getProfile(
+                user.id
+            );
+
+
+        if (profile) {
+
+            return profile;
+
+        }
+
+
+        const displayName =
+            String(
+                user.user_metadata
+                    ?.display_name ||
+                ""
+            )
+                .trim();
+
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "profiles"
+                )
+                .insert({
+
+                    id:
+                        user.id,
+
+                    display_name:
+                        displayName,
+
+                    library_name:
+                        "My Library"
+
+                })
+                .select()
+                .single();
+
+
+        if (error) {
+
+            /*
+             * The database signup trigger should normally create
+             * the profile first. If another request created it
+             * between our SELECT and INSERT, simply fetch it again.
+             */
+
+            if (
+                error.code ===
+                "23505"
+            ) {
+
+                return await getProfile(
+                    user.id
+                );
+
+            }
+
+
+            console.error(
+                "Novellow: profile creation failed:",
+                error
+            );
+
+
+            throw error;
+
+        }
+
+
+        return data;
+
+    }
+
+
+    /* =====================================================
+       CURRENT AUTH SNAPSHOT
+       ===================================================== */
+
+    async function getAuthSnapshot() {
+
+        const session =
+            await getSession();
+
+
+        if (
+            !session?.user
+        ) {
+
+            return {
+
+                session:
+                    null,
+
+                user:
+                    null,
+
+                profile:
+                    null
+
+            };
+
+        }
+
+
+        const profile =
+            await ensureProfile(
+                session.user
+            );
+
+
+        return {
+
+            session,
+
+            user:
+                session.user,
+
+            profile
+
+        };
 
     }
 
@@ -326,6 +704,8 @@
 
         getUser,
 
+        getAuthSnapshot,
+
         signUp,
 
         signIn,
@@ -336,6 +716,8 @@
 
         getProfile,
 
+        ensureProfile,
+
         updateProfile
 
     };
@@ -344,5 +726,6 @@
     console.log(
         "Novellow: Supabase connected."
     );
+
 
 })();
