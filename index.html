@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -12,217 +10,205 @@
 
     <meta
         name="description"
-        content="Shelfmark — a customizable virtual library, reading tracker, and reading journal."
+        content="Shelfmark - Your personal virtual library and reading journal."
     >
 
     <title>Shelfmark | Virtual Library</title>
 
-    <link
-        rel="stylesheet"
-        href="css/global.css"
-    >
+    <!--
+        ================================
+        STYLES
+        ================================
+    -->
 
-    <link
-        rel="stylesheet"
-        href="css/library.css"
-    >
-
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/library.css">
+    <link rel="stylesheet" href="./css/themes.css">
+    <link rel="stylesheet" href="./css/mobile.css">
 </head>
 
 
-<body class="theme-haunted">
+<body data-theme="default">
 
-
-    <!-- =====================================================
+    <!-- =====================================
          APP
-         ===================================================== -->
+    ====================================== -->
 
     <div class="app-shell">
 
+        <!-- =================================
+             SIDEBAR
+        ================================== -->
 
-        <!-- =================================================
-             TOP NAVIGATION
-             Uses existing sidebar markup, styled as top nav.
-             ================================================= -->
-
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
 
             <div class="sidebar-top">
 
                 <a
-                    href="#library"
+                    href="#home"
                     class="brand"
+                    aria-label="Shelfmark home"
                 >
-
-                    <span class="brand-mark">
+                    <span class="brand-mark" aria-hidden="true">
                         S
                     </span>
 
-                    <span class="brand-copy">
-
-                        <strong>
-                            Shelfmark
-                        </strong>
-
-                        <small>
-                            virtual library
-                        </small>
-
+                    <span class="brand-text">
+                        Shelfmark
                     </span>
-
                 </a>
+
+
+                <button
+                    class="sidebar-close"
+                    id="sidebarCloseButton"
+                    type="button"
+                    aria-label="Close navigation"
+                >
+                    ×
+                </button>
 
             </div>
 
 
-            <nav class="main-nav">
+            <nav
+                class="sidebar-nav"
+                aria-label="Main navigation"
+            >
 
                 <a
-                    href="#library"
+                    href="#home"
                     class="nav-link active"
+                    data-section="home"
                 >
-
-                    <span
-                        class="nav-ui-icon icon-library"
-                        aria-hidden="true"
-                    >
-                        <span class="book-one"></span>
-                        <span class="book-two"></span>
+                    <span class="nav-icon" aria-hidden="true">
+                        ⌂
                     </span>
 
                     <span>
-                        Library
+                        Home
+                    </span>
+                </a>
+
+
+                <a
+                    href="#library"
+                    class="nav-link"
+                    data-section="library"
+                >
+                    <span class="nav-icon" aria-hidden="true">
+                        ▤
                     </span>
 
+                    <span>
+                        My Library
+                    </span>
                 </a>
 
 
                 <a
                     href="#reading"
                     class="nav-link"
+                    data-section="reading"
                 >
-
-                    <span
-                        class="nav-ui-icon icon-reading"
-                        aria-hidden="true"
-                    >
-                        <span class="page-left"></span>
-                        <span class="page-right"></span>
+                    <span class="nav-icon" aria-hidden="true">
+                        ◫
                     </span>
 
                     <span>
-                        Reading
+                        Currently Reading
                     </span>
-
                 </a>
 
 
                 <a
                     href="#stats"
                     class="nav-link"
+                    data-section="stats"
                 >
-
-                    <span
-                        class="nav-ui-icon icon-stars"
-                        aria-hidden="true"
-                    >
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                    <span class="nav-icon" aria-hidden="true">
+                        ◇
                     </span>
 
                     <span>
                         Reading Stats
                     </span>
-
                 </a>
 
             </nav>
 
 
-            <div class="sidebar-actions">
+            <div class="sidebar-bottom">
 
                 <button
-                    id="sidebarAddBook"
-                    class="sidebar-primary-button"
+                    class="sidebar-action"
+                    id="themeButton"
                     type="button"
                 >
-                    + Add Book
-                </button>
-
-
-                <button
-                    id="sidebarAddShelf"
-                    class="sidebar-secondary-button"
-                    type="button"
-                >
-                    + Add Shelf
-                </button>
-
-
-                <button
-                    id="openThemeSettings"
-                    class="sidebar-secondary-button"
-                    type="button"
-                >
-                    Theme & Room
-                </button>
-
-
-                <button
-                    id="loginButton"
-                    class="login-button"
-                    type="button"
-                >
-
-                    <span
-                        class="login-key-icon"
-                        aria-hidden="true"
-                    ></span>
-
-                    <span>
-                        Log In
+                    <span aria-hidden="true">
+                        ◐
                     </span>
 
+                    <span>
+                        Change Theme
+                    </span>
                 </button>
 
-            </div>
 
+                <button
+                    class="sidebar-action"
+                    id="accountButton"
+                    type="button"
+                >
+                    <span aria-hidden="true">
+                        ○
+                    </span>
 
-            <div class="sidebar-footer">
-
-                <span>
-                    Shelfmark
-                </span>
-
-                <small>
-                    a quiet place for books
-                </small>
+                    <span id="accountButtonText">
+                        Sign In
+                    </span>
+                </button>
 
             </div>
 
         </aside>
 
 
-        <!-- =================================================
-             MAIN SHELL
-             ================================================= -->
+        <!-- =================================
+             MAIN AREA
+        ================================== -->
 
         <div class="main-shell">
 
-
-            <!-- =============================================
-                 LEGACY TOPBAR
-                 Hidden by CSS, kept for compatibility.
-                 ============================================= -->
+            <!-- =============================
+                 TOP BAR
+            ============================== -->
 
             <header class="topbar">
 
-                <div class="topbar-copy">
+                <div class="topbar-left">
 
-                    <span class="topbar-label">
-                        MY READING ROOM
-                    </span>
+                    <button
+                        class="mobile-menu-button"
+                        id="mobileMenuButton"
+                        type="button"
+                        aria-label="Open navigation"
+                    >
+                        ☰
+                    </button>
+
+
+                    <div class="page-heading">
+
+                        <p class="page-eyebrow">
+                            Your personal library
+                        </p>
+
+                        <h1 id="pageTitle">
+                            Shelfmark
+                        </h1>
+
+                    </div>
 
                 </div>
 
@@ -230,29 +216,20 @@
                 <div class="topbar-actions">
 
                     <button
-                        id="topThemeSettings"
                         class="secondary-button"
+                        id="searchButton"
                         type="button"
                     >
-                        Theme
+                        Search
                     </button>
 
 
                     <button
-                        id="topAddShelf"
-                        class="secondary-button"
-                        type="button"
-                    >
-                        + Shelf
-                    </button>
-
-
-                    <button
-                        id="topAddBook"
                         class="primary-button"
+                        id="addBookButton"
                         type="button"
                     >
-                        + Book
+                        + Add Book
                     </button>
 
                 </div>
@@ -260,351 +237,159 @@
             </header>
 
 
-            <!-- =============================================
+            <!-- =============================
                  MAIN CONTENT
-                 ============================================= -->
+            ============================== -->
 
             <main class="main-content">
 
 
-                <!-- =========================================
-                     LIBRARY
-                     ========================================= -->
+                <!-- =========================
+                     HOME
+                ========================== -->
 
                 <section
-                    id="library"
-                    class="library-page"
+                    class="page-section active"
+                    id="home"
+                    data-page="home"
                 >
 
-                    <div class="library-intro">
+                    <!-- Welcome -->
+
+                    <div class="welcome-row">
 
                         <div>
 
-                            <span class="eyebrow">
-                                MY LIBRARY
-                            </span>
-
-                            <h1>
-                                Books worth
-                                <em>keeping close.</em>
-                            </h1>
-
-                            <p>
-                                Build shelves, collect books, keep track of
-                                what you are reading, and make the room feel
-                                completely your own.
+                            <p class="section-kicker">
+                                Welcome back
                             </p>
-
-                        </div>
-
-
-                        <div class="library-summary">
-
-                            <div>
-
-                                <strong id="bookCount">
-                                    0
-                                </strong>
-
-                                <span>
-                                    books
-                                </span>
-
-                            </div>
-
-
-                            <div>
-
-                                <strong id="readingCount">
-                                    0
-                                </strong>
-
-                                <span>
-                                    reading
-                                </span>
-
-                            </div>
-
-
-                            <div>
-
-                                <strong id="finishedCount">
-                                    0
-                                </strong>
-
-                                <span>
-                                    finished
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div
-                        id="shelfContainer"
-                        class="shelf-container"
-                    >
-                    </div>
-
-
-                    <div
-                        id="libraryEmpty"
-                        class="library-empty"
-                        hidden
-                    >
-
-                        <span class="eyebrow">
-                            AN EMPTY ROOM
-                        </span>
-
-                        <h2>
-                            Your library needs a shelf.
-                        </h2>
-
-                        <p>
-                            Start by creating your first bookshelf,
-                            then begin filling it with books.
-                        </p>
-
-                        <div class="empty-actions">
-
-                            <button
-                                id="emptyAddShelf"
-                                class="primary-button"
-                                type="button"
-                            >
-                                Create a Shelf
-                            </button>
-
-                            <button
-                                id="emptyAddBook"
-                                class="secondary-button"
-                                type="button"
-                            >
-                                Add a Book
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <button
-                        id="bottomAddShelf"
-                        class="bottom-add-shelf"
-                        type="button"
-                        hidden
-                    >
-                        + Add Another Shelf
-                    </button>
-
-                </section>
-
-
-                <!-- =========================================
-                     READING NOW
-                     ========================================= -->
-
-                <section
-                    id="reading"
-                    class="reading-now-section"
-                >
-
-                    <div class="reading-now-intro">
-
-                        <div>
-
-                            <span class="eyebrow">
-                                READING NOW
-                            </span>
 
                             <h2>
-                                The books keeping me
-                                <em>company lately.</em>
+                                What are we reading?
                             </h2>
 
-                            <p>
-                                Keep an eye on your current reads,
-                                update your progress, and jump back
-                                into your journal whenever something
-                                worth remembering comes up.
+                            <p class="section-description">
+                                Keep your books, thoughts, notes,
+                                reading progress, and favorite
+                                discoveries together in one place.
                             </p>
-
-                        </div>
-
-
-                        <div class="reading-now-summary">
-
-                            <div>
-
-                                <strong id="currentReadingCount">
-                                    0
-                                </strong>
-
-                                <span>
-                                    current
-                                </span>
-
-                            </div>
-
-
-                            <div>
-
-                                <strong id="averageProgress">
-                                    0%
-                                </strong>
-
-                                <span>
-                                    average
-                                </span>
-
-                            </div>
-
-
-                            <div>
-
-                                <strong id="pagesRemaining">
-                                    0
-                                </strong>
-
-                                <span>
-                                    pages left
-                                </span>
-
-                            </div>
 
                         </div>
 
                     </div>
 
 
-                    <div
-                        id="featuredReadingSection"
-                        class="featured-reading-section"
-                        hidden
-                    >
+                    <!-- Featured Book -->
 
-                        <article class="featured-reading-card">
+                    <section class="featured-book-section">
 
-                            <div class="featured-cover-wrap">
+                        <div class="section-heading-row">
 
-                                <div
-                                    id="featuredBookCover"
-                                    class="featured-book-cover"
-                                >
-                                </div>
+                            <div>
+
+                                <p class="section-kicker">
+                                    On your nightstand
+                                </p>
+
+                                <h2>
+                                    Featured Book
+                                </h2>
 
                             </div>
 
+                        </div>
 
-                            <div class="featured-reading-copy">
 
-                                <span
-                                    id="featuredBookShelf"
-                                    class="eyebrow"
-                                >
-                                    CURRENTLY READING
+                        <article
+                            class="featured-book"
+                            id="featuredBook"
+                        >
+
+                            <div
+                                class="featured-book-cover"
+                                id="featuredBookCover"
+                                aria-hidden="true"
+                            >
+                                <span class="cover-placeholder">
+                                    Book Cover
                                 </span>
+                            </div>
+
+
+                            <div class="featured-book-info">
+
+                                <p class="book-status-label">
+                                    Currently Reading
+                                </p>
 
 
                                 <h3 id="featuredBookTitle">
-                                    Book Title
+                                    No book selected
                                 </h3>
 
 
                                 <p
-                                    id="featuredBookAuthor"
                                     class="featured-book-author"
+                                    id="featuredBookAuthor"
                                 >
-                                    Author
+                                    Add a book to begin.
                                 </p>
 
 
-                                <div class="featured-reading-meta">
-
-                                    <div>
-
-                                        <span>
-                                            Started
-                                        </span>
-
-                                        <strong id="featuredBookStarted">
-                                            —
-                                        </strong>
-
-                                    </div>
+                                <p
+                                    class="featured-book-description"
+                                    id="featuredBookDescription"
+                                >
+                                    Your current read will appear here.
+                                </p>
 
 
-                                    <div>
+                                <div class="reading-progress">
 
-                                        <span>
-                                            Progress
-                                        </span>
-
-                                        <strong id="featuredBookPages">
-                                            0 / 0
-                                        </strong>
-
-                                    </div>
-
-                                </div>
-
-
-                                <div class="featured-progress">
-
-                                    <div class="featured-progress-copy">
+                                    <div class="progress-heading">
 
                                         <span>
                                             Reading progress
                                         </span>
 
-                                        <strong id="featuredBookPercent">
+                                        <span id="featuredProgressText">
                                             0%
-                                        </strong>
+                                        </span>
 
                                     </div>
 
 
-                                    <div class="progress-track">
-
+                                    <div
+                                        class="progress-track"
+                                        aria-hidden="true"
+                                    >
                                         <div
-                                            id="featuredProgressFill"
-                                            class="progress-fill"
-                                        >
-                                        </div>
-
-                                        <span
-                                            id="featuredProgressBookmark"
-                                            class="progress-bookmark"
-                                        >
-                                            ◆
-                                        </span>
-
+                                            class="progress-bar"
+                                            id="featuredProgressBar"
+                                            style="width: 0%;"
+                                        ></div>
                                     </div>
 
                                 </div>
 
 
-                                <div class="featured-reading-actions">
+                                <div class="featured-book-actions">
 
                                     <button
-                                        id="featuredOpenBook"
                                         class="primary-button"
+                                        id="continueReadingButton"
                                         type="button"
                                     >
-                                        Open Reading Journal
+                                        Open Book
                                     </button>
 
 
                                     <button
-                                        id="featuredEditProgress"
-                                        class="secondary-button"
+                                        class="text-button"
+                                        id="featuredNotesButton"
                                         type="button"
                                     >
-                                        Update Progress
+                                        View Notes
                                     </button>
 
                                 </div>
@@ -613,62 +398,350 @@
 
                         </article>
 
-                    </div>
+                    </section>
 
 
-                    <div
-                        id="readingListSection"
-                        class="reading-list-section"
-                        hidden
+                    <!-- Currently Reading -->
+
+                    <section
+                        class="currently-reading-section"
+                        id="homeReadingSection"
                     >
 
-                        <div class="section-mini-header">
+                        <div class="section-heading-row">
 
                             <div>
 
-                                <span class="eyebrow">
-                                    ON MY NIGHTSTAND
-                                </span>
+                                <p class="section-kicker">
+                                    In progress
+                                </p>
 
-                                <h3>
-                                    Everything I am reading
-                                </h3>
+                                <h2>
+                                    Currently Reading
+                                </h2>
+
+                            </div>
+
+
+                            <a
+                                href="#reading"
+                                class="section-link"
+                            >
+                                View all
+                            </a>
+
+                        </div>
+
+
+                        <div
+                            class="reading-grid"
+                            id="homeReadingGrid"
+                        >
+
+                            <div class="empty-state">
+
+                                <p>
+                                    No books currently being read.
+                                </p>
+
+                                <button
+                                    class="text-button open-add-book"
+                                    type="button"
+                                >
+                                    Add your first book
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- Shelf Preview -->
+
+                    <section class="shelf-preview-section">
+
+                        <div class="section-heading-row">
+
+                            <div>
+
+                                <p class="section-kicker">
+                                    Your collection
+                                </p>
+
+                                <h2>
+                                    Bookshelves
+                                </h2>
+
+                            </div>
+
+
+                            <a
+                                href="#library"
+                                class="section-link"
+                            >
+                                View library
+                            </a>
+
+                        </div>
+
+
+                        <div
+                            class="bookshelf"
+                            id="homeBookshelf"
+                        >
+
+                            <div
+                                class="shelf-books-row"
+                                id="homeShelfBooks"
+                            >
+                            </div>
+
+                            <div class="shelf-board"></div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- Quick Stats -->
+
+                    <section class="home-stats-section">
+
+                        <div class="section-heading-row">
+
+                            <div>
+
+                                <p class="section-kicker">
+                                    At a glance
+                                </p>
+
+                                <h2>
+                                    Reading Life
+                                </h2>
 
                             </div>
 
                         </div>
 
 
-                        <div
-                            id="readingGrid"
-                            class="reading-grid"
+                        <div class="stats-grid">
+
+                            <article class="stat-card">
+
+                                <span
+                                    class="stat-number"
+                                    id="homeTotalBooks"
+                                >
+                                    0
+                                </span>
+
+                                <span class="stat-label">
+                                    Books
+                                </span>
+
+                            </article>
+
+
+                            <article class="stat-card">
+
+                                <span
+                                    class="stat-number"
+                                    id="homeBooksFinished"
+                                >
+                                    0
+                                </span>
+
+                                <span class="stat-label">
+                                    Finished
+                                </span>
+
+                            </article>
+
+
+                            <article class="stat-card">
+
+                                <span
+                                    class="stat-number"
+                                    id="homeCurrentlyReading"
+                                >
+                                    0
+                                </span>
+
+                                <span class="stat-label">
+                                    Reading
+                                </span>
+
+                            </article>
+
+
+                            <article class="stat-card">
+
+                                <span
+                                    class="stat-number"
+                                    id="homeAverageRating"
+                                >
+                                    —
+                                </span>
+
+                                <span class="stat-label">
+                                    Average Rating
+                                </span>
+
+                            </article>
+
+                        </div>
+
+                    </section>
+
+                </section>
+
+
+
+                <!-- =========================
+                     LIBRARY PAGE
+                ========================== -->
+
+                <section
+                    class="page-section"
+                    id="library"
+                    data-page="library"
+                >
+
+                    <div class="page-section-header">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                Your collection
+                            </p>
+
+                            <h2>
+                                My Library
+                            </h2>
+
+                            <p class="section-description">
+                                Browse your shelves, find a favorite,
+                                or add something new.
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            class="primary-button open-add-book"
+                            type="button"
                         >
+                            + Add Book
+                        </button>
+
+                    </div>
+
+
+                    <!-- Library Controls -->
+
+                    <div class="library-toolbar">
+
+                        <div class="search-field">
+
+                            <label
+                                class="sr-only"
+                                for="librarySearch"
+                            >
+                                Search your library
+                            </label>
+
+                            <input
+                                type="search"
+                                id="librarySearch"
+                                placeholder="Search books or authors..."
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+
+                        <div class="library-filters">
+
+                            <select
+                                id="statusFilter"
+                                aria-label="Filter by reading status"
+                            >
+                                <option value="all">
+                                    All Books
+                                </option>
+
+                                <option value="want-to-read">
+                                    Want to Read
+                                </option>
+
+                                <option value="reading">
+                                    Currently Reading
+                                </option>
+
+                                <option value="finished">
+                                    Finished
+                                </option>
+
+                                <option value="dnf">
+                                    Did Not Finish
+                                </option>
+                            </select>
+
+
+                            <select
+                                id="sortBooks"
+                                aria-label="Sort books"
+                            >
+                                <option value="recent">
+                                    Recently Added
+                                </option>
+
+                                <option value="title">
+                                    Title
+                                </option>
+
+                                <option value="author">
+                                    Author
+                                </option>
+
+                                <option value="rating">
+                                    Rating
+                                </option>
+                            </select>
+
                         </div>
 
                     </div>
 
 
+                    <!-- Shelves are inserted by JavaScript -->
+
                     <div
-                        id="readingEmpty"
-                        class="reading-empty"
+                        class="library-shelves"
+                        id="libraryShelves"
+                    >
+                    </div>
+
+
+                    <div
+                        class="empty-library-state"
+                        id="emptyLibraryState"
+                        hidden
                     >
 
-                        <span class="eyebrow">
-                            NOTHING OPEN YET
-                        </span>
-
-                        <h3>
-                            Choose your next read.
-                        </h3>
+                        <p class="empty-state-title">
+                            Your shelves are waiting.
+                        </p>
 
                         <p>
-                            Books marked as currently reading
-                            will appear here.
+                            Add your first book to start building
+                            your library.
                         </p>
 
                         <button
-                            id="readingEmptyAddBook"
-                            class="primary-button"
+                            class="primary-button open-add-book"
                             type="button"
                         >
                             Add a Book
@@ -679,240 +752,215 @@
                 </section>
 
 
-                <!-- =========================================
-                     READING STATS
-                     ========================================= -->
+
+                <!-- =========================
+                     CURRENTLY READING PAGE
+                ========================== -->
 
                 <section
-                    id="stats"
-                    class="reading-stats-section"
+                    class="page-section"
+                    id="reading"
+                    data-page="reading"
                 >
 
-                    <div class="stats-intro">
+                    <div class="page-section-header">
 
-                        <span class="eyebrow">
-                            LITTLE DETAILS
-                        </span>
+                        <div>
 
-                        <h2>
-                            A little record of
-                            <em>where I've been.</em>
-                        </h2>
+                            <p class="section-kicker">
+                                Your current stack
+                            </p>
 
-                        <p>
-                            A quiet collection of numbers from
-                            the books, pages, genres, and reading
-                            habits building up inside my library.
-                        </p>
+                            <h2>
+                                Currently Reading
+                            </h2>
+
+                            <p class="section-description">
+                                Track your progress and return to
+                                your notes whenever inspiration hits.
+                            </p>
+
+                        </div>
 
                     </div>
 
 
-                    <div class="stats-grid">
+                    <div
+                        class="reading-grid reading-page-grid"
+                        id="readingPageGrid"
+                    >
+                    </div>
 
-                        <article class="stat-card">
 
-                            <span>
-                                01 · MY LIBRARY
-                            </span>
+                    <div
+                        class="empty-state"
+                        id="emptyReadingState"
+                        hidden
+                    >
 
-                            <strong id="statsTotalBooks">
+                        <p class="empty-state-title">
+                            Nothing on the nightstand yet.
+                        </p>
+
+                        <p>
+                            Start a book and it will appear here.
+                        </p>
+
+                        <button
+                            class="primary-button open-add-book"
+                            type="button"
+                        >
+                            Add Book
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================
+                     STATS PAGE
+                ========================== -->
+
+                <section
+                    class="page-section"
+                    id="stats"
+                    data-page="stats"
+                >
+
+                    <div class="page-section-header">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                Your reading year
+                            </p>
+
+                            <h2>
+                                Reading Stats
+                            </h2>
+
+                            <p class="section-description">
+                                A little look at the stories,
+                                authors, and pages filling your year.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="stats-grid stats-page-grid">
+
+                        <article class="stat-panel">
+
+                            <p class="stat-panel-label">
+                                Total Books
+                            </p>
+
+                            <strong
+                                class="stat-panel-value"
+                                id="statsTotalBooks"
+                            >
                                 0
                             </strong>
-
-                            <p>
-                                books tucked onto my shelves
-                            </p>
 
                         </article>
 
 
-                        <article class="stat-card">
+                        <article class="stat-panel">
 
-                            <span>
-                                02 · FINISHED
-                            </span>
+                            <p class="stat-panel-label">
+                                Books Finished
+                            </p>
 
-                            <strong id="statsFinishedBooks">
+                            <strong
+                                class="stat-panel-value"
+                                id="statsFinishedBooks"
+                            >
                                 0
                             </strong>
-
-                            <p>
-                                books I've made it all the way through
-                            </p>
 
                         </article>
 
 
-                        <article class="stat-card">
+                        <article class="stat-panel">
 
-                            <span>
-                                03 · PAGES
-                            </span>
+                            <p class="stat-panel-label">
+                                Currently Reading
+                            </p>
 
-                            <strong id="statsPagesRead">
+                            <strong
+                                class="stat-panel-value"
+                                id="statsReadingBooks"
+                            >
                                 0
                             </strong>
-
-                            <p>
-                                pages read across my library
-                            </p>
 
                         </article>
 
 
-                        <article class="stat-card">
+                        <article class="stat-panel">
 
-                            <span>
-                                04 · RATING
-                            </span>
+                            <p class="stat-panel-label">
+                                Average Rating
+                            </p>
 
-                            <strong id="statsAverageRating">
+                            <strong
+                                class="stat-panel-value"
+                                id="statsAverageRating"
+                            >
                                 —
                             </strong>
 
-                            <p>
-                                my average rating so far
-                            </p>
-
                         </article>
 
                     </div>
 
 
-                    <div class="stats-status-grid">
+                    <div class="stats-detail-grid">
 
-                        <article class="stats-status-item">
+                        <article class="stats-detail-card">
 
-                            <strong id="statsCurrentlyReading">
-                                0
-                            </strong>
+                            <div class="stats-card-header">
 
-                            <span>
-                                currently reading
-                            </span>
+                                <p class="section-kicker">
+                                    This year
+                                </p>
 
-                        </article>
+                                <h3>
+                                    Monthly Reading
+                                </h3>
 
-
-                        <article class="stats-status-item">
-
-                            <strong id="statsWantToRead">
-                                0
-                            </strong>
-
-                            <span>
-                                want to read
-                            </span>
-
-                        </article>
-
-
-                        <article class="stats-status-item">
-
-                            <strong id="statsPaused">
-                                0
-                            </strong>
-
-                            <span>
-                                paused
-                            </span>
-
-                        </article>
-
-
-                        <article class="stats-status-item">
-
-                            <strong id="statsDNF">
-                                0
-                            </strong>
-
-                            <span>
-                                did not finish
-                            </span>
-
-                        </article>
-
-
-                        <article class="stats-status-item">
-
-                            <strong id="statsReference">
-                                0
-                            </strong>
-
-                            <span>
-                                reference books
-                            </span>
-
-                        </article>
-
-
-                        <article class="stats-status-item">
-
-                            <strong id="statsRereads">
-                                0
-                            </strong>
-
-                            <span>
-                                rereads
-                            </span>
-
-                        </article>
-
-                    </div>
-
-
-                    <div class="stats-lower-grid">
-
-                        <article class="stats-panel">
-
-                            <span class="eyebrow">
-                                FAVORITE CORNER
-                            </span>
-
-                            <h3>
-                                Genres I keep returning to
-                            </h3>
-
-                            <p>
-                                The kinds of books that keep
-                                finding their way back onto
-                                my shelves.
-                            </p>
+                            </div>
 
                             <div
-                                id="genreStats"
-                                class="genre-stat-list"
+                                class="monthly-reading-chart"
+                                id="monthlyReadingChart"
                             >
-
-                                <div class="stats-empty-line">
-                                    Add genres to your books and
-                                    they will appear here.
-                                </div>
-
                             </div>
 
                         </article>
 
 
-                        <article class="stats-panel">
+                        <article class="stats-detail-card">
 
-                            <span class="eyebrow">
-                                READING RHYTHM
-                            </span>
+                            <div class="stats-card-header">
 
-                            <h3>
-                                Books finished over time
-                            </h3>
+                                <p class="section-kicker">
+                                    Favorites
+                                </p>
 
-                            <p>
-                                A little look at how my reading
-                                changes throughout the year.
-                            </p>
+                                <h3>
+                                    Top Rated Books
+                                </h3>
+
+                            </div>
 
                             <div
-                                id="monthlyReadingStats"
-                                class="monthly-reading-stats"
+                                class="top-rated-list"
+                                id="topRatedBooks"
                             >
                             </div>
 
@@ -929,2101 +977,44 @@
     </div>
 
 
-    <!-- =====================================================
-         OVERLAY
-         ===================================================== -->
+
+    <!-- =====================================
+         THEME MODAL
+    ====================================== -->
 
     <div
-        id="overlay"
-        class="overlay"
-        hidden
-    >
-    </div>
-
-
-    <!-- =====================================================
-         THEME & ATMOSPHERE MODAL
-         ===================================================== -->
-
-    <aside
-        id="themeDrawer"
-        class="drawer theme-drawer"
-        hidden
+        class="modal-overlay"
+        id="themeModal"
+        aria-hidden="true"
     >
 
-        <div class="drawer-header">
-
-            <div>
-
-                <span class="eyebrow">
-                    READING ROOM
-                </span>
-
-                <h2>
-                    Theme & Atmosphere
-                </h2>
-
-            </div>
-
-
-            <button
-                id="closeThemeDrawer"
-                class="icon-button"
-                type="button"
-                aria-label="Close theme settings"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="drawer-body">
-
-
-            <!-- =============================================
-                 THEMES
-                 ============================================= -->
-
-            <section class="drawer-section">
-
-                <div class="drawer-section-heading">
-
-                    <span>
-                        Theme
-                    </span>
-
-                    <p>
-                        Change the mood of your library.
-                    </p>
-
-                </div>
-
-
-                <div class="theme-grid">
-
-                    <button
-                        class="theme-card active"
-                        type="button"
-                        data-theme="haunted"
-                    >
-
-                        <span class="theme-swatch theme-haunted">
-                        </span>
-
-                        <strong>
-                            Haunted Library
-                        </strong>
-
-                        <small>
-                            candlelight · rain · old wood
-                        </small>
-
-                    </button>
-
-
-                    <button
-                        class="theme-card"
-                        type="button"
-                        data-theme="autumn"
-                    >
-
-                        <span class="theme-swatch theme-autumn">
-                        </span>
-
-                        <strong>
-                            Autumn Bookshop
-                        </strong>
-
-                        <small>
-                            pumpkins · tea · warm evenings
-                        </small>
-
-                    </button>
-
-
-                    <button
-                        class="theme-card"
-                        type="button"
-                        data-theme="forest"
-                    >
-
-                        <span class="theme-swatch theme-forest">
-                        </span>
-
-                        <strong>
-                            Enchanted Forest
-                        </strong>
-
-                        <small>
-                            moss · moonlight · strange little things
-                        </small>
-
-                    </button>
-
-
-                    <button
-                        class="theme-card"
-                        type="button"
-                        data-theme="retro"
-                    >
-
-                        <span class="theme-swatch theme-retro">
-                        </span>
-
-                        <strong>
-                            Retro Horror
-                        </strong>
-
-                        <small>
-                            VHS · monsters · strange broadcasts
-                        </small>
-
-                    </button>
-
-
-                    <button
-                        class="theme-card"
-                        type="button"
-                        data-theme="ghosts"
-                    >
-
-                        <span class="theme-swatch theme-ghosts">
-                        </span>
-
-                        <strong>
-                            Pastel Ghosts
-                        </strong>
-
-                        <small>
-                            friendly spirits · dusty pink · sage
-                        </small>
-
-                    </button>
-
-                </div>
-
-            </section>
-
-
-            <!-- =============================================
-                 AMBIENT DETAILS
-                 ============================================= -->
-
-            <section class="drawer-section">
-
-                <div class="drawer-section-heading">
-
-                    <span>
-                        Ambient Details
-                    </span>
-
-                    <p>
-                        Add a little life to the room.
-                    </p>
-
-                </div>
-
-
-                <div class="setting-list">
-
-                    <label class="toggle-setting">
-
-                        <span>
-
-                            <strong>
-                                Candle glow
-                            </strong>
-
-                            <small>
-                                Warm ambient light
-                            </small>
-
-                        </span>
-
-                        <input
-                            id="settingCandleGlow"
-                            type="checkbox"
-                            checked
-                        >
-
-                    </label>
-
-
-                    <label class="toggle-setting">
-
-                        <span>
-
-                            <strong>
-                                Floating dust
-                            </strong>
-
-                            <small>
-                                Tiny particles in the room
-                            </small>
-
-                        </span>
-
-                        <input
-                            id="settingDust"
-                            type="checkbox"
-                            checked
-                        >
-
-                    </label>
-
-
-                    <label class="toggle-setting">
-
-                        <span>
-
-                            <strong>
-                                Rainy window
-                            </strong>
-
-                            <small>
-                                Adds a rainy atmosphere
-                            </small>
-
-                        </span>
-
-                        <input
-                            id="settingRain"
-                            type="checkbox"
-                            checked
-                        >
-
-                    </label>
-
-
-                    <label class="toggle-setting">
-
-                        <span>
-
-                            <strong>
-                                Ambient oddities
-                            </strong>
-
-                            <small>
-                                Automatic theme decorations
-                            </small>
-
-                        </span>
-
-                        <input
-                            id="settingOddities"
-                            type="checkbox"
-                            checked
-                        >
-
-                    </label>
-
-
-                    <label class="toggle-setting">
-
-                        <span>
-
-                            <strong>
-                                Reduce motion
-                            </strong>
-
-                            <small>
-                                Turn off floating and flickering
-                            </small>
-
-                        </span>
-
-                        <input
-                            id="settingReducedMotion"
-                            type="checkbox"
-                        >
-
-                    </label>
-
-                </div>
-
-            </section>
-
-
-            <!-- =============================================
-                 DECORATION DENSITY
-                 ============================================= -->
-
-            <section class="drawer-section">
-
-                <div class="drawer-section-heading">
-
-                    <span>
-                        Decoration Density
-                    </span>
-
-                    <p>
-                        This only changes automatic room clutter.
-                        Decorations you place yourself always remain.
-                    </p>
-
-                </div>
-
-
-                <div class="radio-card-grid">
-
-                    <label class="radio-card">
-
-                        <input
-                            type="radio"
-                            name="decorationDensity"
-                            value="minimal"
-                        >
-
-                        <span>
-
-                            <strong>
-                                Tidy
-                            </strong>
-
-                            <small>
-                                Almost no automatic clutter
-                            </small>
-
-                        </span>
-
-                    </label>
-
-
-                    <label class="radio-card">
-
-                        <input
-                            type="radio"
-                            name="decorationDensity"
-                            value="cozy"
-                            checked
-                        >
-
-                        <span>
-
-                            <strong>
-                                Cozy
-                            </strong>
-
-                            <small>
-                                A few extra room details
-                            </small>
-
-                        </span>
-
-                    </label>
-
-
-                    <label class="radio-card">
-
-                        <input
-                            type="radio"
-                            name="decorationDensity"
-                            value="maximal"
-                        >
-
-                        <span>
-
-                            <strong>
-                                Curio Cabinet
-                            </strong>
-
-                            <small>
-                                Lots of strange little things
-                            </small>
-
-                        </span>
-
-                    </label>
-
-                </div>
-
-            </section>
-
-        </div>
-
-
-        <!-- =============================================
-             DONE BUTTON
-             ============================================= -->
-
-        <div class="theme-modal-actions">
-
-            <button
-                id="closeThemeSettingsButton"
-                class="primary-button"
-                type="button"
-            >
-                Done
-            </button>
-
-        </div>
-
-    </aside>
-
-
-    <!-- =====================================================
-         SHELF DRAWER
-         ===================================================== -->
-
-    <aside
-        id="shelfDrawer"
-        class="drawer"
-        hidden
-    >
-
-        <div class="drawer-header">
-
-            <div>
-
-                <span class="eyebrow">
-                    BOOKSHELF
-                </span>
-
-                <h2 id="shelfDrawerTitle">
-                    Add a Shelf
-                </h2>
-
-            </div>
-
-            <button
-                id="closeShelfDrawer"
-                class="icon-button"
-                type="button"
-                aria-label="Close shelf editor"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <form id="shelfForm">
-
-            <input
-                id="editingShelfId"
-                type="hidden"
-            >
-
-
-            <div class="drawer-body">
-
-                <section class="drawer-section">
-
-                    <div class="form-grid">
-
-                        <label class="field full-field">
-
-                            <span>
-                                Shelf Name
-                            </span>
-
-                            <input
-                                id="shelfName"
-                                type="text"
-                                placeholder="The Haunted Classics"
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="field full-field">
-
-                            <span>
-                                Description
-                            </span>
-
-                            <textarea
-                                id="shelfDescription"
-                                rows="3"
-                                placeholder="Old favorites, strange stories, and books best read after dark."
-                            ></textarea>
-
-                        </label>
-
-                    </div>
-
-                </section>
-
-
-                <section class="drawer-section">
-
-                    <div class="drawer-section-heading">
-
-                        <span>
-                            Shelf Style
-                        </span>
-
-                    </div>
-
-
-                    <div class="form-grid">
-
-                        <label class="field">
-
-                            <span>
-                                Material
-                            </span>
-
-                            <select id="shelfMaterial">
-
-                                <option value="walnut">
-                                    Walnut
-                                </option>
-
-                                <option value="honey">
-                                    Honey Oak
-                                </option>
-
-                                <option value="cream">
-                                    Antique Cream
-                                </option>
-
-                                <option value="sage">
-                                    Sage
-                                </option>
-
-                                <option value="rose">
-                                    Dusty Rose
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Mood
-                            </span>
-
-                            <select id="shelfMood">
-
-                                <option value="cozy">
-                                    Cozy
-                                </option>
-
-                                <option value="botanical">
-                                    Botanical
-                                </option>
-
-                                <option value="celestial">
-                                    Celestial
-                                </option>
-
-                                <option value="cottage">
-                                    Cottage
-                                </option>
-
-                                <option value="gothic">
-                                    Gothic
-                                </option>
-
-                                <option value="simple">
-                                    Simple
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Layout
-                            </span>
-
-                            <select id="shelfLayout">
-
-                                <option value="mixed">
-                                    Mixed
-                                </option>
-
-                                <option value="upright">
-                                    Upright
-                                </option>
-
-                                <option value="stacked">
-                                    Stacked
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Sort Books
-                            </span>
-
-                            <select id="shelfSort">
-
-                                <option value="manual">
-                                    Manual
-                                </option>
-
-                                <option value="title">
-                                    Title
-                                </option>
-
-                                <option value="author">
-                                    Author
-                                </option>
-
-                                <option value="rating">
-                                    Rating
-                                </option>
-
-                                <option value="finished">
-                                    Finished Date
-                                </option>
-
-                            </select>
-
-                        </label>
-
-                    </div>
-
-                </section>
-
-
-                <section class="drawer-section">
-
-                    <div class="drawer-section-heading">
-
-                        <span>
-                            Shelf Decorations
-                        </span>
-
-                        <p>
-                            Decorations can be moved around the shelf
-                            after you add them.
-                        </p>
-
-                    </div>
-
-
-                    <div class="decoration-options">
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="cat">
-                            <span>Cat</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="ghost">
-                            <span>Ghost</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="bat">
-                            <span>Bat</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="goblin">
-                            <span>Goblin</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="moss">
-                            <span>Moss</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="mushroom">
-                            <span>Mushroom</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="potion">
-                            <span>Potion</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="crystal">
-                            <span>Crystal</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="raven">
-                            <span>Raven</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="pumpkin">
-                            <span>Pumpkin</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="plant">
-                            <span>Plant</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="candle">
-                            <span>Candle</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="flowers">
-                            <span>Flowers</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="stars">
-                            <span>Stars</span>
-                        </label>
-
-                        <label class="decoration-option">
-                            <input type="checkbox" value="mug">
-                            <span>Mug</span>
-                        </label>
-
-                    </div>
-
-                </section>
-
-            </div>
-
-
-            <div class="drawer-actions">
-
-                <button
-                    id="cancelShelf"
-                    class="secondary-button"
-                    type="button"
-                >
-                    Cancel
-                </button>
-
-                <button
-                    class="primary-button"
-                    type="submit"
-                >
-                    <span id="saveShelfLabel">
-                        Save Shelf
-                    </span>
-                </button>
-
-            </div>
-
-        </form>
-
-    </aside>
-
-
-    <!-- =====================================================
-         BOOK DRAWER
-         ===================================================== -->
-
-    <aside
-        id="bookDrawer"
-        class="drawer book-drawer"
-        hidden
-    >
-
-        <div class="drawer-header">
-
-            <div>
-
-                <span class="eyebrow">
-                    BOOK
-                </span>
-
-                <h2 id="bookDrawerTitle">
-                    Add a Book
-                </h2>
-
-            </div>
-
-            <button
-                id="closeBookDrawer"
-                class="icon-button"
-                type="button"
-                aria-label="Close book editor"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <form id="bookForm">
-
-            <input
-                id="editingBookId"
-                type="hidden"
-            >
-
-
-            <div class="drawer-body">
-
-                <section class="drawer-section">
-
-                    <div class="drawer-section-heading">
-
-                        <span>
-                            Book Details
-                        </span>
-
-                    </div>
-
-
-                    <div class="form-grid">
-
-                        <label class="field full-field">
-
-                            <span>
-                                Title
-                            </span>
-
-                            <input
-                                id="bookTitle"
-                                type="text"
-                                placeholder="A Tree Grows in Brooklyn"
-                                required
-                            >
-
-                        </label>
-
-
-                        <label class="field full-field">
-
-                            <span>
-                                Author
-                            </span>
-
-                            <input
-                                id="bookAuthor"
-                                type="text"
-                                placeholder="Betty Smith"
-                            >
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Genre
-                            </span>
-
-                            <input
-                                id="bookGenre"
-                                type="text"
-                                placeholder="Literary Fiction"
-                            >
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Year
-                            </span>
-
-                            <input
-                                id="bookYear"
-                                type="number"
-                                min="0"
-                                max="9999"
-                                placeholder="1943"
-                            >
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Pages
-                            </span>
-
-                            <input
-                                id="bookPages"
-                                type="number"
-                                min="0"
-                                placeholder="496"
-                            >
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                ISBN
-                            </span>
-
-                            <input
-                                id="bookISBN"
-                                type="text"
-                                placeholder="Optional"
-                            >
-
-                        </label>
-
-
-                        <label class="field full-field">
-
-                            <span>
-                                Series
-                            </span>
-
-                            <input
-                                id="bookSeries"
-                                type="text"
-                                placeholder="Optional"
-                            >
-
-                        </label>
-
-                    </div>
-
-                </section>
-
-
-                <section class="drawer-section">
-
-                    <div class="drawer-section-heading">
-
-                        <span>
-                            Reading Details
-                        </span>
-
-                    </div>
-
-
-                    <div class="form-grid">
-
-                        <label class="field">
-
-                            <span>
-                                Shelf
-                            </span>
-
-                            <select id="bookShelf">
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Status
-                            </span>
-
-                            <select id="bookStatus">
-
-                                <option value="want">
-                                    Want to Read
-                                </option>
-
-                                <option value="reading">
-                                    Currently Reading
-                                </option>
-
-                                <option value="paused">
-                                    Paused
-                                </option>
-
-                                <option value="finished">
-                                    Finished
-                                </option>
-
-                                <option value="dnf">
-                                    Did Not Finish
-                                </option>
-
-                                <option value="reference">
-                                    Reference
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Rating
-                            </span>
-
-                            <select id="bookRating">
-
-                                <option value="0">
-                                    Not Rated
-                                </option>
-
-                                <option value="1">
-                                    ★
-                                </option>
-
-                                <option value="2">
-                                    ★★
-                                </option>
-
-                                <option value="3">
-                                    ★★★
-                                </option>
-
-                                <option value="4">
-                                    ★★★★
-                                </option>
-
-                                <option value="5">
-                                    ★★★★★
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Times Read
-                            </span>
-
-                            <input
-                                id="bookTimesRead"
-                                type="number"
-                                min="0"
-                                value="0"
-                            >
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Started
-                            </span>
-
-                            <input
-                                id="bookStarted"
-                                type="date"
-                            >
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Finished
-                            </span>
-
-                            <input
-                                id="bookFinished"
-                                type="date"
-                            >
-
-                        </label>
-
-
-                        <label class="field full-field">
-
-                            <span>
-                                Current Page
-                            </span>
-
-                            <input
-                                id="bookCurrentPage"
-                                type="number"
-                                min="0"
-                                placeholder="0"
-                            >
-
-                        </label>
-
-                    </div>
-
-                </section>
-
-
-                <section class="drawer-section">
-
-                    <div class="drawer-section-heading">
-
-                        <span>
-                            Book Cover
-                        </span>
-
-                        <p>
-                            Add a cover image if you have one.
-                            Shelfmark will generate a cover when
-                            no image is provided.
-                        </p>
-
-                    </div>
-
-
-                    <label class="upload-field">
-
-                        <span>
-                            Upload Cover
-                        </span>
-
-                        <input
-                            id="bookCoverUpload"
-                            type="file"
-                            accept="image/*"
-                        >
-
-                    </label>
-
-                </section>
-
-
-                <section class="drawer-section">
-
-                    <div class="drawer-section-heading">
-
-                        <span>
-                            Spine Design
-                        </span>
-
-                        <p>
-                            Your book spine is generated automatically.
-                        </p>
-
-                    </div>
-
-
-                    <div class="spine-editor-layout">
-
-                        <div class="spine-preview-area">
-
-                            <span class="preview-label">
-                                LIVE PREVIEW
-                            </span>
-
-
-                            <div
-                                id="bookSpinePreview"
-                                class="spine-preview-book spine-font-serif spine-size-medium spine-weight-regular spine-spacing-normal spine-case-typed spine-text-normal spine-align-center spine-panel-none"
-                            >
-
-                                <div class="spine-preview-inner">
-
-                                    <div
-                                        id="bookSpinePreviewTitlePanel"
-                                        class="spine-preview-title-panel"
-                                    >
-
-                                        <span
-                                            id="bookSpinePreviewTitle"
-                                            class="spine-preview-title"
-                                        >
-                                            Book Title
-                                        </span>
-
-                                    </div>
-
-
-                                    <span
-                                        id="bookSpinePreviewOrnament"
-                                        class="spine-preview-ornament"
-                                    >
-                                        ✦
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="spine-controls">
-
-                            <div class="form-grid">
-
-                                <label class="field">
-
-                                    <span>
-                                        Spine Style
-                                    </span>
-
-                                    <select id="bookStyle">
-
-                                        <option value="classic">
-                                            Classic
-                                        </option>
-
-                                        <option value="gothic">
-                                            Gothic
-                                        </option>
-
-                                        <option value="botanical">
-                                            Botanical
-                                        </option>
-
-                                        <option value="celestial">
-                                            Celestial
-                                        </option>
-
-                                        <option value="floral">
-                                            Floral
-                                        </option>
-
-                                        <option value="pastel">
-                                            Pastel
-                                        </option>
-
-                                        <option value="minimal">
-                                            Minimal
-                                        </option>
-
-                                        <option value="leather">
-                                            Leather
-                                        </option>
-
-                                        <option value="academia">
-                                            Academia
-                                        </option>
-
-                                        <option value="storybook">
-                                            Storybook
-                                        </option>
-
-                                    </select>
-
-                                </label>
-
-
-                                <label class="field">
-
-                                    <span>
-                                        Ornament
-                                    </span>
-
-                                    <select id="bookSpineOrnament">
-
-                                        <option value="auto">
-                                            Auto
-                                        </option>
-
-                                        <option value="star">
-                                            Star
-                                        </option>
-
-                                        <option value="moon">
-                                            Moon
-                                        </option>
-
-                                        <option value="flower">
-                                            Flower
-                                        </option>
-
-                                        <option value="leaf">
-                                            Leaf
-                                        </option>
-
-                                        <option value="diamond">
-                                            Diamond
-                                        </option>
-
-                                        <option value="heart">
-                                            Heart
-                                        </option>
-
-                                        <option value="none">
-                                            None
-                                        </option>
-
-                                    </select>
-
-                                </label>
-
-
-                                <label class="field color-field">
-
-                                    <span>
-                                        Spine Color
-                                    </span>
-
-                                    <input
-                                        id="bookSpineColor"
-                                        type="color"
-                                        value="#6c2633"
-                                    >
-
-                                </label>
-
-
-                                <label class="field color-field">
-
-                                    <span>
-                                        Text Color
-                                    </span>
-
-                                    <input
-                                        id="bookTextColor"
-                                        type="color"
-                                        value="#eadfca"
-                                    >
-
-                                </label>
-
-
-                                <label class="field color-field">
-
-                                    <span>
-                                        Accent Color
-                                    </span>
-
-                                    <input
-                                        id="bookAccentColor"
-                                        type="color"
-                                        value="#b28a4a"
-                                    >
-
-                                </label>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <section class="drawer-section">
-
-                    <div class="drawer-section-heading">
-
-                        <span>
-                            Spine Typography
-                        </span>
-
-                    </div>
-
-
-                    <div class="form-grid">
-
-                        <label class="field">
-
-                            <span>
-                                Font
-                            </span>
-
-                            <select id="bookSpineFont">
-
-                                <option value="serif">
-                                    Classic Serif
-                                </option>
-
-                                <option value="roman">
-                                    Roman
-                                </option>
-
-                                <option value="bookish">
-                                    Bookish
-                                </option>
-
-                                <option value="elegant">
-                                    Elegant
-                                </option>
-
-                                <option value="typewriter">
-                                    Typewriter
-                                </option>
-
-                                <option value="clean">
-                                    Clean
-                                </option>
-
-                                <option value="condensed">
-                                    Condensed
-                                </option>
-
-                                <option value="heavy">
-                                    Heavy
-                                </option>
-
-                                <option value="storybook">
-                                    Storybook
-                                </option>
-
-                                <option value="handwritten">
-                                    Handwritten
-                                </option>
-
-                                <option value="gothic">
-                                    Gothic
-                                </option>
-
-                                <option value="deco">
-                                    Deco
-                                </option>
-
-                                <option value="retro">
-                                    Retro
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Font Size
-                            </span>
-
-                            <select id="bookSpineFontSize">
-
-                                <option value="small">
-                                    Small
-                                </option>
-
-                                <option value="medium" selected>
-                                    Medium
-                                </option>
-
-                                <option value="large">
-                                    Large
-                                </option>
-
-                                <option value="xlarge">
-                                    Extra Large
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Weight
-                            </span>
-
-                            <select id="bookSpineFontWeight">
-
-                                <option value="light">
-                                    Light
-                                </option>
-
-                                <option value="regular" selected>
-                                    Regular
-                                </option>
-
-                                <option value="bold">
-                                    Bold
-                                </option>
-
-                                <option value="heavy">
-                                    Heavy
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Letter Spacing
-                            </span>
-
-                            <select id="bookSpineLetterSpacing">
-
-                                <option value="tight">
-                                    Tight
-                                </option>
-
-                                <option value="normal" selected>
-                                    Normal
-                                </option>
-
-                                <option value="wide">
-                                    Wide
-                                </option>
-
-                                <option value="extra-wide">
-                                    Extra Wide
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Text Case
-                            </span>
-
-                            <select id="bookSpineCase">
-
-                                <option value="typed" selected>
-                                    As Typed
-                                </option>
-
-                                <option value="uppercase">
-                                    Uppercase
-                                </option>
-
-                                <option value="lowercase">
-                                    Lowercase
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Font Style
-                            </span>
-
-                            <select id="bookSpineFontStyle">
-
-                                <option value="normal" selected>
-                                    Normal
-                                </option>
-
-                                <option value="italic">
-                                    Italic
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Title Position
-                            </span>
-
-                            <select id="bookSpineTextAlign">
-
-                                <option value="top">
-                                    Top
-                                </option>
-
-                                <option value="center" selected>
-                                    Center
-                                </option>
-
-                                <option value="bottom">
-                                    Bottom
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Title Panel
-                            </span>
-
-                            <select id="bookSpineTitlePanel">
-
-                                <option value="none" selected>
-                                    None
-                                </option>
-
-                                <option value="simple">
-                                    Simple
-                                </option>
-
-                                <option value="bordered">
-                                    Bordered
-                                </option>
-
-                                <option value="ornate">
-                                    Ornate
-                                </option>
-
-                                <option value="dark">
-                                    Dark
-                                </option>
-
-                                <option value="light">
-                                    Light
-                                </option>
-
-                            </select>
-
-                        </label>
-
-                    </div>
-
-                </section>
-
-
-                <section class="drawer-section">
-
-                    <div class="drawer-section-heading">
-
-                        <span>
-                            Book Size
-                        </span>
-
-                    </div>
-
-
-                    <div class="form-grid">
-
-                        <label class="field">
-
-                            <span>
-                                Height
-                            </span>
-
-                            <select id="bookHeight">
-
-                                <option value="small">
-                                    Small
-                                </option>
-
-                                <option value="medium" selected>
-                                    Medium
-                                </option>
-
-                                <option value="tall">
-                                    Tall
-                                </option>
-
-                            </select>
-
-                        </label>
-
-
-                        <label class="field">
-
-                            <span>
-                                Thickness
-                            </span>
-
-                            <select id="bookThickness">
-
-                                <option value="slim">
-                                    Slim
-                                </option>
-
-                                <option value="medium" selected>
-                                    Medium
-                                </option>
-
-                                <option value="chunky">
-                                    Chunky
-                                </option>
-
-                            </select>
-
-                        </label>
-
-                    </div>
-
-                </section>
-
-            </div>
-
-
-            <div class="drawer-actions">
-
-                <button
-                    id="cancelBook"
-                    class="secondary-button"
-                    type="button"
-                >
-                    Cancel
-                </button>
-
-                <button
-                    class="primary-button"
-                    type="submit"
-                >
-                    <span id="saveBookLabel">
-                        Save Book
-                    </span>
-                </button>
-
-            </div>
-
-        </form>
-
-    </aside>
-
-
-    <!-- =====================================================
-         BOOK REVEAL
-         ===================================================== -->
-
-    <section
-        id="bookReveal"
-        class="book-reveal"
-        hidden
-    >
-
-        <button
-            id="closeBookReveal"
-            class="reveal-close-button"
-            type="button"
-            aria-label="Close book"
+        <div
+            class="modal theme-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="themeModalTitle"
         >
-            ×
-        </button>
-
-
-        <div class="revealed-book">
-
-            <div
-                id="revealCover"
-                class="revealed-cover"
-            >
-            </div>
-
-
-            <div class="revealed-book-copy">
-
-                <span
-                    id="revealStatus"
-                    class="eyebrow"
-                >
-                    BOOK
-                </span>
-
-                <h2 id="revealTitle">
-                    Book Title
-                </h2>
-
-                <p
-                    id="revealAuthor"
-                    class="reveal-author"
-                >
-                    Author
-                </p>
-
-
-                <div class="reveal-meta-grid">
-
-                    <div>
-                        <span>Started</span>
-                        <strong id="revealStarted">—</strong>
-                    </div>
-
-                    <div>
-                        <span>Finished</span>
-                        <strong id="revealFinished">—</strong>
-                    </div>
-
-                    <div>
-                        <span>Pages</span>
-                        <strong id="revealPageCount">—</strong>
-                    </div>
-
-                    <div>
-                        <span>Rating</span>
-                        <strong id="revealRating">—</strong>
-                    </div>
-
-                </div>
-
-
-                <div class="reveal-progress">
-
-                    <div class="reveal-progress-copy">
-
-                        <span>
-                            Reading Progress
-                        </span>
-
-                        <strong id="revealPercent">
-                            0%
-                        </strong>
-
-                    </div>
-
-
-                    <div class="progress-track">
-
-                        <div
-                            id="revealProgressBar"
-                            class="progress-fill"
-                        >
-                        </div>
-
-                        <span
-                            id="progressBookmark"
-                            class="progress-bookmark"
-                        >
-                            ◆
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="reveal-actions">
-
-                    <button
-                        id="editSelectedBook"
-                        class="secondary-button"
-                        type="button"
-                    >
-                        Edit Book
-                    </button>
-
-                    <button
-                        id="openSelectedBook"
-                        class="primary-button"
-                        type="button"
-                    >
-                        Open Book
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         OPEN BOOK / READING JOURNAL
-         ===================================================== -->
-
-    <section
-        id="readingBook"
-        class="reading-book"
-        hidden
-    >
-
-        <button
-            id="closeReadingBook"
-            class="reading-book-close"
-            type="button"
-            aria-label="Close reading journal"
-        >
-            ×
-        </button>
-
-
-        <div class="journal-shell">
-
-            <aside class="journal-sidebar">
-
-                <div
-                    id="journalCover"
-                    class="journal-cover"
-                >
-                </div>
-
-                <span class="eyebrow">
-                    READING JOURNAL
-                </span>
-
-                <h2 id="journalBookTitle">
-                    Book Title
-                </h2>
-
-                <p id="journalBookAuthor">
-                    Author
-                </p>
-
-
-                <div class="journal-book-meta">
-
-                    <div>
-                        <span>Status</span>
-                        <strong id="journalStatus">—</strong>
-                    </div>
-
-                    <div>
-                        <span>Started</span>
-                        <strong id="journalStarted">—</strong>
-                    </div>
-
-                    <div>
-                        <span>Finished</span>
-                        <strong id="journalFinished">—</strong>
-                    </div>
-
-                    <div>
-                        <span>Pages</span>
-                        <strong id="journalPages">—</strong>
-                    </div>
-
-                </div>
-
-            </aside>
-
-
-            <div class="journal-main">
-
-                <div id="journalContents">
-
-                    <span class="eyebrow">
-                        TABLE OF CONTENTS
-                    </span>
-
-                    <h2>
-                        My notes inside this book
-                    </h2>
-
-
-                    <div class="journal-contents-grid">
-
-                        <button type="button" data-journal-section="overview">
-                            <span>01</span>
-                            <strong>Overview</strong>
-                        </button>
-
-                        <button type="button" data-journal-section="notes">
-                            <span>02</span>
-                            <strong>Notes</strong>
-                        </button>
-
-                        <button type="button" data-journal-section="thoughts">
-                            <span>03</span>
-                            <strong>Thoughts</strong>
-                        </button>
-
-                        <button type="button" data-journal-section="words">
-                            <span>04</span>
-                            <strong>Word Study</strong>
-                        </button>
-
-                        <button type="button" data-journal-section="quotes">
-                            <span>05</span>
-                            <strong>Quotes</strong>
-                        </button>
-
-                        <button type="button" data-journal-section="characters">
-                            <span>06</span>
-                            <strong>Characters</strong>
-                        </button>
-
-                        <button type="button" data-journal-section="themes">
-                            <span>07</span>
-                            <strong>Themes</strong>
-                        </button>
-
-                        <button type="button" data-journal-section="questions">
-                            <span>08</span>
-                            <strong>Questions</strong>
-                        </button>
-
-                        <button type="button" data-journal-section="review">
-                            <span>09</span>
-                            <strong>Review</strong>
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="journalSection"
-                    hidden
-                >
-
-                    <button
-                        id="backToContents"
-                        class="journal-back-button"
-                        type="button"
-                    >
-                        ← Contents
-                    </button>
-
-                    <span
-                        id="journalSectionLabel"
-                        class="eyebrow"
-                    >
-                        JOURNAL
-                    </span>
-
-                    <h2 id="journalSectionTitle">
-                        Notes
-                    </h2>
-
-                    <div
-                        id="journalEntries"
-                        class="journal-entries"
-                    >
-                    </div>
-
-                    <button
-                        id="addJournalEntry"
-                        class="primary-button"
-                        type="button"
-                    >
-                        + Add Entry
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         JOURNAL ENTRY MODAL
-         ===================================================== -->
-
-    <div
-        id="entryModal"
-        class="modal"
-        hidden
-    >
-
-        <div class="modal-card">
 
             <div class="modal-header">
 
                 <div>
 
-                    <span class="eyebrow">
-                        READING JOURNAL
-                    </span>
+                    <p class="section-kicker">
+                        Make it yours
+                    </p>
 
-                    <h2 id="entryModalTitle">
-                        Add Entry
+                    <h2 id="themeModalTitle">
+                        Choose a Theme
                     </h2>
 
                 </div>
 
+
                 <button
-                    id="closeEntryModal"
-                    class="icon-button"
+                    class="modal-close"
+                    id="themeModalClose"
                     type="button"
-                    aria-label="Close entry modal"
+                    aria-label="Close theme selector"
                 >
                     ×
                 </button>
@@ -3031,77 +1022,173 @@
             </div>
 
 
-            <form id="entryForm">
+            <div class="theme-grid">
 
-                <input
-                    id="entrySection"
-                    type="hidden"
+                <button
+                    class="theme-option active"
+                    type="button"
+                    data-theme="default"
                 >
+                    <span class="theme-preview theme-preview-default">
+                    </span>
 
-                <div
-                    id="entryDynamicFields"
-                    class="modal-body"
+                    <span class="theme-option-name">
+                        Shelfmark
+                    </span>
+
+                    <span class="theme-option-description">
+                        Warm, literary, and timeless
+                    </span>
+                </button>
+
+
+                <button
+                    class="theme-option"
+                    type="button"
+                    data-theme="haunted"
                 >
-                </div>
+                    <span class="theme-preview theme-preview-haunted">
+                    </span>
+
+                    <span class="theme-option-name">
+                        Haunted Library
+                    </span>
+
+                    <span class="theme-option-description">
+                        Dark wood, candlelight, and ghosts
+                    </span>
+                </button>
 
 
-                <div class="modal-actions">
+                <button
+                    class="theme-option"
+                    type="button"
+                    data-theme="dark-academia"
+                >
+                    <span class="theme-preview theme-preview-academia">
+                    </span>
 
-                    <button
-                        id="cancelEntry"
-                        class="secondary-button"
-                        type="button"
-                    >
-                        Cancel
-                    </button>
+                    <span class="theme-option-name">
+                        Dark Academia
+                    </span>
 
-                    <button
-                        class="primary-button"
-                        type="submit"
-                    >
-                        Save Entry
-                    </button>
+                    <span class="theme-option-description">
+                        Ink, leather, old paper, and study halls
+                    </span>
+                </button>
 
-                </div>
 
-            </form>
+                <button
+                    class="theme-option"
+                    type="button"
+                    data-theme="rainy-london"
+                >
+                    <span class="theme-preview theme-preview-london">
+                    </span>
+
+                    <span class="theme-option-name">
+                        Rainy London
+                    </span>
+
+                    <span class="theme-option-description">
+                        Moody windows and rainy reading days
+                    </span>
+                </button>
+
+
+                <button
+                    class="theme-option"
+                    type="button"
+                    data-theme="enchanted-forest"
+                >
+                    <span class="theme-preview theme-preview-forest">
+                    </span>
+
+                    <span class="theme-option-name">
+                        Enchanted Forest
+                    </span>
+
+                    <span class="theme-option-description">
+                        Moss, mushrooms, books, and magic
+                    </span>
+                </button>
+
+
+                <button
+                    class="theme-option"
+                    type="button"
+                    data-theme="cozy-autumn"
+                >
+                    <span class="theme-preview theme-preview-autumn">
+                    </span>
+
+                    <span class="theme-option-name">
+                        Cozy Autumn
+                    </span>
+
+                    <span class="theme-option-description">
+                        Warm wood, pumpkins, and falling leaves
+                    </span>
+                </button>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    class="primary-button"
+                    id="themeDoneButton"
+                    type="button"
+                >
+                    Done
+                </button>
+
+            </div>
 
         </div>
 
     </div>
 
 
-    <!-- =====================================================
-         PROGRESS MODAL
-         ===================================================== -->
+
+    <!-- =====================================
+         ADD BOOK MODAL
+    ====================================== -->
 
     <div
-        id="progressModal"
-        class="modal"
-        hidden
+        class="modal-overlay"
+        id="addBookModal"
+        aria-hidden="true"
     >
 
-        <div class="modal-card progress-modal-card">
+        <div
+            class="modal book-form-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="addBookModalTitle"
+        >
 
             <div class="modal-header">
 
                 <div>
 
-                    <span class="eyebrow">
-                        READING PROGRESS
-                    </span>
+                    <p class="section-kicker">
+                        New addition
+                    </p>
 
-                    <h2>
-                        Update your place
+                    <h2 id="addBookModalTitle">
+                        Add a Book
                     </h2>
 
                 </div>
 
+
                 <button
-                    id="closeProgressModal"
-                    class="icon-button"
+                    class="modal-close"
+                    id="addBookModalClose"
                     type="button"
-                    aria-label="Close progress modal"
+                    aria-label="Close add book form"
                 >
                     ×
                 </button>
@@ -3109,106 +1196,302 @@
             </div>
 
 
-            <form id="progressForm">
+            <form id="addBookForm">
 
-                <input
-                    id="progressBookId"
-                    type="hidden"
-                >
+                <div class="form-grid">
 
-                <div class="modal-body">
+                    <!-- Title -->
 
-                    <div class="progress-book-info">
+                    <div class="form-group form-group-full">
 
-                        <span>
-                            CURRENT READ
-                        </span>
-
-                        <strong id="progressBookTitle">
+                        <label for="bookTitle">
                             Book Title
-                        </strong>
+                        </label>
 
-                        <small id="progressBookTotal">
-                            0 pages
-                        </small>
+                        <input
+                            type="text"
+                            id="bookTitle"
+                            name="title"
+                            required
+                        >
 
                     </div>
 
 
-                    <label class="field">
+                    <!-- Author -->
 
-                        <span>
-                            Current Page
-                        </span>
+                    <div class="form-group form-group-full">
+
+                        <label for="bookAuthor">
+                            Author
+                        </label>
 
                         <input
-                            id="progressCurrentPage"
+                            type="text"
+                            id="bookAuthor"
+                            name="author"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Cover URL -->
+
+                    <div class="form-group form-group-full">
+
+                        <label for="bookCover">
+                            Cover Image URL
+                        </label>
+
+                        <input
+                            type="url"
+                            id="bookCover"
+                            name="cover_url"
+                            placeholder="https://..."
+                        >
+
+                    </div>
+
+
+                    <!-- Shelf -->
+
+                    <div class="form-group">
+
+                        <label for="bookShelf">
+                            Shelf
+                        </label>
+
+                        <select
+                            id="bookShelf"
+                            name="shelf"
+                        >
+                            <option value="general">
+                                General Library
+                            </option>
+
+                            <option value="favorites">
+                                Favorites
+                            </option>
+
+                            <option value="classics">
+                                Classics
+                            </option>
+
+                            <option value="fiction">
+                                Fiction
+                            </option>
+
+                            <option value="nonfiction">
+                                Nonfiction
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <!-- Status -->
+
+                    <div class="form-group">
+
+                        <label for="bookStatus">
+                            Reading Status
+                        </label>
+
+                        <select
+                            id="bookStatus"
+                            name="status"
+                        >
+                            <option value="want-to-read">
+                                Want to Read
+                            </option>
+
+                            <option value="reading">
+                                Currently Reading
+                            </option>
+
+                            <option value="finished">
+                                Finished
+                            </option>
+
+                            <option value="dnf">
+                                Did Not Finish
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <!-- Spine Style -->
+
+                    <div class="form-group">
+
+                        <label for="bookSpineStyle">
+                            Spine Size
+                        </label>
+
+                        <select
+                            id="bookSpineStyle"
+                            name="spine_style"
+                        >
+                            <option value="slim">
+                                Slim
+                            </option>
+
+                            <option
+                                value="medium"
+                                selected
+                            >
+                                Medium
+                            </option>
+
+                            <option value="chunky">
+                                Chunky
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <!-- Spine Color -->
+
+                    <div class="form-group">
+
+                        <label for="bookSpineColor">
+                            Spine Color
+                        </label>
+
+                        <input
+                            type="color"
+                            id="bookSpineColor"
+                            name="spine_color"
+                            value="#69483a"
+                        >
+
+                    </div>
+
+
+                    <!-- Spine Font -->
+
+                    <div class="form-group">
+
+                        <label for="bookSpineFont">
+                            Spine Font
+                        </label>
+
+                        <select
+                            id="bookSpineFont"
+                            name="spine_font"
+                        >
+                            <option value="serif">
+                                Classic Serif
+                            </option>
+
+                            <option value="elegant">
+                                Elegant
+                            </option>
+
+                            <option value="typewriter">
+                                Typewriter
+                            </option>
+
+                            <option value="gothic">
+                                Gothic
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <!-- Total Pages -->
+
+                    <div class="form-group">
+
+                        <label for="bookPages">
+                            Total Pages
+                        </label>
+
+                        <input
                             type="number"
+                            id="bookPages"
+                            name="total_pages"
+                            min="1"
+                        >
+
+                    </div>
+
+
+                    <!-- Current Page -->
+
+                    <div class="form-group">
+
+                        <label for="bookCurrentPage">
+                            Current Page
+                        </label>
+
+                        <input
+                            type="number"
+                            id="bookCurrentPage"
+                            name="current_page"
                             min="0"
                             value="0"
                         >
 
-                    </label>
+                    </div>
 
 
-                    <label class="toggle-setting">
+                    <!-- Started -->
 
-                        <span>
+                    <div class="form-group">
 
-                            <strong>
-                                Mark book finished
-                            </strong>
-
-                            <small>
-                                Move this book to finished
-                            </small>
-
-                        </span>
+                        <label for="bookStartDate">
+                            Start Date
+                        </label>
 
                         <input
-                            id="markBookFinished"
-                            type="checkbox"
+                            type="date"
+                            id="bookStartDate"
+                            name="start_date"
                         >
 
-                    </label>
+                    </div>
 
 
-                    <div class="progress-preview">
+                    <!-- Finished -->
 
-                        <div class="progress-track">
+                    <div class="form-group">
 
-                            <div
-                                id="progressPreviewFill"
-                                class="progress-fill"
-                            >
-                            </div>
+                        <label for="bookFinishDate">
+                            Finish Date
+                        </label>
 
-                        </div>
-
-                        <strong id="progressPreviewPercent">
-                            0%
-                        </strong>
+                        <input
+                            type="date"
+                            id="bookFinishDate"
+                            name="finish_date"
+                        >
 
                     </div>
 
                 </div>
 
 
-                <div class="modal-actions">
+                <div class="modal-footer">
 
                     <button
-                        id="cancelProgressUpdate"
                         class="secondary-button"
+                        id="cancelAddBookButton"
                         type="button"
                     >
                         Cancel
                     </button>
 
+
                     <button
                         class="primary-button"
                         type="submit"
                     >
-                        Save Progress
+                        Add to Library
                     </button>
 
                 </div>
@@ -3220,15 +1503,813 @@
     </div>
 
 
-    <!-- =====================================================
+
+    <!-- =====================================
+         BOOK DETAIL MODAL
+    ====================================== -->
+
+    <div
+        class="modal-overlay"
+        id="bookDetailModal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal book-detail-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="detailBookTitle"
+        >
+
+            <div class="book-detail-toolbar">
+
+                <button
+                    class="modal-close"
+                    id="bookDetailModalClose"
+                    type="button"
+                    aria-label="Close book"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="book-detail-layout">
+
+                <!-- Book Cover / Summary -->
+
+                <aside class="book-detail-sidebar">
+
+                    <div
+                        class="book-detail-cover"
+                        id="detailBookCover"
+                    >
+                    </div>
+
+
+                    <h2 id="detailBookTitle">
+                        Book Title
+                    </h2>
+
+
+                    <p id="detailBookAuthor">
+                        Author
+                    </p>
+
+
+                    <div class="book-detail-meta">
+
+                        <span
+                            class="status-pill"
+                            id="detailBookStatus"
+                        >
+                            Want to Read
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="book-rating"
+                        id="detailBookRating"
+                    >
+                    </div>
+
+                </aside>
+
+
+                <!-- Book Journal -->
+
+                <div class="book-journal">
+
+                    <!-- Tabs -->
+
+                    <div
+                        class="book-tabs"
+                        role="tablist"
+                        aria-label="Book journal sections"
+                    >
+
+                        <button
+                            class="book-tab active"
+                            type="button"
+                            data-book-tab="overview"
+                        >
+                            Overview
+                        </button>
+
+
+                        <button
+                            class="book-tab"
+                            type="button"
+                            data-book-tab="notes"
+                        >
+                            Notes
+                        </button>
+
+
+                        <button
+                            class="book-tab"
+                            type="button"
+                            data-book-tab="word-study"
+                        >
+                            Word Study
+                        </button>
+
+
+                        <button
+                            class="book-tab"
+                            type="button"
+                            data-book-tab="thoughts"
+                        >
+                            Thoughts
+                        </button>
+
+
+                        <button
+                            class="book-tab"
+                            type="button"
+                            data-book-tab="review"
+                        >
+                            Review
+                        </button>
+
+                    </div>
+
+
+                    <!-- Overview -->
+
+                    <section
+                        class="book-tab-panel active"
+                        data-book-panel="overview"
+                    >
+
+                        <h3>
+                            Reading Progress
+                        </h3>
+
+
+                        <div class="book-progress-form">
+
+                            <label for="detailCurrentPage">
+                                Current Page
+                            </label>
+
+                            <input
+                                type="number"
+                                id="detailCurrentPage"
+                                min="0"
+                            >
+
+
+                            <label for="detailTotalPages">
+                                Total Pages
+                            </label>
+
+                            <input
+                                type="number"
+                                id="detailTotalPages"
+                                min="1"
+                            >
+
+
+                            <button
+                                class="primary-button"
+                                id="saveProgressButton"
+                                type="button"
+                            >
+                                Save Progress
+                            </button>
+
+                        </div>
+
+
+                        <div class="reading-dates">
+
+                            <div>
+
+                                <span class="detail-label">
+                                    Started
+                                </span>
+
+                                <span id="detailStartDate">
+                                    —
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <span class="detail-label">
+                                    Finished
+                                </span>
+
+                                <span id="detailFinishDate">
+                                    —
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- Notes -->
+
+                    <section
+                        class="book-tab-panel"
+                        data-book-panel="notes"
+                    >
+
+                        <div class="journal-panel-header">
+
+                            <h3>
+                                Reading Notes
+                            </h3>
+
+                            <button
+                                class="secondary-button"
+                                id="addNoteButton"
+                                type="button"
+                            >
+                                + Add Note
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="journal-entry-list"
+                            id="notesList"
+                        >
+                        </div>
+
+                    </section>
+
+
+                    <!-- Word Study -->
+
+                    <section
+                        class="book-tab-panel"
+                        data-book-panel="word-study"
+                    >
+
+                        <div class="journal-panel-header">
+
+                            <h3>
+                                Word Study
+                            </h3>
+
+                            <button
+                                class="secondary-button"
+                                id="addWordButton"
+                                type="button"
+                            >
+                                + Add Word
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="journal-entry-list"
+                            id="wordStudyList"
+                        >
+                        </div>
+
+                    </section>
+
+
+                    <!-- Thoughts -->
+
+                    <section
+                        class="book-tab-panel"
+                        data-book-panel="thoughts"
+                    >
+
+                        <div class="journal-panel-header">
+
+                            <h3>
+                                Thoughts
+                            </h3>
+
+                        </div>
+
+
+                        <textarea
+                            id="bookThoughts"
+                            rows="12"
+                            placeholder="What are you thinking about as you read?"
+                        ></textarea>
+
+
+                        <button
+                            class="primary-button"
+                            id="saveThoughtsButton"
+                            type="button"
+                        >
+                            Save Thoughts
+                        </button>
+
+                    </section>
+
+
+                    <!-- Review -->
+
+                    <section
+                        class="book-tab-panel"
+                        data-book-panel="review"
+                    >
+
+                        <h3>
+                            Your Review
+                        </h3>
+
+
+                        <fieldset class="rating-field">
+
+                            <legend>
+                                Rating
+                            </legend>
+
+
+                            <div
+                                class="star-rating"
+                                id="reviewStarRating"
+                            >
+
+                                <button
+                                    type="button"
+                                    data-rating="1"
+                                    aria-label="1 star"
+                                >
+                                    ★
+                                </button>
+
+                                <button
+                                    type="button"
+                                    data-rating="2"
+                                    aria-label="2 stars"
+                                >
+                                    ★
+                                </button>
+
+                                <button
+                                    type="button"
+                                    data-rating="3"
+                                    aria-label="3 stars"
+                                >
+                                    ★
+                                </button>
+
+                                <button
+                                    type="button"
+                                    data-rating="4"
+                                    aria-label="4 stars"
+                                >
+                                    ★
+                                </button>
+
+                                <button
+                                    type="button"
+                                    data-rating="5"
+                                    aria-label="5 stars"
+                                >
+                                    ★
+                                </button>
+
+                            </div>
+
+                        </fieldset>
+
+
+                        <label for="bookReview">
+                            Review
+                        </label>
+
+                        <textarea
+                            id="bookReview"
+                            rows="10"
+                            placeholder="What did you think?"
+                        ></textarea>
+
+
+                        <button
+                            class="primary-button"
+                            id="saveReviewButton"
+                            type="button"
+                        >
+                            Save Review
+                        </button>
+
+                    </section>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================
+         NOTE MODAL
+    ====================================== -->
+
+    <div
+        class="modal-overlay"
+        id="noteModal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal small-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="noteModalTitle"
+        >
+
+            <div class="modal-header">
+
+                <h2 id="noteModalTitle">
+                    Add Note
+                </h2>
+
+
+                <button
+                    class="modal-close"
+                    id="noteModalClose"
+                    type="button"
+                    aria-label="Close note"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="noteForm">
+
+                <div class="form-group">
+
+                    <label for="notePage">
+                        Page
+                    </label>
+
+                    <input
+                        type="number"
+                        id="notePage"
+                        min="1"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="noteText">
+                        Note
+                    </label>
+
+                    <textarea
+                        id="noteText"
+                        rows="8"
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        class="primary-button"
+                        type="submit"
+                    >
+                        Save Note
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================
+         WORD STUDY MODAL
+    ====================================== -->
+
+    <div
+        class="modal-overlay"
+        id="wordModal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal small-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="wordModalTitle"
+        >
+
+            <div class="modal-header">
+
+                <h2 id="wordModalTitle">
+                    Add Word
+                </h2>
+
+
+                <button
+                    class="modal-close"
+                    id="wordModalClose"
+                    type="button"
+                    aria-label="Close word study"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="wordForm">
+
+                <div class="form-group">
+
+                    <label for="studyWord">
+                        Word
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studyWord"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="wordDefinition">
+                        Definition
+                    </label>
+
+                    <textarea
+                        id="wordDefinition"
+                        rows="4"
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="wordContext">
+                        Context / Why I Saved It
+                    </label>
+
+                    <textarea
+                        id="wordContext"
+                        rows="4"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        class="primary-button"
+                        type="submit"
+                    >
+                        Save Word
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================
+         AUTH MODAL
+    ====================================== -->
+
+    <div
+        class="modal-overlay"
+        id="authModal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal auth-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="authModalTitle"
+        >
+
+            <div class="modal-header">
+
+                <div>
+
+                    <p class="section-kicker">
+                        Your Shelfmark
+                    </p>
+
+                    <h2 id="authModalTitle">
+                        Sign In
+                    </h2>
+
+                </div>
+
+
+                <button
+                    class="modal-close"
+                    id="authModalClose"
+                    type="button"
+                    aria-label="Close sign in"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <!-- Sign In -->
+
+            <form
+                id="signInForm"
+                class="auth-form"
+            >
+
+                <div class="form-group">
+
+                    <label for="signInEmail">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="signInEmail"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="signInPassword">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="signInPassword"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    class="primary-button full-width-button"
+                    type="submit"
+                >
+                    Sign In
+                </button>
+
+
+                <button
+                    class="text-button auth-switch"
+                    id="showSignUpButton"
+                    type="button"
+                >
+                    Don't have an account? Create one
+                </button>
+
+            </form>
+
+
+            <!-- Sign Up -->
+
+            <form
+                id="signUpForm"
+                class="auth-form"
+                hidden
+            >
+
+                <div class="form-group">
+
+                    <label for="signUpEmail">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="signUpEmail"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="signUpPassword">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="signUpPassword"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    class="primary-button full-width-button"
+                    type="submit"
+                >
+                    Create Account
+                </button>
+
+
+                <button
+                    class="text-button auth-switch"
+                    id="showSignInButton"
+                    type="button"
+                >
+                    Already have an account? Sign in
+                </button>
+
+            </form>
+
+
+            <p
+                class="form-message"
+                id="authMessage"
+                aria-live="polite"
+            >
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================
+         TOAST / APP MESSAGE
+    ====================================== -->
+
+    <div
+        class="toast"
+        id="toast"
+        role="status"
+        aria-live="polite"
+        aria-hidden="true"
+    >
+        <span id="toastMessage"></span>
+    </div>
+
+
+
+    <!-- =====================================
          SCRIPTS
-         ===================================================== -->
+    ====================================== -->
 
-    <script src="js/config.js"></script>
+    <!-- Supabase browser client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/library.js"></script>
-
+    <!-- Our app files -->
+    <script src="./js/supabase.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/books.js"></script>
+    <script src="./js/shelves.js"></script>
+    <script src="./js/themes.js"></script>
+    <script src="./js/app.js"></script>
 
 </body>
-
 </html>
