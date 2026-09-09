@@ -1,426 +1,1530 @@
-/* ==========================================================
+/* =========================================================
    NOVELLOW
    THEMES.CSS
-========================================================== */
+
+   Theme variables
+   Theme-specific surfaces
+   Theme previews
+   Ambient details
+   ========================================================= */
 
 
-/* ==========================================================
-   DEFAULT THEME
-========================================================== */
+/* =========================================================
+   DEFAULT / HAUNTED LIBRARY
+   ========================================================= */
 
-body{
+body.theme-haunted,
+body[data-theme="haunted"] {
+    --bg: #171416;
+    --bg-2: #1d181b;
 
-    --background:#F7F2EA;
+    --panel: #241d21;
+    --panel-2: #2c2227;
+    --panel-3: #35292f;
 
-    --surface:#FFFFFF;
+    --paper: #f2e6d2;
+    --paper-soft: #d8c6ad;
 
-    --surface-alt:#F3ECE3;
+    --text: #f2e6d2;
+    --text-soft: #baa7a0;
 
-    --sidebar:#F4EEE5;
+    --muted: #9c8c8a;
+    --muted-light: #74676a;
 
-    --primary:#7A5235;
+    --accent: #9d4962;
+    --accent-light: #d9af82;
+    --accent-2: #b76f62;
 
-    --primary-dark:#5D3E29;
+    --wood: #5a3d34;
+    --wood-mid: #745047;
+    --wood-dark: #342521;
 
-    --primary-light:#B98A61;
+    --border:
+        rgba(242, 230, 210, 0.11);
 
-    --accent:#D49A42;
+    --border-soft:
+        rgba(242, 230, 210, 0.06);
 
-    --text-primary:#2E2A26;
+    --border-strong:
+        rgba(242, 230, 210, 0.18);
 
-    --text-secondary:#6E645A;
+    --danger: #bd5c60;
+    --danger-dark: #733b40;
 
-    --text-light:#9A9085;
-
-    --border:#E7DED4;
-
-    --wood-light:#C28E60;
-
-    --wood-medium:#A56E44;
-
-    --wood-dark:#714629;
-
-    --glow:none;
-
+    --success: #73856c;
 }
 
 
+/* =========================================================
+   AUTUMN BOOKSHOP
+   ========================================================= */
 
-/* ==========================================================
-   SHARED THEME TRANSITIONS
-========================================================== */
+body.theme-autumn,
+body[data-theme="autumn"] {
+    --bg: #211812;
+    --bg-2: #291f18;
+
+    --panel: #33261e;
+    --panel-2: #3d2d23;
+    --panel-3: #47362a;
+
+    --paper: #f4e7cc;
+    --paper-soft: #ddc9a6;
+
+    --text: #f4e7cc;
+    --text-soft: #c9b296;
+
+    --muted: #a79279;
+    --muted-light: #7f6e5d;
+
+    --accent: #b9633f;
+    --accent-light: #e0b16a;
+    --accent-2: #cf7d49;
+
+    --wood: #6c452e;
+    --wood-mid: #875b3b;
+    --wood-dark: #3a2519;
+
+    --border:
+        rgba(244, 231, 204, 0.12);
+
+    --border-soft:
+        rgba(244, 231, 204, 0.065);
+
+    --border-strong:
+        rgba(244, 231, 204, 0.2);
+
+    --danger: #b55c50;
+    --danger-dark: #70403a;
+
+    --success: #7b8b5f;
+}
+
+
+/* =========================================================
+   ENCHANTED FOREST
+   ========================================================= */
+
+body.theme-forest,
+body[data-theme="forest"] {
+    --bg: #111914;
+    --bg-2: #162019;
+
+    --panel: #1d2a20;
+    --panel-2: #253428;
+    --panel-3: #2e3d31;
+
+    --paper: #e8e0c6;
+    --paper-soft: #cfc4a6;
+
+    --text: #e8e0c6;
+    --text-soft: #b7b09a;
+
+    --muted: #879083;
+    --muted-light: #667067;
+
+    --accent: #667d55;
+    --accent-light: #c1b66f;
+    --accent-2: #8b7653;
+
+    --wood: #4f3b2a;
+    --wood-mid: #68503a;
+    --wood-dark: #2f241a;
+
+    --border:
+        rgba(232, 224, 198, 0.11);
+
+    --border-soft:
+        rgba(232, 224, 198, 0.055);
+
+    --border-strong:
+        rgba(232, 224, 198, 0.18);
+
+    --danger: #a25d58;
+    --danger-dark: #683e3a;
+
+    --success: #68845f;
+}
+
+
+/* =========================================================
+   RETRO HORROR
+   ========================================================= */
+
+body.theme-retro,
+body[data-theme="retro"] {
+    --bg: #13110f;
+    --bg-2: #1b1714;
+
+    --panel: #241e19;
+    --panel-2: #2d251f;
+    --panel-3: #372d25;
+
+    --paper: #f2ddbd;
+    --paper-soft: #d7bd96;
+
+    --text: #f2ddbd;
+    --text-soft: #bda78a;
+
+    --muted: #91806f;
+    --muted-light: #6c5f54;
+
+    --accent: #a84530;
+    --accent-light: #d29a55;
+    --accent-2: #68774a;
+
+    --wood: #4d3325;
+    --wood-mid: #694735;
+    --wood-dark: #2b1e18;
+
+    --border:
+        rgba(242, 221, 189, 0.11);
+
+    --border-soft:
+        rgba(242, 221, 189, 0.055);
+
+    --border-strong:
+        rgba(242, 221, 189, 0.18);
+
+    --danger: #b85148;
+    --danger-dark: #703834;
+
+    --success: #6f7e55;
+}
+
+
+/* =========================================================
+   PASTEL GHOSTS
+   ========================================================= */
+
+body.theme-ghosts,
+body[data-theme="ghosts"] {
+    --bg: #eee6df;
+    --bg-2: #e4d8d2;
+
+    --panel: #f6efe9;
+    --panel-2: #eaded8;
+    --panel-3: #dfd1cb;
+
+    --paper: #4e4147;
+    --paper-soft: #6f5c64;
+
+    --text: #4e4147;
+    --text-soft: #75656a;
+
+    --muted: #927f84;
+    --muted-light: #ad9b9f;
+
+    --accent: #b56f87;
+    --accent-light: #9fae8b;
+    --accent-2: #c68d77;
+
+    --wood: #aa7d68;
+    --wood-mid: #c0927c;
+    --wood-dark: #785647;
+
+    --border:
+        rgba(78, 65, 71, 0.12);
+
+    --border-soft:
+        rgba(78, 65, 71, 0.065);
+
+    --border-strong:
+        rgba(78, 65, 71, 0.18);
+
+    --danger: #b25e68;
+    --danger-dark: #8c4f58;
+
+    --success: #7f9876;
+}
+
+
+/* =========================================================
+   THEME TRANSITIONS
+   ========================================================= */
 
 body,
-#sidebar,
-#appHeader,
-.card,
-.book,
-.book-spine,
-.wood-shelf{
-
+.site-header,
+.drawer,
+.modal-card,
+.library-toolbar,
+.collection-toolbar,
+.empty-state,
+.toggle-card,
+.density-option,
+.stat-card,
+.stats-panel {
     transition:
-
-        background .35s ease,
-
-        color .35s ease,
-
-        border-color .35s ease,
-
-        box-shadow .35s ease,
-
-        filter .35s ease;
-
+        background-color 0.28s ease,
+        border-color 0.28s ease,
+        color 0.28s ease;
 }
 
-/* ==========================================================
-   COZY LIBRARY
-========================================================== */
 
-body.theme-cozy{
-
-    --background:#F7F2EA;
-
-    --surface:#FFFDFC;
-
-    --surface-alt:#F3ECE3;
-
-    --sidebar:#F4EEE5;
-
-    --primary:#7A5235;
-
-    --primary-dark:#5D3E29;
-
-    --primary-light:#C09169;
-
-    --accent:#D8A04B;
-
-    --text-primary:#2D2925;
-
-    --text-secondary:#72675D;
-
-    --border:#E7DED4;
-
-    --wood-light:#C28E60;
-
-    --wood-medium:#A56E44;
-
-    --wood-dark:#714629;
-
-}
-
-/* ==========================================================
+/* =========================================================
    HAUNTED LIBRARY
-========================================================== */
+   GENERAL FEEL
+   ========================================================= */
 
-body.theme-haunted{
-
-    --background:#25212C;
-
-    --surface:#302A39;
-
-    --surface-alt:#3A3345;
-
-    --sidebar:#2C2634;
-
-    --primary:#8C6AB5;
-
-    --primary-dark:#6C4C92;
-
-    --primary-light:#B096D4;
-
-    --accent:#C7C0F4;
-
-    --text-primary:#F2EEF9;
-
-    --text-secondary:#C8C2D6;
-
-    --text-light:#AAA1BE;
-
-    --border:#4B4258;
-
-    --wood-light:#66515D;
-
-    --wood-medium:#4D3D47;
-
-    --wood-dark:#372B33;
-
-    --glow:
-
-        0 0 18px rgba(180,160,255,.18);
-
+body.theme-haunted .site-header,
+body[data-theme="haunted"] .site-header {
+    background:
+        #1c171a;
 }
 
-body.theme-haunted .wood-shelf{
+
+body.theme-haunted .brand-mark,
+body[data-theme="haunted"] .brand-mark {
+    background:
+        #2c2227;
+
+    border-color:
+        rgba(217, 175, 130, 0.2);
+}
+
+
+body.theme-haunted .nav-button.active,
+body[data-theme="haunted"] .nav-button.active {
+    background:
+        #30242a;
 
     box-shadow:
-
-        inset 0 2px rgba(255,255,255,.05),
-
-        inset 0 -3px rgba(0,0,0,.35),
-
-        var(--glow);
-
+        inset 0 -2px
+        #9d4962;
 }
 
-/* ==========================================================
-   COTTAGE GARDEN
-========================================================== */
 
-body.theme-cottage{
-
-    --background:#F5F4ED;
-
-    --surface:#FEFDFC;
-
-    --surface-alt:#EEF2E9;
-
-    --sidebar:#F1F2EB;
-
-    --primary:#5D7C5A;
-
-    --primary-dark:#486247;
-
-    --primary-light:#7D9B79;
-
-    --accent:#CFA766;
-
-    --text-primary:#344131;
-
-    --text-secondary:#66735E;
-
-    --border:#DCE5D8;
-
-    --wood-light:#BE9364;
-
-    --wood-medium:#9E744B;
-
-    --wood-dark:#7C5738;
-
+body.theme-haunted .page-hero h1 em,
+body[data-theme="haunted"] .page-hero h1 em {
+    color:
+        #b26078;
 }
 
-/* ==========================================================
+
+body.theme-haunted .primary-button,
+body[data-theme="haunted"] .primary-button {
+    background:
+        #8f4059;
+
+    border-color:
+        #9f4c68;
+}
+
+
+body.theme-haunted .primary-button:hover,
+body[data-theme="haunted"] .primary-button:hover {
+    background:
+        #a14a64;
+
+    border-color:
+        #b95c79;
+}
+
+
+body.theme-haunted .secondary-button,
+body[data-theme="haunted"] .secondary-button {
+    background:
+        #261e22;
+}
+
+
+body.theme-haunted .drawer-header,
+body[data-theme="haunted"] .drawer-header,
+body.theme-haunted .drawer-footer,
+body[data-theme="haunted"] .drawer-footer {
+    background:
+        #231b20;
+}
+
+
+body.theme-haunted .modal-header,
+body[data-theme="haunted"] .modal-header,
+body.theme-haunted .modal-footer,
+body[data-theme="haunted"] .modal-footer {
+    background:
+        #231b20;
+}
+
+
+/* =========================================================
    AUTUMN BOOKSHOP
-========================================================== */
+   ========================================================= */
 
-body.theme-autumn{
+body.theme-autumn .primary-button,
+body[data-theme="autumn"] .primary-button {
+    background:
+        #a95737;
 
-    --background:#F8F2EB;
-
-    --surface:#FFFDFB;
-
-    --surface-alt:#F4E8DA;
-
-    --sidebar:#F6EEE6;
-
-    --primary:#A55C2D;
-
-    --primary-dark:#87461D;
-
-    --primary-light:#C17B4C;
-
-    --accent:#E2A744;
-
-    --text-primary:#3A2B22;
-
-    --text-secondary:#70594C;
-
-    --border:#E6D7C8;
-
-    --wood-light:#C68B57;
-
-    --wood-medium:#9F673E;
-
-    --wood-dark:#7B4A2A;
-
-}
-
-/* ==========================================================
-   THEME ENVIRONMENTS
-========================================================== */
-
-/* ==========================================================
-   DEFAULT
-========================================================== */
-
-body{
-
-    background:var(--background);
-
+    border-color:
+        #bb6744;
 }
 
 
+body.theme-autumn .primary-button:hover,
+body[data-theme="autumn"] .primary-button:hover {
+    background:
+        #bd6841;
+}
 
-/* ==========================================================
-   HAUNTED LIBRARY
-========================================================== */
 
-body.theme-haunted{
+body.theme-autumn .page-hero h1 em,
+body[data-theme="autumn"] .page-hero h1 em {
+    color:
+        #cc7048;
+}
+
+
+/* =========================================================
+   ENCHANTED FOREST
+   ========================================================= */
+
+body.theme-forest .primary-button,
+body[data-theme="forest"] .primary-button {
+    background:
+        #5b724e;
+
+    border-color:
+        #6f885e;
+}
+
+
+body.theme-forest .primary-button:hover,
+body[data-theme="forest"] .primary-button:hover {
+    background:
+        #6a825a;
+}
+
+
+body.theme-forest .page-hero h1 em,
+body[data-theme="forest"] .page-hero h1 em {
+    color:
+        #82936c;
+}
+
+
+/* =========================================================
+   RETRO HORROR
+   ========================================================= */
+
+body.theme-retro .primary-button,
+body[data-theme="retro"] .primary-button {
+    background:
+        #953f2d;
+
+    border-color:
+        #ae5138;
+}
+
+
+body.theme-retro .primary-button:hover,
+body[data-theme="retro"] .primary-button:hover {
+    background:
+        #ab4a32;
+}
+
+
+body.theme-retro .page-hero h1 em,
+body[data-theme="retro"] .page-hero h1 em {
+    color:
+        #b95d39;
+}
+
+
+/* =========================================================
+   PASTEL GHOSTS
+   ========================================================= */
+
+body.theme-ghosts .site-header,
+body[data-theme="ghosts"] .site-header {
+    background:
+        #e2d7d1;
+
+    box-shadow:
+        0 8px 22px
+        rgba(87, 63, 73, 0.08);
+}
+
+
+body.theme-ghosts .brand-mark,
+body[data-theme="ghosts"] .brand-mark {
+    background:
+        #f5ede8;
+
+    box-shadow:
+        0 5px 12px
+        rgba(87, 63, 73, 0.08);
+}
+
+
+body.theme-ghosts .primary-button,
+body[data-theme="ghosts"] .primary-button {
+    background:
+        #ad6980;
+
+    border-color:
+        #ad6980;
+
+    color:
+        #fff;
+}
+
+
+body.theme-ghosts .primary-button:hover,
+body[data-theme="ghosts"] .primary-button:hover {
+    background:
+        #bc7890;
+}
+
+
+body.theme-ghosts .secondary-button,
+body[data-theme="ghosts"] .secondary-button {
+    background:
+        #f2e8e3;
+}
+
+
+body.theme-ghosts .page-hero h1 em,
+body[data-theme="ghosts"] .page-hero h1 em {
+    color:
+        #aa6e85;
+}
+
+
+body.theme-ghosts .drawer,
+body[data-theme="ghosts"] .drawer,
+body.theme-ghosts .modal-card,
+body[data-theme="ghosts"] .modal-card {
+    box-shadow:
+        -18px 0 40px
+        rgba(87, 63, 73, 0.13);
+}
+
+
+/* =========================================================
+   THEME DRAWER
+   ========================================================= */
+
+.theme-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    margin-bottom:
+        26px;
+}
+
+
+.theme-card {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 11px;
+
+    padding:
+        11px;
+
+    border:
+        1px solid
+        var(--border-soft);
+
+    border-radius:
+        14px;
 
     background:
+        var(--panel);
 
-        radial-gradient(
+    text-align:
+        left;
 
-            circle at top,
-
-            rgba(120,95,170,.12),
-
-            transparent 55%
-
-        ),
-
-        var(--background);
-
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        background-color 0.18s ease;
 }
 
 
+.theme-card:hover {
+    transform:
+        translateY(-2px);
 
-/* ==========================================================
-   COTTAGE GARDEN
-========================================================== */
-
-body.theme-cottage{
+    border-color:
+        var(--border-strong);
 
     background:
-
-        radial-gradient(
-
-            circle at top right,
-
-            rgba(158,190,140,.15),
-
-            transparent 50%
-
-        ),
-
-        var(--background);
-
+        var(--panel-2);
 }
 
 
+.theme-card.active {
+    border-color:
+        var(--accent);
 
-/* ==========================================================
-   AUTUMN BOOKSHOP
-========================================================== */
+    box-shadow:
+        0 0 0 1px
+        color-mix(
+            in srgb,
+            var(--accent) 45%,
+            transparent
+        );
+}
 
-body.theme-autumn{
+
+.theme-card-copy {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+
+.theme-card-copy strong {
+    color:
+        var(--paper);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.08rem;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.05;
+}
+
+
+.theme-card-copy small {
+    color:
+        var(--muted);
+
+    font-size:
+        0.51rem;
+
+    line-height:
+        1.4;
+}
+
+
+/* =========================================================
+   THEME PREVIEW BASE
+   ========================================================= */
+
+.theme-preview {
+    position: relative;
+
+    width: 100%;
+    height: 108px;
+
+    display: block;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.06);
+
+    border-radius:
+        10px;
 
     background:
+        #241d21;
+}
 
+
+/* =========================================================
+   HAUNTED PREVIEW
+   ========================================================= */
+
+.haunted-preview {
+    background:
+        #21191d;
+}
+
+
+.haunted-preview::before {
+    content: "";
+
+    position: absolute;
+
+    left: 11px;
+    right: 11px;
+    bottom: 12px;
+
+    height: 11px;
+
+    border-radius:
+        3px;
+
+    background:
+        #68463b;
+
+    box-shadow:
+        0 5px 0
+        #3e2a25;
+}
+
+
+.haunted-preview .preview-window {
+    position: absolute;
+
+    top: 14px;
+    right: 16px;
+
+    width: 37px;
+    height: 46px;
+
+    border:
+        3px solid
+        #5a423d;
+
+    border-radius:
+        18px 18px 4px 4px;
+
+    background:
+        #15191f;
+}
+
+
+.haunted-preview .preview-window::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+    left: 50%;
+
+    border-left:
+        1px solid
+        #5a423d;
+}
+
+
+.haunted-preview .preview-window::after {
+    content: "☾";
+
+    position: absolute;
+
+    top: 6px;
+    left: 8px;
+
+    color:
+        #d9af82;
+
+    font-size:
+        0.75rem;
+}
+
+
+.haunted-preview .preview-candle {
+    position: absolute;
+
+    left: 21px;
+    bottom: 23px;
+
+    width: 9px;
+    height: 25px;
+
+    border-radius:
+        4px 4px 2px 2px;
+
+    background:
+        #e1cfaa;
+}
+
+
+.haunted-preview .preview-candle::before {
+    content: "";
+
+    position: absolute;
+
+    top: -12px;
+    left: 1px;
+
+    width: 7px;
+    height: 11px;
+
+    border-radius:
+        70% 30% 65% 35%;
+
+    background:
+        #db8a52;
+
+    transform:
+        rotate(40deg);
+}
+
+
+.haunted-preview .preview-books {
+    position: absolute;
+
+    left: 43px;
+    bottom: 23px;
+
+    width: 12px;
+    height: 34px;
+
+    border-radius:
+        3px 3px 1px 1px;
+
+    background:
+        #88435b;
+
+    box-shadow:
+        14px 7px
+            #615947,
+        27px 1px
+            #755046,
+        39px 12px
+            #9c6d55;
+}
+
+
+/* =========================================================
+   AUTUMN PREVIEW
+   ========================================================= */
+
+.autumn-preview {
+    background:
+        #33251c;
+}
+
+
+.autumn-preview::before {
+    content: "";
+
+    position: absolute;
+
+    left: 10px;
+    right: 10px;
+    bottom: 13px;
+
+    height: 10px;
+
+    border-radius:
+        4px;
+
+    background:
+        #84583a;
+
+    box-shadow:
+        0 5px 0
+        #523625;
+}
+
+
+.autumn-preview .preview-window {
+    position: absolute;
+
+    top: 13px;
+    right: 18px;
+
+    width: 40px;
+    height: 47px;
+
+    border:
+        3px solid
+        #7a5940;
+
+    border-radius:
+        20px 20px 4px 4px;
+
+    background:
+        #57412e;
+}
+
+
+.autumn-preview .preview-pumpkin {
+    position: absolute;
+
+    left: 17px;
+    bottom: 24px;
+
+    width: 28px;
+    height: 22px;
+
+    border-radius:
+        50%;
+
+    background:
+        #c66c3d;
+}
+
+
+.autumn-preview .preview-pumpkin::before,
+.autumn-preview .preview-pumpkin::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    width: 14px;
+    height: 22px;
+
+    border-radius:
+        50%;
+
+    background:
+        #d77d47;
+}
+
+
+.autumn-preview .preview-pumpkin::before {
+    left: -4px;
+}
+
+
+.autumn-preview .preview-pumpkin::after {
+    right: -4px;
+}
+
+
+.autumn-preview .preview-books {
+    position: absolute;
+
+    left: 59px;
+    bottom: 23px;
+
+    width: 11px;
+    height: 35px;
+
+    border-radius:
+        3px;
+
+    background:
+        #6e7650;
+
+    box-shadow:
+        13px 5px
+            #b35d3f,
+        26px -3px
+            #d2a15f,
+        39px 9px
+            #7d5944;
+}
+
+
+/* =========================================================
+   FOREST PREVIEW
+   ========================================================= */
+
+.forest-preview {
+    background:
+        #17221a;
+}
+
+
+.forest-preview::before {
+    content: "";
+
+    position: absolute;
+
+    left: 10px;
+    right: 10px;
+    bottom: 12px;
+
+    height: 12px;
+
+    border-radius:
+        5px;
+
+    background:
+        #4e3b2c;
+
+    box-shadow:
+        0 4px 0
+        #2e241b;
+}
+
+
+.forest-preview .preview-moon {
+    position: absolute;
+
+    top: 13px;
+    right: 21px;
+
+    width: 25px;
+    height: 25px;
+
+    border-radius:
+        50%;
+
+    background:
+        #d1c887;
+}
+
+
+.forest-preview .preview-moon::before {
+    content: "";
+
+    position: absolute;
+
+    top: -1px;
+    left: 8px;
+
+    width: 24px;
+    height: 24px;
+
+    border-radius:
+        50%;
+
+    background:
+        #17221a;
+}
+
+
+.forest-preview .preview-mushroom {
+    position: absolute;
+
+    left: 20px;
+    bottom: 24px;
+
+    width: 27px;
+    height: 14px;
+
+    border-radius:
+        50% 50% 35% 35%;
+
+    background:
+        #a46b52;
+}
+
+
+.forest-preview .preview-mushroom::after {
+    content: "";
+
+    position: absolute;
+
+    top: 10px;
+    left: 10px;
+
+    width: 8px;
+    height: 20px;
+
+    border-radius:
+        4px;
+
+    background:
+        #d2c9aa;
+}
+
+
+.forest-preview .preview-books {
+    position: absolute;
+
+    left: 58px;
+    bottom: 24px;
+
+    width: 11px;
+    height: 34px;
+
+    border-radius:
+        3px;
+
+    background:
+        #657552;
+
+    box-shadow:
+        14px 8px
+            #77604a,
+        28px 1px
+            #87965d,
+        42px 11px
+            #5d5040;
+}
+
+
+/* =========================================================
+   RETRO PREVIEW
+   ========================================================= */
+
+.retro-preview {
+    background:
+        #211a17;
+}
+
+
+.retro-preview::before {
+    content: "";
+
+    position: absolute;
+
+    left: 10px;
+    right: 10px;
+    bottom: 12px;
+
+    height: 11px;
+
+    border-radius:
+        4px;
+
+    background:
+        #66412d;
+
+    box-shadow:
+        0 5px 0
+        #3b291f;
+}
+
+
+.retro-preview .preview-tv {
+    position: absolute;
+
+    top: 16px;
+    left: 18px;
+
+    width: 48px;
+    height: 37px;
+
+    border:
+        4px solid
+        #5a493a;
+
+    border-radius:
+        5px;
+
+    background:
+        #273025;
+}
+
+
+.retro-preview .preview-tv::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 5px;
+
+    background:
+        #66764d;
+}
+
+
+.retro-preview .preview-tv::after {
+    content: "";
+
+    position: absolute;
+
+    left: 11px;
+    bottom: -14px;
+
+    width: 18px;
+    height: 7px;
+
+    border-left:
+        2px solid
+        #5a493a;
+
+    border-right:
+        2px solid
+        #5a493a;
+}
+
+
+.retro-preview .preview-stars {
+    position: absolute;
+
+    top: 16px;
+    right: 21px;
+
+    color:
+        #d59b58;
+
+    font-size:
+        0.8rem;
+}
+
+
+.retro-preview .preview-stars::before {
+    content: "✦";
+}
+
+
+.retro-preview .preview-stars::after {
+    content: "✧";
+
+    position: absolute;
+
+    left: -18px;
+    top: 17px;
+}
+
+
+.retro-preview .preview-books {
+    position: absolute;
+
+    right: 18px;
+    bottom: 23px;
+
+    width: 11px;
+    height: 31px;
+
+    border-radius:
+        3px;
+
+    background:
+        #9d4532;
+
+    box-shadow:
+        -14px 6px
+            #697551,
+        -27px 0
+            #c27a4f;
+}
+
+
+/* =========================================================
+   GHOSTS PREVIEW
+   ========================================================= */
+
+.ghosts-preview {
+    background:
+        #e4d6d3;
+}
+
+
+.ghosts-preview::before {
+    content: "";
+
+    position: absolute;
+
+    left: 10px;
+    right: 10px;
+    bottom: 12px;
+
+    height: 11px;
+
+    border-radius:
+        4px;
+
+    background:
+        #b88672;
+
+    box-shadow:
+        0 5px 0
+        #8a6253;
+}
+
+
+.ghosts-preview .preview-ghost {
+    position: absolute;
+
+    top: 18px;
+    left: 19px;
+
+    width: 31px;
+    height: 38px;
+
+    border-radius:
+        50% 50% 10px 10px;
+
+    background:
+        #f8f2ea;
+}
+
+
+.ghosts-preview .preview-ghost::before,
+.ghosts-preview .preview-ghost::after {
+    content: "";
+
+    position: absolute;
+
+    top: 13px;
+
+    width: 4px;
+    height: 5px;
+
+    border-radius:
+        50%;
+
+    background:
+        #75636a;
+}
+
+
+.ghosts-preview .preview-ghost::before {
+    left: 8px;
+}
+
+
+.ghosts-preview .preview-ghost::after {
+    right: 8px;
+}
+
+
+.ghosts-preview .preview-flowers {
+    position: absolute;
+
+    right: 20px;
+    top: 23px;
+
+    width: 9px;
+    height: 9px;
+
+    border-radius:
+        50%;
+
+    background:
+        #bf8196;
+
+    box-shadow:
+        10px 8px
+            #99a585,
+        -8px 12px
+            #d0a07e;
+}
+
+
+.ghosts-preview .preview-books {
+    position: absolute;
+
+    left: 67px;
+    bottom: 23px;
+
+    width: 11px;
+    height: 30px;
+
+    border-radius:
+        3px;
+
+    background:
+        #b8798d;
+
+    box-shadow:
+        13px 5px
+            #9eac8c,
+        26px -3px
+            #c58f7c,
+        39px 8px
+            #8d7880;
+}
+
+
+/* =========================================================
+   AMBIENT ROOM STATES
+   ========================================================= */
+
+body.candle-glow::before {
+    content: "";
+
+    position: fixed;
+
+    z-index: -1;
+
+    left: 7%;
+    bottom: 12%;
+
+    width: 320px;
+    height: 320px;
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(201, 132, 83, 0.05);
+
+    pointer-events:
+        none;
+}
+
+
+body.floating-dust::after {
+    content: "";
+
+    position: fixed;
+
+    z-index: -1;
+
+    inset: 0;
+
+    pointer-events:
+        none;
+
+    opacity:
+        0.18;
+
+    background-image:
         radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.22)
+            0 1px,
+            transparent 1px
+        );
 
-            circle at top,
+    background-size:
+        92px 92px;
+}
 
-            rgba(232,170,90,.12),
 
-            transparent 55%
+/* =========================================================
+   RAIN STATE
+   ========================================================= */
 
-        ),
+body.rain-enabled
+.library-hero::after {
+    content: "";
 
-        var(--background);
+    position: absolute;
+
+    top: 24px;
+    right: 3%;
+
+    width: 82px;
+    height: 110px;
+
+    opacity:
+        0.16;
+
+    pointer-events:
+        none;
+
+    background-image:
+        repeating-linear-gradient(
+            105deg,
+            transparent 0 8px,
+            rgba(210, 220, 225, 0.24) 9px 10px,
+            transparent 11px 18px
+        );
+}
+
+
+.library-hero {
+    position: relative;
+}
+
+
+/* =========================================================
+   AMBIENT ODDITIES
+   ========================================================= */
+
+body.ambient-oddities
+.library-hero::before {
+    content: "✦";
+
+    position: absolute;
+
+    top: 5px;
+    right: 17%;
+
+    color:
+        var(--accent-light);
+
+    font-size:
+        0.8rem;
+
+    opacity:
+        0.24;
+
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   DENSITY STATE
+   ========================================================= */
+
+body[data-decoration-density="minimal"]
+.library-hero::before {
+    opacity:
+        0.08;
+}
+
+
+body[data-decoration-density="cozy"]
+.library-hero::before {
+    opacity:
+        0.24;
+}
+
+
+body[data-decoration-density="maximal"]
+.library-hero::before {
+    content: "✦   ☾   ✧";
+
+    white-space:
+        pre;
+
+    opacity:
+        0.34;
+}
+
+
+/* =========================================================
+   GHOST THEME SPECIAL LIGHT MODE TWEAKS
+   ========================================================= */
+
+body.theme-ghosts .search-field input,
+body[data-theme="ghosts"] .search-field input,
+body.theme-ghosts .toolbar-select,
+body[data-theme="ghosts"] .toolbar-select,
+body.theme-ghosts .field input,
+body[data-theme="ghosts"] .field input,
+body.theme-ghosts .field select,
+body[data-theme="ghosts"] .field select,
+body.theme-ghosts .field textarea,
+body[data-theme="ghosts"] .field textarea {
+    background:
+        #f8f1ed;
+}
+
+
+body.theme-ghosts .progress-track,
+body[data-theme="ghosts"] .progress-track {
+    background:
+        #d9ccc6;
+}
+
+
+body.theme-ghosts .overlay,
+body[data-theme="ghosts"] .overlay {
+    background:
+        rgba(84, 67, 75, 0.42);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .theme-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .theme-preview {
+        height:
+            96px;
+    }
 
 }
 
 
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
 
-/* ==========================================================
-   CELESTIAL ARCHIVE
-========================================================== */
-
-body.theme-celestial{
-
-    --background:#20263B;
-
-    --surface:#29314C;
-
-    --surface-alt:#313C5A;
-
-    --sidebar:#252D46;
-
-    --primary:#D4B56A;
-
-    --primary-dark:#B89442;
-
-    --primary-light:#F1D78A;
-
-    --accent:#7AA8FF;
-
-    --text-primary:#F8F8FA;
-
-    --text-secondary:#C7CEE5;
-
-    --text-light:#A7AEC4;
-
-    --border:#4A5675;
-
-    --wood-light:#75664E;
-
-    --wood-medium:#5E503E;
-
-    --wood-dark:#43382A;
-
+body.reduce-motion::before,
+body.reduce-motion::after,
+body.reduce-motion
+.library-hero::before,
+body.reduce-motion
+.library-hero::after {
+    animation:
+        none !important;
 }
-
-
-
-/* ==========================================================
-   RAINY AFTERNOON
-========================================================== */
-
-body.theme-rain{
-
-    --background:#EAEFF2;
-
-    --surface:#FFFFFF;
-
-    --surface-alt:#EDF2F5;
-
-    --sidebar:#F4F7F8;
-
-    --primary:#58768F;
-
-    --primary-dark:#405B72;
-
-    --primary-light:#87A6BE;
-
-    --accent:#D7B36C;
-
-    --text-primary:#2E3942;
-
-    --text-secondary:#64717C;
-
-    --border:#D6DFE5;
-
-}
-
-
-
-/* ==========================================================
-   CHRISTMAS LIBRARY
-========================================================== */
-
-body.theme-christmas{
-
-    --background:#F4F1EC;
-
-    --surface:#FFFDFC;
-
-    --surface-alt:#F6F2EE;
-
-    --sidebar:#F5F2EE;
-
-    --primary:#2F6848;
-
-    --primary-dark:#224C35;
-
-    --primary-light:#5A8A69;
-
-    --accent:#C93E3E;
-
-    --text-primary:#2E2A26;
-
-    --text-secondary:#6B645E;
-
-    --border:#E4DDD6;
-
-}
-
