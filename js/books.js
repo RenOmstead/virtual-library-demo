@@ -3,12 +3,12 @@
    BOOKS.JS
 
    Book creation
-   Book editing
-   Book deletion
-   Shelf spine rendering
-   Live spine preview
-   Cover handling
+   Editing
+   Shelf rendering
+   Spine preview
+   Cover generation
    Book reveal
+   Journal handoff
    ========================================================= */
 
 
@@ -18,13 +18,8 @@
 
 
     /* =====================================================
-       CONFIG / HELPERS / STATE
+       GLOBALS
        ===================================================== */
-
-    const CONFIG =
-        window.NOVELLOW_CONFIG ||
-        {};
-
 
     window.NOVELLOW =
         window.NOVELLOW ||
@@ -41,11 +36,11 @@
 
 
     /* =====================================================
-       MODULE STATE
+       LOCAL STATE
        ===================================================== */
 
-    let pendingCoverData =
-        "";
+    let revealBookId =
+        null;
 
 
     /* =====================================================
@@ -54,61 +49,58 @@
 
     function init() {
 
-        bindBookControls();
+        bindBookDrawer();
 
-        bindPreviewControls();
+        bindBookReveal();
+
+        bindProgressHooks();
+
+        bindLivePreview();
 
         populateShelfSelect();
 
-        updatePreviewFromForm();
+        updateSpinePreview();
 
     }
 
 
     /* =====================================================
-       STATE ACCESS
+       STATE
        ===================================================== */
 
     function getState() {
 
-        return Novellow.state;
+        return Novellow.state || {};
+
+    }
+
+
+    function getBooks() {
+
+        return Array.isArray(
+            getState().books
+        )
+            ? getState().books
+            : [];
 
     }
 
 
     /* =====================================================
-       BIND BOOK CONTROLS
+       BOOK DRAWER
        ===================================================== */
 
-    function bindBookControls() {
+    function bindBookDrawer() {
 
         H.bindClick?.(
             "closeBookDrawer",
-            closeBookDrawer
+            closeDrawer
         );
 
 
         H.bindClick?.(
             "cancelBookButton",
-            closeBookDrawer
-        );
-
-
-        H.bindClick?.(
-            "closeBookReveal",
-            closeReveal
-        );
-
-
-        H.bindClick?.(
-            "editRevealBook",
-            editSelectedBook
-        );
-
-
-        H.bindClick?.(
-            "openRevealJournal",
-            openSelectedJournal
+            closeDrawer
         );
 
 
@@ -128,15 +120,15 @@
         }
 
 
-        const coverInput =
+        const coverUpload =
             H.getById?.(
                 "bookCoverUpload"
             );
 
 
-        if (coverInput) {
+        if (coverUpload) {
 
-            coverInput.addEventListener(
+            coverUpload.addEventListener(
                 "change",
                 handleCoverUpload
             );
@@ -147,12 +139,129 @@
 
 
     /* =====================================================
-       PREVIEW CONTROL BINDING
+       BOOK REVEAL
        ===================================================== */
 
-    function bindPreviewControls() {
+    function bindBookReveal() {
 
-        [
+        H.bindClick?.(
+            "closeBookReveal",
+            closeReveal
+        );
+
+
+        H.bindClick?.(
+            "editRevealBook",
+            () => {
+
+                if (!revealBookId) {
+                    return;
+                }
+
+
+                closeReveal();
+
+                openEditDrawer(
+                    revealBookId
+                );
+
+            }
+        );
+
+
+        H.bindClick?.(
+            "openRevealJournal",
+            () => {
+
+                if (!revealBookId) {
+                    return;
+                }
+
+
+                const bookId =
+                    revealBookId;
+
+
+                closeReveal();
+
+
+                getState().selectedBookId =
+                    bookId;
+
+
+                Novellow.app
+                    ?.navigate?.(
+                        "journal"
+                    );
+
+
+                requestAnimationFrame(
+                    () => {
+
+                        Novellow.journal
+                            ?.openBook?.(
+                                bookId,
+                                "overview"
+                            );
+
+                    }
+                );
+
+            }
+        );
+
+
+        const reveal =
+            H.getById?.(
+                "bookReveal"
+            );
+
+
+        if (reveal) {
+
+            reveal.addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target ===
+                        reveal
+                    ) {
+
+                        closeReveal();
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       PROGRESS HOOKS
+       ===================================================== */
+
+    function bindProgressHooks() {
+
+        /*
+           Reading owns the progress modal itself.
+           This module only exposes helpers used by Reading.
+        */
+
+    }
+
+
+    /* =====================================================
+       LIVE PREVIEW
+       ===================================================== */
+
+    function bindLivePreview() {
+
+        const ids = [
+
             "bookTitle",
             "bookStyle",
             "bookSpineColor",
@@ -169,7 +278,11 @@
             "bookSpineTitlePanel",
             "bookHeight",
             "bookThickness"
-        ].forEach(
+
+        ];
+
+
+        ids.forEach(
             id => {
 
                 const element =
@@ -183,16 +296,15 @@
                 }
 
 
-                const eventName =
-                    element.tagName ===
-                    "INPUT"
-                        ? "input"
-                        : "change";
+                element.addEventListener(
+                    "input",
+                    updateSpinePreview
+                );
 
 
                 element.addEventListener(
-                    eventName,
-                    updatePreviewFromForm
+                    "change",
+                    updateSpinePreview
                 );
 
             }
@@ -225,6 +337,12 @@
         );
 
 
+        setValue(
+            "editingBookId",
+            ""
+        );
+
+
         populateShelfSelect(
             shelfId
         );
@@ -232,7 +350,7 @@
 
         if (shelfId) {
 
-            setInputValue(
+            setValue(
                 "bookShelf",
                 shelfId
             );
@@ -240,12 +358,11 @@
         }
 
 
-        Novellow.panels?.openPanel?.(
-            "bookDrawer"
-        );
+        applyDefaultDesign();
 
+        updateSpinePreview();
 
-        updatePreviewFromForm();
+        openDrawer();
 
 
         requestAnimationFrame(
@@ -276,7 +393,14 @@
 
 
         if (!book) {
+
+            H.showToast?.(
+                "That book could not be found.",
+                "error"
+            );
+
             return;
+
         }
 
 
@@ -295,49 +419,50 @@
         );
 
 
-        setInputValue(
+        setValue(
             "editingBookId",
             book.id
         );
 
 
-        setInputValue(
+        setValue(
             "bookTitle",
             book.title
         );
 
 
-        setInputValue(
+        setValue(
             "bookAuthor",
             book.author
         );
 
 
-        setInputValue(
+        setValue(
             "bookGenre",
             book.genre
         );
 
 
-        setInputValue(
+        setValue(
             "bookYear",
             book.year
         );
 
 
-        setInputValue(
+        setValue(
             "bookPages",
             book.pages
         );
 
 
-        setInputValue(
+        setValue(
             "bookISBN",
-            book.isbn
+            book.isbn ||
+            book.ISBN
         );
 
 
-        setInputValue(
+        setValue(
             "bookSeries",
             book.series
         );
@@ -348,176 +473,246 @@
         );
 
 
-        setInputValue(
+        setValue(
             "bookShelf",
             book.shelfId
         );
 
 
-        setInputValue(
+        setValue(
             "bookStatus",
             book.status
         );
 
 
-        setInputValue(
+        setValue(
             "bookRating",
             book.rating
         );
 
 
-        setInputValue(
+        setValue(
             "bookTimesRead",
             book.timesRead
         );
 
 
-        setInputValue(
+        setValue(
             "bookStarted",
             book.started
         );
 
 
-        setInputValue(
+        setValue(
             "bookFinished",
             book.finished
         );
 
 
-        setInputValue(
+        setValue(
             "bookCurrentPage",
             book.currentPage
         );
 
 
         const design =
+            H.normalizeBookDesign?.(
+                book.design
+            ) ||
             book.design ||
-            CONFIG.defaultBookDesign ||
             {};
 
 
-        setInputValue(
+        setValue(
             "bookStyle",
-            design.style
+            design.style ||
+            "classic"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineColor",
-            design.spineColor
+            design.spineColor ||
+            "#793f55"
         );
 
 
-        setInputValue(
+        setValue(
             "bookTextColor",
-            design.textColor
+            design.textColor ||
+            "#f1e3cf"
         );
 
 
-        setInputValue(
+        setValue(
             "bookAccentColor",
-            design.accentColor
+            design.accentColor ||
+            "#c39a67"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineOrnament",
-            design.ornament
+            design.ornament ||
+            "auto"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineFont",
-            design.spineFont
+            design.font ||
+            "bookish"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineFontSize",
-            design.fontSize
+            design.fontSize ||
+            "medium"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineFontWeight",
-            design.fontWeight
+            design.fontWeight ||
+            "regular"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineLetterSpacing",
-            design.letterSpacing
+            design.letterSpacing ||
+            "normal"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineCase",
-            design.textCase
+            design.letterCase ||
+            "typed"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineFontStyle",
-            design.fontStyle
+            design.fontStyle ||
+            "normal"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineTextAlign",
-            design.textAlign
+            design.textAlign ||
+            "center"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineTitlePanel",
-            design.titlePanel
+            design.titlePanel ||
+            "none"
         );
 
 
-        setInputValue(
+        setValue(
             "bookHeight",
-            design.height
+            design.height ||
+            "medium"
         );
 
 
-        setInputValue(
+        setValue(
             "bookThickness",
-            design.thickness
+            design.thickness ||
+            "medium"
         );
 
 
-        pendingCoverData =
+        getState().pendingCoverData =
             book.cover ||
             "";
 
 
-        Novellow.panels?.openPanel?.(
-            "bookDrawer"
-        );
+        updateSpinePreview();
 
-
-        updatePreviewFromForm();
+        openDrawer();
 
     }
 
 
     /* =====================================================
-       CLOSE BOOK DRAWER
+       OPEN DRAWER
        ===================================================== */
 
-    function closeBookDrawer() {
+    function openDrawer() {
 
-        pendingCoverData =
-            "";
+        const drawer =
+            H.getById?.(
+                "bookDrawer"
+            );
 
 
-        Novellow.panels?.closeAllPanels?.();
+        if (!drawer) {
+            return;
+        }
+
+
+        drawer.hidden =
+            false;
+
+
+        const overlay =
+            H.getById?.(
+                "overlay"
+            );
+
+
+        if (overlay) {
+
+            overlay.hidden =
+                false;
+
+        }
+
+
+        document.body.classList.add(
+            "modal-open"
+        );
 
     }
 
 
     /* =====================================================
-       RESET BOOK FORM
+       CLOSE DRAWER
+       ===================================================== */
+
+    function closeDrawer() {
+
+        const drawer =
+            H.getById?.(
+                "bookDrawer"
+            );
+
+
+        if (drawer) {
+
+            drawer.hidden =
+                true;
+
+        }
+
+
+        getState().pendingCoverData =
+            null;
+
+
+        syncOverlay();
+
+    }
+
+
+    /* =====================================================
+       RESET FORM
        ===================================================== */
 
     function resetBookForm() {
@@ -531,215 +726,165 @@
         form?.reset();
 
 
-        pendingCoverData =
-            "";
-
-
-        setInputValue(
+        setValue(
             "editingBookId",
             ""
         );
 
 
-        setInputValue(
+        setValue(
             "bookStatus",
             "want"
         );
 
 
-        setInputValue(
+        setValue(
             "bookRating",
             "0"
         );
 
 
-        setInputValue(
+        setValue(
             "bookTimesRead",
             "0"
         );
 
 
-        setInputValue(
+        setValue(
             "bookCurrentPage",
             "0"
         );
 
 
-        const design =
-            CONFIG.defaultBookDesign ||
+        getState().pendingCoverData =
+            null;
+
+    }
+
+
+    /* =====================================================
+       DEFAULT DESIGN
+       ===================================================== */
+
+    function applyDefaultDesign() {
+
+        const defaults =
+            Novellow.config
+                ?.defaultBookDesign ||
+            window.NOVELLOW_CONFIG
+                ?.defaultBookDesign ||
             {};
 
 
-        setInputValue(
+        setValue(
             "bookStyle",
-            design.style ||
+            defaults.style ||
             "classic"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineColor",
-            design.spineColor ||
+            defaults.spineColor ||
             "#793f55"
         );
 
 
-        setInputValue(
+        setValue(
             "bookTextColor",
-            design.textColor ||
+            defaults.textColor ||
             "#f1e3cf"
         );
 
 
-        setInputValue(
+        setValue(
             "bookAccentColor",
-            design.accentColor ||
+            defaults.accentColor ||
             "#c39a67"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineOrnament",
-            design.ornament ||
+            defaults.ornament ||
             "auto"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineFont",
-            design.spineFont ||
-            "serif"
+            defaults.font ||
+            "bookish"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineFontSize",
-            design.fontSize ||
+            defaults.fontSize ||
             "medium"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineFontWeight",
-            design.fontWeight ||
+            defaults.fontWeight ||
             "regular"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineLetterSpacing",
-            design.letterSpacing ||
+            defaults.letterSpacing ||
             "normal"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineCase",
-            design.textCase ||
+            defaults.letterCase ||
             "typed"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineFontStyle",
-            design.fontStyle ||
+            defaults.fontStyle ||
             "normal"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineTextAlign",
-            design.textAlign ||
+            defaults.textAlign ||
             "center"
         );
 
 
-        setInputValue(
+        setValue(
             "bookSpineTitlePanel",
-            design.titlePanel ||
+            defaults.titlePanel ||
             "none"
         );
 
 
-        setInputValue(
+        setValue(
             "bookHeight",
-            design.height ||
+            defaults.height ||
             "medium"
         );
 
 
-        setInputValue(
+        setValue(
             "bookThickness",
-            design.thickness ||
+            defaults.thickness ||
             "medium"
         );
 
-
-        populateShelfSelect();
-
-        updatePreviewFromForm();
-
     }
 
 
     /* =====================================================
-       COVER UPLOAD
-       ===================================================== */
-
-    async function handleCoverUpload(
-        event
-    ) {
-
-        const file =
-            event.target.files?.[0];
-
-
-        if (!file) {
-
-            pendingCoverData =
-                "";
-
-            return;
-
-        }
-
-
-        try {
-
-            pendingCoverData =
-                await H.fileToDataURL?.(
-                    file
-                ) || "";
-
-
-            H.showToast?.(
-                "Cover image ready.",
-                "success"
-            );
-
-        } catch (error) {
-
-            console.error(
-                error
-            );
-
-
-            pendingCoverData =
-                "";
-
-
-            H.showToast?.(
-                "Novellow could not read that cover image.",
-                "error"
-            );
-
-        }
-
-    }
-
-
-    /* =====================================================
-       SUBMIT BOOK
+       HANDLE SUBMIT
        ===================================================== */
 
     function handleBookSubmit(
@@ -754,7 +899,7 @@
 
 
         const editingId =
-            getInputValue(
+            value(
                 "editingBookId"
             );
 
@@ -768,15 +913,15 @@
 
 
         const title =
-            getInputValue(
+            value(
                 "bookTitle"
-            );
+            ).trim();
 
 
         if (!title) {
 
             H.showToast?.(
-                "Give your book a title first.",
+                "Add a title before saving.",
                 "error"
             );
 
@@ -785,112 +930,10 @@
         }
 
 
-        const pages =
-            Math.max(
-                0,
-                H.toNumber?.(
-                    getInputValue(
-                        "bookPages"
-                    ),
-                    0
-                ) || 0
-            );
-
-
-        let currentPage =
-            Math.max(
-                0,
-                H.toNumber?.(
-                    getInputValue(
-                        "bookCurrentPage"
-                    ),
-                    0
-                ) || 0
-            );
-
-
-        if (
-            pages > 0
-        ) {
-
-            currentPage =
-                Math.min(
-                    currentPage,
-                    pages
-                );
-
-        }
-
-
-        let status =
-            getInputValue(
-                "bookStatus"
-            ) ||
-            "want";
-
-
-        let started =
-            getInputValue(
-                "bookStarted"
-            );
-
-
-        let finished =
-            getInputValue(
-                "bookFinished"
-            );
-
-
-        if (
-            status ===
-            "reading" &&
-            !started
-        ) {
-
-            started =
-                H.todayISO?.() ||
-                "";
-
-        }
-
-
-        if (
-            status ===
-            "finished"
-        ) {
-
-            if (!started) {
-
-                started =
-                    H.todayISO?.() ||
-                    "";
-
-            }
-
-
-            if (!finished) {
-
-                finished =
-                    H.todayISO?.() ||
-                    "";
-
-            }
-
-
-            if (
-                pages > 0
-            ) {
-
-                currentPage =
-                    pages;
-
-            }
-
-        }
-
-
-        const design =
-            getDesignFromForm();
+        const now =
+            H.nowISO?.() ||
+            new Date()
+                .toISOString();
 
 
         const book =
@@ -900,83 +943,117 @@
 
                 id:
                     existing?.id ||
-                    undefined,
+                    H.createId?.(
+                        "book"
+                    ),
 
                 title,
 
                 author:
-                    getInputValue(
+                    value(
                         "bookAuthor"
-                    ),
+                    ).trim(),
 
                 genre:
-                    getInputValue(
+                    value(
                         "bookGenre"
-                    ),
+                    ).trim(),
 
                 year:
-                    getInputValue(
+                    value(
                         "bookYear"
                     ),
 
-                pages,
+                pages:
+                    Number(
+                        value(
+                            "bookPages"
+                        )
+                    ) || 0,
 
                 isbn:
-                    getInputValue(
+                    value(
                         "bookISBN"
-                    ),
+                    ).trim(),
 
                 series:
-                    getInputValue(
+                    value(
                         "bookSeries"
-                    ),
+                    ).trim(),
 
                 shelfId:
-                    getInputValue(
+                    value(
                         "bookShelf"
                     ),
 
-                status,
+                status:
+                    value(
+                        "bookStatus"
+                    ) ||
+                    "want",
 
                 rating:
-                    H.toNumber?.(
-                        getInputValue(
+                    Number(
+                        value(
                             "bookRating"
-                        ),
-                        0
+                        )
                     ) || 0,
 
                 timesRead:
-                    H.toNumber?.(
-                        getInputValue(
+                    Number(
+                        value(
                             "bookTimesRead"
-                        ),
-                        0
+                        )
                     ) || 0,
 
-                started,
+                started:
+                    value(
+                        "bookStarted"
+                    ),
 
-                finished,
+                finished:
+                    value(
+                        "bookFinished"
+                    ),
 
-                currentPage,
+                currentPage:
+                    Number(
+                        value(
+                            "bookCurrentPage"
+                        )
+                    ) || 0,
 
                 cover:
-                    pendingCoverData ||
+                    state.pendingCoverData ||
                     existing?.cover ||
                     "",
 
-                design,
+                design:
+                    collectBookDesign(),
 
                 journal:
                     existing?.journal,
 
                 createdAt:
-                    existing?.createdAt,
+                    existing?.createdAt ||
+                    now,
 
                 updatedAt:
-                    H.nowISO?.()
+                    now
 
             });
+
+
+        if (
+            !Array.isArray(
+                state.books
+            )
+        ) {
+
+            state.books =
+                [];
+
+        }
 
 
         if (existing) {
@@ -1021,16 +1098,9 @@
         }
 
 
-        Novellow.storage
-            ?.saveBooks?.();
+        saveBooks();
 
-
-        pendingCoverData =
-            "";
-
-
-        closeBookDrawer();
-
+        closeDrawer();
 
         refreshConnectedViews();
 
@@ -1038,482 +1108,220 @@
 
 
     /* =====================================================
-       DESIGN FROM FORM
+       BOOK DESIGN
        ===================================================== */
 
-    function getDesignFromForm() {
+    function collectBookDesign() {
 
         return H.normalizeBookDesign?.({
 
             style:
-                getInputValue(
+                value(
                     "bookStyle"
                 ),
 
             spineColor:
-                getInputValue(
+                value(
                     "bookSpineColor"
                 ),
 
             textColor:
-                getInputValue(
+                value(
                     "bookTextColor"
                 ),
 
             accentColor:
-                getInputValue(
+                value(
                     "bookAccentColor"
                 ),
 
             ornament:
-                getInputValue(
+                value(
                     "bookSpineOrnament"
                 ),
 
-            spineFont:
-                getInputValue(
+            font:
+                value(
                     "bookSpineFont"
                 ),
 
             fontSize:
-                getInputValue(
+                value(
                     "bookSpineFontSize"
                 ),
 
             fontWeight:
-                getInputValue(
+                value(
                     "bookSpineFontWeight"
                 ),
 
             letterSpacing:
-                getInputValue(
+                value(
                     "bookSpineLetterSpacing"
                 ),
 
-            textCase:
-                getInputValue(
+            letterCase:
+                value(
                     "bookSpineCase"
                 ),
 
             fontStyle:
-                getInputValue(
+                value(
                     "bookSpineFontStyle"
                 ),
 
             textAlign:
-                getInputValue(
+                value(
                     "bookSpineTextAlign"
                 ),
 
             titlePanel:
-                getInputValue(
+                value(
                     "bookSpineTitlePanel"
                 ),
 
             height:
-                getInputValue(
+                value(
                     "bookHeight"
                 ),
 
             thickness:
-                getInputValue(
+                value(
                     "bookThickness"
                 )
 
-        });
+        }) || {
+
+            style:
+                value(
+                    "bookStyle"
+                ),
+
+            spineColor:
+                value(
+                    "bookSpineColor"
+                ),
+
+            textColor:
+                value(
+                    "bookTextColor"
+                ),
+
+            accentColor:
+                value(
+                    "bookAccentColor"
+                ),
+
+            ornament:
+                value(
+                    "bookSpineOrnament"
+                ),
+
+            font:
+                value(
+                    "bookSpineFont"
+                ),
+
+            fontSize:
+                value(
+                    "bookSpineFontSize"
+                ),
+
+            fontWeight:
+                value(
+                    "bookSpineFontWeight"
+                ),
+
+            letterSpacing:
+                value(
+                    "bookSpineLetterSpacing"
+                ),
+
+            letterCase:
+                value(
+                    "bookSpineCase"
+                ),
+
+            fontStyle:
+                value(
+                    "bookSpineFontStyle"
+                ),
+
+            textAlign:
+                value(
+                    "bookSpineTextAlign"
+                ),
+
+            titlePanel:
+                value(
+                    "bookSpineTitlePanel"
+                ),
+
+            height:
+                value(
+                    "bookHeight"
+                ),
+
+            thickness:
+                value(
+                    "bookThickness"
+                )
+
+        };
 
     }
 
 
     /* =====================================================
-       LIVE PREVIEW
+       COVER UPLOAD
        ===================================================== */
 
-    function updatePreviewFromForm() {
+    async function handleCoverUpload(
+        event
+    ) {
 
-        const preview =
-            H.getById?.(
-                "bookSpinePreview"
-            );
+        const file =
+            event.target
+                ?.files
+                ?.[0];
 
 
-        if (!preview) {
+        if (!file) {
             return;
         }
 
 
-        const title =
-            getInputValue(
-                "bookTitle"
-            ) ||
-            "Book Title";
+        try {
+
+            const data =
+                await H.fileToDataURL?.(
+                    file
+                );
 
 
-        const design =
-            getDesignFromForm();
+            getState().pendingCoverData =
+                data ||
+                null;
 
 
-        preview.className =
-            buildBookClassList(
-                design,
-                true
+            H.showToast?.(
+                "Cover added.",
+                "success"
             );
 
-
-        preview.style.setProperty(
-            "--book-color",
-            design.spineColor
-        );
-
-
-        preview.style.setProperty(
-            "--book-text",
-            design.textColor
-        );
-
-
-        preview.style.setProperty(
-            "--book-accent",
-            design.accentColor
-        );
-
-
-        const titleElement =
-            H.getById?.(
-                "bookSpinePreviewTitle"
-            );
-
-
-        if (titleElement) {
-
-            titleElement.textContent =
-                H.applyTextCase?.(
-                    title,
-                    design.textCase
-                ) ||
-                title;
-
-        }
-
-
-        const titlePanel =
-            H.getById?.(
-                "bookSpinePreviewTitlePanel"
-            );
-
-
-        if (titlePanel) {
-
-            titlePanel.className =
-                [
-                    "spine-preview-title-panel",
-                    getPreviewPanelClass(
-                        design.titlePanel
-                    )
-                ]
-                .filter(Boolean)
-                .join(" ");
-
-        }
-
-
-        const ornament =
-            H.getById?.(
-                "bookSpinePreviewOrnament"
-            );
-
-
-        if (ornament) {
-
-            ornament.textContent =
-                H.getOrnamentSymbol?.(
-                    design.ornament,
-                    design.style
-                ) ||
-                "";
-
-        }
-
-
-        applyPreviewTypography(
-            preview,
-            design
-        );
-
-    }
-
-
-    /* =====================================================
-       PREVIEW CLASSES
-       ===================================================== */
-
-    function applyPreviewTypography(
-        preview,
-        design
-    ) {
-
-        const title =
-            H.getById?.(
-                "bookSpinePreviewTitle"
-            );
-
-
-        if (!title) {
-            return;
-        }
-
-
-        title.style.fontFamily =
-            getPreviewFontFamily(
-                design.spineFont
-            );
-
-
-        title.style.fontSize =
-            getPreviewFontSize(
-                design.fontSize
-            );
-
-
-        title.style.fontWeight =
-            getPreviewFontWeight(
-                design.fontWeight
-            );
-
-
-        title.style.letterSpacing =
-            getPreviewLetterSpacing(
-                design.letterSpacing
-            );
-
-
-        title.style.fontStyle =
-            design.fontStyle ===
-            "italic"
-                ? "italic"
-                : "normal";
-
-
-        const inner =
-            preview.querySelector(
-                ".spine-preview-inner"
-            );
-
-
-        if (inner) {
-
-            inner.style.justifyContent =
-                design.textAlign ===
-                "top"
-                    ? "flex-start"
-                    : design.textAlign ===
-                      "bottom"
-                        ? "flex-end"
-                        : "center";
-
-        }
-
-
-        if (
-            design.height ===
-            "small"
+        } catch (
+            error
         ) {
 
-            preview.style.height =
-                "205px";
-
-        } else if (
-            design.height ===
-            "tall"
-        ) {
-
-            preview.style.height =
-                "275px";
-
-        } else {
-
-            preview.style.height =
-                "250px";
-
-        }
-
-
-        if (
-            design.thickness ===
-            "slim"
-        ) {
-
-            preview.style.width =
-                "42px";
-
-        } else if (
-            design.thickness ===
-            "chunky"
-        ) {
-
-            preview.style.width =
-                "64px";
-
-        } else {
-
-            preview.style.width =
-                "52px";
-
-        }
-
-    }
-
-
-    function getPreviewPanelClass(
-        panel
-    ) {
-
-        switch (panel) {
-
-            case "simple":
-                return "preview-panel-simple";
-
-            case "bordered":
-                return "preview-panel-bordered";
-
-            case "ornate":
-                return "preview-panel-ornate";
-
-            case "dark":
-                return "preview-panel-dark";
-
-            case "light":
-                return "preview-panel-light";
-
-            default:
-                return "";
-
-        }
-
-    }
-
-
-    function getPreviewFontFamily(
-        font
-    ) {
-
-        switch (font) {
-
-            case "roman":
-
-                return '"Times New Roman", Georgia, serif';
-
-
-            case "bookish":
-
-            case "elegant":
-
-            case "storybook":
-
-                return '"Cormorant Garamond", Georgia, serif';
-
-
-            case "typewriter":
-
-            case "retro":
-
-                return '"Courier New", monospace';
-
-
-            case "clean":
-
-                return 'Arial, Helvetica, sans-serif';
-
-
-            case "condensed":
-
-            case "deco":
-
-                return '"Arial Narrow", Arial, sans-serif';
-
-
-            case "heavy":
-
-                return 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif';
-
-
-            case "handwritten":
-
-                return '"Comic Sans MS", "Bradley Hand", cursive';
-
-
-            default:
-
-                return 'Georgia, "Times New Roman", serif';
-
-        }
-
-    }
-
-
-    function getPreviewFontSize(
-        size
-    ) {
-
-        switch (size) {
-
-            case "small":
-                return "0.56rem";
-
-            case "large":
-                return "0.77rem";
-
-            case "xlarge":
-                return "0.9rem";
-
-            default:
-                return "0.67rem";
-
-        }
-
-    }
-
-
-    function getPreviewFontWeight(
-        weight
-    ) {
-
-        switch (weight) {
-
-            case "light":
-                return "300";
-
-            case "bold":
-                return "700";
-
-            case "heavy":
-                return "800";
-
-            default:
-                return "500";
-
-        }
-
-    }
-
-
-    function getPreviewLetterSpacing(
-        spacing
-    ) {
-
-        switch (spacing) {
-
-            case "tight":
-                return "-0.04em";
-
-            case "wide":
-                return "0.08em";
-
-            case "extra-wide":
-                return "0.16em";
-
-            default:
-                return "0";
+            console.error(
+                error
+            );
+
+
+            H.showToast?.(
+                "That cover could not be loaded.",
+                "error"
+            );
 
         }
 
@@ -1529,10 +1337,11 @@
     ) {
 
         const design =
-            book.design ||
             H.normalizeBookDesign?.(
-                {}
-            );
+                book.design
+            ) ||
+            book.design ||
+            {};
 
 
         const button =
@@ -1557,34 +1366,39 @@
 
         button.setAttribute(
             "aria-label",
-            `${book.title}${book.author ? ` by ${book.author}` : ""}`
+            `Open ${book.title || "book"}`
         );
 
 
         button.style.setProperty(
             "--book-color",
-            design.spineColor
+            design.spineColor ||
+            "#793f55"
         );
 
 
         button.style.setProperty(
             "--book-text",
-            design.textColor
+            design.textColor ||
+            "#f1e3cf"
         );
 
 
         button.style.setProperty(
             "--book-accent",
-            design.accentColor
+            design.accentColor ||
+            "#c39a67"
         );
 
 
         const title =
             H.applyTextCase?.(
-                book.title,
-                design.textCase
+                book.title ||
+                "Untitled",
+                design.letterCase
             ) ||
-            book.title;
+            book.title ||
+            "Untitled";
 
 
         const ornament =
@@ -1602,42 +1416,47 @@
                     aria-hidden="true"
                 ></span>
 
-                <span
-                    class="binding-band bottom"
-                    aria-hidden="true"
-                ></span>
-
                 <span class="spine-inner">
 
                     <span class="spine-title-panel">
 
                         <span class="spine-title">
-                            ${H.escapeHTML?.(
+                            ${escape(
                                 title
                             )}
                         </span>
 
                     </span>
 
+                    <span
+                        class="spine-ornament"
+                        aria-hidden="true"
+                    >
+                        ${escape(
+                            ornament
+                        )}
+                    </span>
+
                 </span>
 
                 <span
-                    class="spine-ornament"
+                    class="binding-band bottom"
                     aria-hidden="true"
-                >
-                    ${H.escapeHTML?.(
-                        ornament
-                    )}
-                </span>
+                ></span>
             `;
 
 
         button.addEventListener(
             "click",
-            () =>
+            event => {
+
+                event.stopPropagation();
+
                 openReveal(
                     book.id
-                )
+                );
+
+            }
         );
 
 
@@ -1681,7 +1500,7 @@
 
 
             classes.push(
-                `book-font-${design.spineFont || "serif"}`
+                `book-font-${design.font || "bookish"}`
             );
 
 
@@ -1725,7 +1544,149 @@
 
 
     /* =====================================================
-       COVER ELEMENT
+       SPINE PREVIEW
+       ===================================================== */
+
+    function updateSpinePreview() {
+
+        const preview =
+            H.getById?.(
+                "bookSpinePreview"
+            );
+
+
+        if (!preview) {
+            return;
+        }
+
+
+        const design =
+            collectBookDesign();
+
+
+        preview.style.setProperty(
+            "--book-color",
+            design.spineColor ||
+            "#793f55"
+        );
+
+
+        preview.style.setProperty(
+            "--book-text",
+            design.textColor ||
+            "#f1e3cf"
+        );
+
+
+        preview.style.setProperty(
+            "--book-accent",
+            design.accentColor ||
+            "#c39a67"
+        );
+
+
+        const title =
+            H.applyTextCase?.(
+                value(
+                    "bookTitle"
+                ) ||
+                "Book Title",
+                design.letterCase
+            ) ||
+            value(
+                "bookTitle"
+            ) ||
+            "Book Title";
+
+
+        H.setText?.(
+            "bookSpinePreviewTitle",
+            title
+        );
+
+
+        H.setText?.(
+            "bookSpinePreviewOrnament",
+            H.getOrnamentSymbol?.(
+                design.ornament,
+                design.style
+            ) ||
+            ""
+        );
+
+
+        const titlePanel =
+            H.getById?.(
+                "bookSpinePreviewTitlePanel"
+            );
+
+
+        if (titlePanel) {
+
+            titlePanel.className =
+                "spine-preview-title-panel";
+
+
+            if (
+                design.titlePanel &&
+                design.titlePanel !==
+                    "none"
+            ) {
+
+                titlePanel.classList.add(
+                    `preview-panel-${design.titlePanel}`
+                );
+
+            }
+
+        }
+
+
+        const previewTitle =
+            H.getById?.(
+                "bookSpinePreviewTitle"
+            );
+
+
+        if (previewTitle) {
+
+            previewTitle.style.fontStyle =
+                design.fontStyle ===
+                    "italic"
+                    ? "italic"
+                    : "normal";
+
+
+            previewTitle.style.fontWeight =
+                mapFontWeight(
+                    design.fontWeight
+                );
+
+
+            previewTitle.style.letterSpacing =
+                mapLetterSpacing(
+                    design.letterSpacing
+                );
+
+
+            previewTitle.style.fontSize =
+                mapFontSize(
+                    design.fontSize
+                );
+
+
+            previewTitle.style.fontFamily =
+                mapPreviewFont(
+                    design.font
+                );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       CREATE COVER
        ===================================================== */
 
     function createCoverElement(
@@ -1738,8 +1699,12 @@
             );
 
 
-        wrapper.className =
-            "generated-cover";
+        wrapper.style.width =
+            "100%";
+
+
+        wrapper.style.height =
+            "100%";
 
 
         if (
@@ -1761,11 +1726,7 @@
 
 
             image.alt =
-                `${book.title} cover`;
-
-
-            wrapper.innerHTML =
-                "";
+                `${book.title || "Book"} cover`;
 
 
             wrapper.appendChild(
@@ -1779,69 +1740,78 @@
 
 
         const design =
+            H.normalizeBookDesign?.(
+                book.design
+            ) ||
             book.design ||
-            CONFIG.defaultBookDesign ||
             {};
 
 
-        wrapper.style.setProperty(
+        const generated =
+            document.createElement(
+                "div"
+            );
+
+
+        generated.className =
+            "generated-cover";
+
+
+        generated.style.setProperty(
             "--cover-color",
             design.spineColor ||
             "#793f55"
         );
 
 
-        wrapper.style.setProperty(
+        generated.style.setProperty(
             "--cover-text",
             design.textColor ||
             "#f1e3cf"
         );
 
 
-        wrapper.style.setProperty(
+        generated.style.setProperty(
             "--cover-accent",
             design.accentColor ||
             "#c39a67"
         );
 
 
-        const ornament =
-            H.getOrnamentSymbol?.(
-                design.ornament,
-                design.style
-            ) ||
-            "";
-
-
-        wrapper.innerHTML =
+        generated.innerHTML =
             `
-                <strong class="generated-cover-title">
-                    ${H.escapeHTML?.(
-                        book.title
+                <div class="generated-cover-title">
+                    ${escape(
+                        book.title ||
+                        "Untitled Book"
                     )}
-                </strong>
+                </div>
 
-                ${
-                    book.author
-                        ? `
-                            <span class="generated-cover-author">
-                                ${H.escapeHTML?.(
-                                    book.author
-                                )}
-                            </span>
-                        `
-                        : ""
-                }
+                <div class="generated-cover-author">
+                    ${escape(
+                        book.author ||
+                        ""
+                    )}
+                </div>
 
-                <span
+                <div
                     class="generated-cover-ornament"
                     aria-hidden="true"
                 >
-                    ${H.escapeHTML?.(
-                        ornament
+                    ${escape(
+                        H.getOrnamentSymbol?.(
+                            design.ornament,
+                            design.style
+                        ) ||
+                        "✦"
                     )}
-                </span>
+                </div>
             `;
+
+
+        wrapper.appendChild(
+            generated
+        );
 
 
         return wrapper;
@@ -1857,10 +1827,6 @@
         bookId
     ) {
 
-        const state =
-            getState();
-
-
         const book =
             H.getBookById?.(
                 bookId
@@ -1872,7 +1838,11 @@
         }
 
 
-        state.selectedBookId =
+        revealBookId =
+            book.id;
+
+
+        getState().selectedBookId =
             book.id;
 
 
@@ -1887,22 +1857,26 @@
         }
 
 
-        const coverContainer =
+        const cover =
             H.getById?.(
                 "revealBookCover"
             );
 
 
-        if (coverContainer) {
+        if (cover) {
 
-            coverContainer.innerHTML =
+            cover.innerHTML =
                 "";
 
 
-            coverContainer.appendChild(
+            const coverElement =
                 createCoverElement(
                     book
-                )
+                );
+
+
+            cover.appendChild(
+                coverElement
             );
 
         }
@@ -1919,14 +1893,15 @@
 
         H.setText?.(
             "revealBookTitle",
-            book.title
+            book.title ||
+            "Untitled Book"
         );
 
 
         H.setText?.(
             "revealBookAuthor",
             book.author ||
-            "Unknown Author"
+            "Unknown author"
         );
 
 
@@ -1951,9 +1926,9 @@
         H.setText?.(
             "revealBookPages",
             book.pages
-                ? H.formatNumber?.(
+                ? String(
                     book.pages
-                ) || book.pages
+                )
                 : "—"
         );
 
@@ -1979,15 +1954,15 @@
         );
 
 
-        const progress =
+        const fill =
             H.getById?.(
                 "revealBookProgress"
             );
 
 
-        if (progress) {
+        if (fill) {
 
-            progress.style.width =
+            fill.style.width =
                 `${percent}%`;
 
         }
@@ -2024,72 +1999,11 @@
         }
 
 
-        document.body.classList.remove(
-            "modal-open"
-        );
-
-    }
+        revealBookId =
+            null;
 
 
-    /* =====================================================
-       EDIT SELECTED BOOK
-       ===================================================== */
-
-    function editSelectedBook() {
-
-        const state =
-            getState();
-
-
-        const bookId =
-            state.selectedBookId;
-
-
-        if (!bookId) {
-            return;
-        }
-
-
-        closeReveal();
-
-        openEditDrawer(
-            bookId
-        );
-
-    }
-
-
-    /* =====================================================
-       OPEN SELECTED JOURNAL
-       ===================================================== */
-
-    function openSelectedJournal() {
-
-        const state =
-            getState();
-
-
-        const bookId =
-            state.selectedBookId;
-
-
-        if (!bookId) {
-            return;
-        }
-
-
-        closeReveal();
-
-
-        Novellow.navigation?.navigateTo?.(
-            "journal"
-        );
-
-
-        Novellow.journal
-            ?.selectBook?.(
-                bookId
-            );
+        syncOverlay();
 
     }
 
@@ -2101,10 +2015,6 @@
     function deleteBook(
         bookId
     ) {
-
-        const state =
-            getState();
-
 
         const book =
             H.getBookById?.(
@@ -2119,7 +2029,7 @@
 
         const confirmed =
             H.confirmAction?.(
-                `Delete "${book.title}" from Novellow?`
+                `Delete "${book.title}" from your library?`
             );
 
 
@@ -2128,21 +2038,55 @@
         }
 
 
+        const state =
+            getState();
+
+
         state.books =
-            state.books.filter(
+            getBooks().filter(
                 item =>
                     item.id !==
                     bookId
             );
 
 
+        /*
+           Remove associated quotes and vocabulary as well so
+           orphaned records do not remain.
+        */
+
         if (
-            state.selectedBookId ===
-            bookId
+            Array.isArray(
+                state.quotes
+            )
         ) {
 
-            state.selectedBookId =
-                null;
+            state.quotes =
+                state.quotes.filter(
+                    quote =>
+                        quote.bookId !==
+                            bookId &&
+                        quote.book !==
+                            bookId
+                );
+
+        }
+
+
+        if (
+            Array.isArray(
+                state.vocabulary
+            )
+        ) {
+
+            state.vocabulary =
+                state.vocabulary.filter(
+                    word =>
+                        word.bookId !==
+                            bookId &&
+                        word.book !==
+                            bookId
+                );
 
         }
 
@@ -2151,7 +2095,36 @@
             ?.saveBooks?.();
 
 
-        closeReveal();
+        Novellow.storage
+            ?.saveQuotes?.();
+
+
+        Novellow.storage
+            ?.saveVocabulary?.();
+
+
+        if (
+            getState()
+                .selectedBookId ===
+            bookId
+        ) {
+
+            getState()
+                .selectedBookId =
+                null;
+
+        }
+
+
+        if (
+            revealBookId ===
+            bookId
+        ) {
+
+            closeReveal();
+
+        }
+
 
         refreshConnectedViews();
 
@@ -2169,7 +2142,7 @@
        ===================================================== */
 
     function populateShelfSelect(
-        selectedShelfId =
+        selectedId =
             ""
     ) {
 
@@ -2180,16 +2153,12 @@
 
             Novellow.library
                 .populateShelfSelect(
-                    selectedShelfId
+                    selectedId
                 );
 
             return;
 
         }
-
-
-        const state =
-            getState();
 
 
         const select =
@@ -2203,30 +2172,46 @@
         }
 
 
+        const shelves =
+            Array.isArray(
+                getState().shelves
+            )
+                ? getState().shelves
+                : [];
+
+
+        const previous =
+            selectedId ||
+            select.value ||
+            "";
+
+
         select.innerHTML =
             "";
 
 
-        const unshelved =
+        const none =
             document.createElement(
                 "option"
             );
 
 
-        unshelved.value =
+        none.value =
             "";
 
 
-        unshelved.textContent =
-            "Unshelved";
+        none.textContent =
+            shelves.length
+                ? "No shelf"
+                : "Create a shelf first";
 
 
         select.appendChild(
-            unshelved
+            none
         );
 
 
-        state.shelves.forEach(
+        shelves.forEach(
             shelf => {
 
                 const option =
@@ -2240,7 +2225,8 @@
 
 
                 option.textContent =
-                    shelf.name;
+                    shelf.name ||
+                    "Shelf";
 
 
                 select.appendChild(
@@ -2251,42 +2237,30 @@
         );
 
 
-        select.value =
-            selectedShelfId ||
-            "";
+        if (
+            shelves.some(
+                shelf =>
+                    shelf.id ===
+                    previous
+            )
+        ) {
+
+            select.value =
+                previous;
+
+        }
 
     }
 
 
     /* =====================================================
-       FORMAT RATING
+       SAVE BOOKS
        ===================================================== */
 
-    function formatRating(
-        rating
-    ) {
+    function saveBooks() {
 
-        const value =
-            Math.max(
-                0,
-                Math.min(
-                    5,
-                    H.toNumber?.(
-                        rating,
-                        0
-                    ) || 0
-                )
-            );
-
-
-        if (!value) {
-            return "Not rated";
-        }
-
-
-        return "★".repeat(
-            value
-        );
+        Novellow.storage
+            ?.saveBooks?.();
 
     }
 
@@ -2320,19 +2294,102 @@
         Novellow.stats
             ?.render?.();
 
+    }
 
-        populateShelfSelect();
+
+    /* =====================================================
+       OVERLAY / BODY LOCK
+       ===================================================== */
+
+    function syncOverlay() {
+
+        const panelIds = [
+
+            "themeDrawer",
+            "settingsDrawer",
+            "shelfDrawer",
+            "bookDrawer",
+            "bookReveal",
+            "progressModal",
+            "journalEntryModal",
+            "quoteModal",
+            "wordModal"
+
+        ];
+
+
+        const anyOpen =
+            panelIds.some(
+                id => {
+
+                    const element =
+                        H.getById?.(
+                            id
+                        );
+
+
+                    return (
+                        element &&
+                        !element.hidden
+                    );
+
+                }
+            );
+
+
+        const overlay =
+            H.getById?.(
+                "overlay"
+            );
+
+
+        if (overlay) {
+
+            const drawerOpen =
+                [
+                    "themeDrawer",
+                    "settingsDrawer",
+                    "shelfDrawer",
+                    "bookDrawer"
+                ].some(
+                    id => {
+
+                        const element =
+                            H.getById?.(
+                                id
+                            );
+
+
+                        return (
+                            element &&
+                            !element.hidden
+                        );
+
+                    }
+                );
+
+
+            overlay.hidden =
+                !drawerOpen;
+
+        }
+
+
+        document.body.classList.toggle(
+            "modal-open",
+            anyOpen
+        );
 
     }
 
 
     /* =====================================================
-       INPUT HELPERS
+       VALUE HELPERS
        ===================================================== */
 
-    function setInputValue(
+    function setValue(
         id,
-        value
+        nextValue
     ) {
 
         const element =
@@ -2347,24 +2404,247 @@
 
 
         element.value =
-            value ?? "";
+            nextValue ??
+            "";
 
     }
 
 
-    function getInputValue(
+    function value(
         id
     ) {
 
-        const element =
+        return (
             H.getById?.(
                 id
+            )?.value ??
+            ""
+        );
+
+    }
+
+
+    /* =====================================================
+       FORMATTING
+       ===================================================== */
+
+    function formatRating(
+        rating
+    ) {
+
+        const value =
+            Math.max(
+                0,
+                Math.min(
+                    5,
+                    Number(
+                        rating
+                    ) || 0
+                )
             );
 
 
-        return element
-            ? element.value
-            : "";
+        if (!value) {
+
+            return "Not rated";
+
+        }
+
+
+        return "★".repeat(
+            value
+        );
+
+    }
+
+
+    function mapFontWeight(
+        weight
+    ) {
+
+        const map = {
+
+            light:
+                "300",
+
+            regular:
+                "500",
+
+            bold:
+                "700",
+
+            heavy:
+                "800"
+
+        };
+
+
+        return (
+            map[
+                weight
+            ] ||
+            "500"
+        );
+
+    }
+
+
+    function mapLetterSpacing(
+        spacing
+    ) {
+
+        const map = {
+
+            tight:
+                "-0.04em",
+
+            normal:
+                "0",
+
+            wide:
+                "0.08em",
+
+            "extra-wide":
+                "0.15em"
+
+        };
+
+
+        return (
+            map[
+                spacing
+            ] ||
+            "0"
+        );
+
+    }
+
+
+    function mapFontSize(
+        size
+    ) {
+
+        const map = {
+
+            small:
+                "0.60rem",
+
+            medium:
+                "0.72rem",
+
+            large:
+                "0.84rem",
+
+            xlarge:
+                "0.96rem"
+
+        };
+
+
+        return (
+            map[
+                size
+            ] ||
+            "0.72rem"
+        );
+
+    }
+
+
+    function mapPreviewFont(
+        font
+    ) {
+
+        const map = {
+
+            serif:
+                "Georgia, 'Times New Roman', serif",
+
+            roman:
+                "'Times New Roman', Georgia, serif",
+
+            bookish:
+                "var(--font-book)",
+
+            elegant:
+                "'Cormorant Garamond', Georgia, serif",
+
+            typewriter:
+                "'Courier New', monospace",
+
+            clean:
+                "Arial, Helvetica, sans-serif",
+
+            condensed:
+                "'Arial Narrow', Arial, sans-serif",
+
+            heavy:
+                "Impact, Haettenschweiler, sans-serif",
+
+            storybook:
+                "var(--font-display)",
+
+            handwritten:
+                "'Comic Sans MS', 'Bradley Hand', cursive",
+
+            gothic:
+                "Georgia, serif",
+
+            deco:
+                "'Arial Narrow', Arial, sans-serif",
+
+            retro:
+                "'Courier New', monospace"
+
+        };
+
+
+        return (
+            map[
+                font
+            ] ||
+            "var(--font-book)"
+        );
+
+    }
+
+
+    /* =====================================================
+       ESCAPE
+       ===================================================== */
+
+    function escape(
+        input
+    ) {
+
+        if (
+            H.escapeHTML
+        ) {
+
+            return H.escapeHTML(
+                String(
+                    input ??
+                    ""
+                )
+            );
+
+        }
+
+
+        const element =
+            document.createElement(
+                "div"
+            );
+
+
+        element.textContent =
+            String(
+                input ??
+                ""
+            );
+
+
+        return element.innerHTML;
 
     }
 
@@ -2381,11 +2661,7 @@
 
         openEditDrawer,
 
-        closeBookDrawer,
-
-        createShelfBookElement,
-
-        createCoverElement,
+        closeDrawer,
 
         openReveal,
 
@@ -2393,9 +2669,15 @@
 
         deleteBook,
 
+        createShelfBookElement,
+
+        createCoverElement,
+
         populateShelfSelect,
 
-        updatePreviewFromForm
+        updateSpinePreview,
+
+        refreshConnectedViews
 
     };
 
