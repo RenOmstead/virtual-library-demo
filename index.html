@@ -188,6 +188,7 @@
                                 id="showSignIn"
                                 type="button"
                                 class="auth-mode-button active"
+                                onclick="window.NOVELLOW?.auth?.setMode?.('signin')"
                             >
                                 Sign In
                             </button>
@@ -196,6 +197,7 @@
                                 id="showSignUp"
                                 type="button"
                                 class="auth-mode-button"
+                                onclick="window.NOVELLOW?.auth?.setMode?.('signup')"
                             >
                                 Create Account
                             </button>
@@ -304,7 +306,6 @@
     <div
         id="loadingScreen"
         class="loading-screen"
-        hidden
     >
 
         <div class="loading-content">
