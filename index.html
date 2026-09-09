@@ -30,7 +30,7 @@
 </head>
 
 
-<body data-theme="haunted">
+<body class="theme-haunted">
 
 
     <!-- =====================================================
@@ -41,7 +41,8 @@
 
 
         <!-- =================================================
-             SIDEBAR
+             TOP NAVIGATION
+             Uses existing sidebar markup, styled as top nav.
              ================================================= -->
 
         <aside class="sidebar">
@@ -80,13 +81,19 @@
                     href="#library"
                     class="nav-link active"
                 >
-                    <span class="nav-icon">
-                        ◫
+
+                    <span
+                        class="nav-ui-icon icon-library"
+                        aria-hidden="true"
+                    >
+                        <span class="book-one"></span>
+                        <span class="book-two"></span>
                     </span>
 
                     <span>
                         Library
                     </span>
+
                 </a>
 
 
@@ -94,13 +101,19 @@
                     href="#reading"
                     class="nav-link"
                 >
-                    <span class="nav-icon">
-                        ◐
+
+                    <span
+                        class="nav-ui-icon icon-reading"
+                        aria-hidden="true"
+                    >
+                        <span class="page-left"></span>
+                        <span class="page-right"></span>
                     </span>
 
                     <span>
                         Reading
                     </span>
+
                 </a>
 
 
@@ -108,13 +121,20 @@
                     href="#stats"
                     class="nav-link"
                 >
-                    <span class="nav-icon">
-                        ✦
+
+                    <span
+                        class="nav-ui-icon icon-stars"
+                        aria-hidden="true"
+                    >
+                        <span></span>
+                        <span></span>
+                        <span></span>
                     </span>
 
                     <span>
                         Reading Stats
                     </span>
+
                 </a>
 
             </nav>
@@ -148,6 +168,24 @@
                     Theme & Room
                 </button>
 
+
+                <button
+                    id="loginButton"
+                    class="login-button"
+                    type="button"
+                >
+
+                    <span
+                        class="login-key-icon"
+                        aria-hidden="true"
+                    ></span>
+
+                    <span>
+                        Log In
+                    </span>
+
+                </button>
+
             </div>
 
 
@@ -167,14 +205,15 @@
 
 
         <!-- =================================================
-             MAIN AREA
+             MAIN SHELL
              ================================================= -->
 
         <div class="main-shell">
 
 
             <!-- =============================================
-                 TOPBAR
+                 LEGACY TOPBAR
+                 Hidden by CSS, kept for compatibility.
                  ============================================= -->
 
             <header class="topbar">
@@ -236,11 +275,6 @@
                     id="library"
                     class="library-page"
                 >
-
-
-                    <!-- =====================================
-                         LIBRARY INTRO
-                         ===================================== -->
 
                     <div class="library-intro">
 
@@ -309,20 +343,12 @@
                     </div>
 
 
-                    <!-- =====================================
-                         SHELVES
-                         ===================================== -->
-
                     <div
                         id="shelfContainer"
                         class="shelf-container"
                     >
                     </div>
 
-
-                    <!-- =====================================
-                         EMPTY LIBRARY
-                         ===================================== -->
 
                     <div
                         id="libraryEmpty"
@@ -366,10 +392,6 @@
                     </div>
 
 
-                    <!-- =====================================
-                         BOTTOM ADD SHELF
-                         ===================================== -->
-
                     <button
                         id="bottomAddShelf"
                         class="bottom-add-shelf"
@@ -390,11 +412,6 @@
                     id="reading"
                     class="reading-now-section"
                 >
-
-
-                    <!-- =====================================
-                         READING INTRO
-                         ===================================== -->
 
                     <div class="reading-now-intro">
 
@@ -463,10 +480,6 @@
 
                     </div>
 
-
-                    <!-- =====================================
-                         FEATURED CURRENT READ
-                         ===================================== -->
 
                     <div
                         id="featuredReadingSection"
@@ -563,7 +576,6 @@
                                         >
                                         </div>
 
-
                                         <span
                                             id="featuredProgressBookmark"
                                             class="progress-bookmark"
@@ -604,10 +616,6 @@
                     </div>
 
 
-                    <!-- =====================================
-                         CURRENT READING LIST
-                         ===================================== -->
-
                     <div
                         id="readingListSection"
                         class="reading-list-section"
@@ -639,10 +647,6 @@
 
                     </div>
 
-
-                    <!-- =====================================
-                         READING EMPTY
-                         ===================================== -->
 
                     <div
                         id="readingEmpty"
@@ -684,11 +688,6 @@
                     class="reading-stats-section"
                 >
 
-
-                    <!-- =====================================
-                         STATS INTRO
-                         ===================================== -->
-
                     <div class="stats-intro">
 
                         <span class="eyebrow">
@@ -709,12 +708,7 @@
                     </div>
 
 
-                    <!-- =====================================
-                         PRIMARY STATS
-                         ===================================== -->
-
                     <div class="stats-grid">
-
 
                         <article class="stat-card">
 
@@ -786,12 +780,7 @@
                     </div>
 
 
-                    <!-- =====================================
-                         STATUS BREAKDOWN
-                         ===================================== -->
-
                     <div class="stats-status-grid">
-
 
                         <article class="stats-status-item">
 
@@ -873,16 +862,7 @@
                     </div>
 
 
-                    <!-- =====================================
-                         LOWER PANELS
-                         ===================================== -->
-
                     <div class="stats-lower-grid">
-
-
-                        <!-- =================================
-                             GENRES
-                             ================================= -->
 
                         <article class="stats-panel">
 
@@ -914,10 +894,6 @@
 
                         </article>
 
-
-                        <!-- =================================
-                             MONTHLY READING
-                             ================================= -->
 
                         <article class="stats-panel">
 
@@ -966,7 +942,7 @@
 
 
     <!-- =====================================================
-         THEME DRAWER
+         THEME & ATMOSPHERE MODAL
          ===================================================== -->
 
     <aside
@@ -988,6 +964,7 @@
                 </h2>
 
             </div>
+
 
             <button
                 id="closeThemeDrawer"
@@ -1024,7 +1001,6 @@
 
 
                 <div class="theme-grid">
-
 
                     <button
                         class="theme-card active"
@@ -1131,7 +1107,7 @@
 
 
             <!-- =============================================
-                 AMBIENT SETTINGS
+                 AMBIENT DETAILS
                  ============================================= -->
 
             <section class="drawer-section">
@@ -1150,7 +1126,6 @@
 
 
                 <div class="setting-list">
-
 
                     <label class="toggle-setting">
 
@@ -1292,7 +1267,6 @@
 
                 <div class="radio-card-grid">
 
-
                     <label class="radio-card">
 
                         <input
@@ -1368,6 +1342,23 @@
 
         </div>
 
+
+        <!-- =============================================
+             DONE BUTTON
+             ============================================= -->
+
+        <div class="theme-modal-actions">
+
+            <button
+                id="closeThemeSettingsButton"
+                class="primary-button"
+                type="button"
+            >
+                Done
+            </button>
+
+        </div>
+
     </aside>
 
 
@@ -1417,11 +1408,6 @@
 
             <div class="drawer-body">
 
-
-                <!-- =========================================
-                     BASIC DETAILS
-                     ========================================= -->
-
                 <section class="drawer-section">
 
                     <div class="form-grid">
@@ -1461,10 +1447,6 @@
                 </section>
 
 
-                <!-- =========================================
-                     SHELF APPEARANCE
-                     ========================================= -->
-
                 <section class="drawer-section">
 
                     <div class="drawer-section-heading">
@@ -1477,7 +1459,6 @@
 
 
                     <div class="form-grid">
-
 
                         <label class="field">
 
@@ -1611,10 +1592,6 @@
                 </section>
 
 
-                <!-- =========================================
-                     DECORATIONS
-                     ========================================= -->
-
                 <section class="drawer-section">
 
                     <div class="drawer-section-heading">
@@ -1624,8 +1601,8 @@
                         </span>
 
                         <p>
-                            Decorations can be moved around the
-                            shelf after you add them.
+                            Decorations can be moved around the shelf
+                            after you add them.
                         </p>
 
                     </div>
@@ -1633,214 +1610,79 @@
 
                     <div class="decoration-options">
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="cat"
-                            >
-
-                            <span>
-                                Cat
-                            </span>
-
+                            <input type="checkbox" value="cat">
+                            <span>Cat</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="ghost"
-                            >
-
-                            <span>
-                                Ghost
-                            </span>
-
+                            <input type="checkbox" value="ghost">
+                            <span>Ghost</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="bat"
-                            >
-
-                            <span>
-                                Bat
-                            </span>
-
+                            <input type="checkbox" value="bat">
+                            <span>Bat</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="goblin"
-                            >
-
-                            <span>
-                                Goblin
-                            </span>
-
+                            <input type="checkbox" value="goblin">
+                            <span>Goblin</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="moss"
-                            >
-
-                            <span>
-                                Moss
-                            </span>
-
+                            <input type="checkbox" value="moss">
+                            <span>Moss</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="mushroom"
-                            >
-
-                            <span>
-                                Mushroom
-                            </span>
-
+                            <input type="checkbox" value="mushroom">
+                            <span>Mushroom</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="potion"
-                            >
-
-                            <span>
-                                Potion
-                            </span>
-
+                            <input type="checkbox" value="potion">
+                            <span>Potion</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="crystal"
-                            >
-
-                            <span>
-                                Crystal
-                            </span>
-
+                            <input type="checkbox" value="crystal">
+                            <span>Crystal</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="raven"
-                            >
-
-                            <span>
-                                Raven
-                            </span>
-
+                            <input type="checkbox" value="raven">
+                            <span>Raven</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="pumpkin"
-                            >
-
-                            <span>
-                                Pumpkin
-                            </span>
-
+                            <input type="checkbox" value="pumpkin">
+                            <span>Pumpkin</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="plant"
-                            >
-
-                            <span>
-                                Plant
-                            </span>
-
+                            <input type="checkbox" value="plant">
+                            <span>Plant</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="candle"
-                            >
-
-                            <span>
-                                Candle
-                            </span>
-
+                            <input type="checkbox" value="candle">
+                            <span>Candle</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="flowers"
-                            >
-
-                            <span>
-                                Flowers
-                            </span>
-
+                            <input type="checkbox" value="flowers">
+                            <span>Flowers</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="stars"
-                            >
-
-                            <span>
-                                Stars
-                            </span>
-
+                            <input type="checkbox" value="stars">
+                            <span>Stars</span>
                         </label>
 
-
                         <label class="decoration-option">
-
-                            <input
-                                type="checkbox"
-                                value="mug"
-                            >
-
-                            <span>
-                                Mug
-                            </span>
-
+                            <input type="checkbox" value="mug">
+                            <span>Mug</span>
                         </label>
 
                     </div>
@@ -1922,11 +1764,6 @@
 
             <div class="drawer-body">
 
-
-                <!-- =========================================
-                     BASIC BOOK INFO
-                     ========================================= -->
-
                 <section class="drawer-section">
 
                     <div class="drawer-section-heading">
@@ -1939,7 +1776,6 @@
 
 
                     <div class="form-grid">
-
 
                         <label class="field full-field">
 
@@ -2054,10 +1890,6 @@
                 </section>
 
 
-                <!-- =========================================
-                     READING DETAILS
-                     ========================================= -->
-
                 <section class="drawer-section">
 
                     <div class="drawer-section-heading">
@@ -2070,7 +1902,6 @@
 
 
                     <div class="form-grid">
-
 
                         <label class="field">
 
@@ -2222,10 +2053,6 @@
                 </section>
 
 
-                <!-- =========================================
-                     COVER
-                     ========================================= -->
-
                 <section class="drawer-section">
 
                     <div class="drawer-section-heading">
@@ -2260,10 +2087,6 @@
                 </section>
 
 
-                <!-- =========================================
-                     SPINE DESIGN
-                     ========================================= -->
-
                 <section class="drawer-section">
 
                     <div class="drawer-section-heading">
@@ -2280,11 +2103,6 @@
 
 
                     <div class="spine-editor-layout">
-
-
-                        <!-- =================================
-                             PREVIEW
-                             ================================= -->
 
                         <div class="spine-preview-area">
 
@@ -2329,15 +2147,9 @@
                         </div>
 
 
-                        <!-- =================================
-                             DESIGN OPTIONS
-                             ================================= -->
-
                         <div class="spine-controls">
 
-
                             <div class="form-grid">
-
 
                                 <label class="field">
 
@@ -2490,10 +2302,6 @@
                 </section>
 
 
-                <!-- =========================================
-                     TYPOGRAPHY
-                     ========================================= -->
-
                 <section class="drawer-section">
 
                     <div class="drawer-section-heading">
@@ -2506,7 +2314,6 @@
 
 
                     <div class="form-grid">
-
 
                         <label class="field">
 
@@ -2585,10 +2392,7 @@
                                     Small
                                 </option>
 
-                                <option
-                                    value="medium"
-                                    selected
-                                >
+                                <option value="medium" selected>
                                     Medium
                                 </option>
 
@@ -2617,10 +2421,7 @@
                                     Light
                                 </option>
 
-                                <option
-                                    value="regular"
-                                    selected
-                                >
+                                <option value="regular" selected>
                                     Regular
                                 </option>
 
@@ -2649,10 +2450,7 @@
                                     Tight
                                 </option>
 
-                                <option
-                                    value="normal"
-                                    selected
-                                >
+                                <option value="normal" selected>
                                     Normal
                                 </option>
 
@@ -2677,10 +2475,7 @@
 
                             <select id="bookSpineCase">
 
-                                <option
-                                    value="typed"
-                                    selected
-                                >
+                                <option value="typed" selected>
                                     As Typed
                                 </option>
 
@@ -2705,10 +2500,7 @@
 
                             <select id="bookSpineFontStyle">
 
-                                <option
-                                    value="normal"
-                                    selected
-                                >
+                                <option value="normal" selected>
                                     Normal
                                 </option>
 
@@ -2733,10 +2525,7 @@
                                     Top
                                 </option>
 
-                                <option
-                                    value="center"
-                                    selected
-                                >
+                                <option value="center" selected>
                                     Center
                                 </option>
 
@@ -2757,10 +2546,7 @@
 
                             <select id="bookSpineTitlePanel">
 
-                                <option
-                                    value="none"
-                                    selected
-                                >
+                                <option value="none" selected>
                                     None
                                 </option>
 
@@ -2793,10 +2579,6 @@
                 </section>
 
 
-                <!-- =========================================
-                     PHYSICAL BOOK SIZE
-                     ========================================= -->
-
                 <section class="drawer-section">
 
                     <div class="drawer-section-heading">
@@ -2810,7 +2592,6 @@
 
                     <div class="form-grid">
 
-
                         <label class="field">
 
                             <span>
@@ -2823,10 +2604,7 @@
                                     Small
                                 </option>
 
-                                <option
-                                    value="medium"
-                                    selected
-                                >
+                                <option value="medium" selected>
                                     Medium
                                 </option>
 
@@ -2851,10 +2629,7 @@
                                     Slim
                                 </option>
 
-                                <option
-                                    value="medium"
-                                    selected
-                                >
+                                <option value="medium" selected>
                                     Medium
                                 </option>
 
@@ -2937,11 +2712,9 @@
                     BOOK
                 </span>
 
-
                 <h2 id="revealTitle">
                     Book Title
                 </h2>
-
 
                 <p
                     id="revealAuthor"
@@ -2954,54 +2727,23 @@
                 <div class="reveal-meta-grid">
 
                     <div>
-
-                        <span>
-                            Started
-                        </span>
-
-                        <strong id="revealStarted">
-                            —
-                        </strong>
-
+                        <span>Started</span>
+                        <strong id="revealStarted">—</strong>
                     </div>
 
-
                     <div>
-
-                        <span>
-                            Finished
-                        </span>
-
-                        <strong id="revealFinished">
-                            —
-                        </strong>
-
+                        <span>Finished</span>
+                        <strong id="revealFinished">—</strong>
                     </div>
 
-
                     <div>
-
-                        <span>
-                            Pages
-                        </span>
-
-                        <strong id="revealPageCount">
-                            —
-                        </strong>
-
+                        <span>Pages</span>
+                        <strong id="revealPageCount">—</strong>
                     </div>
 
-
                     <div>
-
-                        <span>
-                            Rating
-                        </span>
-
-                        <strong id="revealRating">
-                            —
-                        </strong>
-
+                        <span>Rating</span>
+                        <strong id="revealRating">—</strong>
                     </div>
 
                 </div>
@@ -3052,7 +2794,6 @@
                         Edit Book
                     </button>
 
-
                     <button
                         id="openSelectedBook"
                         class="primary-button"
@@ -3092,11 +2833,6 @@
 
         <div class="journal-shell">
 
-
-            <!-- =============================================
-                 JOURNAL BOOK INFO
-                 ============================================= -->
-
             <aside class="journal-sidebar">
 
                 <div
@@ -3105,16 +2841,13 @@
                 >
                 </div>
 
-
                 <span class="eyebrow">
                     READING JOURNAL
                 </span>
 
-
                 <h2 id="journalBookTitle">
                     Book Title
                 </h2>
-
 
                 <p id="journalBookAuthor">
                     Author
@@ -3124,54 +2857,23 @@
                 <div class="journal-book-meta">
 
                     <div>
-
-                        <span>
-                            Status
-                        </span>
-
-                        <strong id="journalStatus">
-                            —
-                        </strong>
-
+                        <span>Status</span>
+                        <strong id="journalStatus">—</strong>
                     </div>
 
-
                     <div>
-
-                        <span>
-                            Started
-                        </span>
-
-                        <strong id="journalStarted">
-                            —
-                        </strong>
-
+                        <span>Started</span>
+                        <strong id="journalStarted">—</strong>
                     </div>
 
-
                     <div>
-
-                        <span>
-                            Finished
-                        </span>
-
-                        <strong id="journalFinished">
-                            —
-                        </strong>
-
+                        <span>Finished</span>
+                        <strong id="journalFinished">—</strong>
                     </div>
 
-
                     <div>
-
-                        <span>
-                            Pages
-                        </span>
-
-                        <strong id="journalPages">
-                            —
-                        </strong>
-
+                        <span>Pages</span>
+                        <strong id="journalPages">—</strong>
                     </div>
 
                 </div>
@@ -3179,16 +2881,7 @@
             </aside>
 
 
-            <!-- =============================================
-                 JOURNAL CONTENT
-                 ============================================= -->
-
             <div class="journal-main">
-
-
-                <!-- =========================================
-                     TABLE OF CONTENTS
-                     ========================================= -->
 
                 <div id="journalContents">
 
@@ -3203,140 +2896,55 @@
 
                     <div class="journal-contents-grid">
 
-
-                        <button
-                            type="button"
-                            data-journal-section="overview"
-                        >
-                            <span>
-                                01
-                            </span>
-
-                            <strong>
-                                Overview
-                            </strong>
+                        <button type="button" data-journal-section="overview">
+                            <span>01</span>
+                            <strong>Overview</strong>
                         </button>
 
-
-                        <button
-                            type="button"
-                            data-journal-section="notes"
-                        >
-                            <span>
-                                02
-                            </span>
-
-                            <strong>
-                                Notes
-                            </strong>
+                        <button type="button" data-journal-section="notes">
+                            <span>02</span>
+                            <strong>Notes</strong>
                         </button>
 
-
-                        <button
-                            type="button"
-                            data-journal-section="thoughts"
-                        >
-                            <span>
-                                03
-                            </span>
-
-                            <strong>
-                                Thoughts
-                            </strong>
+                        <button type="button" data-journal-section="thoughts">
+                            <span>03</span>
+                            <strong>Thoughts</strong>
                         </button>
 
-
-                        <button
-                            type="button"
-                            data-journal-section="words"
-                        >
-                            <span>
-                                04
-                            </span>
-
-                            <strong>
-                                Word Study
-                            </strong>
+                        <button type="button" data-journal-section="words">
+                            <span>04</span>
+                            <strong>Word Study</strong>
                         </button>
 
-
-                        <button
-                            type="button"
-                            data-journal-section="quotes"
-                        >
-                            <span>
-                                05
-                            </span>
-
-                            <strong>
-                                Quotes
-                            </strong>
+                        <button type="button" data-journal-section="quotes">
+                            <span>05</span>
+                            <strong>Quotes</strong>
                         </button>
 
-
-                        <button
-                            type="button"
-                            data-journal-section="characters"
-                        >
-                            <span>
-                                06
-                            </span>
-
-                            <strong>
-                                Characters
-                            </strong>
+                        <button type="button" data-journal-section="characters">
+                            <span>06</span>
+                            <strong>Characters</strong>
                         </button>
 
-
-                        <button
-                            type="button"
-                            data-journal-section="themes"
-                        >
-                            <span>
-                                07
-                            </span>
-
-                            <strong>
-                                Themes
-                            </strong>
+                        <button type="button" data-journal-section="themes">
+                            <span>07</span>
+                            <strong>Themes</strong>
                         </button>
 
-
-                        <button
-                            type="button"
-                            data-journal-section="questions"
-                        >
-                            <span>
-                                08
-                            </span>
-
-                            <strong>
-                                Questions
-                            </strong>
+                        <button type="button" data-journal-section="questions">
+                            <span>08</span>
+                            <strong>Questions</strong>
                         </button>
 
-
-                        <button
-                            type="button"
-                            data-journal-section="review"
-                        >
-                            <span>
-                                09
-                            </span>
-
-                            <strong>
-                                Review
-                            </strong>
+                        <button type="button" data-journal-section="review">
+                            <span>09</span>
+                            <strong>Review</strong>
                         </button>
 
                     </div>
 
                 </div>
 
-
-                <!-- =========================================
-                     JOURNAL SECTION
-                     ========================================= -->
 
                 <div
                     id="journalSection"
@@ -3351,7 +2959,6 @@
                         ← Contents
                     </button>
 
-
                     <span
                         id="journalSectionLabel"
                         class="eyebrow"
@@ -3359,18 +2966,15 @@
                         JOURNAL
                     </span>
 
-
                     <h2 id="journalSectionTitle">
                         Notes
                     </h2>
-
 
                     <div
                         id="journalEntries"
                         class="journal-entries"
                     >
                     </div>
-
 
                     <button
                         id="addJournalEntry"
@@ -3415,7 +3019,6 @@
 
                 </div>
 
-
                 <button
                     id="closeEntryModal"
                     class="icon-button"
@@ -3435,7 +3038,6 @@
                     type="hidden"
                 >
 
-
                 <div
                     id="entryDynamicFields"
                     class="modal-body"
@@ -3452,7 +3054,6 @@
                     >
                         Cancel
                     </button>
-
 
                     <button
                         class="primary-button"
@@ -3496,7 +3097,6 @@
 
                 </div>
 
-
                 <button
                     id="closeProgressModal"
                     class="icon-button"
@@ -3515,7 +3115,6 @@
                     id="progressBookId"
                     type="hidden"
                 >
-
 
                 <div class="modal-body">
 
@@ -3604,7 +3203,6 @@
                     >
                         Cancel
                     </button>
-
 
                     <button
                         class="primary-button"
