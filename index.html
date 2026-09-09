@@ -56,6 +56,11 @@
 
     <link
         rel="stylesheet"
+        href="css/auth.css?v=12"
+    >
+
+    <link
+        rel="stylesheet"
         href="css/library.css?v=3"
     >
 
@@ -102,6 +107,194 @@
     data-theme="haunted"
     data-decoration-density="cozy"
 >
+
+
+    <!-- =====================================================
+         AUTHENTICATION
+         ===================================================== -->
+
+    <section
+        id="authScreen"
+        class="auth-screen"
+    >
+
+        <div class="auth-shell">
+
+            <div class="auth-story">
+
+                <div>
+
+                    <div
+                        class="auth-brand-mark"
+                        aria-hidden="true"
+                    >
+                        N
+                    </div>
+
+                    <span class="auth-story-eyebrow">
+                        Novellow
+                    </span>
+
+                    <h1>
+                        Your reading life,
+                        kept between the pages.
+                    </h1>
+
+                    <p class="auth-story-copy">
+                        Build shelves, collect books, keep reading
+                        journals, save passages, gather unfamiliar
+                        words, and return to everything a book left
+                        behind.
+                    </p>
+
+                </div>
+
+                <div class="auth-story-footer">
+                    Ex Libris — from the library of you.
+                </div>
+
+            </div>
+
+
+            <div class="auth-panel">
+
+                <div class="auth-bookplate">
+
+                    <div class="auth-bookplate-inner">
+
+                        <span class="auth-bookplate-label">
+                            Private Library
+                        </span>
+
+                        <h2
+                            id="authTitle"
+                            class="auth-title"
+                        >
+                            Welcome Back
+                        </h2>
+
+                        <p
+                            id="authSubtitle"
+                            class="auth-subtitle"
+                        >
+                            Enter your library and pick up where
+                            you left off.
+                        </p>
+
+
+                        <div class="auth-mode-switch">
+
+                            <button
+                                id="showSignIn"
+                                type="button"
+                                class="auth-mode-button active"
+                            >
+                                Sign In
+                            </button>
+
+                            <button
+                                id="showSignUp"
+                                type="button"
+                                class="auth-mode-button"
+                            >
+                                Create Account
+                            </button>
+
+                        </div>
+
+
+                        <form id="authForm">
+
+                            <div
+                                id="authSignupFields"
+                                class="auth-signup-fields"
+                                hidden
+                            >
+
+                                <label class="auth-field">
+
+                                    <span>
+                                        Display Name
+                                    </span>
+
+                                    <input
+                                        id="authDisplayName"
+                                        type="text"
+                                        autocomplete="name"
+                                        placeholder="What should Novellow call you?"
+                                    >
+
+                                </label>
+
+                            </div>
+
+
+                            <label class="auth-field">
+
+                                <span>
+                                    Email
+                                </span>
+
+                                <input
+                                    id="authEmail"
+                                    type="email"
+                                    autocomplete="email"
+                                    required
+                                    placeholder="reader@example.com"
+                                >
+
+                            </label>
+
+
+                            <label class="auth-field">
+
+                                <span>
+                                    Password
+                                </span>
+
+                                <input
+                                    id="authPassword"
+                                    type="password"
+                                    autocomplete="current-password"
+                                    required
+                                    minlength="6"
+                                    placeholder="••••••••"
+                                >
+
+                            </label>
+
+
+                            <button
+                                id="authSubmit"
+                                type="submit"
+                                class="auth-submit"
+                            >
+                                Enter Library
+                            </button>
+
+
+                            <p
+                                id="authMessage"
+                                class="auth-message"
+                                role="status"
+                            ></p>
+
+                        </form>
+
+
+                        <div class="auth-divider">
+                            Your shelves stay yours
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
 
 
     <!-- =====================================================
@@ -153,6 +346,7 @@
     <div
         id="app"
         class="app-shell"
+        hidden
     >
 
 
@@ -4343,21 +4537,21 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="js/config.js?v=11"></script>
-<script src="js/helpers.js?v=11"></script>
+<script src="js/config.js?v=12"></script>
+<script src="js/helpers.js?v=12"></script>
 
-<script src="js/supabase.js?v=11"></script>
-<script src="js/auth.js?v=11"></script>
+<script src="js/supabase.js?v=12"></script>
+<script src="js/auth.js?v=12"></script>
 
-<script src="js/app.js?v=11"></script>
+<script src="js/app.js?v=12"></script>
 
-<script src="js/books.js?v=11"></script>
-<script src="js/library.js?v=11"></script>
-<script src="js/reading.js?v=11"></script>
-<script src="js/journal.js?v=11"></script>
-<script src="js/quotes.js?v=11"></script>
-<script src="js/vocabulary.js?v=11"></script>
-<script src="js/stats.js?v=11"></script>
+<script src="js/books.js?v=12"></script>
+<script src="js/library.js?v=12"></script>
+<script src="js/reading.js?v=12"></script>
+<script src="js/journal.js?v=12"></script>
+<script src="js/quotes.js?v=12"></script>
+<script src="js/vocabulary.js?v=12"></script>
+<script src="js/stats.js?v=12"></script>
     
 </body>
 
