@@ -1,0 +1,426 @@
+/* ==========================================================
+   NOVELLOW
+   THEMES.CSS
+========================================================== */
+
+
+/* ==========================================================
+   DEFAULT THEME
+========================================================== */
+
+body{
+
+    --background:#F7F2EA;
+
+    --surface:#FFFFFF;
+
+    --surface-alt:#F3ECE3;
+
+    --sidebar:#F4EEE5;
+
+    --primary:#7A5235;
+
+    --primary-dark:#5D3E29;
+
+    --primary-light:#B98A61;
+
+    --accent:#D49A42;
+
+    --text-primary:#2E2A26;
+
+    --text-secondary:#6E645A;
+
+    --text-light:#9A9085;
+
+    --border:#E7DED4;
+
+    --wood-light:#C28E60;
+
+    --wood-medium:#A56E44;
+
+    --wood-dark:#714629;
+
+    --glow:none;
+
+}
+
+
+
+/* ==========================================================
+   SHARED THEME TRANSITIONS
+========================================================== */
+
+body,
+#sidebar,
+#appHeader,
+.card,
+.book,
+.book-spine,
+.wood-shelf{
+
+    transition:
+
+        background .35s ease,
+
+        color .35s ease,
+
+        border-color .35s ease,
+
+        box-shadow .35s ease,
+
+        filter .35s ease;
+
+}
+
+/* ==========================================================
+   COZY LIBRARY
+========================================================== */
+
+body.theme-cozy{
+
+    --background:#F7F2EA;
+
+    --surface:#FFFDFC;
+
+    --surface-alt:#F3ECE3;
+
+    --sidebar:#F4EEE5;
+
+    --primary:#7A5235;
+
+    --primary-dark:#5D3E29;
+
+    --primary-light:#C09169;
+
+    --accent:#D8A04B;
+
+    --text-primary:#2D2925;
+
+    --text-secondary:#72675D;
+
+    --border:#E7DED4;
+
+    --wood-light:#C28E60;
+
+    --wood-medium:#A56E44;
+
+    --wood-dark:#714629;
+
+}
+
+/* ==========================================================
+   HAUNTED LIBRARY
+========================================================== */
+
+body.theme-haunted{
+
+    --background:#25212C;
+
+    --surface:#302A39;
+
+    --surface-alt:#3A3345;
+
+    --sidebar:#2C2634;
+
+    --primary:#8C6AB5;
+
+    --primary-dark:#6C4C92;
+
+    --primary-light:#B096D4;
+
+    --accent:#C7C0F4;
+
+    --text-primary:#F2EEF9;
+
+    --text-secondary:#C8C2D6;
+
+    --text-light:#AAA1BE;
+
+    --border:#4B4258;
+
+    --wood-light:#66515D;
+
+    --wood-medium:#4D3D47;
+
+    --wood-dark:#372B33;
+
+    --glow:
+
+        0 0 18px rgba(180,160,255,.18);
+
+}
+
+body.theme-haunted .wood-shelf{
+
+    box-shadow:
+
+        inset 0 2px rgba(255,255,255,.05),
+
+        inset 0 -3px rgba(0,0,0,.35),
+
+        var(--glow);
+
+}
+
+/* ==========================================================
+   COTTAGE GARDEN
+========================================================== */
+
+body.theme-cottage{
+
+    --background:#F5F4ED;
+
+    --surface:#FEFDFC;
+
+    --surface-alt:#EEF2E9;
+
+    --sidebar:#F1F2EB;
+
+    --primary:#5D7C5A;
+
+    --primary-dark:#486247;
+
+    --primary-light:#7D9B79;
+
+    --accent:#CFA766;
+
+    --text-primary:#344131;
+
+    --text-secondary:#66735E;
+
+    --border:#DCE5D8;
+
+    --wood-light:#BE9364;
+
+    --wood-medium:#9E744B;
+
+    --wood-dark:#7C5738;
+
+}
+
+/* ==========================================================
+   AUTUMN BOOKSHOP
+========================================================== */
+
+body.theme-autumn{
+
+    --background:#F8F2EB;
+
+    --surface:#FFFDFB;
+
+    --surface-alt:#F4E8DA;
+
+    --sidebar:#F6EEE6;
+
+    --primary:#A55C2D;
+
+    --primary-dark:#87461D;
+
+    --primary-light:#C17B4C;
+
+    --accent:#E2A744;
+
+    --text-primary:#3A2B22;
+
+    --text-secondary:#70594C;
+
+    --border:#E6D7C8;
+
+    --wood-light:#C68B57;
+
+    --wood-medium:#9F673E;
+
+    --wood-dark:#7B4A2A;
+
+}
+
+/* ==========================================================
+   THEME ENVIRONMENTS
+========================================================== */
+
+/* ==========================================================
+   DEFAULT
+========================================================== */
+
+body{
+
+    background:var(--background);
+
+}
+
+
+
+/* ==========================================================
+   HAUNTED LIBRARY
+========================================================== */
+
+body.theme-haunted{
+
+    background:
+
+        radial-gradient(
+
+            circle at top,
+
+            rgba(120,95,170,.12),
+
+            transparent 55%
+
+        ),
+
+        var(--background);
+
+}
+
+
+
+/* ==========================================================
+   COTTAGE GARDEN
+========================================================== */
+
+body.theme-cottage{
+
+    background:
+
+        radial-gradient(
+
+            circle at top right,
+
+            rgba(158,190,140,.15),
+
+            transparent 50%
+
+        ),
+
+        var(--background);
+
+}
+
+
+
+/* ==========================================================
+   AUTUMN BOOKSHOP
+========================================================== */
+
+body.theme-autumn{
+
+    background:
+
+        radial-gradient(
+
+            circle at top,
+
+            rgba(232,170,90,.12),
+
+            transparent 55%
+
+        ),
+
+        var(--background);
+
+}
+
+
+
+/* ==========================================================
+   CELESTIAL ARCHIVE
+========================================================== */
+
+body.theme-celestial{
+
+    --background:#20263B;
+
+    --surface:#29314C;
+
+    --surface-alt:#313C5A;
+
+    --sidebar:#252D46;
+
+    --primary:#D4B56A;
+
+    --primary-dark:#B89442;
+
+    --primary-light:#F1D78A;
+
+    --accent:#7AA8FF;
+
+    --text-primary:#F8F8FA;
+
+    --text-secondary:#C7CEE5;
+
+    --text-light:#A7AEC4;
+
+    --border:#4A5675;
+
+    --wood-light:#75664E;
+
+    --wood-medium:#5E503E;
+
+    --wood-dark:#43382A;
+
+}
+
+
+
+/* ==========================================================
+   RAINY AFTERNOON
+========================================================== */
+
+body.theme-rain{
+
+    --background:#EAEFF2;
+
+    --surface:#FFFFFF;
+
+    --surface-alt:#EDF2F5;
+
+    --sidebar:#F4F7F8;
+
+    --primary:#58768F;
+
+    --primary-dark:#405B72;
+
+    --primary-light:#87A6BE;
+
+    --accent:#D7B36C;
+
+    --text-primary:#2E3942;
+
+    --text-secondary:#64717C;
+
+    --border:#D6DFE5;
+
+}
+
+
+
+/* ==========================================================
+   CHRISTMAS LIBRARY
+========================================================== */
+
+body.theme-christmas{
+
+    --background:#F4F1EC;
+
+    --surface:#FFFDFC;
+
+    --surface-alt:#F6F2EE;
+
+    --sidebar:#F5F2EE;
+
+    --primary:#2F6848;
+
+    --primary-dark:#224C35;
+
+    --primary-light:#5A8A69;
+
+    --accent:#C93E3E;
+
+    --text-primary:#2E2A26;
+
+    --text-secondary:#6B645E;
+
+    --border:#E4DDD6;
+
+}
+
