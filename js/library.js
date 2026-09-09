@@ -766,7 +766,10 @@ function updateThemeCardState() {
    ========================================================= */
 
 function bindControls() {
-
+bindClick(
+    "closeThemeSettingsButton",
+    closeAllPanels
+);
     bindClick(
         "sidebarAddBook",
         () => openBookDrawer()
