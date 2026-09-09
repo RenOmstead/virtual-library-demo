@@ -1,260 +1,16 @@
 /* =========================================================
    NOVELLOW
-   SAFE STORAGE RECOVERY
-
-   Temporary compatibility migration.
-   Does NOT delete any existing data.
-   ========================================================= */
-
-(() => {
-
-    "use strict";
-
-
-    function safelyRead(key) {
-
-        try {
-
-            const raw =
-                localStorage.getItem(
-                    key
-                );
-
-
-            if (!raw) {
-                return [];
-            }
-
-
-            const parsed =
-                JSON.parse(
-                    raw
-                );
-
-
-            return Array.isArray(
-                parsed
-            )
-                ? parsed
-                : [];
-
-        } catch (error) {
-
-            console.warn(
-                `Could not read ${key}`,
-                error
-            );
-
-
-            return [];
-
-        }
-
-    }
-
-
-    function safelyWrite(
-        key,
-        value
-    ) {
-
-        try {
-
-            localStorage.setItem(
-                key,
-                JSON.stringify(
-                    value
-                )
-            );
-
-        } catch (error) {
-
-            console.warn(
-                `Could not write ${key}`,
-                error
-            );
-
-        }
-
-    }
-
-
-    function mergeById(
-        ...collections
-    ) {
-
-        const merged =
-            new Map();
-
-
-        collections
-            .flat()
-            .filter(Boolean)
-            .forEach(
-                item => {
-
-                    const id =
-                        item.id ||
-                        `legacy-${Math.random()
-                            .toString(36)
-                            .slice(2)}`;
-
-
-                    if (
-                        !merged.has(
-                            id
-                        )
-                    ) {
-
-                        merged.set(
-                            id,
-                            item
-                        );
-
-                        return;
-
-                    }
-
-
-                    merged.set(
-                        id,
-                        {
-                            ...merged.get(
-                                id
-                            ),
-                            ...item
-                        }
-                    );
-
-                }
-            );
-
-
-        return [
-            ...merged.values()
-        ];
-
-    }
-
-
-    /* =====================================================
-       BOOKS
-       ===================================================== */
-
-    const novellowBooks =
-        safelyRead(
-            "novellow_books"
-        );
-
-
-    const shelfmarkBooks =
-        safelyRead(
-            "shelfmark_books"
-        );
-
-
-    const recoveredBooks =
-        mergeById(
-            shelfmarkBooks,
-            novellowBooks
-        );
-
-
-    if (
-        recoveredBooks.length
-    ) {
-
-        safelyWrite(
-            "novellow_books",
-            recoveredBooks
-        );
-
-    }
-
-
-    /* =====================================================
-       SHELVES
-       ===================================================== */
-
-    const novellowShelves =
-        safelyRead(
-            "novellow_shelves"
-        );
-
-
-    const shelfmarkShelves =
-        safelyRead(
-            "shelfmark_shelves"
-        );
-
-
-    const recoveredShelves =
-        mergeById(
-            shelfmarkShelves,
-            novellowShelves
-        );
-
-
-    if (
-        recoveredShelves.length
-    ) {
-
-        safelyWrite(
-            "novellow_shelves",
-            recoveredShelves
-        );
-
-    }
-
-})();
-/* ========================================================
-   NOVELLOW
    BOOKS.JS
 
-   Book creation
-   Editing
+   Add books
+   Edit books
+   Delete books
+   Book drawer
    Shelf rendering
    Spine preview
-   Cover generation
-   Book reveal
    Journal handoff
    ========================================================= */
 
-button.addEventListener(
-    "click",
-    event => {
-
-        event.stopPropagation();
-
-
-        const bookId =
-            book.id;
-
-
-        getState().selectedBookId =
-            bookId;
-
-
-        Novellow.app
-            ?.navigate?.(
-                "journal"
-            );
-
-
-        requestAnimationFrame(
-            () => {
-
-                Novellow.journal
-                    ?.openBook?.(
-                        bookId,
-                        "overview"
-                    );
-
-            }
-        );
-
-    }
-);
 (() => {
 
     "use strict";
@@ -273,17 +29,286 @@ button.addEventListener(
         window.NOVELLOW;
 
 
-    const H =
-        Novellow.helpers ||
-        {};
+    let initialized =
+        false;
 
-
-    /* =====================================================
-       LOCAL STATE
-       ===================================================== */
 
     let revealBookId =
         null;
+
+
+    /* =====================================================
+       BASIC HELPERS
+       ===================================================== */
+
+    function byId(id) {
+
+        return document.getElementById(id);
+
+    }
+
+
+    function getState() {
+
+        Novellow.state =
+            Novellow.state ||
+            {};
+
+
+        if (
+            !Array.isArray(
+                Novellow.state.books
+            )
+        ) {
+
+            Novellow.state.books =
+                [];
+
+        }
+
+
+        if (
+            !Array.isArray(
+                Novellow.state.shelves
+            )
+        ) {
+
+            Novellow.state.shelves =
+                [];
+
+        }
+
+
+        return Novellow.state;
+
+    }
+
+
+    function getBooks() {
+
+        return getState().books;
+
+    }
+
+
+    function getShelves() {
+
+        return getState().shelves;
+
+    }
+
+
+    function getBookById(bookId) {
+
+        return getBooks().find(
+            book =>
+                String(book.id) ===
+                String(bookId)
+        ) || null;
+
+    }
+
+
+    function value(id) {
+
+        return (
+            byId(id)?.value ??
+            ""
+        );
+
+    }
+
+
+    function setValue(
+        id,
+        nextValue
+    ) {
+
+        const element =
+            byId(id);
+
+
+        if (!element) {
+            return;
+        }
+
+
+        element.value =
+            nextValue ??
+            "";
+
+    }
+
+
+    function setText(
+        id,
+        text
+    ) {
+
+        const element =
+            byId(id);
+
+
+        if (!element) {
+            return;
+        }
+
+
+        element.textContent =
+            text ??
+            "";
+
+    }
+
+
+    function createId(prefix) {
+
+        if (
+            window.crypto &&
+            typeof window.crypto.randomUUID ===
+                "function"
+        ) {
+
+            return window.crypto
+                .randomUUID();
+
+        }
+
+
+        return (
+            prefix +
+            "-" +
+            Date.now() +
+            "-" +
+            Math.random()
+                .toString(36)
+                .slice(2, 10)
+        );
+
+    }
+
+
+    function escapeHTML(input) {
+
+        const element =
+            document.createElement(
+                "div"
+            );
+
+
+        element.textContent =
+            String(
+                input ??
+                ""
+            );
+
+
+        return element.innerHTML;
+
+    }
+
+
+    function showToast(
+        message,
+        type =
+            "success"
+    ) {
+
+        if (
+            Novellow.helpers
+                ?.showToast
+        ) {
+
+            Novellow.helpers
+                .showToast(
+                    message,
+                    type
+                );
+
+            return;
+
+        }
+
+
+        const toast =
+            byId("toast");
+
+
+        if (!toast) {
+
+            console.log(
+                message
+            );
+
+            return;
+
+        }
+
+
+        toast.textContent =
+            message;
+
+
+        toast.dataset.type =
+            type;
+
+
+        toast.hidden =
+            false;
+
+
+        window.clearTimeout(
+            showToast.timeout
+        );
+
+
+        showToast.timeout =
+            window.setTimeout(
+                () => {
+
+                    toast.hidden =
+                        true;
+
+                },
+                2400
+            );
+
+    }
+
+
+    /* =====================================================
+       STORAGE
+       ===================================================== */
+
+    function saveBooks() {
+
+        const state =
+            getState();
+
+
+        try {
+
+            localStorage.setItem(
+                "novellow_books",
+                JSON.stringify(
+                    state.books
+                )
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Novellow: books could not be saved.",
+                error
+            );
+
+        }
+
+
+        Novellow.storage
+            ?.saveBooks?.();
+
+    }
 
 
     /* =====================================================
@@ -292,13 +317,22 @@ button.addEventListener(
 
     function init() {
 
+        if (initialized) {
+            return;
+        }
+
+
+        initialized =
+            true;
+
+
+        bindAddBookButtons();
+
         bindBookDrawer();
 
         bindBookReveal();
 
-        bindProgressHooks();
-
-        bindLivePreview();
+        bindPreviewControls();
 
         populateShelfSelect();
 
@@ -308,247 +342,131 @@ button.addEventListener(
 
 
     /* =====================================================
-       STATE
+       ADD BOOK BUTTONS
        ===================================================== */
 
-    function getState() {
+    function bindAddBookButtons() {
 
-        return Novellow.state || {};
+        const buttonIds = [
 
-    }
+            "headerAddBook",
 
+            "libraryAddBook",
 
-    function getBooks() {
+            "emptyAddBook",
 
-        return Array.isArray(
-            getState().books
-        )
-            ? getState().books
-            : [];
+            "mobileAddBook",
 
-    }
-
-
-    /* =====================================================
-       BOOK DRAWER
-       ===================================================== */
-
-    function bindBookDrawer() {
-
-        H.bindClick?.(
-            "closeBookDrawer",
-            closeDrawer
-        );
-
-
-        H.bindClick?.(
-            "cancelBookButton",
-            closeDrawer
-        );
-
-
-        const form =
-            H.getById?.(
-                "bookForm"
-            );
-
-
-        if (form) {
-
-            form.addEventListener(
-                "submit",
-                handleBookSubmit
-            );
-
-        }
-
-
-        const coverUpload =
-            H.getById?.(
-                "bookCoverUpload"
-            );
-
-
-        if (coverUpload) {
-
-            coverUpload.addEventListener(
-                "change",
-                handleCoverUpload
-            );
-
-        }
-
-    }
-
-
-    /* =====================================================
-       BOOK REVEAL
-       ===================================================== */
-
-    function bindBookReveal() {
-
-        H.bindClick?.(
-            "closeBookReveal",
-            closeReveal
-        );
-
-
-        H.bindClick?.(
-            "editRevealBook",
-            () => {
-
-                if (!revealBookId) {
-                    return;
-                }
-
-
-                closeReveal();
-
-                openEditDrawer(
-                    revealBookId
-                );
-
-            }
-        );
-
-
-        H.bindClick?.(
-            "openRevealJournal",
-            () => {
-
-                if (!revealBookId) {
-                    return;
-                }
-
-
-                const bookId =
-                    revealBookId;
-
-
-                closeReveal();
-
-
-                getState().selectedBookId =
-                    bookId;
-
-
-                Novellow.app
-                    ?.navigate?.(
-                        "journal"
-                    );
-
-
-                requestAnimationFrame(
-                    () => {
-
-                        Novellow.journal
-                            ?.openBook?.(
-                                bookId,
-                                "overview"
-                            );
-
-                    }
-                );
-
-            }
-        );
-
-
-        const reveal =
-            H.getById?.(
-                "bookReveal"
-            );
-
-
-        if (reveal) {
-
-            reveal.addEventListener(
-                "click",
-                event => {
-
-                    if (
-                        event.target ===
-                        reveal
-                    ) {
-
-                        closeReveal();
-
-                    }
-
-                }
-            );
-
-        }
-
-    }
-
-
-    /* =====================================================
-       PROGRESS HOOKS
-       ===================================================== */
-
-    function bindProgressHooks() {
-
-        /*
-           Reading owns the progress modal itself.
-           This module only exposes helpers used by Reading.
-        */
-
-    }
-
-
-    /* =====================================================
-       LIVE PREVIEW
-       ===================================================== */
-
-    function bindLivePreview() {
-
-        const ids = [
-
-            "bookTitle",
-            "bookStyle",
-            "bookSpineColor",
-            "bookTextColor",
-            "bookAccentColor",
-            "bookSpineOrnament",
-            "bookSpineFont",
-            "bookSpineFontSize",
-            "bookSpineFontWeight",
-            "bookSpineLetterSpacing",
-            "bookSpineCase",
-            "bookSpineFontStyle",
-            "bookSpineTextAlign",
-            "bookSpineTitlePanel",
-            "bookHeight",
-            "bookThickness"
+            "readingAddBook"
 
         ];
 
 
-        ids.forEach(
+        buttonIds.forEach(
             id => {
 
-                const element =
-                    H.getById?.(
-                        id
-                    );
+                const button =
+                    byId(id);
 
 
-                if (!element) {
+                if (!button) {
                     return;
                 }
 
 
-                element.addEventListener(
-                    "input",
-                    updateSpinePreview
+                button.addEventListener(
+                    "click",
+                    event => {
+
+                        event.preventDefault();
+
+                        event.stopPropagation();
+
+                        openAddDrawer();
+
+                    }
                 );
 
+            }
+        );
 
-                element.addEventListener(
-                    "change",
-                    updateSpinePreview
-                );
+    }
+
+
+    /* =====================================================
+       BOOK DRAWER BINDING
+       ===================================================== */
+
+    function bindBookDrawer() {
+
+        byId(
+            "closeBookDrawer"
+        )?.addEventListener(
+            "click",
+            closeDrawer
+        );
+
+
+        byId(
+            "cancelBookButton"
+        )?.addEventListener(
+            "click",
+            closeDrawer
+        );
+
+
+        byId(
+            "bookForm"
+        )?.addEventListener(
+            "submit",
+            handleBookSubmit
+        );
+
+
+        byId(
+            "deleteBookButton"
+        )?.addEventListener(
+            "click",
+            () => {
+
+                const bookId =
+                    value(
+                        "editingBookId"
+                    );
+
+
+                if (bookId) {
+
+                    deleteBook(
+                        bookId
+                    );
+
+                }
+
+            }
+        );
+
+
+        byId(
+            "overlay"
+        )?.addEventListener(
+            "click",
+            () => {
+
+                const drawer =
+                    byId(
+                        "bookDrawer"
+                    );
+
+
+                if (
+                    drawer &&
+                    !drawer.hidden
+                ) {
+
+                    closeDrawer();
+
+                }
 
             }
         );
@@ -568,13 +486,13 @@ button.addEventListener(
         resetBookForm();
 
 
-        H.setText?.(
+        setText(
             "bookDrawerTitle",
             "Add a Book"
         );
 
 
-        H.setText?.(
+        setText(
             "saveBookButtonLabel",
             "Save Book"
         );
@@ -584,6 +502,20 @@ button.addEventListener(
             "editingBookId",
             ""
         );
+
+
+        const deleteButton =
+            byId(
+                "deleteBookButton"
+            );
+
+
+        if (deleteButton) {
+
+            deleteButton.hidden =
+                true;
+
+        }
 
 
         populateShelfSelect(
@@ -611,7 +543,7 @@ button.addEventListener(
         requestAnimationFrame(
             () => {
 
-                H.getById?.(
+                byId(
                     "bookTitle"
                 )?.focus();
 
@@ -630,14 +562,14 @@ button.addEventListener(
     ) {
 
         const book =
-            H.getBookById?.(
+            getBookById(
                 bookId
             );
 
 
         if (!book) {
 
-            H.showToast?.(
+            showToast(
                 "That book could not be found.",
                 "error"
             );
@@ -650,13 +582,13 @@ button.addEventListener(
         resetBookForm();
 
 
-        H.setText?.(
+        setText(
             "bookDrawerTitle",
             "Edit Book"
         );
 
 
-        H.setText?.(
+        setText(
             "saveBookButtonLabel",
             "Save Changes"
         );
@@ -712,58 +644,92 @@ button.addEventListener(
 
 
         populateShelfSelect(
-            book.shelfId
+            book.shelfId ||
+            book.shelf_id ||
+            ""
         );
 
 
         setValue(
             "bookShelf",
-            book.shelfId
+            book.shelfId ||
+            book.shelf_id ||
+            ""
         );
 
 
         setValue(
             "bookStatus",
-            book.status
+            book.status ||
+            "want"
         );
 
 
         setValue(
             "bookRating",
-            book.rating
+            book.rating ||
+            ""
         );
 
 
         setValue(
             "bookTimesRead",
-            book.timesRead
+            book.timesRead ||
+            book.times_read ||
+            0
         );
 
 
         setValue(
             "bookStarted",
-            book.started
+            book.started ||
+            book.started_at ||
+            ""
         );
 
 
         setValue(
             "bookFinished",
-            book.finished
+            book.finished ||
+            book.finished_at ||
+            ""
         );
 
 
         setValue(
             "bookCurrentPage",
-            book.currentPage
+            book.currentPage ||
+            book.current_page ||
+            0
         );
 
 
         const design =
-            H.normalizeBookDesign?.(
-                book.design
-            ) ||
             book.design ||
             {};
+
+
+        setValue(
+            "bookSpineColor",
+            design.spineColor ||
+            design.spine_color ||
+            "#793f55"
+        );
+
+
+        setValue(
+            "bookTextColor",
+            design.textColor ||
+            design.text_color ||
+            "#f1e3cf"
+        );
+
+
+        setValue(
+            "bookSpineStyle",
+            design.style ||
+            "classic"
+        );
 
 
         setValue(
@@ -774,86 +740,9 @@ button.addEventListener(
 
 
         setValue(
-            "bookSpineColor",
-            design.spineColor ||
-            "#793f55"
-        );
-
-
-        setValue(
-            "bookTextColor",
-            design.textColor ||
-            "#f1e3cf"
-        );
-
-
-        setValue(
-            "bookAccentColor",
-            design.accentColor ||
-            "#c39a67"
-        );
-
-
-        setValue(
-            "bookSpineOrnament",
-            design.ornament ||
-            "auto"
-        );
-
-
-        setValue(
             "bookSpineFont",
             design.font ||
-            "bookish"
-        );
-
-
-        setValue(
-            "bookSpineFontSize",
-            design.fontSize ||
-            "medium"
-        );
-
-
-        setValue(
-            "bookSpineFontWeight",
-            design.fontWeight ||
-            "regular"
-        );
-
-
-        setValue(
-            "bookSpineLetterSpacing",
-            design.letterSpacing ||
-            "normal"
-        );
-
-
-        setValue(
-            "bookSpineCase",
-            design.letterCase ||
-            "typed"
-        );
-
-
-        setValue(
-            "bookSpineFontStyle",
-            design.fontStyle ||
-            "normal"
-        );
-
-
-        setValue(
-            "bookSpineTextAlign",
-            design.textAlign ||
-            "center"
-        );
-
-
-        setValue(
-            "bookSpineTitlePanel",
-            design.titlePanel ||
-            "none"
+            "serif"
         );
 
 
@@ -871,9 +760,18 @@ button.addEventListener(
         );
 
 
-        getState().pendingCoverData =
-            book.cover ||
-            "";
+        const deleteButton =
+            byId(
+                "deleteBookButton"
+            );
+
+
+        if (deleteButton) {
+
+            deleteButton.hidden =
+                false;
+
+        }
 
 
         updateSpinePreview();
@@ -890,13 +788,19 @@ button.addEventListener(
     function openDrawer() {
 
         const drawer =
-            H.getById?.(
+            byId(
                 "bookDrawer"
             );
 
 
         if (!drawer) {
+
+            console.error(
+                "Novellow: #bookDrawer was not found."
+            );
+
             return;
+
         }
 
 
@@ -905,7 +809,7 @@ button.addEventListener(
 
 
         const overlay =
-            H.getById?.(
+            byId(
                 "overlay"
             );
 
@@ -918,9 +822,10 @@ button.addEventListener(
         }
 
 
-        document.body.classList.add(
-            "modal-open"
-        );
+        document.body
+            .classList.add(
+                "modal-open"
+            );
 
     }
 
@@ -932,7 +837,7 @@ button.addEventListener(
     function closeDrawer() {
 
         const drawer =
-            H.getById?.(
+            byId(
                 "bookDrawer"
             );
 
@@ -943,10 +848,6 @@ button.addEventListener(
                 true;
 
         }
-
-
-        getState().pendingCoverData =
-            null;
 
 
         syncOverlay();
@@ -961,7 +862,7 @@ button.addEventListener(
     function resetBookForm() {
 
         const form =
-            H.getById?.(
+            byId(
                 "bookForm"
             );
 
@@ -983,7 +884,7 @@ button.addEventListener(
 
         setValue(
             "bookRating",
-            "0"
+            ""
         );
 
 
@@ -997,10 +898,6 @@ button.addEventListener(
             "bookCurrentPage",
             "0"
         );
-
-
-        getState().pendingCoverData =
-            null;
 
     }
 
@@ -1020,13 +917,6 @@ button.addEventListener(
 
 
         setValue(
-            "bookStyle",
-            defaults.style ||
-            "classic"
-        );
-
-
-        setValue(
             "bookSpineColor",
             defaults.spineColor ||
             "#793f55"
@@ -1040,73 +930,40 @@ button.addEventListener(
         );
 
 
-        setValue(
-            "bookAccentColor",
-            defaults.accentColor ||
-            "#c39a67"
-        );
+        if (
+            byId(
+                "bookSpineStyle"
+            )
+        ) {
+
+            setValue(
+                "bookSpineStyle",
+                defaults.style ||
+                "classic"
+            );
+
+        }
 
 
-        setValue(
-            "bookSpineOrnament",
-            defaults.ornament ||
-            "auto"
-        );
+        if (
+            byId(
+                "bookStyle"
+            )
+        ) {
+
+            setValue(
+                "bookStyle",
+                defaults.style ||
+                "classic"
+            );
+
+        }
 
 
         setValue(
             "bookSpineFont",
             defaults.font ||
-            "bookish"
-        );
-
-
-        setValue(
-            "bookSpineFontSize",
-            defaults.fontSize ||
-            "medium"
-        );
-
-
-        setValue(
-            "bookSpineFontWeight",
-            defaults.fontWeight ||
-            "regular"
-        );
-
-
-        setValue(
-            "bookSpineLetterSpacing",
-            defaults.letterSpacing ||
-            "normal"
-        );
-
-
-        setValue(
-            "bookSpineCase",
-            defaults.letterCase ||
-            "typed"
-        );
-
-
-        setValue(
-            "bookSpineFontStyle",
-            defaults.fontStyle ||
-            "normal"
-        );
-
-
-        setValue(
-            "bookSpineTextAlign",
-            defaults.textAlign ||
-            "center"
-        );
-
-
-        setValue(
-            "bookSpineTitlePanel",
-            defaults.titlePanel ||
-            "none"
+            "serif"
         );
 
 
@@ -1127,7 +984,7 @@ button.addEventListener(
 
 
     /* =====================================================
-       HANDLE SUBMIT
+       HANDLE BOOK SUBMIT
        ===================================================== */
 
     function handleBookSubmit(
@@ -1149,7 +1006,7 @@ button.addEventListener(
 
         const existing =
             editingId
-                ? H.getBookById?.(
+                ? getBookById(
                     editingId
                 )
                 : null;
@@ -1163,7 +1020,7 @@ button.addEventListener(
 
         if (!title) {
 
-            H.showToast?.(
+            showToast(
                 "Add a title before saving.",
                 "error"
             );
@@ -1174,129 +1031,117 @@ button.addEventListener(
 
 
         const now =
-            H.nowISO?.() ||
             new Date()
                 .toISOString();
 
 
-        const book =
-            H.normalizeBook?.({
+        const shelfId =
+            value(
+                "bookShelf"
+            );
 
-                ...existing,
 
-                id:
-                    existing?.id ||
-                    H.createId?.(
-                        "book"
-                    ),
+        const book = {
 
-                title,
+            ...existing,
 
-                author:
+            id:
+                existing?.id ||
+                createId(
+                    "book"
+                ),
+
+            title,
+
+            author:
+                value(
+                    "bookAuthor"
+                ).trim(),
+
+            genre:
+                value(
+                    "bookGenre"
+                ).trim(),
+
+            year:
+                value(
+                    "bookYear"
+                ),
+
+            pages:
+                Number(
                     value(
-                        "bookAuthor"
-                    ).trim(),
+                        "bookPages"
+                    )
+                ) || 0,
 
-                genre:
+            isbn:
+                value(
+                    "bookISBN"
+                ).trim(),
+
+            series:
+                value(
+                    "bookSeries"
+                ).trim(),
+
+            shelfId,
+
+            shelf_id:
+                shelfId,
+
+            status:
+                value(
+                    "bookStatus"
+                ) ||
+                "want",
+
+            rating:
+                Number(
                     value(
-                        "bookGenre"
-                    ).trim(),
+                        "bookRating"
+                    )
+                ) || 0,
 
-                year:
+            timesRead:
+                Number(
                     value(
-                        "bookYear"
-                    ),
+                        "bookTimesRead"
+                    )
+                ) || 0,
 
-                pages:
-                    Number(
-                        value(
-                            "bookPages"
-                        )
-                    ) || 0,
+            started:
+                value(
+                    "bookStarted"
+                ),
 
-                isbn:
+            finished:
+                value(
+                    "bookFinished"
+                ),
+
+            currentPage:
+                Number(
                     value(
-                        "bookISBN"
-                    ).trim(),
+                        "bookCurrentPage"
+                    )
+                ) || 0,
 
-                series:
-                    value(
-                        "bookSeries"
-                    ).trim(),
+            design:
+                collectBookDesign(),
 
-                shelfId:
-                    value(
-                        "bookShelf"
-                    ),
+            journal:
+                existing?.journal ||
+                {},
 
-                status:
-                    value(
-                        "bookStatus"
-                    ) ||
-                    "want",
+            createdAt:
+                existing?.createdAt ||
+                now,
 
-                rating:
-                    Number(
-                        value(
-                            "bookRating"
-                        )
-                    ) || 0,
+            updatedAt:
+                now
 
-                timesRead:
-                    Number(
-                        value(
-                            "bookTimesRead"
-                        )
-                    ) || 0,
-
-                started:
-                    value(
-                        "bookStarted"
-                    ),
-
-                finished:
-                    value(
-                        "bookFinished"
-                    ),
-
-                currentPage:
-                    Number(
-                        value(
-                            "bookCurrentPage"
-                        )
-                    ) || 0,
-
-                cover:
-                    state.pendingCoverData ||
-                    existing?.cover ||
-                    "",
-
-                design:
-                    collectBookDesign(),
-
-                journal:
-                    existing?.journal,
-
-                createdAt:
-                    existing?.createdAt ||
-                    now,
-
-                updatedAt:
-                    now
-
-            });
-
-
-        if (
-            !Array.isArray(
-                state.books
-            )
-        ) {
-
-            state.books =
-                [];
-
-        }
+        };
 
 
         if (existing) {
@@ -1304,13 +1149,14 @@ button.addEventListener(
             const index =
                 state.books.findIndex(
                     item =>
-                        item.id ===
-                        existing.id
+                        String(item.id) ===
+                        String(existing.id)
                 );
 
 
             if (
-                index !== -1
+                index !==
+                -1
             ) {
 
                 state.books[
@@ -1321,7 +1167,7 @@ button.addEventListener(
             }
 
 
-            H.showToast?.(
+            showToast(
                 "Book updated.",
                 "success"
             );
@@ -1333,7 +1179,7 @@ button.addEventListener(
             );
 
 
-            H.showToast?.(
+            showToast(
                 "Book added to your library.",
                 "success"
             );
@@ -1356,159 +1202,100 @@ button.addEventListener(
 
     function collectBookDesign() {
 
-        return H.normalizeBookDesign?.({
+        return {
 
             style:
                 value(
+                    "bookSpineStyle"
+                ) ||
+                value(
                     "bookStyle"
-                ),
+                ) ||
+                "classic",
 
             spineColor:
                 value(
                     "bookSpineColor"
-                ),
+                ) ||
+                "#793f55",
 
             textColor:
                 value(
                     "bookTextColor"
-                ),
+                ) ||
+                "#f1e3cf",
 
             accentColor:
                 value(
                     "bookAccentColor"
-                ),
+                ) ||
+                "#c39a67",
 
             ornament:
                 value(
                     "bookSpineOrnament"
-                ),
+                ) ||
+                "auto",
 
             font:
                 value(
                     "bookSpineFont"
-                ),
+                ) ||
+                "serif",
 
             fontSize:
                 value(
                     "bookSpineFontSize"
-                ),
+                ) ||
+                "medium",
 
             fontWeight:
                 value(
                     "bookSpineFontWeight"
-                ),
+                ) ||
+                "regular",
 
             letterSpacing:
                 value(
                     "bookSpineLetterSpacing"
-                ),
+                ) ||
+                "normal",
 
             letterCase:
                 value(
                     "bookSpineCase"
-                ),
+                ) ||
+                "typed",
 
             fontStyle:
                 value(
                     "bookSpineFontStyle"
-                ),
+                ) ||
+                "normal",
 
             textAlign:
                 value(
                     "bookSpineTextAlign"
-                ),
+                ) ||
+                "center",
 
             titlePanel:
                 value(
                     "bookSpineTitlePanel"
-                ),
+                ) ||
+                "none",
 
             height:
                 value(
                     "bookHeight"
-                ),
+                ) ||
+                "medium",
 
             thickness:
                 value(
                     "bookThickness"
-                )
-
-        }) || {
-
-            style:
-                value(
-                    "bookStyle"
-                ),
-
-            spineColor:
-                value(
-                    "bookSpineColor"
-                ),
-
-            textColor:
-                value(
-                    "bookTextColor"
-                ),
-
-            accentColor:
-                value(
-                    "bookAccentColor"
-                ),
-
-            ornament:
-                value(
-                    "bookSpineOrnament"
-                ),
-
-            font:
-                value(
-                    "bookSpineFont"
-                ),
-
-            fontSize:
-                value(
-                    "bookSpineFontSize"
-                ),
-
-            fontWeight:
-                value(
-                    "bookSpineFontWeight"
-                ),
-
-            letterSpacing:
-                value(
-                    "bookSpineLetterSpacing"
-                ),
-
-            letterCase:
-                value(
-                    "bookSpineCase"
-                ),
-
-            fontStyle:
-                value(
-                    "bookSpineFontStyle"
-                ),
-
-            textAlign:
-                value(
-                    "bookSpineTextAlign"
-                ),
-
-            titlePanel:
-                value(
-                    "bookSpineTitlePanel"
-                ),
-
-            height:
-                value(
-                    "bookHeight"
-                ),
-
-            thickness:
-                value(
-                    "bookThickness"
-                )
+                ) ||
+                "medium"
 
         };
 
@@ -1516,55 +1303,96 @@ button.addEventListener(
 
 
     /* =====================================================
-       COVER UPLOAD
+       POPULATE SHELF SELECT
        ===================================================== */
 
-    async function handleCoverUpload(
-        event
+    function populateShelfSelect(
+        selectedId =
+            ""
     ) {
 
-        const file =
-            event.target
-                ?.files
-                ?.[0];
+        const select =
+            byId(
+                "bookShelf"
+            );
 
 
-        if (!file) {
+        if (!select) {
             return;
         }
 
 
-        try {
+        const shelves =
+            getShelves();
 
-            const data =
-                await H.fileToDataURL?.(
-                    file
+
+        const previous =
+            selectedId ||
+            select.value ||
+            "";
+
+
+        select.innerHTML =
+            "";
+
+
+        const noShelf =
+            document.createElement(
+                "option"
+            );
+
+
+        noShelf.value =
+            "";
+
+
+        noShelf.textContent =
+            shelves.length
+                ? "No shelf"
+                : "Create a shelf first";
+
+
+        select.appendChild(
+            noShelf
+        );
+
+
+        shelves.forEach(
+            shelf => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    shelf.id;
+
+
+                option.textContent =
+                    shelf.name ||
+                    "Shelf";
+
+
+                select.appendChild(
+                    option
                 );
 
-
-            getState().pendingCoverData =
-                data ||
-                null;
+            }
+        );
 
 
-            H.showToast?.(
-                "Cover added.",
-                "success"
-            );
-
-        } catch (
-            error
+        if (
+            shelves.some(
+                shelf =>
+                    String(shelf.id) ===
+                    String(previous)
+            )
         ) {
 
-            console.error(
-                error
-            );
-
-
-            H.showToast?.(
-                "That cover could not be loaded.",
-                "error"
-            );
+            select.value =
+                previous;
 
         }
 
@@ -1572,7 +1400,124 @@ button.addEventListener(
 
 
     /* =====================================================
-       CREATE SHELF BOOK ELEMENT
+       LIVE PREVIEW
+       ===================================================== */
+
+    function bindPreviewControls() {
+
+        const ids = [
+
+            "bookTitle",
+
+            "bookSpineStyle",
+
+            "bookStyle",
+
+            "bookSpineColor",
+
+            "bookTextColor",
+
+            "bookSpineFont",
+
+            "bookHeight",
+
+            "bookThickness"
+
+        ];
+
+
+        ids.forEach(
+            id => {
+
+                const element =
+                    byId(id);
+
+
+                if (!element) {
+                    return;
+                }
+
+
+                element.addEventListener(
+                    "input",
+                    updateSpinePreview
+                );
+
+
+                element.addEventListener(
+                    "change",
+                    updateSpinePreview
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       UPDATE SPINE PREVIEW
+       ===================================================== */
+
+    function updateSpinePreview() {
+
+        const preview =
+            byId(
+                "bookSpinePreview"
+            );
+
+
+        if (!preview) {
+            return;
+        }
+
+
+        const design =
+            collectBookDesign();
+
+
+        preview.style
+            .setProperty(
+                "--book-color",
+                design.spineColor
+            );
+
+
+        preview.style
+            .setProperty(
+                "--book-text",
+                design.textColor
+            );
+
+
+        preview.style
+            .setProperty(
+                "--book-accent",
+                design.accentColor
+            );
+
+
+        const previewTitle =
+            byId(
+                "bookSpinePreviewTitle"
+            );
+
+
+        if (previewTitle) {
+
+            previewTitle.textContent =
+                value(
+                    "bookTitle"
+                ) ||
+                "Book Title";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       CREATE SHELF BOOK
        ===================================================== */
 
     function createShelfBookElement(
@@ -1580,9 +1525,6 @@ button.addEventListener(
     ) {
 
         const design =
-            H.normalizeBookDesign?.(
-                book.design
-            ) ||
             book.design ||
             {};
 
@@ -1598,8 +1540,13 @@ button.addEventListener(
 
 
         button.className =
-            buildBookClassList(
-                design
+            [
+                "book-spine",
+                `book-style-${design.style || "classic"}`,
+                `book-height-${design.height || "medium"}`,
+                `book-thickness-${design.thickness || "medium"}`
+            ].join(
+                " "
             );
 
 
@@ -1634,24 +1581,6 @@ button.addEventListener(
         );
 
 
-        const title =
-            H.applyTextCase?.(
-                book.title ||
-                "Untitled",
-                design.letterCase
-            ) ||
-            book.title ||
-            "Untitled";
-
-
-        const ornament =
-            H.getOrnamentSymbol?.(
-                design.ornament,
-                design.style
-            ) ||
-            "";
-
-
         button.innerHTML =
             `
                 <span
@@ -1664,8 +1593,9 @@ button.addEventListener(
                     <span class="spine-title-panel">
 
                         <span class="spine-title">
-                            ${escape(
-                                title
+                            ${escapeHTML(
+                                book.title ||
+                                "Untitled"
                             )}
                         </span>
 
@@ -1675,9 +1605,7 @@ button.addEventListener(
                         class="spine-ornament"
                         aria-hidden="true"
                     >
-                        ${escape(
-                            ornament
-                        )}
+                        ✦
                     </span>
 
                 </span>
@@ -1689,264 +1617,50 @@ button.addEventListener(
             `;
 
 
-       button.addEventListener(
-    "click",
-    event => {
+        button.addEventListener(
+            "click",
+            event => {
 
-        event.stopPropagation();
+                event.preventDefault();
 
-
-        const bookId =
-            book.id;
+                event.stopPropagation();
 
 
-        getState().selectedBookId =
-            bookId;
+                getState()
+                    .selectedBookId =
+                    book.id;
 
 
-        Novellow.app
-            ?.navigate?.(
-                "journal"
-            );
+                if (
+                    Novellow.app
+                        ?.navigate
+                ) {
+
+                    Novellow.app
+                        .navigate(
+                            "journal"
+                        );
+
+                }
 
 
-        requestAnimationFrame(
-            () => {
+                requestAnimationFrame(
+                    () => {
 
-                Novellow.journal
-                    ?.openBook?.(
-                        bookId,
-                        "overview"
-                    );
+                        Novellow.journal
+                            ?.openBook?.(
+                                book.id,
+                                "overview"
+                            );
+
+                    }
+                );
 
             }
         );
-
-    }
-);
 
 
         return button;
-
-    }
-
-
-    /* =====================================================
-       BOOK CLASS LIST
-       ===================================================== */
-
-    function buildBookClassList(
-        design,
-        preview =
-            false
-    ) {
-
-        const classes = [
-            preview
-                ? "spine-preview-book"
-                : "book-spine"
-        ];
-
-
-        if (!preview) {
-
-            classes.push(
-                `book-style-${design.style || "classic"}`
-            );
-
-
-            classes.push(
-                `book-height-${design.height || "medium"}`
-            );
-
-
-            classes.push(
-                `book-thickness-${design.thickness || "medium"}`
-            );
-
-
-            classes.push(
-                `book-font-${design.font || "bookish"}`
-            );
-
-
-            classes.push(
-                `book-font-size-${design.fontSize || "medium"}`
-            );
-
-
-            classes.push(
-                `book-font-weight-${design.fontWeight || "regular"}`
-            );
-
-
-            classes.push(
-                `book-letter-spacing-${design.letterSpacing || "normal"}`
-            );
-
-
-            classes.push(
-                `book-font-style-${design.fontStyle || "normal"}`
-            );
-
-
-            classes.push(
-                `book-text-align-${design.textAlign || "center"}`
-            );
-
-
-            classes.push(
-                `book-title-panel-${design.titlePanel || "none"}`
-            );
-
-        }
-
-
-        return classes.join(
-            " "
-        );
-
-    }
-
-
-    /* =====================================================
-       SPINE PREVIEW
-       ===================================================== */
-
-    function updateSpinePreview() {
-
-        const preview =
-            H.getById?.(
-                "bookSpinePreview"
-            );
-
-
-        if (!preview) {
-            return;
-        }
-
-
-        const design =
-            collectBookDesign();
-
-
-        preview.style.setProperty(
-            "--book-color",
-            design.spineColor ||
-            "#793f55"
-        );
-
-
-        preview.style.setProperty(
-            "--book-text",
-            design.textColor ||
-            "#f1e3cf"
-        );
-
-
-        preview.style.setProperty(
-            "--book-accent",
-            design.accentColor ||
-            "#c39a67"
-        );
-
-
-        const title =
-            H.applyTextCase?.(
-                value(
-                    "bookTitle"
-                ) ||
-                "Book Title",
-                design.letterCase
-            ) ||
-            value(
-                "bookTitle"
-            ) ||
-            "Book Title";
-
-
-        H.setText?.(
-            "bookSpinePreviewTitle",
-            title
-        );
-
-
-        H.setText?.(
-            "bookSpinePreviewOrnament",
-            H.getOrnamentSymbol?.(
-                design.ornament,
-                design.style
-            ) ||
-            ""
-        );
-
-
-        const titlePanel =
-            H.getById?.(
-                "bookSpinePreviewTitlePanel"
-            );
-
-
-        if (titlePanel) {
-
-            titlePanel.className =
-                "spine-preview-title-panel";
-
-
-            if (
-                design.titlePanel &&
-                design.titlePanel !==
-                    "none"
-            ) {
-
-                titlePanel.classList.add(
-                    `preview-panel-${design.titlePanel}`
-                );
-
-            }
-
-        }
-
-
-        const previewTitle =
-            H.getById?.(
-                "bookSpinePreviewTitle"
-            );
-
-
-        if (previewTitle) {
-
-            previewTitle.style.fontStyle =
-                design.fontStyle ===
-                    "italic"
-                    ? "italic"
-                    : "normal";
-
-
-            previewTitle.style.fontWeight =
-                mapFontWeight(
-                    design.fontWeight
-                );
-
-
-            previewTitle.style.letterSpacing =
-                mapLetterSpacing(
-                    design.letterSpacing
-                );
-
-
-            previewTitle.style.fontSize =
-                mapFontSize(
-                    design.fontSize
-                );
-
-
-            previewTitle.style.fontFamily =
-                mapPreviewFont(
-                    design.font
-                );
-
-        }
 
     }
 
@@ -1965,16 +1679,13 @@ button.addEventListener(
             );
 
 
-        wrapper.style.width =
-            "100%";
-
-
-        wrapper.style.height =
-            "100%";
+        wrapper.className =
+            "generated-cover-wrapper";
 
 
         if (
-            book.cover
+            book.cover ||
+            book.cover_url
         ) {
 
             const image =
@@ -1988,7 +1699,8 @@ button.addEventListener(
 
 
             image.src =
-                book.cover;
+                book.cover ||
+                book.cover_url;
 
 
             image.alt =
@@ -2006,9 +1718,6 @@ button.addEventListener(
 
 
         const design =
-            H.normalizeBookDesign?.(
-                book.design
-            ) ||
             book.design ||
             {};
 
@@ -2047,14 +1756,14 @@ button.addEventListener(
         generated.innerHTML =
             `
                 <div class="generated-cover-title">
-                    ${escape(
+                    ${escapeHTML(
                         book.title ||
                         "Untitled Book"
                     )}
                 </div>
 
                 <div class="generated-cover-author">
-                    ${escape(
+                    ${escapeHTML(
                         book.author ||
                         ""
                     )}
@@ -2064,13 +1773,7 @@ button.addEventListener(
                     class="generated-cover-ornament"
                     aria-hidden="true"
                 >
-                    ${escape(
-                        H.getOrnamentSymbol?.(
-                            design.ornament,
-                            design.style
-                        ) ||
-                        "✦"
-                    )}
+                    ✦
                 </div>
             `;
 
@@ -2086,15 +1789,96 @@ button.addEventListener(
 
 
     /* =====================================================
-       OPEN REVEAL
+       BOOK REVEAL
        ===================================================== */
+
+    function bindBookReveal() {
+
+        byId(
+            "closeBookReveal"
+        )?.addEventListener(
+            "click",
+            closeReveal
+        );
+
+
+        byId(
+            "bookRevealEdit"
+        )?.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    revealBookId
+                ) {
+
+                    closeReveal();
+
+                    openEditDrawer(
+                        revealBookId
+                    );
+
+                }
+
+            }
+        );
+
+
+        byId(
+            "bookRevealOpenJournal"
+        )?.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    !revealBookId
+                ) {
+                    return;
+                }
+
+
+                const id =
+                    revealBookId;
+
+
+                closeReveal();
+
+
+                getState()
+                    .selectedBookId =
+                    id;
+
+
+                Novellow.app
+                    ?.navigate?.(
+                        "journal"
+                    );
+
+
+                requestAnimationFrame(
+                    () => {
+
+                        Novellow.journal
+                            ?.openBook?.(
+                                id,
+                                "overview"
+                            );
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
 
     function openReveal(
         bookId
     ) {
 
         const book =
-            H.getBookById?.(
+            getBookById(
                 bookId
             );
 
@@ -2108,12 +1892,8 @@ button.addEventListener(
             book.id;
 
 
-        getState().selectedBookId =
-            book.id;
-
-
         const reveal =
-            H.getById?.(
+            byId(
                 "bookReveal"
             );
 
@@ -2124,8 +1904,8 @@ button.addEventListener(
 
 
         const cover =
-            H.getById?.(
-                "revealBookCover"
+            byId(
+                "bookRevealCover"
             );
 
 
@@ -2135,124 +1915,52 @@ button.addEventListener(
                 "";
 
 
-            const coverElement =
+            cover.appendChild(
                 createCoverElement(
                     book
-                );
-
-
-            cover.appendChild(
-                coverElement
+                )
             );
 
         }
 
 
-        H.setText?.(
-            "revealBookStatus",
-            H.getStatusName?.(
-                book.status
-            ) ||
+        setText(
+            "bookRevealStatus",
+            book.status ||
             "Book"
         );
 
 
-        H.setText?.(
-            "revealBookTitle",
+        setText(
+            "bookRevealTitle",
             book.title ||
             "Untitled Book"
         );
 
 
-        H.setText?.(
-            "revealBookAuthor",
+        setText(
+            "bookRevealAuthor",
             book.author ||
             "Unknown author"
         );
-
-
-        H.setText?.(
-            "revealBookStarted",
-            H.formatDate?.(
-                book.started
-            ) ||
-            "—"
-        );
-
-
-        H.setText?.(
-            "revealBookFinished",
-            H.formatDate?.(
-                book.finished
-            ) ||
-            "—"
-        );
-
-
-        H.setText?.(
-            "revealBookPages",
-            book.pages
-                ? String(
-                    book.pages
-                )
-                : "—"
-        );
-
-
-        H.setText?.(
-            "revealBookRating",
-            formatRating(
-                book.rating
-            )
-        );
-
-
-        const percent =
-            H.calculatePercent?.(
-                book.currentPage,
-                book.pages
-            ) || 0;
-
-
-        H.setText?.(
-            "revealBookPercent",
-            `${percent}%`
-        );
-
-
-        const fill =
-            H.getById?.(
-                "revealBookProgress"
-            );
-
-
-        if (fill) {
-
-            fill.style.width =
-                `${percent}%`;
-
-        }
 
 
         reveal.hidden =
             false;
 
 
-        document.body.classList.add(
-            "modal-open"
-        );
+        document.body
+            .classList.add(
+                "modal-open"
+            );
 
     }
 
 
-    /* =====================================================
-       CLOSE REVEAL
-       ===================================================== */
-
     function closeReveal() {
 
         const reveal =
-            H.getById?.(
+            byId(
                 "bookReveal"
             );
 
@@ -2283,7 +1991,7 @@ button.addEventListener(
     ) {
 
         const book =
-            H.getBookById?.(
+            getBookById(
                 bookId
             );
 
@@ -2294,7 +2002,7 @@ button.addEventListener(
 
 
         const confirmed =
-            H.confirmAction?.(
+            window.confirm(
                 `Delete "${book.title}" from your library?`
             );
 
@@ -2309,17 +2017,12 @@ button.addEventListener(
 
 
         state.books =
-            getBooks().filter(
+            state.books.filter(
                 item =>
-                    item.id !==
-                    bookId
+                    String(item.id) !==
+                    String(bookId)
             );
 
-
-        /*
-           Remove associated quotes and vocabulary as well so
-           orphaned records do not remain.
-        */
 
         if (
             Array.isArray(
@@ -2330,10 +2033,13 @@ button.addEventListener(
             state.quotes =
                 state.quotes.filter(
                     quote =>
-                        quote.bookId !==
-                            bookId &&
-                        quote.book !==
-                            bookId
+                        String(
+                            quote.bookId ||
+                            quote.book_id ||
+                            quote.book ||
+                            ""
+                        ) !==
+                        String(bookId)
                 );
 
         }
@@ -2348,17 +2054,19 @@ button.addEventListener(
             state.vocabulary =
                 state.vocabulary.filter(
                     word =>
-                        word.bookId !==
-                            bookId &&
-                        word.book !==
-                            bookId
+                        String(
+                            word.bookId ||
+                            word.book_id ||
+                            word.book ||
+                            ""
+                        ) !==
+                        String(bookId)
                 );
 
         }
 
 
-        Novellow.storage
-            ?.saveBooks?.();
+        saveBooks();
 
 
         Novellow.storage
@@ -2369,164 +2077,17 @@ button.addEventListener(
             ?.saveVocabulary?.();
 
 
-        if (
-            getState()
-                .selectedBookId ===
-            bookId
-        ) {
+        closeDrawer();
 
-            getState()
-                .selectedBookId =
-                null;
-
-        }
-
-
-        if (
-            revealBookId ===
-            bookId
-        ) {
-
-            closeReveal();
-
-        }
-
+        closeReveal();
 
         refreshConnectedViews();
 
 
-        H.showToast?.(
+        showToast(
             "Book deleted.",
             "success"
         );
-
-    }
-
-
-    /* =====================================================
-       POPULATE SHELF SELECT
-       ===================================================== */
-
-    function populateShelfSelect(
-        selectedId =
-            ""
-    ) {
-
-        if (
-            Novellow.library
-                ?.populateShelfSelect
-        ) {
-
-            Novellow.library
-                .populateShelfSelect(
-                    selectedId
-                );
-
-            return;
-
-        }
-
-
-        const select =
-            H.getById?.(
-                "bookShelf"
-            );
-
-
-        if (!select) {
-            return;
-        }
-
-
-        const shelves =
-            Array.isArray(
-                getState().shelves
-            )
-                ? getState().shelves
-                : [];
-
-
-        const previous =
-            selectedId ||
-            select.value ||
-            "";
-
-
-        select.innerHTML =
-            "";
-
-
-        const none =
-            document.createElement(
-                "option"
-            );
-
-
-        none.value =
-            "";
-
-
-        none.textContent =
-            shelves.length
-                ? "No shelf"
-                : "Create a shelf first";
-
-
-        select.appendChild(
-            none
-        );
-
-
-        shelves.forEach(
-            shelf => {
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                option.value =
-                    shelf.id;
-
-
-                option.textContent =
-                    shelf.name ||
-                    "Shelf";
-
-
-                select.appendChild(
-                    option
-                );
-
-            }
-        );
-
-
-        if (
-            shelves.some(
-                shelf =>
-                    shelf.id ===
-                    previous
-            )
-        ) {
-
-            select.value =
-                previous;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       SAVE BOOKS
-       ===================================================== */
-
-    function saveBooks() {
-
-        Novellow.storage
-            ?.saveBooks?.();
 
     }
 
@@ -2564,34 +2125,32 @@ button.addEventListener(
 
 
     /* =====================================================
-       OVERLAY / BODY LOCK
+       OVERLAY
        ===================================================== */
 
     function syncOverlay() {
 
-        const panelIds = [
+        const drawerIds = [
 
             "themeDrawer",
+
             "settingsDrawer",
+
+            "profileDrawer",
+
             "shelfDrawer",
-            "bookDrawer",
-            "bookReveal",
-            "progressModal",
-            "journalEntryModal",
-            "quoteModal",
-            "wordModal"
+
+            "bookDrawer"
 
         ];
 
 
-        const anyOpen =
-            panelIds.some(
+        const drawerOpen =
+            drawerIds.some(
                 id => {
 
                     const element =
-                        H.getById?.(
-                            id
-                        );
+                        byId(id);
 
 
                     return (
@@ -2604,36 +2163,12 @@ button.addEventListener(
 
 
         const overlay =
-            H.getById?.(
+            byId(
                 "overlay"
             );
 
 
         if (overlay) {
-
-            const drawerOpen =
-                [
-                    "themeDrawer",
-                    "settingsDrawer",
-                    "shelfDrawer",
-                    "bookDrawer"
-                ].some(
-                    id => {
-
-                        const element =
-                            H.getById?.(
-                                id
-                            );
-
-
-                        return (
-                            element &&
-                            !element.hidden
-                        );
-
-                    }
-                );
-
 
             overlay.hidden =
                 !drawerOpen;
@@ -2641,276 +2176,11 @@ button.addEventListener(
         }
 
 
-        document.body.classList.toggle(
-            "modal-open",
-            anyOpen
-        );
-
-    }
-
-
-    /* =====================================================
-       VALUE HELPERS
-       ===================================================== */
-
-    function setValue(
-        id,
-        nextValue
-    ) {
-
-        const element =
-            H.getById?.(
-                id
+        document.body
+            .classList.toggle(
+                "modal-open",
+                drawerOpen
             );
-
-
-        if (!element) {
-            return;
-        }
-
-
-        element.value =
-            nextValue ??
-            "";
-
-    }
-
-
-    function value(
-        id
-    ) {
-
-        return (
-            H.getById?.(
-                id
-            )?.value ??
-            ""
-        );
-
-    }
-
-
-    /* =====================================================
-       FORMATTING
-       ===================================================== */
-
-    function formatRating(
-        rating
-    ) {
-
-        const value =
-            Math.max(
-                0,
-                Math.min(
-                    5,
-                    Number(
-                        rating
-                    ) || 0
-                )
-            );
-
-
-        if (!value) {
-
-            return "Not rated";
-
-        }
-
-
-        return "★".repeat(
-            value
-        );
-
-    }
-
-
-    function mapFontWeight(
-        weight
-    ) {
-
-        const map = {
-
-            light:
-                "300",
-
-            regular:
-                "500",
-
-            bold:
-                "700",
-
-            heavy:
-                "800"
-
-        };
-
-
-        return (
-            map[
-                weight
-            ] ||
-            "500"
-        );
-
-    }
-
-
-    function mapLetterSpacing(
-        spacing
-    ) {
-
-        const map = {
-
-            tight:
-                "-0.04em",
-
-            normal:
-                "0",
-
-            wide:
-                "0.08em",
-
-            "extra-wide":
-                "0.15em"
-
-        };
-
-
-        return (
-            map[
-                spacing
-            ] ||
-            "0"
-        );
-
-    }
-
-
-    function mapFontSize(
-        size
-    ) {
-
-        const map = {
-
-            small:
-                "0.60rem",
-
-            medium:
-                "0.72rem",
-
-            large:
-                "0.84rem",
-
-            xlarge:
-                "0.96rem"
-
-        };
-
-
-        return (
-            map[
-                size
-            ] ||
-            "0.72rem"
-        );
-
-    }
-
-
-    function mapPreviewFont(
-        font
-    ) {
-
-        const map = {
-
-            serif:
-                "Georgia, 'Times New Roman', serif",
-
-            roman:
-                "'Times New Roman', Georgia, serif",
-
-            bookish:
-                "var(--font-book)",
-
-            elegant:
-                "'Cormorant Garamond', Georgia, serif",
-
-            typewriter:
-                "'Courier New', monospace",
-
-            clean:
-                "Arial, Helvetica, sans-serif",
-
-            condensed:
-                "'Arial Narrow', Arial, sans-serif",
-
-            heavy:
-                "Impact, Haettenschweiler, sans-serif",
-
-            storybook:
-                "var(--font-display)",
-
-            handwritten:
-                "'Comic Sans MS', 'Bradley Hand', cursive",
-
-            gothic:
-                "Georgia, serif",
-
-            deco:
-                "'Arial Narrow', Arial, sans-serif",
-
-            retro:
-                "'Courier New', monospace"
-
-        };
-
-
-        return (
-            map[
-                font
-            ] ||
-            "var(--font-book)"
-        );
-
-    }
-
-
-    /* =====================================================
-       ESCAPE
-       ===================================================== */
-
-    function escape(
-        input
-    ) {
-
-        if (
-            H.escapeHTML
-        ) {
-
-            return H.escapeHTML(
-                String(
-                    input ??
-                    ""
-                )
-            );
-
-        }
-
-
-        const element =
-            document.createElement(
-                "div"
-            );
-
-
-        element.textContent =
-            String(
-                input ??
-                ""
-            );
-
-
-        return element.innerHTML;
 
     }
 
@@ -2948,296 +2218,28 @@ button.addEventListener(
     };
 
 
-})();
-/* =========================================================
-   NOVELLOW
-   ADD BOOK BUTTON SAFETY PATCH
-   ========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        const addBookButtons = [
-            "headerAddBook",
-            "libraryAddBook",
-            "emptyAddBook",
-            "mobileAddBook",
-            "readingAddBook"
-        ];
-
-
-        function safelyOpenAddBook() {
-
-            console.log(
-                "Novellow: opening Add Book drawer"
-            );
-
-
-            /*
-               Use the normal books module first.
-            */
-
-            if (
-                window.NOVELLOW?.books?.openAddDrawer
-            ) {
-
-                try {
-
-                    window.NOVELLOW
-                        .books
-                        .openAddDrawer();
-
-                    return;
-
-                } catch (error) {
-
-                    console.error(
-                        "Normal Add Book opener failed:",
-                        error
-                    );
-
-                }
-
-            }
-
-
-            /*
-               Fallback:
-               open the actual drawer directly.
-            */
-
-            const drawer =
-                document.getElementById(
-                    "bookDrawer"
-                );
-
-
-            const overlay =
-                document.getElementById(
-                    "overlay"
-                );
-
-
-            if (!drawer) {
-
-                console.error(
-                    "bookDrawer was not found."
-                );
-
-                return;
-
-            }
-
-
-            /*
-               Reset the form for a new book.
-            */
-
-            const form =
-                document.getElementById(
-                    "bookForm"
-                );
-
-
-            if (form) {
-
-                form.reset();
-
-            }
-
-
-            const editingId =
-                document.getElementById(
-                    "editingBookId"
-                );
-
-
-            if (editingId) {
-
-                editingId.value =
-                    "";
-
-            }
-
-
-            const title =
-                document.getElementById(
-                    "bookDrawerTitle"
-                );
-
-
-            if (title) {
-
-                title.textContent =
-                    "Add a Book";
-
-            }
-
-
-            const saveLabel =
-                document.getElementById(
-                    "saveBookButtonLabel"
-                );
-
-
-            if (saveLabel) {
-
-                saveLabel.textContent =
-                    "Save Book";
-
-            }
-
-
-            /*
-               Populate shelf dropdown manually if needed.
-            */
-
-            const shelfSelect =
-                document.getElementById(
-                    "bookShelf"
-                );
-
-
-            if (shelfSelect) {
-
-                const shelves =
-                    window.NOVELLOW
-                        ?.state
-                        ?.shelves ||
-                    [];
-
-
-                shelfSelect.innerHTML =
-                    "";
-
-
-                const noShelf =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                noShelf.value =
-                    "";
-
-
-                noShelf.textContent =
-                    shelves.length
-                        ? "No shelf"
-                        : "Create a shelf first";
-
-
-                shelfSelect.appendChild(
-                    noShelf
-                );
-
-
-                shelves.forEach(
-                    shelf => {
-
-                        const option =
-                            document.createElement(
-                                "option"
-                            );
-
-
-                        option.value =
-                            shelf.id;
-
-
-                        option.textContent =
-                            shelf.name ||
-                            "Shelf";
-
-
-                        shelfSelect.appendChild(
-                            option
-                        );
-
-                    }
-                );
-
-            }
-
-
-            drawer.hidden =
-                false;
-
-
-            if (overlay) {
-
-                overlay.hidden =
-                    false;
-
-            }
-
-
-            document.body.classList.add(
-                "modal-open"
-            );
-
-
-            requestAnimationFrame(
-                () => {
-
-                    document
-                        .getElementById(
-                            "bookTitle"
-                        )
-                        ?.focus();
-
-                }
-            );
-
-        }
-
-
-        addBookButtons.forEach(
-            id => {
-
-                const button =
-                    document.getElementById(
-                        id
-                    );
-
-
-                if (!button) {
-                    return;
-                }
-
-
-                /*
-                   Replace the button node so any broken or duplicate
-                   click listeners attached previously are discarded.
-                */
-
-                const replacement =
-                    button.cloneNode(
-                        true
-                    );
-
-
-                button.replaceWith(
-                    replacement
-                );
-
-
-                replacement.addEventListener(
-                    "click",
-                    event => {
-
-                        event.preventDefault();
-
-                        event.stopPropagation();
-
-                        safelyOpenAddBook();
-
-                    }
-                );
-
+    /* =====================================================
+       START
+       ===================================================== */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            init,
+            {
+                once: true
             }
         );
 
+    } else {
+
+        init();
+
     }
-);
+
+
+})();
