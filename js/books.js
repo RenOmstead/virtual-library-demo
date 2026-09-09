@@ -11,7 +11,41 @@
    Journal handoff
    ========================================================= */
 
+button.addEventListener(
+    "click",
+    event => {
 
+        event.stopPropagation();
+
+
+        const bookId =
+            book.id;
+
+
+        getState().selectedBookId =
+            bookId;
+
+
+        Novellow.app
+            ?.navigate?.(
+                "journal"
+            );
+
+
+        requestAnimationFrame(
+            () => {
+
+                Novellow.journal
+                    ?.openBook?.(
+                        bookId,
+                        "overview"
+                    );
+
+            }
+        );
+
+    }
+);
 (() => {
 
     "use strict";
@@ -1446,18 +1480,41 @@
             `;
 
 
-        button.addEventListener(
-            "click",
-            event => {
+       button.addEventListener(
+    "click",
+    event => {
 
-                event.stopPropagation();
+        event.stopPropagation();
 
-                openReveal(
-                    book.id
-                );
+
+        const bookId =
+            book.id;
+
+
+        getState().selectedBookId =
+            bookId;
+
+
+        Novellow.app
+            ?.navigate?.(
+                "journal"
+            );
+
+
+        requestAnimationFrame(
+            () => {
+
+                Novellow.journal
+                    ?.openBook?.(
+                        bookId,
+                        "overview"
+                    );
 
             }
         );
+
+    }
+);
 
 
         return button;
