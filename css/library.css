@@ -3,12 +3,11 @@
    LIBRARY.CSS
 
    Library page
-   Shelves
-   Shelf materials
-   Shelf moods
+   Theme-aware shelves
+   Structural shelf UI
+   Book staging
    Decorations
-   Drag states
-   Responsive shelf layout
+   Responsive behavior
    ========================================================= */
 
 
@@ -30,21 +29,37 @@
 
     flex-direction: column;
 
-    gap: 74px;
+    gap: 84px;
 }
 
 
 /* =========================================================
-   SHELF
+   LIBRARY SHELF
    ========================================================= */
 
 .library-shelf {
-    --shelf-main: #694b39;
-    --shelf-light: #896650;
-    --shelf-mid: #573c2f;
-    --shelf-dark: #38261e;
-    --shelf-deep: #241813;
-    --shelf-back: #352a24;
+    --shelf-main:
+        var(--wood);
+
+    --shelf-light:
+        color-mix(
+            in srgb,
+            var(--wood-mid) 78%,
+            white
+        );
+
+    --shelf-mid:
+        var(--wood-mid);
+
+    --shelf-dark:
+        var(--wood-dark);
+
+    --shelf-back:
+        color-mix(
+            in srgb,
+            var(--wood-dark) 78%,
+            var(--bg)
+        );
 
     position: relative;
 
@@ -53,14 +68,14 @@
     overflow: visible;
 
     padding:
-        18px 18px 22px;
+        20px 22px 26px;
 
     border:
         1px solid
-        rgba(0, 0, 0, 0.32);
+        rgba(0, 0, 0, 0.30);
 
     border-radius:
-        15px 15px 8px 8px;
+        var(--shelf-radius);
 
     background:
         repeating-linear-gradient(
@@ -69,27 +84,27 @@
             rgba(255, 255, 255, 0.012) 8px 9px,
             transparent 9px 18px
         ),
-        linear-gradient(
+        repeating-linear-gradient(
             90deg,
-            rgba(0, 0, 0, 0.08),
-            transparent 10%,
-            transparent 90%,
-            rgba(0, 0, 0, 0.09)
+            transparent 0 95px,
+            rgba(0, 0, 0, 0.025) 95px 97px
         ),
         var(--shelf-main);
 
     box-shadow:
-        0 26px 44px
+        0 30px 52px
         rgba(0, 0, 0, 0.24),
+
         inset 0 1px
-        rgba(255, 255, 255, 0.08),
-        inset 0 -2px
-        rgba(0, 0, 0, 0.11);
+        rgba(255, 255, 255, 0.09),
+
+        inset 0 -4px
+        rgba(0, 0, 0, 0.10);
 }
 
 
 /* =========================================================
-   SHELF TOP EDGE
+   TOP SHELF CAP
    ========================================================= */
 
 .library-shelf::before {
@@ -97,44 +112,49 @@
 
     position: absolute;
 
-    z-index: 10;
+    z-index: 20;
 
-    top: -11px;
-    left: -7px;
-    right: -7px;
+    top: -14px;
+    left: -10px;
+    right: -10px;
 
-    height: 22px;
+    height:
+        var(--shelf-depth);
 
     border:
         1px solid
-        rgba(0, 0, 0, 0.28);
+        rgba(0, 0, 0, 0.30);
 
     border-radius:
-        13px 13px 5px 5px;
+        calc(
+            var(--shelf-radius)
+            * 0.8
+        );
 
     background:
         linear-gradient(
             to bottom,
             rgba(255, 255, 255, 0.10),
-            transparent 28%
+            transparent 35%
         ),
         repeating-linear-gradient(
             90deg,
-            transparent 0 90px,
-            rgba(255, 255, 255, 0.018) 90px 92px
+            transparent 0 86px,
+            rgba(255, 255, 255, 0.018) 86px 88px
         ),
         var(--shelf-light);
 
     box-shadow:
-        0 5px 9px
-        rgba(0, 0, 0, 0.20),
-        inset 0 -5px
+        0 7px 10px
+        rgba(0, 0, 0, 0.22),
+
+        inset 0 -7px
         rgba(0, 0, 0, 0.08);
 }
 
 
 /* =========================================================
-   SHELF SHADOW
+   SHELF DROP SHADOW
    ========================================================= */
 
 .library-shelf::after {
@@ -142,22 +162,21 @@
 
     position: absolute;
 
-    z-index: -2;
+    z-index: -3;
 
     left: 7%;
     right: 7%;
-    bottom: -23px;
+    bottom: -29px;
 
-    height: 27px;
+    height: 32px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
-        rgba(0, 0, 0, 0.24);
+        rgba(0, 0, 0, 0.28);
 
     filter:
-        blur(12px);
+        blur(13px);
 }
 
 
@@ -168,20 +187,20 @@
 .shelf-header {
     position: relative;
 
-    z-index: 20;
+    z-index: 30;
 
     display: flex;
 
     align-items: flex-start;
     justify-content: space-between;
 
-    gap: 18px;
+    gap: 20px;
 
     margin:
-        6px 4px 18px;
+        7px 7px 18px;
 
-    padding-bottom:
-        15px;
+    padding:
+        9px 4px 18px;
 
     border-bottom:
         1px solid
@@ -197,24 +216,26 @@
 .shelf-eyebrow {
     display: block;
 
-    margin-bottom:
-        5px;
+    margin-bottom: 6px;
 
     color:
         color-mix(
             in srgb,
-            var(--shelf-light) 72%,
-            white
+            var(--accent-light) 74%,
+            var(--paper)
         );
 
+    font-family:
+        var(--font-label);
+
     font-size:
-        0.48rem;
+        0.49rem;
 
     font-weight:
         700;
 
     letter-spacing:
-        0.15em;
+        var(--label-letter-spacing);
 
     text-transform:
         uppercase;
@@ -222,45 +243,53 @@
 
 
 .shelf-header h2 {
-    margin-bottom:
-        4px;
+    margin-bottom: 5px;
 
     color:
-        #f1e3d0;
+        var(--paper);
 
     font-family:
         var(--font-display);
 
     font-size:
         clamp(
-            1.75rem,
+            1.9rem,
             3vw,
-            2.6rem
+            2.9rem
         );
 
     font-weight:
         500;
 
     letter-spacing:
-        -0.025em;
+        -0.03em;
 
     line-height:
-        1;
+        0.96;
+
+    text-transform:
+        var(--shelf-header-transform);
 }
 
 
 .shelf-header p {
     max-width:
-        700px;
+        720px;
 
-    margin:
-        0;
+    margin: 0;
 
     color:
-        rgba(241, 227, 208, 0.65);
+        color-mix(
+            in srgb,
+            var(--paper) 64%,
+            transparent
+        );
+
+    font-family:
+        var(--font-body);
 
     font-size:
-        0.63rem;
+        0.61rem;
 
     line-height:
         1.6;
@@ -288,56 +317,66 @@
         34px;
 
     padding:
-        0 11px;
+        0 12px;
 
     border:
         1px solid
-        rgba(255, 255, 255, 0.12);
+        rgba(255, 255, 255, 0.10);
 
     border-radius:
-        7px;
+        var(--radius-small);
 
     background:
-        rgba(0, 0, 0, 0.12);
+        rgba(0, 0, 0, 0.13);
 
     color:
-        rgba(241, 227, 208, 0.76);
+        color-mix(
+            in srgb,
+            var(--paper) 72%,
+            transparent
+        );
+
+    font-family:
+        var(--font-ui);
 
     font-size:
-        0.53rem;
+        0.5rem;
 
     font-weight:
         700;
 
     letter-spacing:
-        0.03em;
+        var(--button-letter-spacing);
+
+    text-transform:
+        var(--button-transform);
 
     transition:
-        background-color 0.15s ease,
-        border-color 0.15s ease,
-        color 0.15s ease,
-        transform 0.15s ease;
+        transform 0.16s ease,
+        background-color 0.16s ease,
+        border-color 0.16s ease,
+        color 0.16s ease;
 }
 
 
 .shelf-action-button:hover {
     transform:
-        translateY(-1px);
+        translateY(-2px);
 
     border-color:
-        rgba(255, 255, 255, 0.20);
+        var(--border);
 
     background:
         rgba(0, 0, 0, 0.20);
 
     color:
-        #fff4e8;
+        var(--paper);
 }
 
 
 .shelf-action-button.danger {
     color:
-        #e8b1aa;
+        #d9aaa4;
 }
 
 
@@ -348,45 +387,104 @@
 .shelf-interior {
     position: relative;
 
-    z-index: 4;
+    z-index: 8;
 
     min-height:
-        330px;
+        345px;
 
     overflow: visible;
 
     padding:
-        28px 20px 18px;
+        30px 30px 22px;
 
     border:
         1px solid
-        rgba(0, 0, 0, 0.30);
+        rgba(0, 0, 0, 0.32);
 
     border-radius:
-        7px 7px 3px 3px;
+        calc(
+            var(--shelf-radius)
+            * 0.55
+        );
 
     background:
         linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.025),
-            transparent 10%,
+            to right,
+            rgba(255, 255, 255, 0.018),
+            transparent 12%,
             transparent 88%,
-            rgba(0, 0, 0, 0.12)
+            rgba(0, 0, 0, 0.11)
         ),
         linear-gradient(
             to bottom,
-            rgba(255, 255, 255, 0.022),
-            transparent 18%
+            rgba(255, 255, 255, 0.018),
+            transparent 19%
         ),
         var(--shelf-back);
 
     box-shadow:
-        inset 0 14px 24px
+        inset 0 20px 29px
         rgba(0, 0, 0, 0.18),
-        inset 8px 0 14px
+
+        inset 10px 0 16px
         rgba(0, 0, 0, 0.08),
-        inset -8px 0 14px
+
+        inset -10px 0 17px
         rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================================
+   SIDE SUPPORTS
+   ========================================================= */
+
+.shelf-interior::before,
+.shelf-interior::after {
+    content: "";
+
+    position: absolute;
+
+    z-index: 18;
+
+    top: -7px;
+    bottom: 2px;
+
+    width: 19px;
+
+    border:
+        1px solid
+        rgba(0, 0, 0, 0.25);
+
+    background:
+        linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.05),
+            transparent 44%
+        ),
+        var(--shelf-mid);
+
+    box-shadow:
+        inset -5px 0 7px
+        rgba(0, 0, 0, 0.10);
+}
+
+
+.shelf-interior::before {
+    left: -12px;
+
+    border-radius:
+        6px 2px 2px 6px;
+}
+
+
+.shelf-interior::after {
+    right: -12px;
+
+    border-radius:
+        2px 6px 6px 2px;
+
+    transform:
+        scaleX(-1);
 }
 
 
@@ -397,48 +495,56 @@
 .shelf-floor {
     position: absolute;
 
-    z-index: 8;
+    z-index: 16;
 
-    left: 7px;
-    right: 7px;
-    bottom: 7px;
+    left: -4px;
+    right: -4px;
+    bottom: 4px;
 
-    height: 24px;
+    height:
+        calc(
+            var(--shelf-depth)
+            + 2px
+        );
 
     border:
         1px solid
-        rgba(0, 0, 0, 0.24);
+        rgba(0, 0, 0, 0.28);
 
     border-radius:
-        3px;
+        4px;
 
     background:
         linear-gradient(
             to bottom,
             var(--shelf-light),
-            var(--shelf-main) 55%,
+            var(--shelf-main) 48%,
             var(--shelf-mid)
         );
 
     box-shadow:
-        0 5px 7px
-        rgba(0, 0, 0, 0.24),
+        0 6px 9px
+        rgba(0, 0, 0, 0.26),
+
         inset 0 2px
-        rgba(255, 255, 255, 0.08);
+        rgba(255, 255, 255, 0.08),
+
+        inset 0 -5px
+        rgba(0, 0, 0, 0.10);
 }
 
 
 /* =========================================================
-   BOOK STAGE
+   BOOK STAGING AREA
    ========================================================= */
 
 .shelf-books {
     position: relative;
 
-    z-index: 12;
+    z-index: 22;
 
     min-height:
-        276px;
+        285px;
 
     display: flex;
 
@@ -448,10 +554,58 @@
         2px;
 
     padding:
-        0 10px 28px;
+        0 14px 32px;
 
     overflow:
         visible;
+}
+
+
+/* =========================================================
+   MORE NATURAL BOOK RHYTHM
+   ========================================================= */
+
+.shelf-books
+.book-spine:nth-child(5n + 2) {
+    margin-left:
+        2px;
+}
+
+
+.shelf-books
+.book-spine:nth-child(7n + 3) {
+    margin-right:
+        3px;
+}
+
+
+.shelf-books
+.book-spine:nth-child(9n + 4) {
+    transform:
+        rotate(-1.2deg);
+
+    transform-origin:
+        bottom center;
+}
+
+
+.shelf-books
+.book-spine:nth-child(11n + 6) {
+    transform:
+        rotate(1.4deg);
+
+    transform-origin:
+        bottom center;
+}
+
+
+.shelf-books
+.book-spine:hover {
+    transform:
+        translateY(
+            var(--book-hover-lift)
+        )
+        rotate(0deg);
 }
 
 
@@ -462,10 +616,10 @@
 .shelf-empty {
     position: absolute;
 
-    z-index: 5;
+    z-index: 8;
 
     inset:
-        20px 20px 35px;
+        26px 25px 43px;
 
     display: flex;
 
@@ -477,20 +631,23 @@
     text-align:
         center;
 
-    pointer-events:
-        none;
+    pointer-events: none;
 }
 
 
 .shelf-empty strong {
     color:
-        rgba(241, 227, 208, 0.76);
+        color-mix(
+            in srgb,
+            var(--paper) 70%,
+            transparent
+        );
 
     font-family:
         var(--font-display);
 
     font-size:
-        1.3rem;
+        1.45rem;
 
     font-weight:
         500;
@@ -498,11 +655,14 @@
 
 
 .shelf-empty span {
-    margin-top:
-        5px;
+    margin-top: 6px;
 
     color:
-        rgba(241, 227, 208, 0.42);
+        color-mix(
+            in srgb,
+            var(--paper) 40%,
+            transparent
+        );
 
     font-size:
         0.54rem;
@@ -510,93 +670,137 @@
 
 
 /* =========================================================
-   SHELF FOOTER LABEL
+   SHELF LABEL PLATE
    ========================================================= */
 
 .shelf-footer-label {
     position: absolute;
 
-    z-index: 14;
+    z-index: 30;
 
     left: 50%;
-    bottom: -9px;
+    bottom: -13px;
 
     transform:
         translateX(-50%);
 
     min-width:
-        120px;
+        126px;
 
     padding:
-        4px 12px;
+        5px 14px;
 
     border:
         1px solid
-        rgba(0, 0, 0, 0.26);
+        rgba(0, 0, 0, 0.30);
 
     border-radius:
-        4px;
+        var(--radius-small);
 
     background:
-        var(--shelf-mid);
+        color-mix(
+            in srgb,
+            var(--shelf-mid) 88%,
+            black
+        );
 
     color:
-        rgba(247, 231, 211, 0.84);
+        color-mix(
+            in srgb,
+            var(--paper) 84%,
+            transparent
+        );
 
     font-family:
-        var(--font-display);
+        var(--font-label);
 
     font-size:
-        0.7rem;
+        0.68rem;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        var(--label-letter-spacing);
 
     text-align:
         center;
 
+    text-transform:
+        var(--shelf-label-transform);
+
     box-shadow:
-        0 5px 8px
-        rgba(0, 0, 0, 0.22);
+        0 5px 9px
+        rgba(0, 0, 0, 0.24),
+
+        inset 0 1px
+        rgba(255, 255, 255, 0.06);
 }
 
 
 /* =========================================================
-   MATERIAL: WALNUT
+   WALNUT
    ========================================================= */
 
 .library-shelf.material-walnut {
-    --shelf-main: #684837;
-    --shelf-light: #8a6550;
-    --shelf-mid: #573b2f;
-    --shelf-dark: #3a271f;
-    --shelf-deep: #251813;
-    --shelf-back: #342923;
+    --shelf-main:
+        #654737;
+
+    --shelf-light:
+        #88634e;
+
+    --shelf-mid:
+        #52392e;
+
+    --shelf-dark:
+        #34251f;
+
+    --shelf-back:
+        #302723;
 }
 
 
 /* =========================================================
-   MATERIAL: HONEY OAK
+   HONEY OAK
    ========================================================= */
 
 .library-shelf.material-honey {
-    --shelf-main: #9b7147;
-    --shelf-light: #bf9464;
-    --shelf-mid: #815a38;
-    --shelf-dark: #574027;
-    --shelf-deep: #342519;
-    --shelf-back: #5f4a36;
+    --shelf-main:
+        #9b7147;
+
+    --shelf-light:
+        #c19461;
+
+    --shelf-mid:
+        #805937;
+
+    --shelf-dark:
+        #543820;
+
+    --shelf-back:
+        #594634;
 }
 
 
 /* =========================================================
-   MATERIAL: CREAM
+   CREAM
    ========================================================= */
 
 .library-shelf.material-cream {
-    --shelf-main: #c8b498;
-    --shelf-light: #e2d4bd;
-    --shelf-mid: #aa9578;
-    --shelf-dark: #756451;
-    --shelf-deep: #514537;
-    --shelf-back: #9b8c78;
+    --shelf-main:
+        #c9b69a;
+
+    --shelf-light:
+        #e0d2ba;
+
+    --shelf-mid:
+        #aa9577;
+
+    --shelf-dark:
+        #746451;
+
+    --shelf-back:
+        #948775;
 }
 
 
@@ -607,35 +811,51 @@
 .library-shelf.material-cream
 .shelf-eyebrow {
     color:
-        #463a34;
+        #413832;
 }
 
 
 /* =========================================================
-   MATERIAL: SAGE
+   SAGE
    ========================================================= */
 
 .library-shelf.material-sage {
-    --shelf-main: #68705d;
-    --shelf-light: #87927b;
-    --shelf-mid: #555e4d;
-    --shelf-dark: #394038;
-    --shelf-deep: #252c27;
-    --shelf-back: #454e42;
+    --shelf-main:
+        #69705d;
+
+    --shelf-light:
+        #8b947d;
+
+    --shelf-mid:
+        #555d4d;
+
+    --shelf-dark:
+        #384038;
+
+    --shelf-back:
+        #454d42;
 }
 
 
 /* =========================================================
-   MATERIAL: DUSTY ROSE
+   DUSTY ROSE
    ========================================================= */
 
 .library-shelf.material-rose {
-    --shelf-main: #8e6266;
-    --shelf-light: #ae8083;
-    --shelf-mid: #754f53;
-    --shelf-dark: #50373b;
-    --shelf-deep: #302327;
-    --shelf-back: #5f484c;
+    --shelf-main:
+        #8d6266;
+
+    --shelf-light:
+        #af8084;
+
+    --shelf-mid:
+        #744f53;
+
+    --shelf-dark:
+        #4d3539;
+
+    --shelf-back:
+        #5b474a;
 }
 
 
@@ -648,17 +868,22 @@
     background:
         linear-gradient(
             to bottom,
-            rgba(125, 43, 68, 0.08),
-            transparent 30%
+            rgba(142, 58, 79, 0.08),
+            transparent 28%
         ),
         var(--shelf-back);
 }
 
 
 .library-shelf.mood-gothic
-.shelf-header {
-    border-bottom-color:
-        rgba(190, 115, 135, 0.16);
+.shelf-footer-label {
+    border:
+        3px double
+        color-mix(
+            in srgb,
+            var(--accent-light) 30%,
+            transparent
+        );
 }
 
 
@@ -667,28 +892,25 @@
    ========================================================= */
 
 .library-shelf.mood-botanical
-.shelf-interior::before {
+.shelf-interior > .shelf-books::before {
     content: "❦";
 
     position: absolute;
 
-    z-index: 1;
+    z-index: -1;
 
-    top: 18px;
     right: 22px;
+    top: 15px;
 
     color:
-        rgba(168, 189, 143, 0.12);
+        rgba(173, 194, 147, 0.11);
 
     font-family:
         Georgia,
         serif;
 
     font-size:
-        3.3rem;
-
-    pointer-events:
-        none;
+        4rem;
 }
 
 
@@ -697,27 +919,25 @@
    ========================================================= */
 
 .library-shelf.mood-celestial
-.shelf-interior::before {
-    content: "✦  ·  ☾  ·  ✧";
+.shelf-books::before {
+    content:
+        "✦   ·   ☾   ·   ✧";
 
     position: absolute;
 
-    z-index: 1;
-
-    top: 18px;
-    right: 22px;
+    top: 14px;
+    right: 16px;
 
     color:
-        rgba(222, 201, 138, 0.16);
+        rgba(224, 200, 131, 0.13);
 
     font-size:
-        0.8rem;
+        0.82rem;
 
     letter-spacing:
-        0.55em;
+        0.48em;
 
-    pointer-events:
-        none;
+    pointer-events: none;
 }
 
 
@@ -725,13 +945,19 @@
    MOOD: COTTAGE
    ========================================================= */
 
+.library-shelf.mood-cottage {
+    --shelf-radius:
+        18px;
+}
+
+
 .library-shelf.mood-cottage
-.shelf-interior {
-    box-shadow:
-        inset 0 14px 24px
-        rgba(0, 0, 0, 0.12),
-        inset 0 0 0 2px
-        rgba(235, 214, 183, 0.025);
+.shelf-footer-label {
+    border-radius:
+        12px;
+
+    font-style:
+        italic;
 }
 
 
@@ -740,19 +966,21 @@
    ========================================================= */
 
 .library-shelf.mood-simple {
-    border-radius:
-        7px;
-}
-
-
-.library-shelf.mood-simple::before {
-    border-radius:
+    --shelf-radius:
         5px;
 }
 
 
+.library-shelf.mood-simple
+.shelf-interior::before,
+.library-shelf.mood-simple
+.shelf-interior::after {
+    width: 12px;
+}
+
+
 /* =========================================================
-   LAYOUT VARIANTS
+   LAYOUT: UPRIGHT
    ========================================================= */
 
 .library-shelf.layout-upright
@@ -762,23 +990,268 @@
 }
 
 
+/* =========================================================
+   LAYOUT: STACKED
+   ========================================================= */
+
 .library-shelf.layout-stacked
 .shelf-books {
-    align-content:
-        flex-end;
-
     flex-wrap:
         wrap;
 
+    align-content:
+        flex-end;
+
     gap:
-        3px 8px;
+        5px 8px;
 }
 
+
+/* =========================================================
+   LAYOUT: MIXED
+   ========================================================= */
 
 .library-shelf.layout-mixed
 .shelf-books {
     flex-wrap:
         nowrap;
+}
+
+
+/* =========================================================
+   THEME: HAUNTED
+   ========================================================= */
+
+body.theme-haunted
+.library-shelf {
+    border-radius:
+        7px;
+
+    box-shadow:
+        0 34px 56px
+        rgba(0, 0, 0, 0.32),
+
+        inset 0 1px
+        rgba(225, 196, 160, 0.05);
+}
+
+
+body.theme-haunted
+.library-shelf::before {
+    border-radius:
+        5px;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 72px,
+            rgba(255, 255, 255, 0.016) 72px 74px
+        ),
+        var(--shelf-light);
+}
+
+
+body.theme-haunted
+.shelf-interior {
+    border-radius:
+        3px;
+}
+
+
+body.theme-haunted
+.shelf-footer-label {
+    border-radius:
+        2px;
+
+    border:
+        3px double
+        rgba(211, 172, 127, 0.20);
+
+    background:
+        #4b342d;
+}
+
+
+/* =========================================================
+   THEME: AUTUMN
+   ========================================================= */
+
+body.theme-autumn
+.library-shelf {
+    border-radius:
+        16px 16px 10px 10px;
+}
+
+
+body.theme-autumn
+.library-shelf::before {
+    border-radius:
+        15px 15px 5px 5px;
+}
+
+
+body.theme-autumn
+.shelf-interior::before,
+body.theme-autumn
+.shelf-interior::after {
+    border-radius:
+        8px;
+}
+
+
+body.theme-autumn
+.shelf-footer-label {
+    border-radius:
+        999px;
+
+    padding-left:
+        18px;
+
+    padding-right:
+        18px;
+}
+
+
+/* =========================================================
+   THEME: FOREST
+   ========================================================= */
+
+body.theme-forest
+.library-shelf {
+    border-radius:
+        20px 20px 11px 11px;
+}
+
+
+body.theme-forest
+.library-shelf::before {
+    border-radius:
+        22px 22px 6px 6px;
+}
+
+
+body.theme-forest
+.shelf-interior {
+    border-radius:
+        14px 14px 5px 5px;
+}
+
+
+body.theme-forest
+.shelf-footer-label {
+    border-radius:
+        11px;
+
+    border-color:
+        rgba(196, 185, 121, 0.20);
+}
+
+
+/* =========================================================
+   THEME: RETRO HORROR
+   ========================================================= */
+
+body.theme-retro
+.library-shelf {
+    border-radius:
+        2px;
+
+    box-shadow:
+        8px 8px 0
+        rgba(0, 0, 0, 0.22);
+}
+
+
+body.theme-retro
+.library-shelf::before,
+body.theme-retro
+.shelf-interior,
+body.theme-retro
+.shelf-footer-label {
+    border-radius:
+        1px;
+}
+
+
+body.theme-retro
+.library-shelf::before {
+    box-shadow:
+        4px 4px 0
+        rgba(0, 0, 0, 0.18);
+}
+
+
+body.theme-retro
+.shelf-footer-label {
+    border:
+        1px solid
+        var(--accent-light);
+
+    box-shadow:
+        3px 3px 0
+        rgba(0, 0, 0, 0.16);
+}
+
+
+/* =========================================================
+   THEME: PASTEL GHOSTS
+   ========================================================= */
+
+body.theme-ghosts
+.library-shelf {
+    border-radius:
+        23px 23px 14px 14px;
+
+    border-color:
+        rgba(80, 65, 72, 0.12);
+}
+
+
+body.theme-ghosts
+.library-shelf::before {
+    border-radius:
+        24px 24px 8px 8px;
+
+    border-color:
+        rgba(80, 65, 72, 0.11);
+}
+
+
+body.theme-ghosts
+.shelf-interior {
+    border-radius:
+        18px 18px 8px 8px;
+
+    border-color:
+        rgba(80, 65, 72, 0.10);
+}
+
+
+body.theme-ghosts
+.shelf-footer-label {
+    border-radius:
+        999px;
+
+    background:
+        #aaa08f;
+
+    color:
+        #4e4145;
+}
+
+
+/* =========================================================
+   DECORATION LAYER
+   ========================================================= */
+
+.shelf-decoration-layer {
+    position: absolute;
+
+    z-index: 40;
+
+    inset: 0;
+
+    pointer-events: none;
 }
 
 
@@ -789,7 +1262,7 @@
 .shelf-decoration {
     position: absolute;
 
-    z-index: 30;
+    z-index: 45;
 
     width: 66px;
     height: 66px;
@@ -800,13 +1273,24 @@
 
     touch-action: none;
 
+    pointer-events: auto;
+
     transform-origin:
         center bottom;
 
     filter:
         drop-shadow(
-            0 5px 3px
-            rgba(0, 0, 0, 0.18)
+            0 6px 4px
+            rgba(0, 0, 0, 0.20)
+        );
+}
+
+
+.shelf-decoration:hover {
+    filter:
+        drop-shadow(
+            0 8px 6px
+            rgba(0, 0, 0, 0.24)
         );
 }
 
@@ -817,14 +1301,14 @@
 
 
 .shelf-decoration.is-dragging {
-    z-index: 120;
+    z-index: 150;
 
     cursor: grabbing;
 
     filter:
         drop-shadow(
-            0 9px 8px
-            rgba(0, 0, 0, 0.28)
+            0 12px 10px
+            rgba(0, 0, 0, 0.30)
         );
 }
 
@@ -836,8 +1320,7 @@
 
 
 .decoration-symbol {
-    display:
-        none;
+    display: none;
 }
 
 
@@ -852,8 +1335,7 @@
 
     height: 7px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         rgba(0, 0, 0, 0.20);
@@ -965,8 +1447,7 @@
     width: 4px;
     height: 5px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         #d8b86a;
@@ -998,8 +1479,7 @@
         7px solid
         #2d2b2f;
 
-    border-left:
-        0;
+    border-left: 0;
 
     border-radius:
         0 30px 30px 0;
@@ -1018,8 +1498,8 @@
     height: 70px;
 
     animation:
-        ghostFloat 3.8s
-        ease-in-out infinite;
+        ghostFloat
+        3.8s ease-in-out infinite;
 }
 
 
@@ -1083,8 +1563,7 @@
     width: 5px;
     height: 7px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         #574c4f;
@@ -1138,8 +1617,7 @@
     width: 13px;
     height: 25px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         #30282f;
@@ -1238,8 +1716,7 @@
     width: 31px;
     height: 29px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         #26282d;
@@ -1280,8 +1757,7 @@
     width: 4px;
     height: 4px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         #d3b46d;
@@ -1310,7 +1786,7 @@
     height: 40px;
 
     border-radius:
-        48% 48% 45% 45%;
+        48%;
 
     background:
         #73815d;
@@ -1366,8 +1842,7 @@
     width: 5px;
     height: 5px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         #e4c575;
@@ -1444,8 +1919,7 @@
     width: 6px;
     height: 6px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         #e9dec5;
@@ -1616,8 +2090,7 @@
     width: 21px;
     height: 21px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         radial-gradient(
@@ -1745,8 +2218,7 @@
 
     height: 40px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     box-shadow:
         inset 0 -5px
@@ -1815,8 +2287,7 @@
     width: 8px;
     height: 19px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         rgba(255, 255, 255, 0.065);
@@ -1841,11 +2312,7 @@
         6px 4px 2px 3px;
 
     background:
-        linear-gradient(
-            90deg,
-            #566047,
-            #747c56
-        );
+        #65704e;
 
     transform:
         rotate(7deg);
@@ -1877,16 +2344,12 @@
         7px 7px 3px 3px;
 
     background:
-        linear-gradient(
-            90deg,
-            #dfcfad,
-            #f0dfbc 55%,
-            #d4c19f
-        );
+        #e5d4b2;
 
     box-shadow:
         inset -4px 0
         rgba(0, 0, 0, 0.03),
+
         0 3px 4px
         rgba(0, 0, 0, 0.08);
 }
@@ -1926,12 +2389,7 @@
         70% 35% 65% 35%;
 
     background:
-        radial-gradient(
-            ellipse at 54% 62%,
-            #fff3ad 0 25%,
-            #efa05e 26% 68%,
-            #dd7647 69%
-        );
+        #efa05e;
 
     transform:
         rotate(43deg);
@@ -1942,7 +2400,8 @@
 
     animation:
         candleFlicker
-        1.5s ease-in-out infinite alternate;
+        1.5s ease-in-out
+        infinite alternate;
 }
 
 
@@ -2026,8 +2485,7 @@
         6px solid
         #8e7164;
 
-    border-left:
-        0;
+    border-left: 0;
 
     border-radius:
         0 50% 50% 0;
@@ -2045,8 +2503,7 @@
     width: 38px;
     height: 7px;
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 
     background:
         #ad9182;
@@ -2067,8 +2524,7 @@
         2px solid
         rgba(235, 225, 210, 0.28);
 
-    border-radius:
-        50%;
+    border-radius: 50%;
 }
 
 
@@ -2173,8 +2629,7 @@
     width: 18px;
     height: 9px;
 
-    border-radius:
-        3px;
+    border-radius: 3px;
 
     background:
         #8b6549;
@@ -2317,7 +2772,7 @@
 
 
 /* =========================================================
-   DECORATION SCALE CLASSES
+   DECORATION SCALES
    ========================================================= */
 
 .shelf-decoration.scale-075 {
@@ -2345,38 +2800,7 @@
 
 
 /* =========================================================
-   AUTOMATIC AMBIENT DECORATIONS
-   ========================================================= */
-
-.ambient-decoration {
-    position: absolute;
-
-    z-index: 3;
-
-    pointer-events:
-        none;
-
-    opacity:
-        0.12;
-}
-
-
-body[data-decoration-density="minimal"]
-.ambient-decoration:nth-child(n + 2) {
-    display:
-        none;
-}
-
-
-body[data-decoration-density="cozy"]
-.ambient-decoration:nth-child(n + 4) {
-    display:
-        none;
-}
-
-
-/* =========================================================
-   USER DECORATIONS NEVER HIDDEN
+   USER DECORATIONS ALWAYS VISIBLE
    ========================================================= */
 
 .draggable-decoration {
@@ -2386,16 +2810,20 @@ body[data-decoration-density="cozy"]
 
 
 /* =========================================================
-   DRAG TARGET
+   DRAG STATE
    ========================================================= */
 
 .shelf-interior.is-drag-target {
     outline:
         1px dashed
-        rgba(219, 180, 132, 0.35);
+        color-mix(
+            in srgb,
+            var(--accent-light) 38%,
+            transparent
+        );
 
     outline-offset:
-        -8px;
+        -10px;
 }
 
 
@@ -2407,19 +2835,25 @@ body[data-decoration-density="cozy"]
 
     .shelf-container {
         gap:
-            60px;
+            68px;
     }
 
 
     .shelf-interior {
         min-height:
-            300px;
+            315px;
+
+        padding-left:
+            22px;
+
+        padding-right:
+            22px;
     }
 
 
     .shelf-books {
         min-height:
-            245px;
+            255px;
     }
 
 }
@@ -2433,31 +2867,28 @@ body[data-decoration-density="cozy"]
 
     .shelf-container {
         gap:
-            54px;
+            58px;
     }
 
 
     .library-shelf {
         padding:
-            15px 12px 18px;
-
-        border-radius:
-            12px 12px 7px 7px;
+            16px 13px 20px;
     }
 
 
     .library-shelf::before {
+        top:
+            -10px;
+
         left:
-            -4px;
+            -5px;
 
         right:
-            -4px;
-
-        top:
-            -9px;
+            -5px;
 
         height:
-            18px;
+            19px;
     }
 
 
@@ -2469,7 +2900,7 @@ body[data-decoration-density="cozy"]
             flex-start;
 
         margin:
-            4px 2px 15px;
+            4px 3px 15px;
     }
 
 
@@ -2489,22 +2920,41 @@ body[data-decoration-density="cozy"]
 
     .shelf-interior {
         min-height:
-            290px;
+            295px;
 
         padding:
-            23px 10px 15px;
+            23px 13px 17px;
+    }
+
+
+    .shelf-interior::before,
+    .shelf-interior::after {
+        width:
+            13px;
+    }
+
+
+    .shelf-interior::before {
+        left:
+            -8px;
+    }
+
+
+    .shelf-interior::after {
+        right:
+            -8px;
     }
 
 
     .shelf-books {
         min-height:
-            238px;
+            242px;
 
         gap:
             1px;
 
         padding:
-            0 4px 27px;
+            0 4px 29px;
     }
 
 
@@ -2570,34 +3020,34 @@ body[data-decoration-density="cozy"]
 
     .library-shelf {
         padding:
-            14px 8px 16px;
+            14px 8px 18px;
     }
 
 
     .shelf-header h2 {
         font-size:
-            1.6rem;
+            1.65rem;
     }
 
 
     .shelf-header p {
         font-size:
-            0.56rem;
+            0.55rem;
     }
 
 
     .shelf-interior {
         min-height:
-            270px;
+            275px;
 
         padding:
-            20px 6px 13px;
+            20px 8px 14px;
     }
 
 
     .shelf-books {
         min-height:
-            220px;
+            222px;
 
         padding-left:
             1px;
@@ -2609,10 +3059,10 @@ body[data-decoration-density="cozy"]
 
     .shelf-footer-label {
         min-width:
-            100px;
+            105px;
 
         font-size:
-            0.58rem;
+            0.56rem;
     }
 
 
