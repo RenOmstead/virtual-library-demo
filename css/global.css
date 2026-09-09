@@ -2941,3 +2941,906 @@ body.reduce-motion *::after {
     }
 
 }
+/* =========================================================
+   THEME & ATMOSPHERE
+   MODAL FIX
+   ========================================================= */
+
+
+/* =========================================================
+   OVERLAY
+   No more blurry page
+   ========================================================= */
+
+.overlay {
+    position: fixed !important;
+    z-index: 2500 !important;
+
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    background:
+        rgba(16, 14, 13, 0.62) !important;
+
+    backdrop-filter:
+        none !important;
+
+    -webkit-backdrop-filter:
+        none !important;
+}
+
+
+/* =========================================================
+   THEME DRAWER BECOMES MODAL
+   ========================================================= */
+
+#themeDrawer.theme-drawer {
+    position: fixed !important;
+
+    z-index: 2600 !important;
+
+    top: 50% !important;
+    left: 50% !important;
+
+    right: auto !important;
+    bottom: auto !important;
+
+    width:
+        min(
+            920px,
+            calc(100vw - 40px)
+        ) !important;
+
+    max-width:
+        920px !important;
+
+    height:
+        auto !important;
+
+    max-height:
+        calc(100vh - 50px) !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    overflow:
+        hidden !important;
+
+    transform:
+        translate(-50%, -50%) !important;
+
+    border:
+        1px solid
+        rgba(255, 240, 218, 0.12) !important;
+
+    border-radius:
+        20px !important;
+
+    background:
+        #211d1b !important;
+
+    box-shadow:
+        0 30px 90px
+        rgba(0, 0, 0, 0.5),
+
+        inset 0 1px
+        rgba(255, 255, 255, 0.035) !important;
+}
+
+
+/* =========================================================
+   MODAL HEADER
+   ========================================================= */
+
+#themeDrawer .drawer-header {
+    position: sticky;
+
+    z-index: 10;
+
+    top: 0;
+
+    min-height: 92px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding:
+        24px 28px;
+
+    border-bottom:
+        1px solid
+        rgba(255, 240, 218, 0.08);
+
+    background:
+        #27221f;
+}
+
+
+#themeDrawer .drawer-header > div {
+    min-width: 0;
+}
+
+
+#themeDrawer .drawer-header .eyebrow {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color:
+        var(--accent);
+
+    font-size: 0.48rem;
+
+    font-weight: 700;
+
+    letter-spacing: 0.16em;
+
+    text-transform: uppercase;
+}
+
+
+#themeDrawer .drawer-header h2 {
+    margin: 0;
+
+    color:
+        var(--text);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        clamp(
+            1.5rem,
+            3vw,
+            2.25rem
+        );
+
+    font-weight: 400;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+#themeDrawer .icon-button,
+#closeThemeDrawer {
+    flex:
+        0 0 auto;
+
+    width: 38px !important;
+    height: 38px !important;
+
+    min-width: 38px !important;
+    min-height: 38px !important;
+
+    display: grid !important;
+
+    place-items: center;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    border:
+        1px solid
+        rgba(255, 240, 218, 0.12) !important;
+
+    border-radius:
+        50% !important;
+
+    background:
+        rgba(255, 255, 255, 0.035) !important;
+
+    color:
+        var(--muted) !important;
+
+    font-size:
+        1.1rem !important;
+
+    line-height: 1 !important;
+
+    cursor: pointer;
+}
+
+
+#themeDrawer .icon-button:hover,
+#closeThemeDrawer:hover {
+    background:
+        rgba(255, 255, 255, 0.07) !important;
+
+    color:
+        var(--text) !important;
+
+    border-color:
+        rgba(255, 240, 218, 0.2) !important;
+}
+
+
+/* =========================================================
+   MODAL BODY
+   ========================================================= */
+
+#themeDrawer .drawer-body {
+    max-height:
+        calc(100vh - 145px);
+
+    overflow-y:
+        auto;
+
+    padding:
+        26px 28px 30px;
+
+    scrollbar-width:
+        thin;
+
+    scrollbar-color:
+        rgba(255, 255, 255, 0.14)
+        transparent;
+}
+
+
+/* =========================================================
+   SETTINGS SECTIONS
+   ========================================================= */
+
+#themeDrawer .drawer-section {
+    margin: 0 0 20px;
+
+    padding: 22px;
+
+    border:
+        1px solid
+        rgba(255, 240, 218, 0.07);
+
+    border-radius:
+        15px;
+
+    background:
+        rgba(255, 255, 255, 0.018);
+}
+
+
+#themeDrawer .drawer-section:last-child {
+    margin-bottom: 0;
+}
+
+
+#themeDrawer .drawer-section-heading {
+    margin-bottom: 18px;
+}
+
+
+#themeDrawer .drawer-section-heading > span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color:
+        var(--text);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        1rem;
+
+    font-weight: 700;
+}
+
+
+#themeDrawer .drawer-section-heading p {
+    margin: 0;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.66rem;
+
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   THEME GRID
+   ========================================================= */
+
+#themeDrawer .theme-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 10px;
+}
+
+
+/* =========================================================
+   THEME CARDS
+   ========================================================= */
+
+#themeDrawer .theme-card {
+    position: relative;
+
+    min-height: 104px;
+
+    display: grid;
+
+    grid-template-columns:
+        42px
+        minmax(0, 1fr);
+
+    grid-template-rows:
+        auto
+        auto;
+
+    column-gap: 13px;
+
+    align-items: center;
+
+    padding:
+        15px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(255, 240, 218, 0.08) !important;
+
+    border-radius:
+        12px !important;
+
+    background:
+        rgba(255, 255, 255, 0.02) !important;
+
+    color:
+        var(--text) !important;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    box-shadow:
+        none !important;
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease;
+}
+
+
+#themeDrawer .theme-card:hover {
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(255, 240, 218, 0.18) !important;
+
+    background:
+        rgba(255, 255, 255, 0.045) !important;
+}
+
+
+#themeDrawer .theme-card.active {
+    border-color:
+        var(--accent) !important;
+
+    background:
+        color-mix(
+            in srgb,
+            var(--accent) 9%,
+            transparent
+        ) !important;
+
+    box-shadow:
+        inset 3px 0
+        var(--accent) !important;
+}
+
+
+/* =========================================================
+   THEME SWATCH
+   ========================================================= */
+
+#themeDrawer .theme-swatch {
+    grid-row:
+        1 / 3;
+
+    width: 42px;
+    height: 58px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.1);
+
+    border-radius:
+        8px;
+
+    box-shadow:
+        inset 0 1px
+        rgba(255, 255, 255, 0.08),
+
+        0 5px 10px
+        rgba(0, 0, 0, 0.14);
+}
+
+
+#themeDrawer .theme-haunted {
+    background:
+        linear-gradient(
+            145deg,
+            #312623,
+            #181515
+        );
+}
+
+
+#themeDrawer .theme-autumn {
+    background:
+        linear-gradient(
+            145deg,
+            #a6643f,
+            #4c3126
+        );
+}
+
+
+#themeDrawer .theme-forest {
+    background:
+        linear-gradient(
+            145deg,
+            #6d8266,
+            #283a2d
+        );
+}
+
+
+#themeDrawer .theme-retro {
+    background:
+        linear-gradient(
+            145deg,
+            #be6339,
+            #29331e
+        );
+}
+
+
+#themeDrawer .theme-ghosts {
+    background:
+        linear-gradient(
+            145deg,
+            #b7808e,
+            #6d8378
+        );
+}
+
+
+#themeDrawer .theme-card strong {
+    align-self: end;
+
+    color:
+        var(--text);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        0.8rem;
+
+    line-height: 1.2;
+}
+
+
+#themeDrawer .theme-card small {
+    align-self: start;
+
+    margin-top: 4px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.52rem;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   AMBIENT SETTINGS
+   ========================================================= */
+
+#themeDrawer .setting-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 9px;
+}
+
+
+#themeDrawer .toggle-setting {
+    min-height: 72px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 13px;
+
+    padding:
+        12px 14px;
+
+    border:
+        1px solid
+        rgba(255, 240, 218, 0.065);
+
+    border-radius:
+        10px;
+
+    background:
+        rgba(255, 255, 255, 0.016);
+
+    cursor: pointer;
+}
+
+
+#themeDrawer .toggle-setting > span {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+#themeDrawer .toggle-setting strong {
+    color:
+        var(--text);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        0.68rem;
+}
+
+
+#themeDrawer .toggle-setting small {
+    margin-top: 4px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.5rem;
+
+    line-height: 1.35;
+}
+
+
+/* =========================================================
+   TOGGLE SWITCH
+   ========================================================= */
+
+#themeDrawer .toggle-setting input[type="checkbox"] {
+    position: relative;
+
+    flex:
+        0 0 auto;
+
+    width: 38px;
+    height: 21px;
+
+    appearance:
+        none;
+
+    -webkit-appearance:
+        none;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.12);
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(255, 255, 255, 0.08);
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease;
+}
+
+
+#themeDrawer .toggle-setting input[type="checkbox"]::before {
+    content: "";
+
+    position: absolute;
+
+    top: 3px;
+    left: 3px;
+
+    width: 13px;
+    height: 13px;
+
+    border-radius: 50%;
+
+    background:
+        #d7ccb7;
+
+    transition:
+        transform 0.18s ease;
+}
+
+
+#themeDrawer .toggle-setting input[type="checkbox"]:checked {
+    border-color:
+        var(--accent);
+
+    background:
+        color-mix(
+            in srgb,
+            var(--accent) 52%,
+            #20201b
+        );
+}
+
+
+#themeDrawer .toggle-setting input[type="checkbox"]:checked::before {
+    transform:
+        translateX(17px);
+
+    background:
+        #fff5dc;
+}
+
+
+/* =========================================================
+   DECORATION DENSITY
+   ========================================================= */
+
+#themeDrawer .radio-card-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 9px;
+}
+
+
+#themeDrawer .radio-card {
+    position: relative;
+
+    min-height: 90px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 14px;
+
+    border:
+        1px solid
+        rgba(255, 240, 218, 0.07);
+
+    border-radius:
+        10px;
+
+    background:
+        rgba(255, 255, 255, 0.016);
+
+    cursor: pointer;
+}
+
+
+#themeDrawer .radio-card input {
+    flex:
+        0 0 auto;
+
+    accent-color:
+        var(--accent);
+}
+
+
+#themeDrawer .radio-card span {
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+#themeDrawer .radio-card strong {
+    color:
+        var(--text);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size:
+        0.65rem;
+}
+
+
+#themeDrawer .radio-card small {
+    margin-top: 4px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.48rem;
+
+    line-height: 1.35;
+}
+
+
+/* =========================================================
+   DESKTOP OPEN ANIMATION
+   ========================================================= */
+
+#themeDrawer:not([hidden]) {
+    animation:
+        shelfmarkThemeModalIn
+        0.2s
+        ease-out;
+}
+
+
+@keyframes shelfmarkThemeModalIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translate(-50%, -47%)
+            scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    #themeDrawer.theme-drawer {
+        width:
+            calc(100vw - 20px) !important;
+
+        max-height:
+            calc(100vh - 20px) !important;
+
+        border-radius:
+            16px !important;
+    }
+
+
+    #themeDrawer .drawer-header {
+        min-height: 78px;
+
+        padding:
+            18px;
+    }
+
+
+    #themeDrawer .drawer-header h2 {
+        font-size:
+            1.45rem;
+    }
+
+
+    #themeDrawer .drawer-body {
+        max-height:
+            calc(100vh - 100px);
+
+        padding:
+            16px;
+    }
+
+
+    #themeDrawer .drawer-section {
+        padding:
+            16px;
+
+        border-radius:
+            12px;
+    }
+
+
+    #themeDrawer .theme-grid,
+    #themeDrawer .setting-list {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    #themeDrawer .radio-card-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    #themeDrawer .theme-card {
+        min-height:
+            88px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 420px) {
+
+    #themeDrawer.theme-drawer {
+        width:
+            calc(100vw - 12px) !important;
+
+        max-height:
+            calc(100vh - 12px) !important;
+    }
+
+
+    #themeDrawer .drawer-header {
+        padding:
+            15px;
+    }
+
+
+    #themeDrawer .drawer-body {
+        padding:
+            12px;
+    }
+
+}
