@@ -1372,48 +1372,18 @@ function showOverlay() {
         );
 
 
-    if (overlay) {
-        overlay.hidden = false;
-    }
-
-}
-
-
-function hideOverlay() {
-
-    const overlay =
-        document.getElementById(
-            "overlay"
-        );
-
-
-    if (overlay) {
-        overlay.hidden = true;
-    }
-
-}
-
-
-function bindOverlay() {
-
-    const overlay =
-        document.getElementById(
-            "overlay"
-        );
-
-
     if (!overlay) {
         return;
     }
 
 
-    overlay.addEventListener(
-        "click",
-        closeAllPanels
-    );
+    overlay.hidden =
+        false;
+
+    overlay.style.pointerEvents =
+        "auto";
 
 }
-
 
 /* =========================================================
    SHELF FORM
