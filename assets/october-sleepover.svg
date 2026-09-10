@@ -57,18 +57,14 @@
             />
 
             <feMerge>
-
                 <feMergeNode in="blur" />
-
                 <feMergeNode in="SourceGraphic" />
-
             </feMerge>
-
         </filter>
 
 
         <!-- =================================================
-             COLORS / GRADIENTS
+             GRADIENTS
              ================================================= -->
 
         <linearGradient
@@ -92,37 +88,6 @@
                 offset="1"
                 stop-color="#51262c"
             />
-
-        </linearGradient>
-
-
-        <linearGradient
-            id="wood-edge"
-            x1="0"
-            y1="0"
-            x2="1"
-            y2="0"
-        >
-            <stop
-                offset="0"
-                stop-color="#3b2027"
-            />
-
-            <stop
-                offset=".25"
-                stop-color="#7e4238"
-            />
-
-            <stop
-                offset=".7"
-                stop-color="#5b2e31"
-            />
-
-            <stop
-                offset="1"
-                stop-color="#27161f"
-            />
-
         </linearGradient>
 
 
@@ -150,7 +115,6 @@
                 stop-color="#3e1d55"
                 stop-opacity=".96"
             />
-
         </linearGradient>
 
 
@@ -175,7 +139,6 @@
                 offset="1"
                 stop-color="#9b3e3f"
             />
-
         </linearGradient>
 
 
@@ -195,7 +158,6 @@
                 offset="1"
                 stop-color="#c78185"
             />
-
         </linearGradient>
 
 
@@ -220,56 +182,6 @@
 
 
         <!-- =================================================
-             PAPER TEXTURE
-             ================================================= -->
-
-        <filter
-            id="paper-noise"
-            x="-20%"
-            y="-20%"
-            width="140%"
-            height="140%"
-        >
-
-            <feTurbulence
-                type="fractalNoise"
-                baseFrequency=".85"
-                numOctaves="2"
-                seed="8"
-                result="noise"
-            />
-
-            <feColorMatrix
-                in="noise"
-                type="saturate"
-                values="0"
-                result="grayNoise"
-            />
-
-            <feComponentTransfer
-                in="grayNoise"
-                result="softNoise"
-            >
-
-                <feFuncA
-                    type="table"
-                    tableValues="0 .06"
-                />
-
-            </feComponentTransfer>
-
-
-            <feBlend
-                in="SourceGraphic"
-                in2="softNoise"
-                mode="multiply"
-            />
-
-        </filter>
-
-
-        <!-- =================================================
-             SYMBOL:
              MAGIC 8 BALL
              ================================================= -->
 
@@ -333,8 +245,10 @@
             </text>
 
             <path
-                d="M31 74
-                   C35 87 45 95 59 98"
+                d="
+                    M31 74
+                    C35 87 45 95 59 98
+                "
                 fill="none"
                 stroke="#ffffff"
                 stroke-width="3"
@@ -348,15 +262,17 @@
             >
 
                 <path
-                    d="M18 36
-                       l2.8 6.4
-                       6.4 2.8
-                       -6.4 2.8
-                       -2.8 6.4
-                       -2.8 -6.4
-                       -6.4 -2.8
-                       6.4 -2.8
-                       z"
+                    d="
+                        M18 36
+                        L21 42
+                        L27 45
+                        L21 48
+                        L18 54
+                        L15 48
+                        L9 45
+                        L15 42
+                        Z
+                    "
                 />
 
                 <circle
@@ -377,7 +293,6 @@
 
 
         <!-- =================================================
-             SYMBOL:
              GHOST MUG
              ================================================= -->
 
@@ -396,23 +311,27 @@
             />
 
             <path
-                d="M31 39
-                   C31 24 44 16 59 16
-                   C77 16 88 26 88 42
-                   L88 90
-                   C88 100 79 106 68 106
-                   H47
-                   C37 106 28 98 28 87
-                   Z"
+                d="
+                    M31 39
+                    C31 24 44 16 59 16
+                    C77 16 88 26 88 42
+                    L88 90
+                    C88 100 79 106 68 106
+                    H47
+                    C37 106 28 98 28 87
+                    Z
+                "
                 fill="#eadfd5"
                 stroke="#483548"
                 stroke-width="3"
             />
 
             <path
-                d="M88 52
-                   C108 49 113 61 111 74
-                   C109 86 100 91 89 86"
+                d="
+                    M88 52
+                    C108 49 113 61 111 74
+                    C109 86 100 91 89 86
+                "
                 fill="none"
                 stroke="#483548"
                 stroke-width="6"
@@ -420,8 +339,7 @@
             />
 
             <path
-                d="M42 62
-                   C45 58 50 58 53 62"
+                d="M42 62 C45 58 50 58 53 62"
                 fill="none"
                 stroke="#3b2e3d"
                 stroke-width="3"
@@ -429,8 +347,7 @@
             />
 
             <path
-                d="M64 62
-                   C67 58 72 58 75 62"
+                d="M64 62 C67 58 72 58 75 62"
                 fill="none"
                 stroke="#3b2e3d"
                 stroke-width="3"
@@ -438,22 +355,27 @@
             />
 
             <path
-                d="M54 76
-                   C58 80 63 80 67 76"
+                d="M54 76 C58 80 63 80 67 76"
                 fill="none"
                 stroke="#3b2e3d"
                 stroke-width="3"
                 stroke-linecap="round"
             />
 
-            <path
-                d="M46 32
-                   C48 27 52 24 57 22"
-                fill="none"
-                stroke="#ffffff"
-                stroke-width="4"
-                stroke-linecap="round"
-                opacity=".35"
+            <circle
+                cx="39"
+                cy="76"
+                r="5"
+                fill="#dd96aa"
+                opacity=".45"
+            />
+
+            <circle
+                cx="78"
+                cy="76"
+                r="5"
+                fill="#dd96aa"
+                opacity=".45"
             />
 
             <g
@@ -463,53 +385,20 @@
                 stroke-linecap="round"
                 opacity=".75"
             >
-
                 <path
-                    d="M48 11
-                       C39 3 45 -4 51 -10"
+                    d="M48 11 C39 3 45 -4 51 -10"
                 />
 
                 <path
-                    d="M65 10
-                       C57 1 66 -4 68 -12"
+                    d="M65 10 C57 1 66 -4 68 -12"
                 />
-
-            </g>
-
-            <g fill="#d66e60">
-
-                <path
-                    d="M36 89
-                       l2 4
-                       4 2
-                       -4 2
-                       -2 4
-                       -2 -4
-                       -4 -2
-                       4 -2
-                       z"
-                />
-
-                <path
-                    d="M75 86
-                       l2 4
-                       4 2
-                       -4 2
-                       -2 4
-                       -2 -4
-                       -4 -2
-                       4 -2
-                       z"
-                />
-
             </g>
 
         </symbol>
 
 
         <!-- =================================================
-             SYMBOL:
-             POTION BOTTLE
+             POTION
              ================================================= -->
 
         <symbol
@@ -538,27 +427,19 @@
             />
 
             <path
-                d="M44 28
-                   L44 48
-                   C29 57 22 71 24 92
-                   C27 119 38 130 55 130
-                   C73 130 84 116 86 93
-                   C88 72 80 57 66 48
-                   L66 28
-                   Z"
+                d="
+                    M44 28
+                    L44 48
+                    C29 57 22 71 24 92
+                    C27 119 38 130 55 130
+                    C73 130 84 116 86 93
+                    C88 72 80 57 66 48
+                    L66 28
+                    Z
+                "
                 fill="url(#purple-glass)"
                 stroke="#33203d"
                 stroke-width="3"
-            />
-
-            <path
-                d="M35 75
-                   C47 68 65 69 77 76
-                   L74 108
-                   C64 116 45 116 35 108
-                   Z"
-                fill="#ca6e87"
-                opacity=".68"
             />
 
             <rect
@@ -573,18 +454,19 @@
             />
 
             <path
-                d="M55 81
-                   C51 87 47 90 42 91
-                   C48 94 52 98 55 103
-                   C58 98 62 94 68 91
-                   C62 90 58 87 55 81
-                   Z"
+                d="
+                    M55 81
+                    C51 87 47 90 42 91
+                    C48 94 52 98 55 103
+                    C58 98 62 94 68 91
+                    C62 90 58 87 55 81
+                    Z
+                "
                 fill="#68416a"
             />
 
             <path
-                d="M35 58
-                   C42 48 51 46 60 49"
+                d="M35 58 C42 48 51 46 60 49"
                 fill="none"
                 stroke="#ffffff"
                 stroke-width="4"
@@ -610,530 +492,7 @@
 
 
         <!-- =================================================
-             SYMBOL:
-             CANDLE
-             ================================================= -->
-
-        <symbol
-            id="decor-candle"
-            viewBox="0 0 100 150"
-        >
-
-            <ellipse
-                cx="51"
-                cy="136"
-                rx="27"
-                ry="6"
-                fill="#120d15"
-                opacity=".28"
-            />
-
-            <ellipse
-                cx="50"
-                cy="32"
-                rx="25"
-                ry="12"
-                fill="url(#flame)"
-                opacity=".18"
-                filter="url(#soft-glow)"
-            />
-
-            <path
-                d="M50 11
-                   C59 24 58 31 50 38
-                   C42 31 42 23 50 11
-                   Z"
-                fill="url(#flame)"
-            />
-
-            <path
-                d="M50 19
-                   C54 26 53 30 50 33
-                   C47 30 47 25 50 19
-                   Z"
-                fill="#fff6d0"
-            />
-
-            <line
-                x1="50"
-                y1="36"
-                x2="50"
-                y2="44"
-                stroke="#3c2630"
-                stroke-width="2"
-            />
-
-            <path
-                d="M27 43
-                   Q50 37 73 43
-                   L70 127
-                   Q50 135 30 127
-                   Z"
-                fill="url(#candle-wax)"
-                stroke="#5e3945"
-                stroke-width="3"
-            />
-
-            <path
-                d="M36 44
-                   L37 61
-                   Q42 66 45 57
-                   L47 45"
-                fill="#f4d5bc"
-                opacity=".75"
-            />
-
-            <path
-                d="M58 42
-                   L58 55
-                   Q62 61 65 53
-                   L67 43"
-                fill="#e7b2ad"
-                opacity=".7"
-            />
-
-            <path
-                d="M38 81
-                   C46 75 56 75 64 81
-                   C57 88 47 89 38 81
-                   Z"
-                fill="#69415c"
-                opacity=".75"
-            />
-
-            <circle
-                cx="51"
-                cy="82"
-                r="4"
-                fill="#f2c16a"
-            />
-
-        </symbol>
-
-
-        <!-- =================================================
-             SYMBOL:
-             BLACK CAT
-             ================================================= -->
-
-        <symbol
-            id="decor-black-cat"
-            viewBox="0 0 160 160"
-        >
-
-            <ellipse
-                cx="82"
-                cy="141"
-                rx="55"
-                ry="8"
-                fill="#120d15"
-                opacity=".3"
-            />
-
-            <path
-                d="M56 62
-                   L43 35
-                   L66 48
-                   Q82 42 98 48
-                   L120 34
-                   L108 64
-                   Q120 76 118 96
-                   C116 122 99 137 78 137
-                   C55 137 40 120 41 96
-                   C41 79 46 69 56 62
-                   Z"
-                fill="#1c1721"
-                stroke="#3d2d47"
-                stroke-width="3"
-            />
-
-            <path
-                d="M52 96
-                   C42 122 29 127 20 117
-                   C13 109 17 97 26 98"
-                fill="none"
-                stroke="#1c1721"
-                stroke-width="9"
-                stroke-linecap="round"
-            />
-
-            <path
-                d="M59 81
-                   Q66 75 72 81"
-                fill="none"
-                stroke="#ddbf71"
-                stroke-width="4"
-                stroke-linecap="round"
-            />
-
-            <path
-                d="M88 81
-                   Q95 75 101 81"
-                fill="none"
-                stroke="#ddbf71"
-                stroke-width="4"
-                stroke-linecap="round"
-            />
-
-            <path
-                d="M77 93
-                   L82 97
-                   L87 93"
-                fill="#b77891"
-            />
-
-            <path
-                d="M65 104
-                   C73 109 91 109 99 104"
-                fill="none"
-                stroke="#66516b"
-                stroke-width="2"
-                stroke-linecap="round"
-            />
-
-            <g
-                stroke="#78617b"
-                stroke-width="2"
-                stroke-linecap="round"
-                opacity=".75"
-            >
-
-                <line
-                    x1="61"
-                    y1="99"
-                    x2="35"
-                    y2="95"
-                />
-
-                <line
-                    x1="62"
-                    y1="104"
-                    x2="34"
-                    y2="108"
-                />
-
-                <line
-                    x1="102"
-                    y1="99"
-                    x2="129"
-                    y2="94"
-                />
-
-                <line
-                    x1="102"
-                    y1="104"
-                    x2="130"
-                    y2="108"
-                />
-
-            </g>
-
-            <path
-                d="M82 52
-                   l3.5 8
-                   8 3.5
-                   -8 3.5
-                   -3.5 8
-                   -3.5 -8
-                   -8 -3.5
-                   8 -3.5
-                   z"
-                fill="#b8759b"
-                opacity=".7"
-            />
-
-        </symbol>
-
-
-        <!-- =================================================
-             SYMBOL:
-             TINY GHOST
-             ================================================= -->
-
-        <symbol
-            id="decor-tiny-ghost"
-            viewBox="0 0 120 140"
-        >
-
-            <ellipse
-                cx="60"
-                cy="126"
-                rx="33"
-                ry="6"
-                fill="#120d15"
-                opacity=".22"
-            />
-
-            <path
-                d="M60 13
-                   C36 13 21 31 21 55
-                   L21 111
-                   L34 101
-                   L46 112
-                   L60 101
-                   L74 112
-                   L86 101
-                   L99 111
-                   L99 55
-                   C99 31 84 13 60 13
-                   Z"
-                fill="#eee4da"
-                stroke="#573f5a"
-                stroke-width="3"
-            />
-
-            <ellipse
-                cx="45"
-                cy="60"
-                rx="5"
-                ry="7"
-                fill="#34263b"
-            />
-
-            <ellipse
-                cx="75"
-                cy="60"
-                rx="5"
-                ry="7"
-                fill="#34263b"
-            />
-
-            <path
-                d="M52 78
-                   Q60 84 68 78"
-                fill="none"
-                stroke="#34263b"
-                stroke-width="3"
-                stroke-linecap="round"
-            />
-
-            <circle
-                cx="42"
-                cy="75"
-                r="5"
-                fill="#dc92a6"
-                opacity=".48"
-            />
-
-            <circle
-                cx="78"
-                cy="75"
-                r="5"
-                fill="#dc92a6"
-                opacity=".48"
-            />
-
-        </symbol>
-
-
-        <!-- =================================================
-             SYMBOL:
-             MOON + STARS
-             ================================================= -->
-
-        <symbol
-            id="decor-moon-stars"
-            viewBox="0 0 150 150"
-        >
-
-            <path
-                d="M86 20
-                   C62 26 48 48 51 71
-                   C54 97 77 112 101 104
-                   C86 119 61 121 43 105
-                   C21 86 19 54 36 34
-                   C48 20 68 14 86 20
-                   Z"
-                fill="#e2b66f"
-            />
-
-            <g fill="#d68caa">
-
-                <path
-                    d="M111 29
-                       l4 9
-                       9 4
-                       -9 4
-                       -4 9
-                       -4 -9
-                       -9 -4
-                       9 -4
-                       z"
-                />
-
-                <path
-                    d="M120 73
-                       l2.5 5.5
-                       5.5 2.5
-                       -5.5 2.5
-                       -2.5 5.5
-                       -2.5 -5.5
-                       -5.5 -2.5
-                       5.5 -2.5
-                       z"
-                />
-
-                <circle
-                    cx="99"
-                    cy="84"
-                    r="3"
-                />
-
-            </g>
-
-        </symbol>
-
-
-        <!-- =================================================
-             SYMBOL:
-             SPIDER WEB CORNER
-             ================================================= -->
-
-        <symbol
-            id="decor-spider-web"
-            viewBox="0 0 120 120"
-        >
-
-            <g
-                fill="none"
-                stroke="#d8b5c9"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                opacity=".86"
-            >
-
-                <path d="M8 8 L109 109" />
-
-                <path d="M8 8 L8 111" />
-
-                <path d="M8 8 L111 8" />
-
-                <path
-                    d="M8 37
-                       Q27 27 38 8"
-                />
-
-                <path
-                    d="M8 65
-                       Q49 48 66 8"
-                />
-
-                <path
-                    d="M8 92
-                       Q75 70 92 8"
-                />
-
-                <path
-                    d="M37 8
-                       Q27 27 8 37"
-                />
-
-                <path
-                    d="M66 8
-                       Q49 48 8 65"
-                />
-
-                <path
-                    d="M92 8
-                       Q75 70 8 92"
-                />
-
-            </g>
-
-            <circle
-                cx="92"
-                cy="91"
-                r="5"
-                fill="#322536"
-            />
-
-            <line
-                x1="92"
-                y1="86"
-                x2="92"
-                y2="69"
-                stroke="#322536"
-                stroke-width="2"
-            />
-
-        </symbol>
-
-
-        <!-- =================================================
-             SYMBOL:
-             CRYSTAL CLUSTER
-             ================================================= -->
-
-        <symbol
-            id="decor-crystals"
-            viewBox="0 0 140 120"
-        >
-
-            <ellipse
-                cx="70"
-                cy="104"
-                rx="49"
-                ry="8"
-                fill="#120d15"
-                opacity=".28"
-            />
-
-            <path
-                d="M26 91
-                   L39 43
-                   L54 90
-                   Z"
-                fill="#8c5d9c"
-                stroke="#4c3159"
-                stroke-width="3"
-            />
-
-            <path
-                d="M48 92
-                   L67 17
-                   L86 92
-                   Z"
-                fill="#b37caf"
-                stroke="#56325d"
-                stroke-width="3"
-            />
-
-            <path
-                d="M77 93
-                   L98 39
-                   L116 93
-                   Z"
-                fill="#755397"
-                stroke="#432f5d"
-                stroke-width="3"
-            />
-
-            <path
-                d="M67 17
-                   L59 56
-                   L72 45
-                   L81 73"
-                fill="none"
-                stroke="#f0d8ef"
-                stroke-width="3"
-                opacity=".32"
-            />
-
-            <path
-                d="M98 39
-                   L91 67"
-                fill="none"
-                stroke="#e6d3f0"
-                stroke-width="3"
-                opacity=".3"
-            />
-
-        </symbol>
-
-
-        <!-- =================================================
-             SYMBOL:
-             POTION ROUND
+             ROUND POTION
              ================================================= -->
 
         <symbol
@@ -1162,14 +521,16 @@
             />
 
             <path
-                d="M45 31
-                   L45 48
-                   C31 55 23 69 24 86
-                   C25 112 41 127 60 127
-                   C79 127 95 112 96 86
-                   C97 69 89 55 75 48
-                   L75 31
-                   Z"
+                d="
+                    M45 31
+                    L45 48
+                    C31 55 23 69 24 86
+                    C25 112 41 127 60 127
+                    C79 127 95 112 96 86
+                    C97 69 89 55 75 48
+                    L75 31
+                    Z
+                "
                 fill="url(#orange-glass)"
                 stroke="#4b2a3a"
                 stroke-width="3"
@@ -1184,10 +545,12 @@
             />
 
             <path
-                d="M48 81
-                   Q60 71 72 81
-                   Q60 96 48 81
-                   Z"
+                d="
+                    M48 81
+                    Q60 71 72 81
+                    Q60 96 48 81
+                    Z
+                "
                 fill="#512c59"
                 opacity=".7"
             />
@@ -1203,126 +566,568 @@
 
 
         <!-- =================================================
-             SYMBOL:
-             OLD KEY
+             CANDLE
              ================================================= -->
 
         <symbol
-            id="decor-old-key"
-            viewBox="0 0 170 80"
+            id="decor-candle"
+            viewBox="0 0 100 150"
         >
 
-            <circle
-                cx="38"
-                cy="40"
-                r="20"
-                fill="none"
-                stroke="#d5a15f"
-                stroke-width="7"
+            <ellipse
+                cx="51"
+                cy="136"
+                rx="27"
+                ry="6"
+                fill="#120d15"
+                opacity=".28"
             />
 
-            <circle
-                cx="38"
-                cy="40"
-                r="8"
-                fill="none"
-                stroke="#d5a15f"
-                stroke-width="4"
+            <ellipse
+                cx="50"
+                cy="32"
+                rx="25"
+                ry="12"
+                fill="url(#flame)"
+                opacity=".18"
+                filter="url(#soft-glow)"
             />
 
             <path
-                d="M57 40
-                   H140
-                   L151 31
-                   L158 38
-                   L148 47
-                   H136
-                   V58
-                   H124
-                   V48
-                   H111"
+                d="
+                    M50 11
+                    C59 24 58 31 50 38
+                    C42 31 42 23 50 11
+                    Z
+                "
+                fill="url(#flame)"
+            />
+
+            <path
+                d="
+                    M27 43
+                    Q50 37 73 43
+                    L70 127
+                    Q50 135 30 127
+                    Z
+                "
+                fill="url(#candle-wax)"
+                stroke="#5e3945"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M38 81
+                    C46 75 56 75 64 81
+                    C57 88 47 89 38 81
+                    Z
+                "
+                fill="#69415c"
+                opacity=".75"
+            />
+
+            <circle
+                cx="51"
+                cy="82"
+                r="4"
+                fill="#f2c16a"
+            />
+
+        </symbol>
+
+
+        <!-- =================================================
+             BLACK CAT
+             ================================================= -->
+
+        <symbol
+            id="decor-black-cat"
+            viewBox="0 0 160 160"
+        >
+
+            <ellipse
+                cx="82"
+                cy="141"
+                rx="55"
+                ry="8"
+                fill="#120d15"
+                opacity=".3"
+            />
+
+            <path
+                d="
+                    M56 62
+                    L43 35
+                    L66 48
+                    Q82 42 98 48
+                    L120 34
+                    L108 64
+                    Q120 76 118 96
+                    C116 122 99 137 78 137
+                    C55 137 40 120 41 96
+                    C41 79 46 69 56 62
+                    Z
+                "
+                fill="#1c1721"
+                stroke="#3d2d47"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M52 96
+                    C42 122 29 127 20 117
+                    C13 109 17 97 26 98
+                "
                 fill="none"
-                stroke="#d5a15f"
-                stroke-width="7"
+                stroke="#1c1721"
+                stroke-width="9"
                 stroke-linecap="round"
+            />
+
+            <path
+                d="M59 81 Q66 75 72 81"
+                fill="none"
+                stroke="#ddbf71"
+                stroke-width="4"
+                stroke-linecap="round"
+            />
+
+            <path
+                d="M88 81 Q95 75 101 81"
+                fill="none"
+                stroke="#ddbf71"
+                stroke-width="4"
+                stroke-linecap="round"
+            />
+
+            <path
+                d="M77 93 L82 97 L87 93"
+                fill="#b77891"
+            />
+
+            <path
+                d="
+                    M82 52
+                    L86 60
+                    L94 64
+                    L86 68
+                    L82 76
+                    L78 68
+                    L70 64
+                    L78 60
+                    Z
+                "
+                fill="#b8759b"
+                opacity=".7"
+            />
+
+        </symbol>
+
+
+        <!-- =================================================
+             TINY GHOST
+             ================================================= -->
+
+        <symbol
+            id="decor-tiny-ghost"
+            viewBox="0 0 120 140"
+        >
+
+            <ellipse
+                cx="60"
+                cy="126"
+                rx="33"
+                ry="6"
+                fill="#120d15"
+                opacity=".22"
+            />
+
+            <path
+                d="
+                    M60 13
+                    C36 13 21 31 21 55
+                    L21 111
+                    L34 101
+                    L46 112
+                    L60 101
+                    L74 112
+                    L86 101
+                    L99 111
+                    L99 55
+                    C99 31 84 13 60 13
+                    Z
+                "
+                fill="#eee4da"
+                stroke="#573f5a"
+                stroke-width="3"
+            />
+
+            <ellipse
+                cx="45"
+                cy="60"
+                rx="5"
+                ry="7"
+                fill="#34263b"
+            />
+
+            <ellipse
+                cx="75"
+                cy="60"
+                rx="5"
+                ry="7"
+                fill="#34263b"
+            />
+
+            <path
+                d="M52 78 Q60 84 68 78"
+                fill="none"
+                stroke="#34263b"
+                stroke-width="3"
+                stroke-linecap="round"
+            />
+
+            <circle
+                cx="42"
+                cy="75"
+                r="5"
+                fill="#dc92a6"
+                opacity=".48"
+            />
+
+            <circle
+                cx="78"
+                cy="75"
+                r="5"
+                fill="#dc92a6"
+                opacity=".48"
+            />
+
+        </symbol>
+
+
+        <!-- =================================================
+             BAT
+             ================================================= -->
+
+        <symbol
+            id="decor-bat"
+            viewBox="0 0 160 105"
+        >
+
+            <ellipse
+                cx="80"
+                cy="92"
+                rx="42"
+                ry="6"
+                fill="#110c15"
+                opacity=".18"
+            />
+
+            <path
+                d="
+                    M73 43
+                    C55 24 36 18 13 25
+                    C28 34 28 45 23 58
+                    C39 52 49 57 57 69
+                    C59 57 65 49 73 43
+                    Z
+                "
+                fill="#31263a"
+                stroke="#4a3653"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M87 43
+                    C105 24 124 18 147 25
+                    C132 34 132 45 137 58
+                    C121 52 111 57 103 69
+                    C101 57 95 49 87 43
+                    Z
+                "
+                fill="#31263a"
+                stroke="#4a3653"
+                stroke-width="3"
+            />
+
+            <ellipse
+                cx="80"
+                cy="54"
+                rx="17"
+                ry="26"
+                fill="#211824"
+                stroke="#4a3653"
+                stroke-width="3"
+            />
+
+            <path
+                d="M69 35 L72 17 L81 34"
+                fill="#211824"
+                stroke="#4a3653"
+                stroke-width="3"
                 stroke-linejoin="round"
             />
 
             <path
-                d="M64 35
-                   H120"
-                stroke="#fff1c9"
-                stroke-width="2"
-                opacity=".25"
-            />
-
-        </symbol>
-
-
-        <!-- =================================================
-             SYMBOL:
-             FLASHLIGHT
-             ================================================= -->
-
-        <symbol
-            id="decor-flashlight"
-            viewBox="0 0 190 85"
-        >
-
-            <path
-                d="M18 29
-                   L64 16
-                   L73 68
-                   L18 55
-                   Z"
-                fill="#d96c4e"
-                stroke="#492737"
+                d="M91 35 L88 17 L79 34"
+                fill="#211824"
+                stroke="#4a3653"
                 stroke-width="3"
-            />
-
-            <path
-                d="M72 28
-                   H168
-                   Q178 28 178 38
-                   V48
-                   Q178 58 168 58
-                   H72
-                   Z"
-                fill="#55395e"
-                stroke="#332039"
-                stroke-width="3"
-            />
-
-            <rect
-                x="104"
-                y="24"
-                width="26"
-                height="38"
-                rx="8"
-                fill="#7b557d"
+                stroke-linejoin="round"
             />
 
             <circle
-                cx="116"
-                cy="43"
-                r="5"
-                fill="#eac96f"
+                cx="74"
+                cy="49"
+                r="2.7"
+                fill="#e4b96c"
+            />
+
+            <circle
+                cx="86"
+                cy="49"
+                r="2.7"
+                fill="#e4b96c"
             />
 
             <path
-                d="M18 33
-                   L2 19
-                   L4 65
-                   L18 51"
-                fill="#f2d489"
-                opacity=".32"
+                d="
+                    M80 57
+                    L84 63
+                    L80 61
+                    L76 63
+                    Z
+                "
+                fill="#d47d92"
             />
 
         </symbol>
 
 
         <!-- =================================================
-             SYMBOL:
+             RAVEN
+             ================================================= -->
+
+        <symbol
+            id="decor-raven"
+            viewBox="0 0 130 140"
+        >
+
+            <ellipse
+                cx="64"
+                cy="124"
+                rx="42"
+                ry="7"
+                fill="#0f0b13"
+                opacity=".28"
+            />
+
+            <path
+                d="
+                    M51 48
+                    C45 36 48 21 60 15
+                    C75 9 89 17 93 30
+                    C95 37 93 45 89 51
+                    C100 63 102 85 94 102
+                    C86 119 67 126 51 116
+                    C36 107 34 87 38 72
+                    C41 61 45 53 51 48
+                    Z
+                "
+                fill="#20212a"
+                stroke="#3b3345"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M88 31
+                    L119 43
+                    L91 49
+                    Z
+                "
+                fill="#b26e4e"
+                stroke="#533744"
+                stroke-width="2"
+            />
+
+            <circle
+                cx="76"
+                cy="31"
+                r="4"
+                fill="#e8c367"
+            />
+
+            <circle
+                cx="77"
+                cy="31"
+                r="1.5"
+                fill="#332238"
+            />
+
+            <path
+                d="
+                    M52 65
+                    C71 57 85 66 90 82
+                    C77 75 67 80 55 94
+                    C57 80 55 72 52 65
+                    Z
+                "
+                fill="#292b35"
+            />
+
+            <path
+                d="M56 115 L48 131"
+                stroke="#a87954"
+                stroke-width="4"
+                stroke-linecap="round"
+            />
+
+            <path
+                d="M75 119 L78 132"
+                stroke="#a87954"
+                stroke-width="4"
+                stroke-linecap="round"
+            />
+
+        </symbol>
+
+
+        <!-- =================================================
+             GOBLIN
+             ================================================= -->
+
+        <symbol
+            id="decor-goblin"
+            viewBox="0 0 140 130"
+        >
+
+            <ellipse
+                cx="70"
+                cy="116"
+                rx="39"
+                ry="7"
+                fill="#100d14"
+                opacity=".25"
+            />
+
+            <path
+                d="
+                    M45 47
+                    L13 55
+                    L39 72
+                    Z
+                "
+                fill="#70805e"
+                stroke="#435143"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M95 47
+                    L127 55
+                    L101 72
+                    Z
+                "
+                fill="#70805e"
+                stroke="#435143"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M70 21
+                    C45 21 32 39 35 66
+                    C37 91 51 108 70 108
+                    C89 108 103 91 105 66
+                    C108 39 95 21 70 21
+                    Z
+                "
+                fill="#7f8f68"
+                stroke="#485442"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M51 56
+                    Q58 48 65 55
+                "
+                fill="none"
+                stroke="#433b43"
+                stroke-width="4"
+                stroke-linecap="round"
+            />
+
+            <path
+                d="
+                    M75 55
+                    Q83 48 90 56
+                "
+                fill="none"
+                stroke="#433b43"
+                stroke-width="4"
+                stroke-linecap="round"
+            />
+
+            <circle
+                cx="59"
+                cy="60"
+                r="3"
+                fill="#e7c471"
+            />
+
+            <circle
+                cx="82"
+                cy="60"
+                r="3"
+                fill="#e7c471"
+            />
+
+            <path
+                d="
+                    M70 63
+                    L63 77
+                    L73 75
+                "
+                fill="#657553"
+                stroke="#485442"
+                stroke-width="2"
+            />
+
+            <path
+                d="
+                    M57 89
+                    Q70 97 83 89
+                "
+                fill="none"
+                stroke="#493946"
+                stroke-width="3"
+                stroke-linecap="round"
+            />
+
+            <path
+                d="M59 91 L63 98"
+                stroke="#f0dfcb"
+                stroke-width="3"
+                stroke-linecap="round"
+            />
+
+            <path
+                d="M81 91 L77 98"
+                stroke="#f0dfcb"
+                stroke-width="3"
+                stroke-linecap="round"
+            />
+
+        </symbol>
+
+
+        <!-- =================================================
              MUSHROOM
              ================================================= -->
 
@@ -1332,21 +1137,25 @@
         >
 
             <path
-                d="M42 62
-                   C42 76 38 95 31 107
-                   H69
-                   C62 94 58 76 58 62
-                   Z"
+                d="
+                    M42 62
+                    C42 76 38 95 31 107
+                    H69
+                    C62 94 58 76 58 62
+                    Z
+                "
                 fill="#e6c9b7"
                 stroke="#61424e"
                 stroke-width="3"
             />
 
             <path
-                d="M14 61
-                   C17 30 31 14 50 14
-                   C69 14 84 30 87 61
-                   Z"
+                d="
+                    M14 61
+                    C17 30 31 14 50 14
+                    C69 14 84 30 87 61
+                    Z
+                "
                 fill="#bc5969"
                 stroke="#5b3245"
                 stroke-width="3"
@@ -1384,7 +1193,751 @@
 
 
         <!-- =================================================
-             SYMBOL:
+             HOUSE PLANT
+             ================================================= -->
+
+        <symbol
+            id="decor-plant"
+            viewBox="0 0 130 145"
+        >
+
+            <ellipse
+                cx="65"
+                cy="130"
+                rx="40"
+                ry="7"
+                fill="#120d15"
+                opacity=".25"
+            />
+
+            <path
+                d="
+                    M44 86
+                    L87 86
+                    L80 126
+                    Q65 133 50 126
+                    Z
+                "
+                fill="#b16e52"
+                stroke="#5c3943"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M62 88
+                    C41 78 26 58 32 43
+                    C48 47 60 63 62 88
+                    Z
+                "
+                fill="#72815d"
+                stroke="#465344"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M66 87
+                    C55 63 59 37 75 25
+                    C88 39 83 66 66 87
+                    Z
+                "
+                fill="#819166"
+                stroke="#465344"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M71 89
+                    C74 65 90 47 107 48
+                    C108 67 94 82 71 89
+                    Z
+                "
+                fill="#6f8058"
+                stroke="#465344"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M55 88
+                    C42 72 41 53 51 43
+                    C65 55 64 72 55 88
+                    Z
+                "
+                fill="#89956e"
+                stroke="#465344"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M77 89
+                    C85 72 99 62 113 66
+                    C108 80 95 89 77 89
+                    Z
+                "
+                fill="#647652"
+                stroke="#465344"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M51 96
+                    H80
+                "
+                stroke="#e1a171"
+                stroke-width="3"
+                opacity=".38"
+            />
+
+        </symbol>
+
+
+        <!-- =================================================
+             FLOWERS
+             ================================================= -->
+
+        <symbol
+            id="decor-flowers"
+            viewBox="0 0 120 135"
+        >
+
+            <ellipse
+                cx="59"
+                cy="122"
+                rx="34"
+                ry="6"
+                fill="#120d15"
+                opacity=".24"
+            />
+
+            <path
+                d="
+                    M38 81
+                    H80
+                    L76 118
+                    Q59 126 43 118
+                    Z
+                "
+                fill="#705d6c"
+                stroke="#453447"
+                stroke-width="3"
+            />
+
+            <path
+                d="M58 83 C57 58 46 42 36 28"
+                fill="none"
+                stroke="#647b54"
+                stroke-width="4"
+                stroke-linecap="round"
+            />
+
+            <path
+                d="M60 82 C61 56 63 41 65 25"
+                fill="none"
+                stroke="#647b54"
+                stroke-width="4"
+                stroke-linecap="round"
+            />
+
+            <path
+                d="M63 82 C67 59 79 47 89 34"
+                fill="none"
+                stroke="#647b54"
+                stroke-width="4"
+                stroke-linecap="round"
+            />
+
+            <g transform="translate(34 27)">
+
+                <circle
+                    cx="0"
+                    cy="-9"
+                    r="8"
+                    fill="#d7869f"
+                />
+
+                <circle
+                    cx="9"
+                    cy="0"
+                    r="8"
+                    fill="#d7869f"
+                />
+
+                <circle
+                    cx="0"
+                    cy="9"
+                    r="8"
+                    fill="#d7869f"
+                />
+
+                <circle
+                    cx="-9"
+                    cy="0"
+                    r="8"
+                    fill="#d7869f"
+                />
+
+                <circle
+                    cx="0"
+                    cy="0"
+                    r="6"
+                    fill="#e8bd68"
+                />
+
+            </g>
+
+
+            <g transform="translate(65 24)">
+
+                <circle
+                    cx="0"
+                    cy="-9"
+                    r="8"
+                    fill="#e29a76"
+                />
+
+                <circle
+                    cx="9"
+                    cy="0"
+                    r="8"
+                    fill="#e29a76"
+                />
+
+                <circle
+                    cx="0"
+                    cy="9"
+                    r="8"
+                    fill="#e29a76"
+                />
+
+                <circle
+                    cx="-9"
+                    cy="0"
+                    r="8"
+                    fill="#e29a76"
+                />
+
+                <circle
+                    cx="0"
+                    cy="0"
+                    r="6"
+                    fill="#f0c76f"
+                />
+
+            </g>
+
+
+            <g transform="translate(90 34)">
+
+                <circle
+                    cx="0"
+                    cy="-9"
+                    r="8"
+                    fill="#b985b6"
+                />
+
+                <circle
+                    cx="9"
+                    cy="0"
+                    r="8"
+                    fill="#b985b6"
+                />
+
+                <circle
+                    cx="0"
+                    cy="9"
+                    r="8"
+                    fill="#b985b6"
+                />
+
+                <circle
+                    cx="-9"
+                    cy="0"
+                    r="8"
+                    fill="#b985b6"
+                />
+
+                <circle
+                    cx="0"
+                    cy="0"
+                    r="6"
+                    fill="#e9bc67"
+                />
+
+            </g>
+
+        </symbol>
+
+
+        <!-- =================================================
+             MOSS
+             ================================================= -->
+
+        <symbol
+            id="decor-moss"
+            viewBox="0 0 150 75"
+        >
+
+            <ellipse
+                cx="75"
+                cy="63"
+                rx="60"
+                ry="7"
+                fill="#110d14"
+                opacity=".22"
+            />
+
+            <path
+                d="
+                    M13 57
+                    C18 39 31 33 45 40
+                    C50 25 69 22 80 37
+                    C90 23 112 27 116 42
+                    C132 37 141 46 138 58
+                    Z
+                "
+                fill="#596c4c"
+                stroke="#3d4a3c"
+                stroke-width="3"
+            />
+
+            <circle
+                cx="39"
+                cy="45"
+                r="12"
+                fill="#657857"
+            />
+
+            <circle
+                cx="67"
+                cy="38"
+                r="16"
+                fill="#70825d"
+            />
+
+            <circle
+                cx="95"
+                cy="43"
+                r="13"
+                fill="#617452"
+            />
+
+            <circle
+                cx="120"
+                cy="49"
+                r="10"
+                fill="#556748"
+            />
+
+            <g
+                fill="#d39a6e"
+                opacity=".55"
+            >
+
+                <circle
+                    cx="52"
+                    cy="42"
+                    r="2"
+                />
+
+                <circle
+                    cx="85"
+                    cy="51"
+                    r="2"
+                />
+
+                <circle
+                    cx="108"
+                    cy="42"
+                    r="2"
+                />
+
+            </g>
+
+        </symbol>
+
+
+        <!-- =================================================
+             PUMPKIN
+             ================================================= -->
+
+        <symbol
+            id="decor-pumpkin"
+            viewBox="0 0 130 110"
+        >
+
+            <ellipse
+                cx="65"
+                cy="97"
+                rx="45"
+                ry="7"
+                fill="#130c12"
+                opacity=".28"
+            />
+
+            <path
+                d="
+                    M58 29
+                    C59 18 63 10 73 8
+                    L80 14
+                    C72 20 70 26 71 33
+                    Z
+                "
+                fill="#71805a"
+                stroke="#40513f"
+                stroke-width="3"
+            />
+
+            <ellipse
+                cx="35"
+                cy="65"
+                rx="26"
+                ry="32"
+                fill="#b65b39"
+                stroke="#713838"
+                stroke-width="3"
+            />
+
+            <ellipse
+                cx="50"
+                cy="62"
+                rx="27"
+                ry="35"
+                fill="#d06d42"
+                stroke="#8a413b"
+                stroke-width="2"
+            />
+
+            <ellipse
+                cx="66"
+                cy="60"
+                rx="26"
+                ry="37"
+                fill="#df7d49"
+                stroke="#97463e"
+                stroke-width="2"
+            />
+
+            <ellipse
+                cx="82"
+                cy="62"
+                rx="27"
+                ry="35"
+                fill="#cc673f"
+                stroke="#85403a"
+                stroke-width="2"
+            />
+
+            <ellipse
+                cx="97"
+                cy="65"
+                rx="24"
+                ry="32"
+                fill="#ae5536"
+                stroke="#703638"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M54 42
+                    C58 34 63 30 68 30
+                "
+                fill="none"
+                stroke="#ffd39a"
+                stroke-width="4"
+                stroke-linecap="round"
+                opacity=".16"
+            />
+
+        </symbol>
+
+
+        <!-- =================================================
+             MOON + STARS
+             ================================================= -->
+
+        <symbol
+            id="decor-moon-stars"
+            viewBox="0 0 150 150"
+        >
+
+            <path
+                d="
+                    M86 20
+                    C62 26 48 48 51 71
+                    C54 97 77 112 101 104
+                    C86 119 61 121 43 105
+                    C21 86 19 54 36 34
+                    C48 20 68 14 86 20
+                    Z
+                "
+                fill="#e2b66f"
+            />
+
+            <g fill="#d68caa">
+
+                <path
+                    d="
+                        M111 29
+                        L115 38
+                        L124 42
+                        L115 46
+                        L111 55
+                        L107 46
+                        L98 42
+                        L107 38
+                        Z
+                    "
+                />
+
+                <path
+                    d="
+                        M120 73
+                        L123 79
+                        L129 82
+                        L123 85
+                        L120 91
+                        L117 85
+                        L111 82
+                        L117 79
+                        Z
+                    "
+                />
+
+                <circle
+                    cx="99"
+                    cy="84"
+                    r="3"
+                />
+
+            </g>
+
+        </symbol>
+
+
+        <!-- =================================================
+             SPIDER WEB
+             ================================================= -->
+
+        <symbol
+            id="decor-spider-web"
+            viewBox="0 0 120 120"
+        >
+
+            <g
+                fill="none"
+                stroke="#d8b5c9"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                opacity=".86"
+            >
+
+                <path d="M8 8 L109 109" />
+                <path d="M8 8 L8 111" />
+                <path d="M8 8 L111 8" />
+                <path d="M8 37 Q27 27 38 8" />
+                <path d="M8 65 Q49 48 66 8" />
+                <path d="M8 92 Q75 70 92 8" />
+
+            </g>
+
+            <circle
+                cx="92"
+                cy="91"
+                r="5"
+                fill="#322536"
+            />
+
+            <line
+                x1="92"
+                y1="86"
+                x2="92"
+                y2="69"
+                stroke="#322536"
+                stroke-width="2"
+            />
+
+        </symbol>
+
+
+        <!-- =================================================
+             CRYSTALS
+             ================================================= -->
+
+        <symbol
+            id="decor-crystals"
+            viewBox="0 0 140 120"
+        >
+
+            <ellipse
+                cx="70"
+                cy="104"
+                rx="49"
+                ry="8"
+                fill="#120d15"
+                opacity=".28"
+            />
+
+            <path
+                d="M26 91 L39 43 L54 90 Z"
+                fill="#8c5d9c"
+                stroke="#4c3159"
+                stroke-width="3"
+            />
+
+            <path
+                d="M48 92 L67 17 L86 92 Z"
+                fill="#b37caf"
+                stroke="#56325d"
+                stroke-width="3"
+            />
+
+            <path
+                d="M77 93 L98 39 L116 93 Z"
+                fill="#755397"
+                stroke="#432f5d"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M67 17
+                    L59 56
+                    L72 45
+                    L81 73
+                "
+                fill="none"
+                stroke="#f0d8ef"
+                stroke-width="3"
+                opacity=".32"
+            />
+
+        </symbol>
+
+
+        <!-- =================================================
+             OLD KEY
+             ================================================= -->
+
+        <symbol
+            id="decor-old-key"
+            viewBox="0 0 170 80"
+        >
+
+            <circle
+                cx="38"
+                cy="40"
+                r="20"
+                fill="none"
+                stroke="#d5a15f"
+                stroke-width="7"
+            />
+
+            <circle
+                cx="38"
+                cy="40"
+                r="8"
+                fill="none"
+                stroke="#d5a15f"
+                stroke-width="4"
+            />
+
+            <path
+                d="
+                    M57 40
+                    H140
+                    L151 31
+                    L158 38
+                    L148 47
+                    H136
+                    V58
+                    H124
+                    V48
+                    H111
+                "
+                fill="none"
+                stroke="#d5a15f"
+                stroke-width="7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+
+        </symbol>
+
+
+        <!-- =================================================
+             FLASHLIGHT
+             ================================================= -->
+
+        <symbol
+            id="decor-flashlight"
+            viewBox="0 0 190 85"
+        >
+
+            <path
+                d="
+                    M18 29
+                    L64 16
+                    L73 68
+                    L18 55
+                    Z
+                "
+                fill="#d96c4e"
+                stroke="#492737"
+                stroke-width="3"
+            />
+
+            <path
+                d="
+                    M72 28
+                    H168
+                    Q178 28 178 38
+                    V48
+                    Q178 58 168 58
+                    H72
+                    Z
+                "
+                fill="#55395e"
+                stroke="#332039"
+                stroke-width="3"
+            />
+
+            <rect
+                x="104"
+                y="24"
+                width="26"
+                height="38"
+                rx="8"
+                fill="#7b557d"
+            />
+
+            <circle
+                cx="116"
+                cy="43"
+                r="5"
+                fill="#eac96f"
+            />
+
+            <path
+                d="
+                    M18 33
+                    L2 19
+                    L4 65
+                    L18 51
+                "
+                fill="#f2d489"
+                opacity=".32"
+            />
+
+        </symbol>
+
+
+        <!-- =================================================
              STARS
              ================================================= -->
 
@@ -1396,39 +1949,31 @@
             <g fill="#d98c71">
 
                 <path
-                    d="M33 15
-                       l4 9
-                       9 4
-                       -9 4
-                       -4 9
-                       -4 -9
-                       -9 -4
-                       9 -4
-                       z"
+                    d="
+                        M33 15
+                        L37 24
+                        L46 28
+                        L37 32
+                        L33 41
+                        L29 32
+                        L20 28
+                        L29 24
+                        Z
+                    "
                 />
 
                 <path
-                    d="M79 43
-                       l3 7
-                       7 3
-                       -7 3
-                       -3 7
-                       -3 -7
-                       -7 -3
-                       7 -3
-                       z"
-                />
-
-                <path
-                    d="M48 78
-                       l2.5 5
-                       5 2.5
-                       -5 2.5
-                       -2.5 5
-                       -2.5 -5
-                       -5 -2.5
-                       5 -2.5
-                       z"
+                    d="
+                        M79 43
+                        L82 50
+                        L89 53
+                        L82 56
+                        L79 63
+                        L76 56
+                        L69 53
+                        L76 50
+                        Z
+                    "
                 />
 
                 <circle
@@ -1449,8 +1994,7 @@
 
 
         <!-- =================================================
-             SYMBOL:
-             HEART-SPARKLE
+             HEART SPARKLE
              ================================================= -->
 
         <symbol
@@ -1459,25 +2003,29 @@
         >
 
             <path
-                d="M50 78
-                   C43 68 20 58 20 38
-                   C20 24 38 18 50 32
-                   C62 18 80 24 80 38
-                   C80 58 57 68 50 78
-                   Z"
+                d="
+                    M50 78
+                    C43 68 20 58 20 38
+                    C20 24 38 18 50 32
+                    C62 18 80 24 80 38
+                    C80 58 57 68 50 78
+                    Z
+                "
                 fill="#d77d91"
             />
 
             <path
-                d="M77 14
-                   l3 7
-                   7 3
-                   -7 3
-                   -3 7
-                   -3 -7
-                   -7 -3
-                   7 -3
-                   z"
+                d="
+                    M77 14
+                    L80 21
+                    L87 24
+                    L80 27
+                    L77 34
+                    L74 27
+                    L67 24
+                    L74 21
+                    Z
+                "
                 fill="#e7bd68"
             />
 
@@ -1485,7 +2033,6 @@
 
 
         <!-- =================================================
-             SYMBOL:
              SPINE ORNAMENT — MOON
              ================================================= -->
 
@@ -1495,13 +2042,15 @@
         >
 
             <path
-                d="M38 9
-                   C25 13 18 25 21 37
-                   C24 48 35 53 45 49
-                   C37 58 22 57 14 47
-                   C4 34 8 16 21 9
-                   C26 6 33 6 38 9
-                   Z"
+                d="
+                    M38 9
+                    C25 13 18 25 21 37
+                    C24 48 35 53 45 49
+                    C37 58 22 57 14 47
+                    C4 34 8 16 21 9
+                    C26 6 33 6 38 9
+                    Z
+                "
                 fill="currentColor"
             />
 
@@ -1516,7 +2065,6 @@
 
 
         <!-- =================================================
-             SYMBOL:
              SPINE ORNAMENT — STAR
              ================================================= -->
 
@@ -1526,15 +2074,17 @@
         >
 
             <path
-                d="M30 5
-                   L36 23
-                   L55 30
-                   L36 37
-                   L30 55
-                   L24 37
-                   L5 30
-                   L24 23
-                   Z"
+                d="
+                    M30 5
+                    L36 23
+                    L55 30
+                    L36 37
+                    L30 55
+                    L24 37
+                    L5 30
+                    L24 23
+                    Z
+                "
                 fill="currentColor"
             />
 
@@ -1542,7 +2092,6 @@
 
 
         <!-- =================================================
-             SYMBOL:
              SPINE ORNAMENT — GHOST
              ================================================= -->
 
@@ -1552,38 +2101,25 @@
         >
 
             <path
-                d="M30 5
-                   C16 5 8 16 8 29
-                   V62
-                   L18 54
-                   L30 63
-                   L42 54
-                   L52 62
-                   V29
-                   C52 16 44 5 30 5
-                   Z"
+                d="
+                    M30 5
+                    C16 5 8 16 8 29
+                    V62
+                    L18 54
+                    L30 63
+                    L42 54
+                    L52 62
+                    V29
+                    C52 16 44 5 30 5
+                    Z
+                "
                 fill="currentColor"
-            />
-
-            <circle
-                cx="23"
-                cy="31"
-                r="3"
-                fill="#33263a"
-            />
-
-            <circle
-                cx="37"
-                cy="31"
-                r="3"
-                fill="#33263a"
             />
 
         </symbol>
 
 
         <!-- =================================================
-             SYMBOL:
              SPINE ORNAMENT — VINE
              ================================================= -->
 
@@ -1593,9 +2129,11 @@
         >
 
             <path
-                d="M40 72
-                   C22 59 22 42 39 35
-                   C53 29 54 18 47 8"
+                d="
+                    M40 72
+                    C22 59 22 42 39 35
+                    C53 29 54 18 47 8
+                "
                 fill="none"
                 stroke="currentColor"
                 stroke-width="4"
@@ -1603,18 +2141,22 @@
             />
 
             <path
-                d="M34 52
-                   C23 48 17 42 17 34
-                   C29 34 36 40 34 52
-                   Z"
+                d="
+                    M34 52
+                    C23 48 17 42 17 34
+                    C29 34 36 40 34 52
+                    Z
+                "
                 fill="currentColor"
             />
 
             <path
-                d="M43 29
-                   C53 29 62 24 65 16
-                   C54 12 46 18 43 29
-                   Z"
+                d="
+                    M43 29
+                    C53 29 62 24 65 16
+                    C54 12 46 18 43 29
+                    Z
+                "
                 fill="currentColor"
             />
 
@@ -1622,8 +2164,7 @@
 
 
         <!-- =================================================
-             SYMBOL:
-             SPINE ORNAMENT — WEB
+             SPINE WEB
              ================================================= -->
 
         <symbol
@@ -1689,8 +2230,7 @@
 
 
         <!-- =================================================
-             SYMBOL:
-             SPINE ORNAMENT — FLOWER
+             SPINE FLOWER
              ================================================= -->
 
         <symbol
@@ -1740,8 +2280,7 @@
 
 
         <!-- =================================================
-             SYMBOL:
-             SPINE LABEL — ARCH
+             SPINE LABEL ARCH
              ================================================= -->
 
         <symbol
@@ -1750,24 +2289,28 @@
         >
 
             <path
-                d="M16 185
-                   V58
-                   C16 28 36 13 60 13
-                   C84 13 104 28 104 58
-                   V185
-                   Z"
+                d="
+                    M16 185
+                    V58
+                    C16 28 36 13 60 13
+                    C84 13 104 28 104 58
+                    V185
+                    Z
+                "
                 fill="none"
                 stroke="currentColor"
                 stroke-width="5"
             />
 
             <path
-                d="M26 174
-                   V61
-                   C26 38 42 26 60 26
-                   C78 26 94 38 94 61
-                   V174
-                   Z"
+                d="
+                    M26 174
+                    V61
+                    C26 38 42 26 60 26
+                    C78 26 94 38 94 61
+                    V174
+                    Z
+                "
                 fill="none"
                 stroke="currentColor"
                 stroke-width="2"
@@ -1778,8 +2321,7 @@
 
 
         <!-- =================================================
-             SYMBOL:
-             SPINE LABEL — ORNATE
+             SPINE LABEL ORNATE
              ================================================= -->
 
         <symbol
@@ -1788,60 +2330,39 @@
         >
 
             <path
-                d="M60 8
-                   L72 21
-                   H94
-                   L103 35
-                   V75
-                   L112 91
-                   L103 107
-                   V175
-                   L92 192
-                   H72
-                   L60 204
-                   L48 192
-                   H28
-                   L17 175
-                   V107
-                   L8 91
-                   L17 75
-                   V35
-                   L26 21
-                   H48
-                   Z"
+                d="
+                    M60 8
+                    L72 21
+                    H94
+                    L103 35
+                    V75
+                    L112 91
+                    L103 107
+                    V175
+                    L92 192
+                    H72
+                    L60 204
+                    L48 192
+                    H28
+                    L17 175
+                    V107
+                    L8 91
+                    L17 75
+                    V35
+                    L26 21
+                    H48
+                    Z
+                "
                 fill="none"
                 stroke="currentColor"
                 stroke-width="4"
-            />
-
-            <path
-                d="M60 20
-                   L70 31
-                   H87
-                   L94 43
-                   V170
-                   L86 181
-                   H70
-                   L60 192
-                   L50 181
-                   H34
-                   L26 170
-                   V43
-                   L33 31
-                   H50
-                   Z"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                opacity=".7"
             />
 
         </symbol>
 
 
         <!-- =================================================
-             SYMBOL:
-             SHELF CORNER FLOURISH
+             SHELF FLOURISH
              ================================================= -->
 
         <symbol
@@ -1850,11 +2371,13 @@
         >
 
             <path
-                d="M6 72
-                   C30 67 39 50 37 34
-                   C36 20 49 12 62 19
-                   C73 25 76 39 69 49
-                   C63 58 49 57 46 47"
+                d="
+                    M6 72
+                    C30 67 39 50 37 34
+                    C36 20 49 12 62 19
+                    C73 25 76 39 69 49
+                    C63 58 49 57 46 47
+                "
                 fill="none"
                 stroke="currentColor"
                 stroke-width="5"
@@ -1862,8 +2385,10 @@
             />
 
             <path
-                d="M67 43
-                   C80 27 99 20 120 23"
+                d="
+                    M67 43
+                    C80 27 99 20 120 23
+                "
                 fill="none"
                 stroke="currentColor"
                 stroke-width="5"
@@ -1871,18 +2396,12 @@
             />
 
             <path
-                d="M95 25
-                   C100 13 110 7 124 8
-                   C123 20 115 28 95 25
-                   Z"
-                fill="currentColor"
-            />
-
-            <path
-                d="M76 36
-                   C82 47 93 51 104 48
-                   C99 38 89 32 76 36
-                   Z"
+                d="
+                    M95 25
+                    C100 13 110 7 124 8
+                    C123 20 115 28 95 25
+                    Z
+                "
                 fill="currentColor"
             />
 
@@ -1890,8 +2409,7 @@
 
 
         <!-- =================================================
-             SYMBOL:
-             THEME BOOK — OCTOBER SLEEPOVER
+             OCTOBER SLEEPOVER THEME BOOK
              ================================================= -->
 
         <symbol
@@ -1922,53 +2440,29 @@
             />
 
             <path
-                d="M18 35
-                   H72"
+                d="M18 35 H72"
                 stroke="#dd9568"
                 stroke-width="4"
             />
 
             <path
-                d="M18 222
-                   H72"
+                d="M18 222 H72"
                 stroke="#dd9568"
                 stroke-width="4"
             />
 
             <path
-                d="M45 49
-                   C35 52 29 61 31 70
-                   C33 80 42 84 51 81
-                   C45 88 34 88 27 81
-                   C18 72 21 58 31 51
-                   C35 48 40 47 45 49
-                   Z"
+                d="
+                    M45 49
+                    C35 52 29 61 31 70
+                    C33 80 42 84 51 81
+                    C45 88 34 88 27 81
+                    C18 72 21 58 31 51
+                    C35 48 40 47 45 49
+                    Z
+                "
                 fill="#e0b867"
             />
-
-            <g
-                fill="#d7758e"
-            >
-
-                <path
-                    d="M58 59
-                       l2 5
-                       5 2
-                       -5 2
-                       -2 5
-                       -2 -5
-                       -5 -2
-                       5 -2
-                       z"
-                />
-
-                <circle
-                    cx="59"
-                    cy="83"
-                    r="2"
-                />
-
-            </g>
 
             <text
                 x="45"
@@ -1995,41 +2489,22 @@
             </text>
 
             <path
-                d="M26 171
-                   Q45 160 64 171"
-                fill="none"
-                stroke="#dc9567"
-                stroke-width="2"
-            />
-
-            <path
-                d="M45 183
-                   l3 7
-                   7 3
-                   -7 3
-                   -3 7
-                   -3 -7
-                   -7 -3
-                   7 -3
-                   z"
+                d="
+                    M45 183
+                    L48 190
+                    L55 193
+                    L48 196
+                    L45 203
+                    L42 196
+                    L35 193
+                    L42 190
+                    Z
+                "
                 fill="#db8e6b"
             />
 
         </symbol>
 
     </defs>
-
-
-    <!--
-        This file is a symbol library.
-
-        It intentionally renders nothing by itself.
-
-        Usage example:
-
-        <svg class="decor decor-eight-ball">
-            <use href="assets/october-sleepover.svg#decor-magic-eight-ball"></use>
-        </svg>
-    -->
 
 </svg>
