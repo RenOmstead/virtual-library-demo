@@ -1,123 +1,1613 @@
-/* =========================================================
+/* ============================================================
    NOVELLOW
    DRAWERS.CSS
+   VERSION 8
 
-   Theme drawer
-   Settings drawer
-   Shelf drawer
-   Book drawer
-   Drawer-specific form styling
-   ========================================================= */
+   OCTOBER SLEEPOVER EDITOR
+
+   - Dreamy storybook drawer treatment
+   - Clear form organization
+   - Book palette swatches
+   - Book font cards
+   - Decoration quantity controls
+   - Shelf decoration choices
+   - Theme/settings controls
+   - Scroll-safe forms
+   - Mobile friendly
+   ============================================================ */
 
 
-/* =========================================================
-   GENERIC DRAWER POLISH
-   ========================================================= */
+/* ============================================================
+   DRAWER SHELL
+   ============================================================ */
 
 .drawer {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-}
+    --drawer-width: 560px;
 
+    position: fixed;
 
-.drawer-header {
-    position: relative;
-}
+    z-index: 4000;
 
+    top: 0;
+    right: 0;
 
-.drawer-header::after {
-    content: "";
+    width:
+        min(
+            var(--drawer-width),
+            100vw
+        );
 
-    position: absolute;
+    height:
+        100vh;
 
-    left: 24px;
-    right: 24px;
-    bottom: 0;
+    height:
+        100dvh;
 
-    height: 1px;
+    max-height:
+        100vh;
+
+    max-height:
+        100dvh;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--october-warm-cream);
 
     background:
-        var(--border-soft);
-}
 
+        radial-gradient(
+            circle at 86% 8%,
+            rgba(167, 142, 184, 0.12),
+            transparent 22%
+        ),
 
-.drawer-body {
-    position: relative;
-}
+        linear-gradient(
+            180deg,
+            #2b192c 0%,
+            #211322 48%,
+            #1b101d 100%
+        );
 
+    border-left:
+        1px solid
+        rgba(201, 154, 79, 0.25);
 
-.drawer-footer {
     box-shadow:
-        0 -10px 26px
-        rgba(0, 0, 0, 0.12);
+        -28px 0 75px
+        rgba(5, 1, 7, 0.48);
 }
 
 
-/* =========================================================
-   THEME DRAWER
-   ========================================================= */
-
-.theme-drawer {
-    width:
-        min(720px, 100vw);
+.drawer[hidden] {
+    display:
+        none !important;
 }
 
 
-.theme-drawer
-.drawer-body {
-    padding-top:
-        22px;
+/* ============================================================
+   DRAWER SIZES
+   ============================================================ */
+
+.book-drawer {
+    --drawer-width:
+        680px;
 }
 
 
-.theme-drawer
-.drawer-intro {
-    max-width:
+.shelf-drawer {
+    --drawer-width:
         580px;
 }
 
 
-/* =========================================================
-   THEME CARDS
-   ========================================================= */
+.theme-drawer,
+.settings-drawer {
+    --drawer-width:
+        520px;
+}
 
-.theme-card {
+
+/* ============================================================
+   DRAWER WITHOUT FORM
+   ============================================================ */
+
+.drawer:not(:has(> form)) {
+    display:
+        grid;
+
+    grid-template-rows:
+        auto
+        minmax(0, 1fr)
+        auto;
+}
+
+
+/* ============================================================
+   FORM-BASED DRAWER
+   ============================================================ */
+
+.drawer > form {
+    width:
+        100%;
+
+    height:
+        calc(
+            100dvh - 86px
+        );
+
+    max-height:
+        calc(
+            100dvh - 86px
+        );
+
     min-height:
-        168px;
+        0;
+
+    display:
+        grid;
+
+    grid-template-rows:
+        minmax(0, 1fr)
+        auto;
+
+    overflow:
+        hidden;
 }
 
 
-.theme-card.active {
-    position: relative;
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.drawer-header {
+    position:
+        relative;
+
+    z-index:
+        30;
+
+    min-height:
+        86px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
+
+    padding:
+        18px 22px;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(64, 38, 64, 0.98),
+            rgba(38, 22, 39, 0.98)
+        );
+
+    border-bottom:
+        1px solid
+        rgba(201, 154, 79, 0.20);
+
+    box-shadow:
+        0 7px 18px
+        rgba(8, 2, 9, 0.18);
 }
 
 
-.theme-card.active::after {
-    content: "Selected";
+/* little bookish line */
+
+.drawer-header::after {
+    content:
+        "";
 
     position: absolute;
 
-    top: 17px;
-    right: 17px;
+    left:
+        22px;
+    right:
+        70px;
+
+    bottom:
+        8px;
+
+    height:
+        1px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            rgba(201, 154, 79, 0.42),
+            rgba(201, 154, 79, 0.08),
+            transparent
+        );
+
+    pointer-events:
+        none;
+}
+
+
+/* ============================================================
+   HEADER TEXT
+   ============================================================ */
+
+.drawer-header h2 {
+    margin:
+        2px 0 0;
+
+    color:
+        var(--october-warm-cream);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.85rem;
+
+    font-weight:
+        500;
+
+    letter-spacing:
+        -0.03em;
+
+    line-height:
+        1;
+}
+
+
+.drawer-eyebrow {
+    display:
+        block;
+
+    color:
+        var(--october-candlelight);
+
+    font-family:
+        var(--font-literary);
+
+    font-size:
+        0.52rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.17em;
+
+    text-transform:
+        uppercase;
+}
+
+
+/* ============================================================
+   CLOSE BUTTON
+   ============================================================ */
+
+.drawer-close {
+    flex:
+        0 0 auto;
+
+    width:
+        38px;
+
+    height:
+        38px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
 
     padding:
-        4px 7px;
+        0;
 
     border:
         1px solid
-        var(--border);
+        rgba(201, 154, 79, 0.22);
 
     border-radius:
-        999px;
+        8px;
 
     background:
-        var(--bg-2);
+
+        linear-gradient(
+            145deg,
+            rgba(91, 58, 107, 0.48),
+            rgba(31, 18, 32, 0.76)
+        );
 
     color:
-        var(--accent-light);
+        var(--october-warm-cream);
+
+    font-family:
+        var(--font-literary);
 
     font-size:
-        0.42rem;
+        1.28rem;
+
+    line-height:
+        1;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 150ms ease,
+        border-color 150ms ease,
+        background 150ms ease;
+}
+
+
+.drawer-close:hover {
+    transform:
+        rotate(3deg);
+
+    border-color:
+        rgba(239, 185, 108, 0.55);
+
+    background:
+        rgba(91, 58, 107, 0.60);
+}
+
+
+/* ============================================================
+   BODY
+   ============================================================ */
+
+.drawer-body {
+    min-height:
+        0;
+
+    overflow-y:
+        auto;
+
+    overflow-x:
+        hidden;
+
+    padding:
+        24px 22px 42px;
+
+    scrollbar-width:
+        thin;
+
+    scrollbar-color:
+        rgba(166, 116, 137, 0.60)
+        rgba(28, 15, 30, 0.70);
+
+    -webkit-overflow-scrolling:
+        touch;
+
+    overscroll-behavior:
+        contain;
+}
+
+
+.drawer > form > .drawer-body {
+    min-height:
+        0;
+
+    overflow-y:
+        auto;
+
+    overflow-x:
+        hidden;
+
+    padding-bottom:
+        52px;
+}
+
+
+.drawer-body::-webkit-scrollbar {
+    width:
+        8px;
+}
+
+
+.drawer-body::-webkit-scrollbar-track {
+    background:
+        rgba(16, 7, 18, 0.45);
+}
+
+
+.drawer-body::-webkit-scrollbar-thumb {
+    border:
+        2px solid
+        rgba(16, 7, 18, 0.45);
+
+    border-radius:
+        20px;
+
+    background:
+        rgba(166, 116, 137, 0.60);
+}
+
+
+/* ============================================================
+   DRAWER SECTION
+   ============================================================ */
+
+.drawer-section {
+    position:
+        relative;
+
+    margin-bottom:
+        22px;
+
+    padding:
+        20px;
+
+    border:
+        1px solid
+        rgba(201, 154, 79, 0.15);
+
+    border-radius:
+        13px;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(70, 41, 68, 0.40),
+            rgba(43, 25, 43, 0.53)
+        );
+
+    box-shadow:
+        inset 0 1px
+        rgba(255, 255, 255, 0.025),
+
+        0 8px 22px
+        rgba(7, 2, 9, 0.08);
+}
+
+
+.drawer-section:last-child {
+    margin-bottom:
+        0;
+}
+
+
+/* subtle paper-corner detail */
+
+.drawer-section::before {
+    content:
+        "✦";
+
+    position: absolute;
+
+    top:
+        11px;
+    right:
+        14px;
+
+    color:
+        rgba(201, 154, 79, 0.23);
+
+    font-size:
+        0.56rem;
+
+    pointer-events:
+        none;
+}
+
+
+/* ============================================================
+   SECTION HEADING
+   ============================================================ */
+
+.drawer-section-heading {
+    margin-bottom:
+        17px;
+
+    padding-right:
+        22px;
+}
+
+
+.drawer-section-heading h3 {
+    margin:
+        2px 0 0;
+
+    color:
+        var(--october-warm-cream);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1.38rem;
+
+    font-weight:
+        500;
+
+    letter-spacing:
+        -0.02em;
+}
+
+
+.drawer-section-heading p {
+    margin:
+        6px 0 0;
+
+    max-width:
+        480px;
+
+    color:
+        rgba(244, 232, 212, 0.53);
+
+    font-family:
+        var(--font-hand);
+
+    font-size:
+        0.82rem;
+
+    line-height:
+        1.3;
+}
+
+
+/* ============================================================
+   FIELD
+   ============================================================ */
+
+.field {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        7px;
+
+    margin-bottom:
+        15px;
+}
+
+
+.field:last-child {
+    margin-bottom:
+        0;
+}
+
+
+.field > span,
+.field > label {
+    color:
+        rgba(244, 232, 212, 0.76);
+
+    font-family:
+        var(--font-literary);
+
+    font-size:
+        0.61rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.045em;
+}
+
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+
+.drawer input[type="text"],
+.drawer input[type="email"],
+.drawer input[type="password"],
+.drawer input[type="number"],
+.drawer input[type="date"],
+.drawer input[type="url"],
+.drawer input[type="search"],
+.drawer select,
+.drawer textarea {
+    width:
+        100%;
+
+    min-height:
+        43px;
+
+    padding:
+        10px 12px;
+
+    border:
+        1px solid
+        rgba(91, 58, 107, 0.25);
+
+    border-radius:
+        8px;
+
+    outline:
+        0;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(255, 250, 240, 0.98),
+            rgba(239, 225, 204, 0.98)
+        );
+
+    color:
+        var(--october-ink);
+
+    font-family:
+        var(--font-literary);
+
+    font-size:
+        0.78rem;
+
+    box-shadow:
+        inset 0 1px 2px
+        rgba(70, 39, 59, 0.06);
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        background 150ms ease;
+}
+
+
+.drawer textarea {
+    min-height:
+        100px;
+
+    resize:
+        vertical;
+
+    line-height:
+        1.55;
+}
+
+
+.drawer input::placeholder,
+.drawer textarea::placeholder {
+    color:
+        rgba(59, 33, 77, 0.43);
+}
+
+
+.drawer input:focus,
+.drawer select:focus,
+.drawer textarea:focus {
+    border-color:
+        var(--october-dusty-mauve);
+
+    background:
+        #fff8ec;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(166, 116, 137, 0.15),
+
+        inset 0 1px 2px
+        rgba(70, 39, 59, 0.05);
+}
+
+
+/* ============================================================
+   FILE INPUT
+   ============================================================ */
+
+.drawer input[type="file"] {
+    width:
+        100%;
+
+    padding:
+        9px;
+
+    border:
+        1px dashed
+        rgba(201, 154, 79, 0.28);
+
+    border-radius:
+        9px;
+
+    background:
+        rgba(244, 232, 212, 0.06);
+
+    color:
+        rgba(244, 232, 212, 0.66);
+
+    font-family:
+        var(--font-literary);
+
+    font-size:
+        0.68rem;
+}
+
+
+.drawer input[type="file"]::file-selector-button {
+    margin-right:
+        10px;
+
+    padding:
+        7px 11px;
+
+    border:
+        1px solid
+        rgba(201, 154, 79, 0.27);
+
+    border-radius:
+        6px;
+
+    background:
+        rgba(91, 58, 107, 0.55);
+
+    color:
+        var(--october-warm-cream);
+
+    font-family:
+        var(--font-literary);
+
+    cursor:
+        pointer;
+}
+
+
+/* ============================================================
+   OLD COLOR INPUTS
+
+   books.js now adds swatches below these.
+   Keep native inputs available but visually secondary.
+   ============================================================ */
+
+.book-drawer input[type="color"] {
+    width:
+        100%;
+
+    height:
+        38px;
+
+    padding:
+        4px;
+
+    border:
+        1px solid
+        rgba(201, 154, 79, 0.16);
+
+    border-radius:
+        7px;
+
+    background:
+        rgba(244, 232, 212, 0.07);
+
+    opacity:
+        0.46;
+}
+
+
+/* ============================================================
+   FORM GRID
+   ============================================================ */
+
+.form-grid {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap:
+        0 13px;
+}
+
+
+.form-grid.three-column,
+.form-grid-3 {
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+}
+
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.drawer-footer {
+    position:
+        relative;
+
+    z-index:
+        50;
+
+    min-height:
+        72px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        flex-end;
+
+    gap:
+        10px;
+
+    padding:
+        14px 20px;
+
+    border-top:
+        1px solid
+        rgba(201, 154, 79, 0.19);
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(41, 24, 41, 0.98),
+            rgba(27, 15, 29, 0.99)
+        );
+
+    box-shadow:
+        0 -10px 28px
+        rgba(7, 2, 8, 0.18);
+}
+
+
+/* ============================================================
+   FOOTER BUTTONS
+   ============================================================ */
+
+.drawer-footer .primary-button,
+.drawer-footer .secondary-button {
+    min-width:
+        118px;
+
+    min-height:
+        41px;
+}
+
+
+/* ============================================================
+   DECORATION CHECKBOXES
+   ============================================================ */
+
+.decoration-options {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap:
+        8px;
+}
+
+
+.decoration-options label {
+    position:
+        relative;
+
+    cursor:
+        pointer;
+}
+
+
+.decoration-options input {
+    position:
+        absolute;
+
+    opacity:
+        0;
+
+    pointer-events:
+        none;
+}
+
+
+.decoration-options label > span {
+    min-height:
+        38px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        7px 8px;
+
+    border:
+        1px solid
+        rgba(201, 154, 79, 0.16);
+
+    border-radius:
+        8px;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(72, 42, 69, 0.42),
+            rgba(38, 22, 39, 0.52)
+        );
+
+    color:
+        rgba(244, 232, 212, 0.67);
+
+    font-family:
+        var(--font-literary);
+
+    font-size:
+        0.58rem;
+
+    text-align:
+        center;
+
+    transition:
+        transform 140ms ease,
+        color 140ms ease,
+        border-color 140ms ease,
+        background 140ms ease;
+}
+
+
+.decoration-options label:hover > span {
+    transform:
+        translateY(-1px);
+
+    border-color:
+        rgba(239, 185, 108, 0.35);
+
+    color:
+        var(--october-warm-cream);
+}
+
+
+.decoration-options input:checked + span {
+    border-color:
+        rgba(201, 154, 79, 0.62);
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(112, 67, 103, 0.78),
+            rgba(78, 43, 72, 0.85)
+        );
+
+    color:
+        var(--october-warm-cream);
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(255, 255, 255, 0.045),
+
+        0 5px 12px
+        rgba(9, 3, 10, 0.14);
+}
+
+
+/* ============================================================
+   DECORATION QUANTITY EDITOR
+   CREATED BY library.js v14
+   ============================================================ */
+
+.decoration-quantity-editor {
+    margin-top:
+        17px;
+
+    padding:
+        14px;
+
+    border:
+        1px solid
+        rgba(201, 154, 79, 0.17);
+
+    border-radius:
+        11px;
+
+    background:
+        rgba(24, 13, 26, 0.30);
+}
+
+
+/* ============================================================
+   QUANTITY HEADING
+   ============================================================ */
+
+.decoration-quantity-heading {
+    display:
+        flex;
+
+    align-items:
+        baseline;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    margin-bottom:
+        12px;
+}
+
+
+.decoration-quantity-heading strong {
+    color:
+        var(--october-warm-cream);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1rem;
+
+    font-weight:
+        500;
+}
+
+
+.decoration-quantity-heading span {
+    color:
+        var(--october-dusty-mauve);
+
+    font-family:
+        var(--font-hand);
+
+    font-size:
+        0.75rem;
+}
+
+
+/* ============================================================
+   QUANTITY ROW
+   ============================================================ */
+
+.decoration-quantity-row {
+    display:
+        grid;
+
+    grid-template-columns:
+        42px
+        minmax(0, 1fr)
+        30px
+        25px
+        30px;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    min-height:
+        50px;
+
+    padding:
+        5px 7px;
+
+    border-bottom:
+        1px solid
+        rgba(244, 232, 212, 0.055);
+
+    opacity:
+        0.62;
+
+    transition:
+        opacity 150ms ease,
+        background 150ms ease;
+}
+
+
+.decoration-quantity-row:last-child {
+    border-bottom:
+        0;
+}
+
+
+.decoration-quantity-row.is-selected {
+    opacity:
+        1;
+
+    background:
+        rgba(91, 58, 107, 0.11);
+}
+
+
+/* ============================================================
+   DECOR PREVIEW
+   ============================================================ */
+
+.decoration-quantity-preview {
+    width:
+        38px;
+
+    height:
+        38px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+}
+
+
+.decoration-quantity-preview svg {
+    width:
+        100%;
+
+    height:
+        100%;
+
+    overflow:
+        visible;
+}
+
+
+/* ============================================================
+   DECOR NAME
+   ============================================================ */
+
+.decoration-quantity-name {
+    color:
+        rgba(244, 232, 212, 0.82);
+
+    font-family:
+        var(--font-literary);
+
+    font-size:
+        0.63rem;
+
+    font-weight:
+        700;
+}
+
+
+/* ============================================================
+   DECOR COUNT BUTTONS
+   ============================================================ */
+
+.decoration-count-button {
+    width:
+        30px;
+
+    height:
+        30px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    padding:
+        0;
+
+    border:
+        1px solid
+        rgba(201, 154, 79, 0.22);
+
+    border-radius:
+        7px;
+
+    background:
+        rgba(91, 58, 107, 0.36);
+
+    color:
+        var(--october-warm-cream);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        1rem;
+
+    line-height:
+        1;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 130ms ease,
+        border-color 130ms ease,
+        background 130ms ease;
+}
+
+
+.decoration-count-button:hover {
+    transform:
+        translateY(-1px);
+
+    border-color:
+        var(--october-antique-gold);
+
+    background:
+        rgba(112, 67, 103, 0.70);
+}
+
+
+.decoration-count-value {
+    color:
+        var(--october-candlelight);
+
+    font-family:
+        var(--font-literary);
+
+    font-size:
+        0.72rem;
+
+    font-weight:
+        700;
+
+    text-align:
+        center;
+}
+
+
+/* ============================================================
+   BOOK THEME PICKERS
+   CREATED BY books.js v17
+   ============================================================ */
+
+.novellow-theme-picker,
+.novellow-font-picker {
+    margin:
+        10px 0 17px;
+
+    padding:
+        13px;
+
+    border:
+        1px solid
+        rgba(201, 154, 79, 0.15);
+
+    border-radius:
+        10px;
+
+    background:
+        rgba(24, 13, 26, 0.25);
+}
+
+
+.novellow-theme-picker-label {
+    display:
+        block;
+
+    margin-bottom:
+        10px;
+
+    color:
+        var(--october-dusty-mauve);
+
+    font-family:
+        var(--font-hand);
+
+    font-size:
+        0.82rem;
+
+    font-weight:
+        600;
+}
+
+
+/* ============================================================
+   BOOK COLOR OPTIONS
+   ============================================================ */
+
+.book-color-options,
+.book-accent-options,
+.book-text-color-options {
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        9px;
+}
+
+
+/* ============================================================
+   COLOR SWATCH
+   ============================================================ */
+
+.book-color-swatch {
+    position:
+        relative;
+
+    width:
+        37px;
+
+    height:
+        37px;
+
+    flex:
+        0 0 37px;
+
+    padding:
+        0;
+
+    border:
+        2px solid
+        rgba(244, 232, 212, 0.10);
+
+    border-radius:
+        9px;
+
+    background:
+        var(--swatch-color);
+
+    cursor:
+        pointer;
+
+    box-shadow:
+
+        inset
+        0 1px
+        rgba(255, 255, 255, 0.16),
+
+        inset
+        0 -3px
+        rgba(0, 0, 0, 0.10),
+
+        0 4px 8px
+        rgba(5, 1, 7, 0.12);
+
+    transition:
+        transform 140ms ease,
+        border-color 140ms ease,
+        box-shadow 140ms ease;
+}
+
+
+.book-color-swatch:hover {
+    transform:
+        translateY(-3px);
+
+    border-color:
+        rgba(244, 232, 212, 0.43);
+}
+
+
+/* ============================================================
+   SELECTED SWATCH
+   ============================================================ */
+
+.book-color-swatch.is-selected,
+.book-color-swatch[aria-pressed="true"] {
+    transform:
+        translateY(-2px);
+
+    border-color:
+        var(--october-warm-cream);
+
+    box-shadow:
+
+        0 0 0 2px
+        var(--october-dusty-mauve),
+
+        0 6px 12px
+        rgba(5, 1, 7, 0.20),
+
+        inset
+        0 1px
+        rgba(255, 255, 255, 0.18);
+}
+
+
+/* little selection diamond */
+
+.book-color-swatch.is-selected::after,
+.book-color-swatch[aria-pressed="true"]::after {
+    content:
+        "◆";
+
+    position: absolute;
+
+    right:
+        -5px;
+
+    bottom:
+        -6px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    width:
+        14px;
+
+    height:
+        14px;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--october-blackberry);
+
+    color:
+        var(--october-antique-gold);
+
+    font-size:
+        0.43rem;
+}
+
+
+/* ============================================================
+   BOOK FONT OPTIONS
+   ============================================================ */
+
+.book-font-options {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap:
+        8px;
+}
+
+
+/* ============================================================
+   FONT CARD
+   ============================================================ */
+
+.book-font-choice {
+    min-width:
+        0;
+
+    min-height:
+        69px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        flex-start;
+
+    justify-content:
+        center;
+
+    gap:
+        5px;
+
+    padding:
+        10px 11px;
+
+    border:
+        1px solid
+        rgba(201, 154, 79, 0.15);
+
+    border-radius:
+        9px;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(65, 38, 64, 0.45),
+            rgba(35, 20, 37, 0.64)
+        );
+
+    color:
+        var(--october-warm-cream);
+
+    text-align:
+        left;
+
+    cursor:
+        pointer;
+
+    overflow:
+        hidden;
+
+    transition:
+        transform 150ms ease,
+        border-color 150ms ease,
+        background 150ms ease,
+        box-shadow 150ms ease;
+}
+
+
+.book-font-choice:hover {
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(239, 185, 108, 0.37);
+}
+
+
+.book-font-choice.is-selected {
+    border-color:
+        rgba(201, 154, 79, 0.70);
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(112, 67, 103, 0.70),
+            rgba(72, 39, 68, 0.80)
+        );
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(255, 255, 255, 0.035),
+
+        0 6px 14px
+        rgba(7, 2, 8, 0.16);
+}
+
+
+/* ============================================================
+   FONT SAMPLE
+   ============================================================ */
+
+.book-font-choice-sample {
+    width:
+        100%;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--october-warm-cream);
+
+    font-size:
+        1rem;
+
+    line-height:
+        1.05;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+}
+
+
+.book-font-choice small {
+    color:
+        rgba(244, 232, 212, 0.47);
+
+    font-family:
+        var(--font-literary);
+
+    font-size:
+        0.47rem;
 
     font-weight:
         700;
@@ -130,618 +1620,768 @@
 }
 
 
-/* =========================================================
-   SETTINGS DRAWER
-   ========================================================= */
-
-.settings-drawer {
-    width:
-        min(620px, 100vw);
-}
-
-
-.settings-action-list {
-    align-items:
-        stretch;
-}
-
-
-.settings-action-list
-.secondary-button {
-    flex:
-        1 1 160px;
-}
-
-
-/* =========================================================
-   SHELF DRAWER
-   ========================================================= */
-
-.shelf-drawer {
-    width:
-        min(640px, 100vw);
-}
-
-
-.shelf-drawer
-.drawer-section {
-    position: relative;
-}
-
-
-.shelf-drawer
-.drawer-section-heading {
-    max-width:
-        520px;
-}
-
-
-/* =========================================================
-   SHELF FORM
-   ========================================================= */
-
-#shelfForm
-textarea {
-    min-height:
-        120px;
-}
-
-
-/* =========================================================
-   SHELF MATERIAL / MOOD GROUPS
-   ========================================================= */
-
-#shelfMaterial,
-#shelfMood,
-#shelfLayout,
-#shelfSort {
-    cursor: pointer;
-}
-
-
-/* =========================================================
-   DECORATION OPTIONS
-   ========================================================= */
-
-.decoration-options {
-    margin-top:
-        4px;
-}
-
-
-.decoration-options
-label {
-    position: relative;
-}
-
-
-.decoration-options
-label:has(input:checked) {
-    border-color:
-        var(--accent);
-
-    background:
-        var(--panel-2);
-
-    color:
-        var(--paper);
-}
-
-
-.decoration-options
-label:has(input:checked)::after {
-    content: "✓";
-
-    margin-left:
-        auto;
-
-    color:
-        var(--accent-light);
-
-    font-size:
-        0.68rem;
-
-    font-weight:
-        700;
-}
-
-
-/* =========================================================
-   BOOK DRAWER
-   ========================================================= */
-
-.book-drawer {
-    width:
-        min(820px, 100vw);
-}
-
-
-.book-drawer
-.drawer-body {
-    padding-bottom:
-        48px;
-}
-
-
-/* =========================================================
-   BOOK DRAWER SECTIONS
-   ========================================================= */
-
-.book-drawer
-.drawer-section {
-    position: relative;
-}
-
-
-.book-drawer
-.drawer-section + .drawer-section {
-    margin-top:
-        2px;
-}
-
-
-/* =========================================================
-   BOOK DESIGN SECTION
-   ========================================================= */
-
-.spine-design-section {
-    padding-top:
-        28px;
-}
-
+/* ============================================================
+   SPINE PREVIEW EDITOR
+   ============================================================ */
 
 .spine-editor {
     margin-top:
-        4px;
-}
+        16px;
 
+    padding:
+        14px;
 
-/* =========================================================
-   SPINE PREVIEW CARD
-   ========================================================= */
-
-.spine-preview-area {
-    position: sticky;
-
-    top: 0;
-
-    align-self:
-        start;
-
-    min-height:
-        360px;
-}
-
-
-.spine-preview-area::before {
-    content: "";
-
-    position: absolute;
-
-    left: 20%;
-    right: 20%;
-    bottom: 17px;
-
-    height: 18px;
+    border:
+        1px solid
+        rgba(201, 154, 79, 0.15);
 
     border-radius:
-        50%;
+        12px;
 
     background:
-        rgba(0, 0, 0, 0.18);
 
-    filter:
-        blur(10px);
+        linear-gradient(
+            180deg,
+            rgba(25, 13, 27, 0.42),
+            rgba(17, 9, 19, 0.28)
+        );
+}
+
+
+/* ============================================================
+   PREVIEW SVG ORNAMENTS
+   ============================================================ */
+
+.spine-ornament-svg {
+    width:
+        18px;
+
+    height:
+        18px;
+
+    display:
+        block;
+
+    overflow:
+        visible;
+
+    color:
+        var(--book-accent);
+}
+
+
+.spine-frame-svg {
+    position:
+        absolute;
+
+    z-index:
+        6;
+
+    inset:
+        4px 3px;
+
+    width:
+        calc(100% - 6px);
+
+    height:
+        calc(100% - 8px);
+
+    color:
+        var(--book-accent);
+
+    opacity:
+        0.72;
 
     pointer-events:
         none;
 }
 
 
-.spine-preview-book {
-    z-index: 2;
-}
+/* ============================================================
+   SVG INSIDE GENERATED COVER
+   ============================================================ */
 
+.generated-cover-ornament .spine-ornament-svg {
+    width:
+        27px;
 
-/* =========================================================
-   LIVE PREVIEW TITLE PANELS
-   ========================================================= */
-
-.preview-panel-simple {
-    background:
-        rgba(255, 255, 255, 0.08);
-
-    border-radius:
-        3px;
-}
-
-
-.preview-panel-bordered {
-    border:
-        1px solid
-        var(--book-accent);
-
-    border-radius:
-        3px;
-}
-
-
-.preview-panel-ornate {
-    border:
-        3px double
-        var(--book-accent);
-
-    border-radius:
-        4px;
-}
-
-
-.preview-panel-dark {
-    background:
-        rgba(0, 0, 0, 0.22);
-
-    border-radius:
-        3px;
-}
-
-
-.preview-panel-light {
-    background:
-        rgba(255, 255, 255, 0.16);
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.12);
-
-    border-radius:
-        3px;
-}
-
-
-/* =========================================================
-   BOOK DESIGN OPTIONS
-   ========================================================= */
-
-.spine-options
-.form-grid {
-    align-items:
-        start;
-}
-
-
-.spine-options
-.field {
-    min-width:
-        0;
-}
-
-
-/* =========================================================
-   COLOR INPUTS
-   ========================================================= */
-
-.color-field
-input[type="color"] {
     height:
-        48px;
+        27px;
 
+    margin:
+        0 auto;
+}
+
+
+/* ============================================================
+   RADIO CARD GRID
+   ============================================================ */
+
+.radio-card-grid {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap:
+        8px;
+}
+
+
+.radio-card-grid label {
+    position:
+        relative;
+
+    cursor:
+        pointer;
+}
+
+
+.radio-card-grid input {
+    position:
+        absolute;
+
+    opacity:
+        0;
+
+    pointer-events:
+        none;
+}
+
+
+.radio-card-grid label > span {
     min-height:
-        48px;
+        43px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
 
     padding:
-        4px;
+        8px;
+
+    border:
+        1px solid
+        rgba(201, 154, 79, 0.15);
+
+    border-radius:
+        8px;
+
+    background:
+        rgba(55, 31, 55, 0.50);
+
+    color:
+        rgba(244, 232, 212, 0.67);
+
+    font-family:
+        var(--font-literary);
+
+    font-size:
+        0.58rem;
+
+    text-align:
+        center;
+}
+
+
+.radio-card-grid input:checked + span {
+    border-color:
+        rgba(201, 154, 79, 0.58);
+
+    background:
+        rgba(91, 58, 107, 0.55);
+
+    color:
+        var(--october-warm-cream);
+}
+
+
+/* ============================================================
+   SETTINGS ROWS
+   ============================================================ */
+
+.setting-list {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        8px;
+}
+
+
+.setting-row {
+    min-height:
+        61px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        16px;
+
+    padding:
+        11px 13px;
+
+    border:
+        1px solid
+        rgba(201, 154, 79, 0.12);
 
     border-radius:
         9px;
 
     background:
-        var(--panel);
+        rgba(33, 18, 34, 0.30);
 }
 
 
-.color-field
-input[type="color"]::-webkit-color-swatch-wrapper {
-    padding: 0;
+.setting-row > span {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        3px;
 }
 
 
-.color-field
-input[type="color"]::-webkit-color-swatch {
+.setting-row strong {
+    color:
+        rgba(244, 232, 212, 0.88);
+
+    font-family:
+        var(--font-literary);
+
+    font-size:
+        0.66rem;
+}
+
+
+.setting-row small {
+    color:
+        rgba(244, 232, 212, 0.44);
+
+    font-family:
+        var(--font-hand);
+
+    font-size:
+        0.72rem;
+}
+
+
+/* ============================================================
+   CHECKBOX / TOGGLE
+   ============================================================ */
+
+.setting-row input[type="checkbox"] {
+    width:
+        36px;
+
+    height:
+        20px;
+
+    flex:
+        0 0 auto;
+
+    appearance:
+        none;
+
+    position:
+        relative;
+
     border:
-        0;
+        1px solid
+        rgba(201, 154, 79, 0.25);
 
     border-radius:
-        6px;
+        20px;
+
+    background:
+        rgba(17, 8, 18, 0.60);
+
+    cursor:
+        pointer;
+
+    transition:
+        background 150ms ease,
+        border-color 150ms ease;
 }
 
 
-.color-field
-input[type="color"]::-moz-color-swatch {
-    border:
-        0;
-
-    border-radius:
-        6px;
-}
-
-
-/* =========================================================
-   BOOK COVER UPLOAD
-   ========================================================= */
-
-#bookCoverUpload {
-    width: 100%;
-}
-
-
-.upload-field {
-    position: relative;
-
-    overflow: hidden;
-}
-
-
-.upload-field::before {
-    content: "Cover";
+.setting-row input[type="checkbox"]::before {
+    content:
+        "";
 
     position: absolute;
 
-    top: 10px;
-    left: 12px;
+    top:
+        3px;
 
-    color:
-        var(--muted-light);
+    left:
+        3px;
 
-    font-size:
-        0.45rem;
+    width:
+        12px;
 
-    font-weight:
-        700;
+    height:
+        12px;
 
-    letter-spacing:
-        0.12em;
+    border-radius:
+        50%;
 
-    text-transform:
-        uppercase;
+    background:
+        var(--october-warm-cream);
+
+    transition:
+        transform 150ms ease;
 }
 
 
-/* =========================================================
-   FORM SUBTLETIES
-   ========================================================= */
+.setting-row input[type="checkbox"]:checked {
+    border-color:
+        rgba(201, 154, 79, 0.55);
 
-.book-drawer
-.field input,
-.book-drawer
-.field select,
-.book-drawer
-.field textarea,
-.shelf-drawer
-.field input,
-.shelf-drawer
-.field select,
-.shelf-drawer
-.field textarea {
     background:
-        color-mix(
-            in srgb,
-            var(--bg-2) 92%,
-            black
+        var(--october-deep-plum);
+}
+
+
+.setting-row input[type="checkbox"]:checked::before {
+    transform:
+        translateX(16px);
+
+    background:
+        var(--october-candlelight);
+}
+
+
+/* ============================================================
+   SMALL HELPER TEXT
+   ============================================================ */
+
+.field-help,
+.form-help,
+.drawer-help {
+    margin-top:
+        4px;
+
+    color:
+        rgba(244, 232, 212, 0.42);
+
+    font-family:
+        var(--font-hand);
+
+    font-size:
+        0.73rem;
+
+    line-height:
+        1.3;
+}
+
+
+/* ============================================================
+   DIVIDER
+   ============================================================ */
+
+.drawer-divider {
+    height:
+        1px;
+
+    margin:
+        18px 0;
+
+    border:
+        0;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(201, 154, 79, 0.25),
+            transparent
         );
 }
 
 
-.book-drawer
-.field input:focus,
-.book-drawer
-.field select:focus,
-.book-drawer
-.field textarea:focus,
-.shelf-drawer
-.field input:focus,
-.shelf-drawer
-.field select:focus,
-.shelf-drawer
-.field textarea:focus {
-    background:
-        var(--panel);
-}
+/* ============================================================
+   BOOK DRAWER SPECIAL POLISH
+   ============================================================ */
 
-
-/* =========================================================
-   DRAWER SECTION DIVIDERS
-   ========================================================= */
-
-.book-drawer
-.drawer-section-heading,
-.shelf-drawer
-.drawer-section-heading,
-.settings-drawer
-.drawer-section-heading,
-.theme-drawer
-.drawer-section-heading {
-    position: relative;
-}
-
-
-.book-drawer
-.drawer-section-heading::after,
-.shelf-drawer
-.drawer-section-heading::after {
-    content: "";
-
-    display: block;
-
-    width: 34px;
-    height: 2px;
-
-    margin-top:
-        10px;
-
-    background:
-        var(--accent);
-
-    opacity:
-        0.65;
-}
-
-
-/* =========================================================
-   SAVE FOOTER
-   ========================================================= */
-
-.book-drawer
-.drawer-footer,
-.shelf-drawer
-.drawer-footer {
-    min-height:
-        72px;
-}
-
-
-.book-drawer
-.drawer-footer
-.primary-button,
-.shelf-drawer
-.drawer-footer
-.primary-button {
-    min-width:
-        130px;
-}
-
-
-/* =========================================================
-   INPUT STATES
-   ========================================================= */
-
-.drawer
-input:invalid:not(:placeholder-shown),
-.drawer
-textarea:invalid:not(:placeholder-shown) {
+.book-drawer .drawer-section:nth-of-type(1) {
     border-color:
-        rgba(186, 91, 91, 0.55);
+        rgba(166, 116, 137, 0.22);
 }
 
 
-/* =========================================================
-   SMALL HELP TEXT
-   ========================================================= */
-
-.drawer-help {
-    margin-top:
-        6px;
-
-    color:
-        var(--muted);
-
+.book-drawer .drawer-section-heading h3 {
     font-size:
-        0.54rem;
-
-    line-height:
-        1.5;
+        1.48rem;
 }
 
 
-/* =========================================================
-   MOBILE
-   ========================================================= */
+/* ============================================================
+   SHELF DRAWER SPECIAL POLISH
+   ============================================================ */
 
-@media (max-width: 700px) {
+.shelf-drawer .drawer-section:last-child {
+    border-color:
+        rgba(167, 142, 184, 0.21);
+}
 
-    .theme-drawer,
-    .settings-drawer,
-    .shelf-drawer,
-    .book-drawer {
+
+/* ============================================================
+   OVERLAY SAFETY
+   ============================================================ */
+
+body.modal-open {
+    overflow:
+        hidden;
+}
+
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media
+(max-width: 760px) {
+
+    .drawer {
         width:
+            min(
+                100vw,
+                560px
+            );
+    }
+
+
+    .book-drawer,
+    .shelf-drawer,
+    .theme-drawer,
+    .settings-drawer {
+        --drawer-width:
             100vw;
     }
 
 
-    .theme-card {
+    .drawer-header {
         min-height:
-            auto;
+            78px;
+
+        padding:
+            15px 16px;
     }
 
 
-    .theme-card.active::after {
-        top:
-            14px;
-
-        right:
-            14px;
+    .drawer-header::after {
+        left:
+            16px;
     }
 
 
-    .spine-preview-area {
-        position: relative;
-
-        top: auto;
-
-        min-height:
-            300px;
+    .drawer-header h2 {
+        font-size:
+            1.65rem;
     }
 
 
-    .book-drawer
+    .drawer > form {
+        height:
+            calc(
+                100dvh - 78px
+            );
+
+        max-height:
+            calc(
+                100dvh - 78px
+            );
+    }
+
+
     .drawer-body {
-        padding-bottom:
-            36px;
+        padding:
+            18px 14px 38px;
     }
 
 
-    .book-drawer
-    .drawer-footer,
-    .shelf-drawer
+    .drawer-section {
+        padding:
+            16px;
+
+        margin-bottom:
+            16px;
+    }
+
+
+    .form-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .form-grid.three-column,
+    .form-grid-3 {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .decoration-options {
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(0, 1fr)
+            );
+    }
+
+
+    .book-font-options {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+
     .drawer-footer {
         min-height:
-            64px;
+            68px;
+
+        padding:
+            11px 14px;
     }
 
 }
 
 
-/* =========================================================
+/* ============================================================
    SMALL MOBILE
-   ========================================================= */
+   ============================================================ */
 
-@media (max-width: 430px) {
+@media
+(max-width: 480px) {
 
-    .drawer-header::after {
-        left:
-            16px;
+    .drawer-header {
+        min-height:
+            72px;
 
-        right:
-            16px;
+        padding:
+            13px 13px;
     }
 
 
-    .book-drawer
-    .drawer-section-heading::after,
-    .shelf-drawer
-    .drawer-section-heading::after {
-        width:
-            26px;
+    .drawer-header h2 {
+        font-size:
+            1.48rem;
     }
 
 
-    .settings-action-list {
+    .drawer > form {
+        height:
+            calc(
+                100dvh - 72px
+            );
+
+        max-height:
+            calc(
+                100dvh - 72px
+            );
+    }
+
+
+    .drawer-body {
+        padding:
+            14px 10px 34px;
+    }
+
+
+    .drawer-section {
+        padding:
+            14px 12px;
+
+        border-radius:
+            10px;
+    }
+
+
+    .drawer-section-heading h3 {
+        font-size:
+            1.23rem;
+    }
+
+
+    .decoration-options {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+
+    .decoration-quantity-heading {
         flex-direction:
             column;
+
+        align-items:
+            flex-start;
+
+        gap:
+            3px;
     }
 
 
-    .settings-action-list
-    .secondary-button {
-        width: 100%;
+    .decoration-quantity-row {
+        grid-template-columns:
+            35px
+            minmax(0, 1fr)
+            28px
+            22px
+            28px;
 
-        flex:
-            none;
+        gap:
+            5px;
     }
 
 
-    .spine-preview-area {
+    .decoration-quantity-preview {
+        width:
+            32px;
+
+        height:
+            32px;
+    }
+
+
+    .decoration-count-button {
+        width:
+            28px;
+
+        height:
+            28px;
+    }
+
+
+    .book-font-options {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .book-font-choice {
         min-height:
-            275px;
+            62px;
     }
 
+
+    .book-color-swatch {
+        width:
+            34px;
+
+        height:
+            34px;
+
+        flex-basis:
+            34px;
+    }
+
+
+    .radio-card-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .drawer-footer {
+        display:
+            grid;
+
+        grid-template-columns:
+            1fr 1fr;
+
+        gap:
+            8px;
+    }
+
+
+    .drawer-footer .primary-button,
+    .drawer-footer .secondary-button {
+        width:
+            100%;
+
+        min-width:
+            0;
+    }
+
+}
+
+
+/* ============================================================
+   VERY SMALL MOBILE
+   ============================================================ */
+
+@media
+(max-width: 350px) {
+
+    .drawer-footer {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .decoration-options {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+body.reduce-motion
+.drawer * {
+    transition:
+        none !important;
+}
+
+
+@media
+(prefers-reduced-motion: reduce) {
+
+    .drawer * {
+        transition:
+            none !important;
+    }
+
+}
+
+
+/* ============================================================
+   HIDDEN
+   ============================================================ */
+
+.drawer [hidden] {
+    display:
+        none !important;
 }
