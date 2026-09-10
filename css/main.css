@@ -2630,3 +2630,114 @@ textarea:focus {
     animation-iteration-count:
         1 !important;
 }
+/* ============================================================
+   DRAWER SCROLL FIX
+   Form drawers + standard drawers
+   ============================================================ */
+
+.drawer {
+    height: 100vh !important;
+    height: 100dvh !important;
+
+    max-height: 100vh !important;
+    max-height: 100dvh !important;
+
+    overflow: hidden !important;
+}
+
+
+/* ============================================================
+   DRAWERS WITHOUT DIRECT FORMS
+   ============================================================ */
+
+.drawer:not(:has(> form)) {
+    display: grid !important;
+
+    grid-template-rows:
+        auto
+        minmax(0, 1fr)
+        auto !important;
+}
+
+
+.drawer:not(:has(> form)) > .drawer-body {
+    min-height: 0 !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    -webkit-overflow-scrolling: touch;
+
+    overscroll-behavior: contain;
+}
+
+
+/* ============================================================
+   FORM DRAWERS
+   Includes Create a Book / Edit Book
+   ============================================================ */
+
+.drawer > form {
+    width: 100% !important;
+
+    height: 100% !important;
+
+    min-height: 0 !important;
+
+    display: grid !important;
+
+    grid-template-rows:
+        minmax(0, 1fr)
+        auto !important;
+
+    overflow: hidden !important;
+}
+
+
+/* ============================================================
+   FORM HEIGHT
+   Leaves room for drawer header
+   ============================================================ */
+
+.drawer:has(> form) > form {
+    height: calc(100dvh - 86px) !important;
+
+    max-height: calc(100dvh - 86px) !important;
+}
+
+
+/* ============================================================
+   SCROLLABLE FORM BODY
+   ============================================================ */
+
+.drawer > form > .drawer-body {
+    min-height: 0 !important;
+
+    height: auto !important;
+
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+
+    -webkit-overflow-scrolling: touch;
+
+    overscroll-behavior-y: contain;
+
+    padding-bottom: 40px;
+}
+
+
+/* ============================================================
+   FIXED FORM FOOTER
+   ============================================================ */
+
+.drawer > form > .drawer-footer {
+    position: relative !important;
+
+    flex: none !important;
+
+    min-height: 70px;
+
+    background: var(--panel);
+
+    z-index: 20;
+}
