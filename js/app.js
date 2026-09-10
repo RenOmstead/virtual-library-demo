@@ -1,18 +1,21 @@
-/* =========================================================
+/* ============================================================
    NOVELLOW
    APP.JS
    VERSION 13
 
    Application startup
-   Global state
+   Shared state
    Navigation
-   Theme/settings controller
-   Drawer + overlay management
+   Settings
    Local cache
-   Supabase library sync
-   Legacy library migration
-   Import/export
-   ========================================================= */
+   Supabase hydration
+   Supabase persistence coordination
+   Import / export
+
+   IMPORTANT:
+   localStorage is now a CACHE.
+   Supabase is the signed-in source of truth.
+   ============================================================ */
 
 
 (() => {
@@ -20,9 +23,9 @@
     "use strict";
 
 
-    /* =====================================================
-       CONFIG / HELPERS
-       ===================================================== */
+    /* ========================================================
+       CONFIG / GLOBALS
+       ======================================================== */
 
     const CONFIG =
         window.NOVELLOW_CONFIG ||
@@ -43,9 +46,14 @@
         {};
 
 
-    /* =====================================================
-       GLOBAL STATE
-       ===================================================== */
+    const STORAGE =
+        CONFIG.storageKeys ||
+        {};
+
+
+    /* ========================================================
+       STATE
+       ======================================================== */
 
     Novellow.state =
         Novellow.state ||
@@ -53,8 +61,11 @@
         {
 
             shelves: [],
+
             books: [],
+
             quotes: [],
+
             vocabulary: [],
 
             settings: {
@@ -70,8 +81,11 @@
             },
 
             selectedBookId: null,
+
             selectedJournalSection: null,
+
             currentSection: "library",
+
             pendingCoverData: ""
 
         };
@@ -81,18 +95,13 @@
         Novellow.state;
 
 
-    /* =====================================================
-       STORAGE KEYS
-       ===================================================== */
+    /* ========================================================
+       CLOUD STATE
+       ======================================================== */
 
-    const STORAGE =
-        CONFIG.storageKeys ||
-        {};
+    let initialized =
+        false;
 
-
-    /* =====================================================
-       CLOUD SYNC STATE
-       ===================================================== */
 
     let cloudReady =
         false;
@@ -102,29 +111,79 @@
         false;
 
 
-    let suppressCloudSync =
-        false;
-
-
-    let activeCloudUserId =
+    let activeUserId =
         null;
 
 
-    let cloudSyncTimer =
-        null;
+    let saveQueue =
+        Promise.resolve();
 
 
-    const pendingCloudSync =
-        new Set();
+    /*
+       These snapshots let us detect deletes.
+
+       Example:
+
+       Supabase knows about:
+       A, B, C
+
+       Local state now contains:
+       A, B
+
+       saveBooks() knows C was removed and can delete it
+       from Supabase instead of merely failing to upsert it.
+    */
+
+    const cloudIds = {
+
+        shelves:
+            new Set(),
+
+        books:
+            new Set(),
+
+        quotes:
+            new Set(),
+
+        vocabulary:
+            new Set()
+
+    };
 
 
-    const LOCAL_OWNER_KEY =
-        "novellow_local_owner_id";
+    /* ========================================================
+       AUTH EVENT LISTENER
+
+       auth.js dispatches this after a user signs in or an
+       existing session has been restored.
+       ======================================================== */
+
+    document.addEventListener(
+        "novellow:user-ready",
+        event => {
+
+            const user =
+                event.detail?.user ||
+                Novellow.currentUser ||
+                null;
 
 
-    /* =====================================================
-       STARTUP
-       ===================================================== */
+            if (!user) {
+                return;
+            }
+
+
+            hydrateSignedInUser(
+                user
+            );
+
+        }
+    );
+
+
+    /* ========================================================
+       DOM READY
+       ======================================================== */
 
     document.addEventListener(
         "DOMContentLoaded",
@@ -134,13 +193,34 @@
 
     function initialize() {
 
+        if (initialized) {
+            return;
+        }
+
+
+        initialized =
+            true;
+
+
         hideInitialTransientUI();
+
 
         migrateLegacyData();
 
-        loadState();
+
+        /*
+           Load the browser cache immediately so Novellow
+           doesn't flash empty while Supabase responds.
+
+           IMPORTANT:
+           We do NOT upload this data here.
+        */
+
+        loadLocalCache();
+
 
         applySettings();
+
 
         bindNavigation();
 
@@ -152,22 +232,41 @@
 
         bindImportExport();
 
-        bindCloudLibrary();
 
         initializeFeatureModules();
 
+
         renderEverything();
+
 
         restoreCurrentSection();
 
-        finishLoading();
+
+        /*
+           auth.js may already have restored a user before
+           this point.
+        */
+
+        if (
+            Novellow.currentUser
+        ) {
+
+            hydrateSignedInUser(
+                Novellow.currentUser
+            );
+
+        } else {
+
+            finishLoading();
+
+        }
 
     }
 
 
-    /* =====================================================
+    /* ========================================================
        INITIAL UI SAFETY
-       ===================================================== */
+       ======================================================== */
 
     function hideInitialTransientUI() {
 
@@ -175,7 +274,6 @@
             "overlay",
             "themeDrawer",
             "settingsDrawer",
-            "profileDrawer",
             "shelfDrawer",
             "bookDrawer",
             "bookReveal",
@@ -184,23 +282,28 @@
             "quoteModal",
             "wordModal"
         ].forEach(
-            id =>
+            id => {
+
                 H.hide?.(
                     id
-                )
+                );
+
+            }
         );
 
 
-        document.body.classList.remove(
-            "modal-open"
-        );
+        document.body
+            .classList
+            .remove(
+                "modal-open"
+            );
 
     }
 
 
-    /* =====================================================
-       LEGACY STORAGE MIGRATION
-       ===================================================== */
+    /* ========================================================
+       LEGACY MIGRATION
+       ======================================================== */
 
     function migrateLegacyData() {
 
@@ -219,16 +322,11 @@
     }
 
 
-    /* =====================================================
-       LOAD LOCAL STATE
+    /* ========================================================
+       LOCAL CACHE
+       ======================================================== */
 
-       Local storage is now a cache.
-
-       Once authentication is ready, the user's Supabase
-       library replaces this state.
-       ===================================================== */
-
-    function loadState() {
+    function loadLocalCache() {
 
         const rawShelves =
             H.readStorage?.(
@@ -271,35 +369,27 @@
 
 
         state.shelves =
-            H.normalizeCollection?.(
-                rawShelves,
-                H.normalizeShelf
-            ) ||
-            [];
+            normalizeShelves(
+                rawShelves
+            );
 
 
         state.books =
-            H.normalizeCollection?.(
-                rawBooks,
-                H.normalizeBook
-            ) ||
-            [];
+            normalizeBooks(
+                rawBooks
+            );
 
 
         state.quotes =
-            H.normalizeCollection?.(
-                rawQuotes,
-                H.normalizeQuote
-            ) ||
-            [];
+            normalizeQuotes(
+                rawQuotes
+            );
 
 
         state.vocabulary =
-            H.normalizeCollection?.(
-                rawVocabulary,
-                H.normalizeWord
-            ) ||
-            [];
+            normalizeVocabulary(
+                rawVocabulary
+            );
 
 
         state.settings =
@@ -311,64 +401,347 @@
             };
 
 
-        writeLocalCache();
+        /*
+           Local cache is rewritten only locally.
+
+           This keeps normalization changes without sending
+           potentially stale browser data to Supabase before
+           the account has been hydrated.
+        */
+
+        cacheEverything();
 
     }
 
 
-    /* =====================================================
-       CLOUD AUTH CONNECTION
-       ===================================================== */
+    /* ========================================================
+       NORMALIZATION
+       ======================================================== */
 
-    function bindCloudLibrary() {
+    function normalizeShelves(
+        collection
+    ) {
 
-        document.addEventListener(
-            "novellow:user-ready",
-            event => {
-
-                const user =
-                    event.detail?.user ||
-                    Novellow.currentUser;
-
-
-                if (!user?.id) {
-
-                    return;
-
-                }
+        const values =
+            Array.isArray(
+                collection
+            )
+                ? collection
+                : [];
 
 
-                loadCloudLibraryForUser(
-                    user
-                );
-
-            }
+        return (
+            H.normalizeCollection?.(
+                values.map(
+                    fromCloudShelf
+                ),
+                H.normalizeShelf
+            ) ||
+            values.map(
+                fromCloudShelf
+            )
         );
 
+    }
 
-        /*
-           Handles the rare case where auth completed before
-           this module finished initializing.
-        */
+
+    function normalizeBooks(
+        collection
+    ) {
+
+        const values =
+            Array.isArray(
+                collection
+            )
+                ? collection
+                : [];
+
+
+        return (
+            H.normalizeCollection?.(
+                values.map(
+                    fromCloudBook
+                ),
+                H.normalizeBook
+            ) ||
+            values.map(
+                fromCloudBook
+            )
+        );
+
+    }
+
+
+    function normalizeQuotes(
+        collection
+    ) {
+
+        const values =
+            Array.isArray(
+                collection
+            )
+                ? collection
+                : [];
+
+
+        return (
+            H.normalizeCollection?.(
+                values.map(
+                    fromCloudQuote
+                ),
+                H.normalizeQuote
+            ) ||
+            values.map(
+                fromCloudQuote
+            )
+        );
+
+    }
+
+
+    function normalizeVocabulary(
+        collection
+    ) {
+
+        const values =
+            Array.isArray(
+                collection
+            )
+                ? collection
+                : [];
+
+
+        return (
+            H.normalizeCollection?.(
+                values.map(
+                    fromCloudVocabulary
+                ),
+                H.normalizeWord
+            ) ||
+            values.map(
+                fromCloudVocabulary
+            )
+        );
+
+    }
+
+
+    /* ========================================================
+       CLOUD RECORD → APP RECORD
+
+       The Supabase helper may already transform these.
+       These functions make app.js tolerant of either
+       camelCase or snake_case records.
+       ======================================================== */
+
+    function fromCloudShelf(
+        row
+    ) {
 
         if (
-            Novellow.currentUser?.id
+            !row ||
+            typeof row !==
+                "object"
         ) {
 
-            loadCloudLibraryForUser(
-                Novellow.currentUser
-            );
+            return row;
 
         }
 
+
+        return {
+
+            ...row,
+
+            id:
+                row.id,
+
+            userId:
+                row.userId ??
+                row.user_id,
+
+            createdAt:
+                row.createdAt ??
+                row.created_at,
+
+            updatedAt:
+                row.updatedAt ??
+                row.updated_at,
+
+            decorations:
+                row.decorations ??
+                row.decoration_data ??
+                []
+
+        };
+
     }
 
 
-    /* =====================================================
-       LOAD CLOUD LIBRARY FOR USER
-       ===================================================== */
+    function fromCloudBook(
+        row
+    ) {
 
-    async function loadCloudLibraryForUser(
+        if (
+            !row ||
+            typeof row !==
+                "object"
+        ) {
+
+            return row;
+
+        }
+
+
+        /*
+           Some versions of the Supabase layer may store
+           advanced book styling inside a JSON object.
+
+           Flatten it back into the book so books.js sees
+           exactly the properties it expects.
+        */
+
+        const design =
+            row.design ||
+            row.spine_design ||
+            row.design_data ||
+            {};
+
+
+        return {
+
+            ...row,
+
+            ...(
+                design &&
+                typeof design ===
+                    "object"
+                    ? design
+                    : {}
+            ),
+
+            id:
+                row.id,
+
+            userId:
+                row.userId ??
+                row.user_id,
+
+            shelfId:
+                row.shelfId ??
+                row.shelf_id ??
+                "",
+
+            createdAt:
+                row.createdAt ??
+                row.created_at,
+
+            updatedAt:
+                row.updatedAt ??
+                row.updated_at,
+
+            startedAt:
+                row.startedAt ??
+                row.started_at,
+
+            finishedAt:
+                row.finishedAt ??
+                row.finished_at
+
+        };
+
+    }
+
+
+    function fromCloudQuote(
+        row
+    ) {
+
+        if (
+            !row ||
+            typeof row !==
+                "object"
+        ) {
+
+            return row;
+
+        }
+
+
+        return {
+
+            ...row,
+
+            bookId:
+                row.bookId ??
+                row.book_id ??
+                row.book ??
+                "",
+
+            userId:
+                row.userId ??
+                row.user_id,
+
+            createdAt:
+                row.createdAt ??
+                row.created_at,
+
+            updatedAt:
+                row.updatedAt ??
+                row.updated_at
+
+        };
+
+    }
+
+
+    function fromCloudVocabulary(
+        row
+    ) {
+
+        if (
+            !row ||
+            typeof row !==
+                "object"
+        ) {
+
+            return row;
+
+        }
+
+
+        return {
+
+            ...row,
+
+            bookId:
+                row.bookId ??
+                row.book_id ??
+                row.book ??
+                "",
+
+            userId:
+                row.userId ??
+                row.user_id,
+
+            createdAt:
+                row.createdAt ??
+                row.created_at,
+
+            updatedAt:
+                row.updatedAt ??
+                row.updated_at
+
+        };
+
+    }
+
+
+    /* ========================================================
+       SIGNED-IN CLOUD HYDRATION
+       ======================================================== */
+
+    async function hydrateSignedInUser(
         user
     ) {
 
@@ -378,36 +751,21 @@
         ) {
 
             return;
-
         }
 
 
+        /*
+           If the same account has already been hydrated,
+           do not unnecessarily reload it on TOKEN_REFRESHED.
+        */
+
         if (
             cloudReady &&
-            activeCloudUserId ===
+            activeUserId ===
                 user.id
         ) {
 
             return;
-
-        }
-
-
-        const supabase =
-            Novellow.supabase;
-
-
-        if (
-            typeof supabase?.loadLibrary !==
-            "function"
-        ) {
-
-            console.warn(
-                "Novellow cloud library is not available."
-            );
-
-            return;
-
         }
 
 
@@ -415,138 +773,205 @@
             true;
 
 
-        cloudReady =
-            false;
+        activeUserId =
+            user.id;
 
 
         try {
 
-            prepareLocalCacheForUser(
-                user.id
+            console.info(
+                "Novellow: loading library from Supabase..."
             );
 
 
-            let remote =
-                await supabase
-                    .loadLibrary();
+            const localBeforeCloud = {
+
+                shelves:
+                    clone(
+                        state.shelves
+                    ),
+
+                books:
+                    clone(
+                        state.books
+                    ),
+
+                quotes:
+                    clone(
+                        state.quotes
+                    ),
+
+                vocabulary:
+                    clone(
+                        state.vocabulary
+                    ),
+
+                settings:
+                    clone(
+                        state.settings
+                    )
+
+            };
 
 
-            const localHasContent =
-                hasLocalLibraryContent();
+            const cloud =
+                await loadCloudLibrary();
 
 
-            const remoteHasContent =
-                hasRemoteLibraryContent(
-                    remote
+            const cloudShelves =
+                normalizeShelves(
+                    cloud.shelves
                 );
 
 
-            const migrationKey =
-                getMigrationKey(
-                    user.id
+            const cloudBooks =
+                normalizeBooks(
+                    cloud.books
                 );
 
 
-            const alreadyMigrated =
-                localStorage.getItem(
-                    migrationKey
-                ) ===
-                "1";
+            const cloudQuotes =
+                normalizeQuotes(
+                    cloud.quotes
+                );
+
+
+            const cloudVocabulary =
+                normalizeVocabulary(
+                    cloud.vocabulary
+                );
+
+
+            rememberCloudIds(
+                cloudShelves,
+                cloudBooks,
+                cloudQuotes,
+                cloudVocabulary
+            );
 
 
             /*
-               FIRST CLOUD MIGRATION
+               Keep cloud records AND any browser-only records.
 
-               If:
-               - this account has no cloud library yet
-               - this browser has an existing Novellow library
-               - we have never migrated it for this user
+               This matters right now because a book that was
+               created while the broken local-only app.js was
+               active may exist in localStorage but not yet in
+               Supabase.
 
-               then claim the local library for this account.
+               We do not want hydration to make it disappear.
+            */
+
+            const migration =
+                prepareLocalCloudMerge(
+                    {
+
+                        localShelves:
+                            localBeforeCloud
+                                .shelves,
+
+                        localBooks:
+                            localBeforeCloud
+                                .books,
+
+                        cloudShelves,
+
+                        cloudBooks
+
+                    }
+                );
+
+
+            state.shelves =
+                mergeCollections(
+                    cloudShelves,
+                    migration.localShelves
+                );
+
+
+            state.books =
+                mergeCollections(
+                    cloudBooks,
+                    migration.localBooks
+                );
+
+
+            state.quotes =
+                mergeCollections(
+                    cloudQuotes,
+                    localBeforeCloud
+                        .quotes
+                );
+
+
+            state.vocabulary =
+                mergeCollections(
+                    cloudVocabulary,
+                    localBeforeCloud
+                        .vocabulary
+                );
+
+
+            /*
+               Supabase settings win when they exist.
+
+               Otherwise keep the locally cached settings.
             */
 
             if (
-                !remoteHasContent &&
-                localHasContent &&
-                !alreadyMigrated
+                cloud.settings &&
+                Object.keys(
+                    cloud.settings
+                ).length
             ) {
 
-                H.showToast?.(
-                    "Moving this library into your Novellow account...",
-                    "success"
-                );
+                state.settings =
+                    H.normalizeSettings?.(
+                        cloud.settings
+                    ) ||
+                    cloud.settings;
 
+            } else {
 
-                await migrateLocalLibraryToCloud(
-                    user.id
-                );
-
-
-                localStorage.setItem(
-                    migrationKey,
-                    "1"
-                );
-
-
-                remote =
-                    await supabase
-                        .loadLibrary();
+                state.settings =
+                    H.normalizeSettings?.(
+                        localBeforeCloud
+                            .settings
+                    ) ||
+                    localBeforeCloud
+                        .settings;
 
             }
-
-
-            /*
-               Once migration is complete, Supabase becomes
-               the source of truth.
-            */
-
-            suppressCloudSync =
-                true;
-
-
-            hydrateStateFromCloud(
-                remote
-            );
-
-
-            writeLocalCache();
-
-
-            suppressCloudSync =
-                false;
-
-
-            activeCloudUserId =
-                user.id;
 
 
             cloudReady =
                 true;
 
 
-            localStorage.setItem(
-                LOCAL_OWNER_KEY,
-                user.id
-            );
+            cacheEverything();
 
 
             applySettings();
 
+
             renderEverything();
+
 
             restoreCurrentSection();
 
 
-            document.dispatchEvent(
-                new CustomEvent(
-                    "novellow:library-ready",
-                    {
-                        detail: {
-                            user,
-                            state
-                        }
-                    }
-                )
+            /*
+               Upload browser-only items that were created while
+               cloud persistence was unavailable.
+
+               This runs AFTER cloudReady so storage operations
+               are allowed to synchronize.
+            */
+
+            await synchronizeAllToCloud();
+
+
+            console.info(
+                `Novellow: Supabase synced ${state.shelves.length} shelves and ${state.books.length} books.`
             );
 
 
@@ -557,18 +982,25 @@
 
         } catch (error) {
 
-            suppressCloudSync =
-                false;
-
-
             console.error(
-                "Novellow could not load the cloud library.",
+                "Novellow Supabase hydration failed:",
                 error
             );
 
 
+            /*
+               Keep the local cache visible.
+
+               A temporary network failure should never make
+               the library vanish.
+            */
+
+            cloudReady =
+                false;
+
+
             H.showToast?.(
-                "Cloud sync failed. Your browser copy is still available.",
+                "Novellow is using the local library cache. Cloud sync could not finish.",
                 "error"
             );
 
@@ -577,258 +1009,215 @@
             cloudLoading =
                 false;
 
+
+            finishLoading();
+
         }
 
     }
 
 
-    /* =====================================================
-       LOCAL CACHE OWNERSHIP
+    /* ========================================================
+       LOAD CLOUD LIBRARY
+       ======================================================== */
 
-       Prevents User B from inheriting User A's browser cache.
-       ===================================================== */
+    async function loadCloudLibrary() {
 
-    function prepareLocalCacheForUser(
-        userId
-    ) {
+        const api =
+            Novellow.supabase;
 
-        const ownerId =
-            localStorage.getItem(
-                LOCAL_OWNER_KEY
+
+        if (!api) {
+
+            throw new Error(
+                "Supabase helper is unavailable."
             );
+
+        }
 
 
         /*
-           No owner means this is legacy pre-account data.
-           The first account can claim it.
-
-           A DIFFERENT owner means this cache belongs to a
-           different account and must never be migrated.
+           Prefer one consolidated request if supabase.js
+           exposes it.
         */
 
         if (
-            ownerId &&
-            ownerId !== userId
-        ) {
-
-            state.shelves =
-                [];
-
-
-            state.books =
-                [];
-
-
-            state.quotes =
-                [];
-
-
-            state.vocabulary =
-                [];
-
-
-            state.settings =
-                H.normalizeSettings?.(
-                    {}
-                ) ||
-                {
-                    ...CONFIG.defaultSettings
-                };
-
-
-            state.selectedBookId =
-                null;
-
-
-            state.selectedJournalSection =
-                null;
-
-
-            state.pendingCoverData =
-                "";
-
-
-            suppressCloudSync =
-                true;
-
-
-            writeLocalCache();
-
-
-            suppressCloudSync =
-                false;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       MIGRATION MARKER
-       ===================================================== */
-
-    function getMigrationKey(
-        userId
-    ) {
-
-        return (
-            `novellow_supabase_migrated_${userId}`
-        );
-
-    }
-
-
-    /* =====================================================
-       LIBRARY EXISTENCE
-       ===================================================== */
-
-    function hasLocalLibraryContent() {
-
-        return Boolean(
-            state.shelves.length ||
-            state.books.length ||
-            state.quotes.length ||
-            state.vocabulary.length
-        );
-
-    }
-
-
-    function hasRemoteLibraryContent(
-        remote
-    ) {
-
-        return Boolean(
-            remote?.shelves?.length ||
-            remote?.books?.length ||
-            remote?.quotes?.length ||
-            remote?.vocabulary?.length ||
-            remote?.journalEntries?.length
-        );
-
-    }
-
-
-    /* =====================================================
-       UUID UTILITIES
-
-       Supabase uses UUID primary keys.
-       Older Shelfmark / Novellow local records may not.
-       ===================================================== */
-
-    function isUUID(
-        value
-    ) {
-
-        return (
-            /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-                .test(
-                    String(
-                        value ||
-                        ""
-                    )
-                )
-        );
-
-    }
-
-
-    function createUUID() {
-
-        if (
-            window.crypto &&
-            typeof window.crypto.randomUUID ===
+            typeof api.loadLibrary ===
                 "function"
         ) {
 
-            return window.crypto
-                .randomUUID();
+            const result =
+                await api.loadLibrary();
+
+
+            return {
+
+                shelves:
+                    result?.shelves ||
+                    [],
+
+                books:
+                    result?.books ||
+                    [],
+
+                quotes:
+                    result?.quotes ||
+                    [],
+
+                vocabulary:
+                    result?.vocabulary ||
+                    [],
+
+                settings:
+                    result?.settings ||
+                    {}
+
+            };
 
         }
 
 
-        return (
-            "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
-        ).replace(
-            /[xy]/g,
-            character => {
+        /*
+           Compatibility with the individual CRUD functions
+           in the current Supabase helper.
+        */
 
-                const random =
-                    Math.random() *
-                        16 |
-                    0;
+        const [
+            shelves,
+            books,
+            quotes,
+            vocabulary,
+            settings
+        ] =
+            await Promise.all([
+
+                api.getShelves?.() ??
+                    Promise.resolve(
+                        []
+                    ),
+
+                api.getBooks?.() ??
+                    Promise.resolve(
+                        []
+                    ),
+
+                api.getQuotes?.() ??
+                    Promise.resolve(
+                        []
+                    ),
+
+                api.getVocabulary?.() ??
+                    Promise.resolve(
+                        []
+                    ),
+
+                api.getUserSettings?.() ??
+                    Promise.resolve(
+                        {}
+                    )
+
+            ]);
 
 
-                const generated =
-                    character ===
-                    "x"
-                        ? random
-                        : (
-                            random &
-                            0x3 |
-                            0x8
-                        );
+        return {
 
+            shelves:
+                shelves ||
+                [],
 
-                return generated
-                    .toString(
-                        16
-                    );
+            books:
+                books ||
+                [],
 
-            }
-        );
+            quotes:
+                quotes ||
+                [],
+
+            vocabulary:
+                vocabulary ||
+                [],
+
+            settings:
+                settings ||
+                {}
+
+        };
 
     }
 
 
-    /* =====================================================
-       MAKE EXISTING LOCAL IDS CLOUD SAFE
+    /* ========================================================
+       SAFE LOCAL/CLOUD MERGE
+       ======================================================== */
 
-       Also maintains relationships:
-       shelf -> books -> quotes / vocabulary
-       ===================================================== */
-
-    function ensureCloudCompatibleIds() {
+    function prepareLocalCloudMerge({
+        localShelves,
+        localBooks,
+        cloudShelves,
+        cloudBooks
+    }) {
 
         const shelfIdMap =
             new Map();
 
 
-        const bookIdMap =
-            new Map();
+        /*
+           Supabase UUID columns cannot accept old ids like:
 
+           shelf-abc123
 
-        /* -------------------------------------------------
-           SHELVES
-           ------------------------------------------------- */
+           Convert only local records that need it.
+        */
 
-        state.shelves =
-            state.shelves.map(
+        const repairedShelves =
+            localShelves.map(
                 shelf => {
 
-                    const oldId =
-                        String(
-                            shelf.id ||
-                            ""
+                    if (
+                        isUUID(
+                            shelf.id
+                        )
+                    ) {
+
+                        return shelf;
+
+                    }
+
+
+                    const existingCloudMatch =
+                        findLikelyShelfMatch(
+                            shelf,
+                            cloudShelves
                         );
+
+
+                    if (
+                        existingCloudMatch
+                    ) {
+
+                        shelfIdMap.set(
+                            shelf.id,
+                            existingCloudMatch.id
+                        );
+
+
+                        return {
+                            ...shelf,
+                            id:
+                                existingCloudMatch.id
+                        };
+
+                    }
 
 
                     const newId =
-                        isUUID(
-                            oldId
-                        )
-                            ? oldId
-                            : createUUID();
+                        makeUUID();
 
 
-                    if (oldId) {
-
-                        shelfIdMap.set(
-                            oldId,
-                            newId
-                        );
-
-                    }
+                    shelfIdMap.set(
+                        shelf.id,
+                        newId
+                    );
 
 
                     return {
@@ -841,58 +1230,44 @@
             );
 
 
-        /* -------------------------------------------------
-           BOOKS
-           ------------------------------------------------- */
-
-        state.books =
-            state.books.map(
+        const repairedBooks =
+            localBooks.map(
                 book => {
 
-                    const oldId =
-                        String(
-                            book.id ||
-                            ""
-                        );
-
-
-                    const newId =
-                        isUUID(
-                            oldId
-                        )
-                            ? oldId
-                            : createUUID();
-
-
-                    if (oldId) {
-
-                        bookIdMap.set(
-                            oldId,
-                            newId
-                        );
-
-                    }
-
-
                     const oldShelfId =
-                        String(
-                            book.shelfId ||
-                            book.shelf_id ||
-                            ""
-                        );
+                        book.shelfId ||
+                        "";
 
 
-                    const shelfId =
+                    const fixedShelfId =
                         shelfIdMap.get(
                             oldShelfId
                         ) ||
-                        (
-                            isUUID(
-                                oldShelfId
-                            )
-                                ? oldShelfId
-                                : ""
-                        );
+                        oldShelfId;
+
+
+                    let fixedId =
+                        book.id;
+
+
+                    if (
+                        !isUUID(
+                            fixedId
+                        )
+                    ) {
+
+                        const existingCloudMatch =
+                            findLikelyBookMatch(
+                                book,
+                                cloudBooks
+                            );
+
+
+                        fixedId =
+                            existingCloudMatch?.id ||
+                            makeUUID();
+
+                    }
 
 
                     return {
@@ -900,649 +1275,352 @@
                         ...book,
 
                         id:
-                            newId,
-
-                        shelfId,
-
-                        shelf_id:
-                            shelfId ||
-                            null
-
-                    };
-
-                }
-            );
-
-
-        /* -------------------------------------------------
-           QUOTES
-           ------------------------------------------------- */
-
-        state.quotes =
-            state.quotes.map(
-                quote => {
-
-                    const oldBookId =
-                        String(
-                            quote.bookId ||
-                            quote.book_id ||
-                            ""
-                        );
-
-
-                    const bookId =
-                        bookIdMap.get(
-                            oldBookId
-                        ) ||
-                        oldBookId;
-
-
-                    return {
-
-                        ...quote,
-
-                        id:
-                            isUUID(
-                                quote.id
-                            )
-                                ? quote.id
-                                : createUUID(),
-
-                        bookId,
-
-                        book_id:
-                            bookId ||
-                            null
-
-                    };
-
-                }
-            );
-
-
-        /* -------------------------------------------------
-           VOCABULARY
-           ------------------------------------------------- */
-
-        state.vocabulary =
-            state.vocabulary.map(
-                entry => {
-
-                    const oldBookId =
-                        String(
-                            entry.bookId ||
-                            entry.book_id ||
-                            ""
-                        );
-
-
-                    const bookId =
-                        bookIdMap.get(
-                            oldBookId
-                        ) ||
-                        oldBookId;
-
-
-                    return {
-
-                        ...entry,
-
-                        id:
-                            isUUID(
-                                entry.id
-                            )
-                                ? entry.id
-                                : createUUID(),
-
-                        bookId,
-
-                        book_id:
-                            bookId ||
-                            null
-
-                    };
-
-                }
-            );
-
-
-        /* -------------------------------------------------
-           SELECTED BOOK
-           ------------------------------------------------- */
-
-        if (
-            state.selectedBookId
-        ) {
-
-            state.selectedBookId =
-                bookIdMap.get(
-                    String(
-                        state.selectedBookId
-                    )
-                ) ||
-                state.selectedBookId;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       ONE-TIME LOCAL -> SUPABASE MIGRATION
-       ===================================================== */
-
-    async function migrateLocalLibraryToCloud(
-        userId
-    ) {
-
-        const supabase =
-            Novellow.supabase;
-
-
-        ensureCloudCompatibleIds();
-
-
-        /*
-           Save the newly generated UUIDs locally first.
-           This means even a refresh halfway through migration
-           keeps the relationships stable.
-        */
-
-        suppressCloudSync =
-            true;
-
-
-        writeLocalCache();
-
-
-        suppressCloudSync =
-            false;
-
-
-        /* -------------------------------------------------
-           SHELVES FIRST
-
-           Books reference shelf UUIDs.
-           ------------------------------------------------- */
-
-        for (
-            const shelf of
-                state.shelves
-        ) {
-
-            await supabase
-                .saveShelf(
-                    shelf
-                );
-
-        }
-
-
-        /* -------------------------------------------------
-           BOOKS
-           ------------------------------------------------- */
-
-        for (
-            const book of
-                state.books
-        ) {
-
-            await supabase
-                .saveBook(
-                    book
-                );
-
-        }
-
-
-        /* -------------------------------------------------
-           QUOTES
-           ------------------------------------------------- */
-
-        for (
-            const quote of
-                state.quotes
-        ) {
-
-            if (
-                !(
-                    quote.bookId ||
-                    quote.book_id
-                )
-            ) {
-
-                continue;
-
-            }
-
-
-            await supabase
-                .saveQuote(
-                    quote
-                );
-
-        }
-
-
-        /* -------------------------------------------------
-           VOCABULARY
-           ------------------------------------------------- */
-
-        for (
-            const entry of
-                state.vocabulary
-        ) {
-
-            if (
-                !(
-                    entry.bookId ||
-                    entry.book_id
-                )
-            ) {
-
-                continue;
-
-            }
-
-
-            await supabase
-                .saveVocabularyEntry(
-                    entry
-                );
-
-        }
-
-
-        /* -------------------------------------------------
-           SETTINGS
-           ------------------------------------------------- */
-
-        await supabase
-            .saveUserSettings(
-                buildCloudSettingsPayload()
-            );
-
-
-        localStorage.setItem(
-            LOCAL_OWNER_KEY,
-            userId
-        );
-
-    }
-
-
-    /* =====================================================
-       HYDRATE APP STATE FROM SUPABASE
-       ===================================================== */
-
-    function hydrateStateFromCloud(
-        remote
-    ) {
-
-        const remoteShelves =
-            remote?.shelves ||
-            [];
-
-
-        const remoteBooks =
-            remote?.books ||
-            [];
-
-
-        const remoteQuotes =
-            remote?.quotes ||
-            [];
-
-
-        const remoteVocabulary =
-            remote?.vocabulary ||
-            [];
-
-
-        /* -------------------------------------------------
-           SHELVES
-           ------------------------------------------------- */
-
-        state.shelves =
-            remoteShelves.map(
-                row => {
-
-                    const shelf = {
-
-                        ...row,
-
-                        sortMode:
-                            row.sort_mode ||
-                            "manual"
-
-                    };
-
-
-                    return (
-                        H.normalizeShelf?.(
-                            shelf
-                        ) ||
-                        shelf
-                    );
-
-                }
-            );
-
-
-        /* -------------------------------------------------
-           BOOKS
-           ------------------------------------------------- */
-
-        state.books =
-            remoteBooks.map(
-                row => {
-
-                    const book = {
-
-                        ...row,
+                            fixedId,
 
                         shelfId:
-                            row.shelf_id ||
-                            "",
-
-                        shelf_id:
-                            row.shelf_id ||
-                            null,
-
-                        year:
-                            row.publication_year ??
-                            "",
-
-                        pages:
-                            row.total_pages ??
-                            0,
-
-                        total_pages:
-                            row.total_pages ??
-                            0,
-
-                        currentPage:
-                            row.current_page ??
-                            0,
-
-                        current_page:
-                            row.current_page ??
-                            0,
-
-                        timesRead:
-                            row.times_read ??
-                            0,
-
-                        times_read:
-                            row.times_read ??
-                            0,
-
-                        started:
-                            row.started_at ||
-                            "",
-
-                        finished:
-                            row.finished_at ||
-                            "",
-
-                        cover:
-                            row.cover_url ||
-                            "",
-
-                        design:
-                            row.design ||
-                            {}
+                            fixedShelfId
 
                     };
-
-
-                    return (
-                        H.normalizeBook?.(
-                            book
-                        ) ||
-                        book
-                    );
 
                 }
             );
 
-
-        /* -------------------------------------------------
-           QUOTES
-           ------------------------------------------------- */
-
-        state.quotes =
-            remoteQuotes.map(
-                row => {
-
-                    const quote = {
-
-                        ...row,
-
-                        bookId:
-                            row.book_id,
-
-                        text:
-                            row.quote_text,
-
-                        quote:
-                            row.quote_text,
-
-                        pageNumber:
-                            row.page_number
-
-                    };
-
-
-                    return (
-                        H.normalizeQuote?.(
-                            quote
-                        ) ||
-                        quote
-                    );
-
-                }
-            );
-
-
-        /* -------------------------------------------------
-           VOCABULARY
-           ------------------------------------------------- */
-
-        state.vocabulary =
-            remoteVocabulary.map(
-                row => {
-
-                    const entry = {
-
-                        ...row,
-
-                        bookId:
-                            row.book_id,
-
-                        partOfSpeech:
-                            row.part_of_speech,
-
-                        pageNumber:
-                            row.page_number
-
-                    };
-
-
-                    return (
-                        H.normalizeWord?.(
-                            entry
-                        ) ||
-                        entry
-                    );
-
-                }
-            );
-
-
-        /* -------------------------------------------------
-           SETTINGS
-           ------------------------------------------------- */
-
-        if (
-            remote?.settings
-        ) {
-
-            const row =
-                remote.settings;
-
-
-            const custom =
-                row.settings ||
-                {};
-
-
-            state.settings =
-                H.normalizeSettings?.({
-
-                    ...state.settings,
-
-                    ...custom,
-
-                    theme:
-                        row.theme ||
-                        custom.theme ||
-                        state.settings.theme,
-
-                    decorationDensity:
-                        row.decoration_density ||
-                        custom.decorationDensity ||
-                        state.settings
-                            .decorationDensity,
-
-                    annualReadingGoal:
-                        row.annual_reading_goal ??
-                        custom.annualReadingGoal ??
-                        state.settings
-                            .annualReadingGoal,
-
-                    defaultShelfSort:
-                        row.default_shelf_sort ||
-                        custom.defaultShelfSort ||
-                        state.settings
-                            .defaultShelfSort
-
-                }) ||
-                {
-
-                    ...state.settings,
-
-                    ...custom
-
-                };
-
-        }
-
-
-        /*
-           If the previously-selected local book isn't in the
-           authenticated user's library, clear it.
-        */
-
-        state.selectedBookId =
-            state.books.some(
-                book =>
-                    String(
-                        book.id
-                    ) ===
-                    String(
-                        state.selectedBookId
-                    )
-            )
-                ? state.selectedBookId
-                : null;
-
-    }
-
-
-    /* =====================================================
-       SETTINGS -> CLOUD FORMAT
-
-       Top-level database columns handle the common settings.
-
-       The settings JSON column stores Novellow-specific
-       ambience preferences that don't have their own columns.
-       ===================================================== */
-
-    function buildCloudSettingsPayload() {
 
         return {
 
-            ...state.settings,
+            localShelves:
+                repairedShelves,
 
-            settings: {
-
-                candleGlow:
-                    Boolean(
-                        state.settings
-                            .candleGlow
-                    ),
-
-                dust:
-                    Boolean(
-                        state.settings
-                            .dust
-                    ),
-
-                rain:
-                    Boolean(
-                        state.settings
-                            .rain
-                    ),
-
-                oddities:
-                    Boolean(
-                        state.settings
-                            .oddities
-                    ),
-
-                reducedMotion:
-                    Boolean(
-                        state.settings
-                            .reducedMotion
-                    )
-
-            }
+            localBooks:
+                repairedBooks
 
         };
 
     }
 
 
-    /* =====================================================
-       LOCAL CACHE WRITER
-       ===================================================== */
+    function findLikelyShelfMatch(
+        localShelf,
+        cloudShelves
+    ) {
 
-    function writeLocalCache() {
+        return (
+            cloudShelves.find(
+                shelf =>
+
+                    normalizedText(
+                        shelf.name
+                    ) ===
+                    normalizedText(
+                        localShelf.name
+                    )
+
+            ) ||
+            null
+        );
+
+    }
+
+
+    function findLikelyBookMatch(
+        localBook,
+        cloudBooks
+    ) {
+
+        return (
+            cloudBooks.find(
+                book => {
+
+                    return (
+
+                        normalizedText(
+                            book.title
+                        ) ===
+                        normalizedText(
+                            localBook.title
+                        )
+
+                        &&
+
+                        normalizedText(
+                            book.author
+                        ) ===
+                        normalizedText(
+                            localBook.author
+                        )
+
+                    );
+
+                }
+            ) ||
+            null
+        );
+
+    }
+
+
+    function normalizedText(
+        value
+    ) {
+
+        return String(
+            value ||
+            ""
+        )
+            .trim()
+            .toLowerCase();
+
+    }
+
+
+    /* ========================================================
+       MERGE COLLECTIONS
+       ======================================================== */
+
+    function mergeCollections(
+        cloudCollection,
+        localCollection
+    ) {
+
+        const merged =
+            new Map();
+
+
+        (
+            cloudCollection ||
+            []
+        ).forEach(
+            item => {
+
+                if (
+                    item?.id
+                ) {
+
+                    merged.set(
+                        String(
+                            item.id
+                        ),
+                        item
+                    );
+
+                }
+
+            }
+        );
+
+
+        (
+            localCollection ||
+            []
+        ).forEach(
+            item => {
+
+                if (
+                    !item?.id
+                ) {
+
+                    return;
+
+                }
+
+
+                const key =
+                    String(
+                        item.id
+                    );
+
+
+                const cloudItem =
+                    merged.get(
+                        key
+                    );
+
+
+                if (
+                    !cloudItem
+                ) {
+
+                    merged.set(
+                        key,
+                        item
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                   Prefer whichever version was updated later.
+                */
+
+                const cloudDate =
+                    timestamp(
+                        cloudItem.updatedAt ??
+                        cloudItem.updated_at
+                    );
+
+
+                const localDate =
+                    timestamp(
+                        item.updatedAt ??
+                        item.updated_at
+                    );
+
+
+                if (
+                    localDate >
+                    cloudDate
+                ) {
+
+                    merged.set(
+                        key,
+                        {
+                            ...cloudItem,
+                            ...item
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+
+        return [
+            ...merged.values()
+        ];
+
+    }
+
+
+    function timestamp(
+        value
+    ) {
+
+        const time =
+            new Date(
+                value ||
+                0
+            )
+                .getTime();
+
+
+        return Number.isFinite(
+            time
+        )
+            ? time
+            : 0;
+
+    }
+
+
+    /* ========================================================
+       CLOUD ID SNAPSHOTS
+       ======================================================== */
+
+    function rememberCloudIds(
+        shelves,
+        books,
+        quotes,
+        vocabulary
+    ) {
+
+        cloudIds.shelves =
+            idSet(
+                shelves
+            );
+
+
+        cloudIds.books =
+            idSet(
+                books
+            );
+
+
+        cloudIds.quotes =
+            idSet(
+                quotes
+            );
+
+
+        cloudIds.vocabulary =
+            idSet(
+                vocabulary
+            );
+
+    }
+
+
+    function idSet(
+        collection
+    ) {
+
+        return new Set(
+            (
+                collection ||
+                []
+            )
+                .map(
+                    item =>
+                        item?.id
+                )
+                .filter(
+                    Boolean
+                )
+                .map(
+                    String
+                )
+        );
+
+    }
+
+
+    /* ========================================================
+       LOCAL CACHE WRITERS
+       ======================================================== */
+
+    function cacheShelves() {
 
         H.writeStorage?.(
             STORAGE.shelves,
             state.shelves
         );
 
+    }
+
+
+    function cacheBooks() {
 
         H.writeStorage?.(
             STORAGE.books,
             state.books
         );
 
+    }
+
+
+    function cacheQuotes() {
 
         H.writeStorage?.(
             STORAGE.quotes,
             state.quotes
         );
 
+    }
+
+
+    function cacheVocabulary() {
 
         H.writeStorage?.(
             STORAGE.vocabulary,
             state.vocabulary
         );
 
+    }
+
+
+    function cacheSettings() {
 
         H.writeStorage?.(
             STORAGE.settings,
@@ -1552,21 +1630,42 @@
     }
 
 
-    /* =====================================================
-       PERSISTENCE
-       Local immediately + cloud queue
-       ===================================================== */
+    function cacheEverything() {
+
+        cacheShelves();
+
+        cacheBooks();
+
+        cacheQuotes();
+
+        cacheVocabulary();
+
+        cacheSettings();
+
+    }
+
+
+    /* ========================================================
+       PUBLIC STORAGE API
+
+       Existing feature modules already call:
+
+       Novellow.storage.saveBooks()
+       Novellow.storage.saveShelves()
+
+       We keep that API.
+
+       The difference:
+       it now caches immediately AND queues Supabase sync.
+       ======================================================== */
 
     function saveShelves() {
 
-        H.writeStorage?.(
-            STORAGE.shelves,
-            state.shelves
-        );
+        cacheShelves();
 
 
-        queueCloudSync(
-            "shelves"
+        queueCloudOperation(
+            synchronizeShelves
         );
 
     }
@@ -1574,14 +1673,11 @@
 
     function saveBooks() {
 
-        H.writeStorage?.(
-            STORAGE.books,
-            state.books
-        );
+        cacheBooks();
 
 
-        queueCloudSync(
-            "books"
+        queueCloudOperation(
+            synchronizeBooks
         );
 
     }
@@ -1589,14 +1685,11 @@
 
     function saveQuotes() {
 
-        H.writeStorage?.(
-            STORAGE.quotes,
-            state.quotes
-        );
+        cacheQuotes();
 
 
-        queueCloudSync(
-            "quotes"
+        queueCloudOperation(
+            synchronizeQuotes
         );
 
     }
@@ -1604,14 +1697,11 @@
 
     function saveVocabulary() {
 
-        H.writeStorage?.(
-            STORAGE.vocabulary,
-            state.vocabulary
-        );
+        cacheVocabulary();
 
 
-        queueCloudSync(
-            "vocabulary"
+        queueCloudOperation(
+            synchronizeVocabulary
         );
 
     }
@@ -1619,14 +1709,11 @@
 
     function saveSettings() {
 
-        H.writeStorage?.(
-            STORAGE.settings,
-            state.settings
-        );
+        cacheSettings();
 
 
-        queueCloudSync(
-            "settings"
+        queueCloudOperation(
+            synchronizeSettings
         );
 
     }
@@ -1634,273 +1721,15 @@
 
     function persistAll() {
 
-        saveShelves();
-
-        saveBooks();
-
-        saveQuotes();
-
-        saveVocabulary();
-
-        saveSettings();
-
-    }
+        cacheEverything();
 
 
-    /* =====================================================
-       CLOUD SAVE QUEUE
-       ===================================================== */
-
-    function queueCloudSync(
-        kind
-    ) {
-
-        if (
-            suppressCloudSync ||
-            !cloudReady ||
-            !Novellow.currentUser?.id
-        ) {
-
-            return;
-
-        }
-
-
-        pendingCloudSync.add(
-            kind
+        queueCloudOperation(
+            synchronizeAllToCloud
         );
 
-
-        window.clearTimeout(
-            cloudSyncTimer
-        );
-
-
-        cloudSyncTimer =
-            window.setTimeout(
-                flushCloudSync,
-                300
-            );
-
     }
 
-
-    /* =====================================================
-       FLUSH CLOUD SAVE QUEUE
-       ===================================================== */
-
-    async function flushCloudSync() {
-
-        if (
-            suppressCloudSync ||
-            !cloudReady ||
-            !Novellow.currentUser?.id
-        ) {
-
-            return;
-
-        }
-
-
-        const types =
-            new Set(
-                pendingCloudSync
-            );
-
-
-        pendingCloudSync.clear();
-
-
-        if (!types.size) {
-
-            return;
-
-        }
-
-
-        const supabase =
-            Novellow.supabase;
-
-
-        try {
-
-            /* -------------------------------------------------
-               SHELVES
-               ------------------------------------------------- */
-
-            if (
-                types.has(
-                    "shelves"
-                )
-            ) {
-
-                for (
-                    const shelf of
-                        state.shelves
-                ) {
-
-                    await supabase
-                        .saveShelf(
-                            shelf
-                        );
-
-                }
-
-            }
-
-
-            /* -------------------------------------------------
-               BOOKS
-               ------------------------------------------------- */
-
-            if (
-                types.has(
-                    "books"
-                )
-            ) {
-
-                for (
-                    const book of
-                        state.books
-                ) {
-
-                    await supabase
-                        .saveBook(
-                            book
-                        );
-
-                }
-
-            }
-
-
-            /* -------------------------------------------------
-               QUOTES
-               ------------------------------------------------- */
-
-            if (
-                types.has(
-                    "quotes"
-                )
-            ) {
-
-                for (
-                    const quote of
-                        state.quotes
-                ) {
-
-                    if (
-                        !(
-                            quote.bookId ||
-                            quote.book_id
-                        )
-                    ) {
-
-                        continue;
-
-                    }
-
-
-                    await supabase
-                        .saveQuote(
-                            quote
-                        );
-
-                }
-
-            }
-
-
-            /* -------------------------------------------------
-               VOCABULARY
-               ------------------------------------------------- */
-
-            if (
-                types.has(
-                    "vocabulary"
-                )
-            ) {
-
-                for (
-                    const entry of
-                        state.vocabulary
-                ) {
-
-                    if (
-                        !(
-                            entry.bookId ||
-                            entry.book_id
-                        )
-                    ) {
-
-                        continue;
-
-                    }
-
-
-                    await supabase
-                        .saveVocabularyEntry(
-                            entry
-                        );
-
-                }
-
-            }
-
-
-            /* -------------------------------------------------
-               SETTINGS
-               ------------------------------------------------- */
-
-            if (
-                types.has(
-                    "settings"
-                )
-            ) {
-
-                await supabase
-                    .saveUserSettings(
-                        buildCloudSettingsPayload()
-                    );
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Novellow cloud save failed.",
-                error
-            );
-
-
-            /*
-               Put these categories back into the queue.
-
-               Local data is never discarded because the
-               network happened to fail.
-            */
-
-            types.forEach(
-                type =>
-                    pendingCloudSync.add(
-                        type
-                    )
-            );
-
-
-            H.showToast?.(
-                "Your change is saved on this device, but cloud sync needs another try.",
-                "error"
-            );
-
-        }
-
-    }
-
-
-    /* =====================================================
-       STORAGE API
-       ===================================================== */
 
     Novellow.storage = {
 
@@ -1916,40 +1745,542 @@
 
         persistAll,
 
-        flushCloudSync
+        syncNow:
+            synchronizeAllToCloud,
+
+        isCloudReady() {
+
+            return cloudReady;
+
+        }
 
     };
 
 
-    /* =====================================================
-       NAVIGATION
-       ===================================================== */
+    /* ========================================================
+       CLOUD QUEUE
 
-    function bindNavigation() {
+       Avoid multiple edits racing each other.
+       ======================================================== */
 
-        H.queryAll?.(
-            "[data-section]"
-        ).forEach(
-            button => {
+    function queueCloudOperation(
+        operation
+    ) {
 
-                button.addEventListener(
-                    "click",
-                    () => {
+        if (
+            !cloudReady ||
+            !activeUserId ||
+            typeof operation !==
+                "function"
+        ) {
 
-                        const section =
-                            button.dataset
-                                .section;
+            return;
+
+        }
 
 
-                        navigateTo(
-                            section
+        saveQueue =
+            saveQueue
+                .then(
+                    () =>
+                        operation()
+                )
+                .catch(
+                    error => {
+
+                        console.error(
+                            "Novellow cloud save failed:",
+                            error
+                        );
+
+
+                        H.showToast?.(
+                            "Saved on this device, but cloud sync needs another try.",
+                            "error"
                         );
 
                     }
                 );
 
+    }
+
+
+    /* ========================================================
+       SYNC EVERYTHING
+       ======================================================== */
+
+    async function synchronizeAllToCloud() {
+
+        if (
+            !cloudReady ||
+            !activeUserId
+        ) {
+
+            return;
+
+        }
+
+
+        await synchronizeShelves();
+
+        await synchronizeBooks();
+
+        await synchronizeQuotes();
+
+        await synchronizeVocabulary();
+
+        await synchronizeSettings();
+
+
+        cacheEverything();
+
+    }
+
+
+    /* ========================================================
+       SYNC SHELVES
+       ======================================================== */
+
+    async function synchronizeShelves() {
+
+        const api =
+            Novellow.supabase;
+
+
+        if (
+            !api?.saveShelf
+        ) {
+
+            return;
+
+        }
+
+
+        for (
+            const shelf
+            of state.shelves
+        ) {
+
+            if (
+                !shelf?.id
+            ) {
+                continue;
             }
+
+
+            await api.saveShelf(
+                shelf
+            );
+
+
+            cloudIds.shelves.add(
+                String(
+                    shelf.id
+                )
+            );
+
+        }
+
+
+        if (
+            api.deleteShelf
+        ) {
+
+            const localIds =
+                idSet(
+                    state.shelves
+                );
+
+
+            const deletedIds =
+                [
+                    ...cloudIds.shelves
+                ]
+                    .filter(
+                        id =>
+                            !localIds.has(
+                                id
+                            )
+                    );
+
+
+            for (
+                const id
+                of deletedIds
+            ) {
+
+                await api.deleteShelf(
+                    id
+                );
+
+
+                cloudIds.shelves.delete(
+                    id
+                );
+
+            }
+
+        }
+
+    }
+
+
+    /* ========================================================
+       SYNC BOOKS
+       ======================================================== */
+
+    async function synchronizeBooks() {
+
+        const api =
+            Novellow.supabase;
+
+
+        if (
+            !api?.saveBook
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+           Save shelves first.
+
+           A book references shelf_id, so its parent shelf needs
+           to exist before the book is written.
+        */
+
+        await synchronizeShelves();
+
+
+        for (
+            const book
+            of state.books
+        ) {
+
+            if (
+                !book?.id
+            ) {
+                continue;
+            }
+
+
+            /*
+               Don't upload an invalid shelf relationship.
+
+               Unshelved books use null/empty shelf depending on
+               the transformation inside supabase.js.
+            */
+
+            if (
+                book.shelfId &&
+                !state.shelves.some(
+                    shelf =>
+                        String(
+                            shelf.id
+                        ) ===
+                        String(
+                            book.shelfId
+                        )
+                )
+            ) {
+
+                console.warn(
+                    `Novellow book "${book.title}" references missing shelf ${book.shelfId}.`
+                );
+
+            }
+
+
+            await api.saveBook(
+                book
+            );
+
+
+            cloudIds.books.add(
+                String(
+                    book.id
+                )
+            );
+
+        }
+
+
+        if (
+            api.deleteBook
+        ) {
+
+            const localIds =
+                idSet(
+                    state.books
+                );
+
+
+            const deletedIds =
+                [
+                    ...cloudIds.books
+                ]
+                    .filter(
+                        id =>
+                            !localIds.has(
+                                id
+                            )
+                    );
+
+
+            for (
+                const id
+                of deletedIds
+            ) {
+
+                await api.deleteBook(
+                    id
+                );
+
+
+                cloudIds.books.delete(
+                    id
+                );
+
+            }
+
+        }
+
+
+        cacheBooks();
+
+    }
+
+
+    /* ========================================================
+       SYNC QUOTES
+       ======================================================== */
+
+    async function synchronizeQuotes() {
+
+        const api =
+            Novellow.supabase;
+
+
+        if (
+            !api?.saveQuote
+        ) {
+
+            return;
+
+        }
+
+
+        for (
+            const quote
+            of state.quotes
+        ) {
+
+            if (
+                !quote?.id
+            ) {
+                continue;
+            }
+
+
+            await api.saveQuote(
+                quote
+            );
+
+
+            cloudIds.quotes.add(
+                String(
+                    quote.id
+                )
+            );
+
+        }
+
+
+        if (
+            api.deleteQuote
+        ) {
+
+            const localIds =
+                idSet(
+                    state.quotes
+                );
+
+
+            const deletedIds =
+                [
+                    ...cloudIds.quotes
+                ]
+                    .filter(
+                        id =>
+                            !localIds.has(
+                                id
+                            )
+                    );
+
+
+            for (
+                const id
+                of deletedIds
+            ) {
+
+                await api.deleteQuote(
+                    id
+                );
+
+
+                cloudIds.quotes.delete(
+                    id
+                );
+
+            }
+
+        }
+
+    }
+
+
+    /* ========================================================
+       SYNC VOCABULARY
+       ======================================================== */
+
+    async function synchronizeVocabulary() {
+
+        const api =
+            Novellow.supabase;
+
+
+        if (
+            !api?.saveVocabularyEntry
+        ) {
+
+            return;
+
+        }
+
+
+        for (
+            const word
+            of state.vocabulary
+        ) {
+
+            if (
+                !word?.id
+            ) {
+                continue;
+            }
+
+
+            await api.saveVocabularyEntry(
+                word
+            );
+
+
+            cloudIds.vocabulary.add(
+                String(
+                    word.id
+                )
+            );
+
+        }
+
+
+        if (
+            api.deleteVocabularyEntry
+        ) {
+
+            const localIds =
+                idSet(
+                    state.vocabulary
+                );
+
+
+            const deletedIds =
+                [
+                    ...cloudIds.vocabulary
+                ]
+                    .filter(
+                        id =>
+                            !localIds.has(
+                                id
+                            )
+                    );
+
+
+            for (
+                const id
+                of deletedIds
+            ) {
+
+                await api
+                    .deleteVocabularyEntry(
+                        id
+                    );
+
+
+                cloudIds.vocabulary.delete(
+                    id
+                );
+
+            }
+
+        }
+
+    }
+
+
+    /* ========================================================
+       SYNC SETTINGS
+       ======================================================== */
+
+    async function synchronizeSettings() {
+
+        const api =
+            Novellow.supabase;
+
+
+        if (
+            !api?.saveUserSettings
+        ) {
+
+            return;
+
+        }
+
+
+        await api.saveUserSettings(
+            state.settings
         );
+
+    }
+
+
+    /* ========================================================
+       NAVIGATION
+       ======================================================== */
+
+    function bindNavigation() {
+
+        H.queryAll?.(
+            "[data-section]"
+        )
+            .forEach(
+                button => {
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            navigateTo(
+                                button.dataset.section
+                            );
+
+                        }
+                    );
+
+                }
+            );
 
     }
 
@@ -1965,9 +2296,7 @@
 
 
         if (!target) {
-
             return;
-
         }
 
 
@@ -2012,8 +2341,7 @@
 
                 button.classList.toggle(
                     "active",
-                    button.dataset
-                        .section ===
+                    button.dataset.section ===
                         sectionId
                 );
 
@@ -2032,8 +2360,7 @@
 
         window.scrollTo({
 
-            top:
-                0,
+            top: 0,
 
             behavior:
                 state.settings
@@ -2162,7 +2489,7 @@
                 `#${sectionId}`
             );
 
-        } catch (error) {
+        } catch {
 
             window.location.hash =
                 sectionId;
@@ -2179,9 +2506,9 @@
     };
 
 
-    /* =====================================================
+    /* ========================================================
        GLOBAL ACTIONS
-       ===================================================== */
+       ======================================================== */
 
     function bindGlobalActions() {
 
@@ -2311,9 +2638,9 @@
     }
 
 
-    /* =====================================================
-       DRAWER / OVERLAY CONTROLLER
-       ===================================================== */
+    /* ========================================================
+       PANELS
+       ======================================================== */
 
     function openPanel(
         panelId
@@ -2335,9 +2662,7 @@
 
 
         if (!panel) {
-
             return;
-
         }
 
 
@@ -2358,13 +2683,16 @@
             false;
 
 
-        panel.style.pointerEvents =
+        panel.style
+            .pointerEvents =
             "auto";
 
 
-        document.body.classList.add(
-            "modal-open"
-        );
+        document.body
+            .classList
+            .add(
+                "modal-open"
+            );
 
     }
 
@@ -2374,7 +2702,6 @@
         [
             "themeDrawer",
             "settingsDrawer",
-            "profileDrawer",
             "shelfDrawer",
             "bookDrawer"
         ].forEach(
@@ -2387,9 +2714,7 @@
 
 
                 if (!element) {
-
                     return;
-
                 }
 
 
@@ -2424,9 +2749,11 @@
         }
 
 
-        document.body.classList.remove(
-            "modal-open"
-        );
+        document.body
+            .classList
+            .remove(
+                "modal-open"
+            );
 
     }
 
@@ -2468,9 +2795,9 @@
     };
 
 
-    /* =====================================================
+    /* ========================================================
        THEME CONTROLS
-       ===================================================== */
+       ======================================================== */
 
     function bindThemeControls() {
 
@@ -2489,8 +2816,7 @@
                     () => {
 
                         setTheme(
-                            card.dataset
-                                .theme
+                            card.dataset.theme
                         );
 
                     }
@@ -2547,9 +2873,7 @@
                         if (
                             !radio.checked
                         ) {
-
                             return;
-
                         }
 
 
@@ -2559,6 +2883,7 @@
 
 
                         saveSettings();
+
 
                         applySettings();
 
@@ -2587,9 +2912,7 @@
 
 
         if (!input) {
-
             return;
-
         }
 
 
@@ -2606,6 +2929,7 @@
 
 
                 saveSettings();
+
 
                 applySettings();
 
@@ -2634,17 +2958,18 @@
             (
                 CONFIG.themes ||
                 []
-            ).some(
-                theme =>
-                    theme.id ===
-                    themeId
-            );
+            )
+                .some(
+                    theme =>
+                        theme.id ===
+                        themeId
+                );
 
 
-        if (!themeExists) {
-
+        if (
+            !themeExists
+        ) {
             return;
-
         }
 
 
@@ -2654,7 +2979,9 @@
 
         saveSettings();
 
+
         applySettings();
+
 
         syncThemeControls();
 
@@ -2664,10 +2991,6 @@
 
     }
 
-
-    /* =====================================================
-       APPLY SETTINGS
-       ===================================================== */
 
     function applySettings() {
 
@@ -2692,9 +3015,16 @@
         ).forEach(
             item => {
 
-                body.classList.remove(
+                if (
                     item.className
-                );
+                ) {
+
+                    body.classList
+                        .remove(
+                            item.className
+                        );
+
+                }
 
             }
         );
@@ -2751,8 +3081,7 @@
 
         body.dataset
             .decorationDensity =
-            settings
-                .decorationDensity ||
+            settings.decorationDensity ||
             "cozy";
 
 
@@ -2762,10 +3091,6 @@
 
     }
 
-
-    /* =====================================================
-       SYNC THEME CONTROLS
-       ===================================================== */
 
     function syncThemeControls() {
 
@@ -2844,9 +3169,9 @@
     }
 
 
-    /* =====================================================
-       SETTINGS CONTROLS
-       ===================================================== */
+    /* ========================================================
+       SETTINGS
+       ======================================================== */
 
     function bindSettingsControls() {
 
@@ -2929,10 +3254,6 @@
 
     function syncSettingsControls() {
 
-        const settings =
-            state.settings;
-
-
         const sort =
             H.getById?.(
                 "defaultShelfSort"
@@ -2942,7 +3263,7 @@
         if (sort) {
 
             sort.value =
-                settings
+                state.settings
                     .defaultShelfSort ||
                 "manual";
 
@@ -2961,7 +3282,7 @@
                 Math.max(
                     1,
                     H.toNumber?.(
-                        settings
+                        state.settings
                             .annualReadingGoal,
                         20
                     ) ||
@@ -2975,7 +3296,7 @@
 
     function setChecked(
         id,
-        nextValue
+        value
     ) {
 
         const input =
@@ -2984,24 +3305,21 @@
             );
 
 
-        if (!input) {
+        if (input) {
 
-            return;
+            input.checked =
+                Boolean(
+                    value
+                );
 
         }
-
-
-        input.checked =
-            Boolean(
-                nextValue
-            );
 
     }
 
 
-    /* =====================================================
+    /* ========================================================
        IMPORT / EXPORT
-       ===================================================== */
+       ======================================================== */
 
     function bindImportExport() {
 
@@ -3015,13 +3333,10 @@
             "importLibraryButton",
             () => {
 
-                const input =
-                    H.getById?.(
-                        "importLibraryInput"
-                    );
-
-
-                input?.click();
+                H.getById?.(
+                    "importLibraryInput"
+                )
+                    ?.click();
 
             }
         );
@@ -3033,14 +3348,10 @@
             );
 
 
-        if (input) {
-
-            input.addEventListener(
-                "change",
-                handleImportFile
-            );
-
-        }
+        input?.addEventListener(
+            "change",
+            handleImportFile
+        );
 
     }
 
@@ -3109,9 +3420,7 @@
 
 
         if (!file) {
-
             return;
-
         }
 
 
@@ -3175,51 +3484,41 @@
 
         const confirmed =
             H.confirmAction?.(
-                "Importing this backup will replace the library currently loaded in Novellow. Continue?"
+                "Import this backup into your current Novellow library?"
             );
 
 
         if (!confirmed) {
-
             return;
-
         }
 
 
         state.shelves =
-            H.normalizeCollection?.(
+            normalizeShelves(
                 data.shelves ||
-                [],
-                H.normalizeShelf
-            ) ||
-            [];
+                []
+            );
 
 
         state.books =
-            H.normalizeCollection?.(
+            normalizeBooks(
                 data.books ||
-                [],
-                H.normalizeBook
-            ) ||
-            [];
+                []
+            );
 
 
         state.quotes =
-            H.normalizeCollection?.(
+            normalizeQuotes(
                 data.quotes ||
-                [],
-                H.normalizeQuote
-            ) ||
-            [];
+                []
+            );
 
 
         state.vocabulary =
-            H.normalizeCollection?.(
+            normalizeVocabulary(
                 data.vocabulary ||
-                [],
-                H.normalizeWord
-            ) ||
-            [];
+                []
+            );
 
 
         state.settings =
@@ -3232,236 +3531,97 @@
             };
 
 
-        /*
-           Imported IDs may come from older Shelfmark exports.
-        */
-
-        ensureCloudCompatibleIds();
-
-
         persistAll();
+
 
         applySettings();
 
+
         renderEverything();
+
 
         closeAllPanels();
 
     }
 
 
-    /* =====================================================
-       CLEAR ENTIRE LIBRARY
-       ===================================================== */
+    /* ========================================================
+       CLEAR LIBRARY
+       ======================================================== */
 
-    async function clearEntireLibrary() {
+    function clearEntireLibrary() {
 
         const confirmed =
             H.confirmAction?.(
-                "Clear your entire Novellow library? This removes your synced shelves, books, quotes, vocabulary, and settings from this account."
+                "Clear your entire Novellow library? This will remove your shelves and books from your signed-in library."
             );
 
 
         if (!confirmed) {
-
             return;
-
         }
 
 
-        /*
-           Keep copies so we know which Supabase records must
-           be deleted before local state is emptied.
-        */
+        state.shelves =
+            [];
 
-        const oldShelves = [
-            ...state.shelves
-        ];
 
+        state.books =
+            [];
 
-        const oldBooks = [
-            ...state.books
-        ];
 
+        state.quotes =
+            [];
 
-        const oldQuotes = [
-            ...state.quotes
-        ];
 
+        state.vocabulary =
+            [];
 
-        const oldVocabulary = [
-            ...state.vocabulary
-        ];
 
+        state.settings =
+            H.normalizeSettings?.(
+                {}
+            ) ||
+            {
+                ...CONFIG.defaultSettings
+            };
 
-        try {
 
-            if (
-                cloudReady &&
-                Novellow.currentUser?.id
-            ) {
+        state.selectedBookId =
+            null;
 
-                /*
-                   Quotes and vocabulary first.
-                */
 
-                for (
-                    const quote of
-                        oldQuotes
-                ) {
+        state.selectedJournalSection =
+            null;
 
-                    await Novellow.supabase
-                        ?.deleteQuote?.(
-                            quote.id
-                        );
 
-                }
+        state.pendingCoverData =
+            "";
 
 
-                for (
-                    const entry of
-                        oldVocabulary
-                ) {
+        persistAll();
 
-                    await Novellow.supabase
-                        ?.deleteVocabularyEntry?.(
-                            entry.id
-                        );
 
-                }
+        applySettings();
 
 
-                /*
-                   Journal rows cascade when the book is
-                   deleted because of our database schema.
-                */
+        renderEverything();
 
-                for (
-                    const book of
-                        oldBooks
-                ) {
 
-                    await Novellow.supabase
-                        ?.deleteBook?.(
-                            book.id
-                        );
+        closeAllPanels();
 
-                }
 
-
-                for (
-                    const shelf of
-                        oldShelves
-                ) {
-
-                    await Novellow.supabase
-                        ?.deleteShelf?.(
-                            shelf.id
-                        );
-
-                }
-
-            }
-
-
-            suppressCloudSync =
-                true;
-
-
-            state.shelves =
-                [];
-
-
-            state.books =
-                [];
-
-
-            state.quotes =
-                [];
-
-
-            state.vocabulary =
-                [];
-
-
-            state.settings =
-                H.normalizeSettings?.(
-                    {}
-                ) ||
-                {
-                    ...CONFIG.defaultSettings
-                };
-
-
-            state.selectedBookId =
-                null;
-
-
-            state.selectedJournalSection =
-                null;
-
-
-            state.pendingCoverData =
-                "";
-
-
-            writeLocalCache();
-
-
-            suppressCloudSync =
-                false;
-
-
-            if (
-                cloudReady &&
-                Novellow.currentUser?.id
-            ) {
-
-                await Novellow.supabase
-                    ?.saveUserSettings?.(
-                        buildCloudSettingsPayload()
-                    );
-
-            }
-
-
-            applySettings();
-
-            renderEverything();
-
-            closeAllPanels();
-
-
-            H.showToast?.(
-                "Your Novellow library has been cleared.",
-                "success"
-            );
-
-        } catch (error) {
-
-            suppressCloudSync =
-                false;
-
-
-            console.error(
-                "Novellow could not clear the synced library.",
-                error
-            );
-
-
-            H.showToast?.(
-                "Novellow could not completely clear the synced library.",
-                "error"
-            );
-
-        }
+        H.showToast?.(
+            "Your Novellow library has been cleared.",
+            "success"
+        );
 
     }
 
 
-    /* =====================================================
-       FEATURE MODULE INITIALIZATION
-       ===================================================== */
+    /* ========================================================
+       FEATURE MODULES
+       ======================================================== */
 
     function initializeFeatureModules() {
 
@@ -3516,9 +3676,9 @@
     }
 
 
-    /* =====================================================
+    /* ========================================================
        RENDER EVERYTHING
-       ===================================================== */
+       ======================================================== */
 
     function renderEverything() {
 
@@ -3571,9 +3731,9 @@
         renderEverything;
 
 
-    /* =====================================================
+    /* ========================================================
        LOADING SCREEN
-       ===================================================== */
+       ======================================================== */
 
     function finishLoading() {
 
@@ -3584,18 +3744,18 @@
 
 
         if (!loadingScreen) {
-
             return;
-
         }
 
 
         requestAnimationFrame(
             () => {
 
-                loadingScreen.classList.add(
-                    "is-hidden"
-                );
+                loadingScreen
+                    .classList
+                    .add(
+                        "is-hidden"
+                    );
 
 
                 setTimeout(
@@ -3614,9 +3774,124 @@
     }
 
 
-    /* =====================================================
+    /* ========================================================
+       UUID
+       ======================================================== */
+
+    function isUUID(
+        value
+    ) {
+
+        return (
+            typeof value ===
+                "string" &&
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+                .test(
+                    value
+                )
+        );
+
+    }
+
+
+    function makeUUID() {
+
+        if (
+            typeof crypto !==
+                "undefined" &&
+            typeof crypto.randomUUID ===
+                "function"
+        ) {
+
+            return crypto
+                .randomUUID();
+
+        }
+
+
+        /*
+           Browser fallback.
+        */
+
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+            .replace(
+                /[xy]/g,
+                character => {
+
+                    const random =
+                        Math.random() *
+                        16 |
+                        0;
+
+
+                    const value =
+                        character ===
+                        "x"
+                            ? random
+                            : (
+                                random &
+                                0x3 |
+                                0x8
+                            );
+
+
+                    return value
+                        .toString(
+                            16
+                        );
+
+                }
+            );
+
+    }
+
+
+    /* ========================================================
+       CLONE
+       ======================================================== */
+
+    function clone(
+        value
+    ) {
+
+        try {
+
+            if (
+                typeof structuredClone ===
+                "function"
+            ) {
+
+                return structuredClone(
+                    value
+                );
+
+            }
+
+        } catch {
+            // Use JSON fallback.
+        }
+
+
+        try {
+
+            return JSON.parse(
+                JSON.stringify(
+                    value
+                )
+            );
+
+        } catch {
+
+            return value;
+
+        }
+
+    }
+
+
+    /* ========================================================
        PUBLIC APP API
-       ===================================================== */
+       ======================================================== */
 
     Novellow.app = {
 
@@ -3640,13 +3915,16 @@
 
         clearEntireLibrary,
 
-        loadCloudLibraryForUser,
+        hydrateSignedInUser,
 
-        flushCloudSync,
+        syncNow:
+            synchronizeAllToCloud,
 
-        isCloudReady:
-            () =>
-                cloudReady
+        get cloudReady() {
+
+            return cloudReady;
+
+        }
 
     };
 
