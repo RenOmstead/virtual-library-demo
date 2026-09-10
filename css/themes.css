@@ -1,44 +1,361 @@
 /* ============================================================
    NOVELLOW
    THEMES.CSS
-   VERSION 4
+   VERSION 9
 
-   OCTOBER SLEEPOVER
-   ------------------------------------------------------------
+   OCTOBER SLEEPOVER MASTER THEME
+
    Dreamy spooky storybook nostalgia
-   Warm illustrated color system
-   Curated book colors
-   Typography system
-   Theme-aware UI surfaces
-   Auth / login atmosphere
-   Motion tokens
-
-   IMPORTANT:
-   "haunted" is currently the compatibility ID for
-   October Sleepover so existing saved user settings continue
-   working without a migration.
+   - Master color system
+   - Novellow typography system
+   - Expanded book-spine font library
+   - October Sleepover theme aliases
+   - Theme picker
+   - Ambient settings
+   - SVG decoration animation
+   - Cat stretch
+   - Ghost hover
+   - Candle flicker
+   - Gentle floating decorations
    ============================================================ */
 
 
 /* ============================================================
-   THEME FONT LIBRARY
+   FONT LIBRARY
 
-   These are intentionally curated for:
-   - Novellow branding
-   - dreamy display headings
-   - literary UI
-   - handwritten accents
-   - future book-spine choices
+   These are web fonts — no font files need to live in the repo.
    ============================================================ */
 
 @import url(
-    "https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Caveat:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Serif+Display:ital@0;1&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IM+Fell+English:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Special+Elite&display=swap"
+    "https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Bodoni+Moda:opsz,ital,wght@6..96,400;6..96,500;6..96,600;6..96,700;6..96,400;6..96,500&family=Cormorant+Infant:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Sans:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IM+Fell+English:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Rye&family=Special+Elite&family=UnifrakturCook:wght@700&display=swap"
 );
 
 
 /* ============================================================
-   OCTOBER SLEEPOVER
    MASTER DESIGN TOKENS
+   ============================================================ */
+
+:root {
+
+    /* --------------------------------------------------------
+       OCTOBER SLEEPOVER — CORE PALETTE
+       -------------------------------------------------------- */
+
+    --october-deep-plum:
+        #5b3a6b;
+
+    --october-blackberry:
+        #3b214d;
+
+    --october-dark-blackberry:
+        #25132f;
+
+    --october-night:
+        #170c1a;
+
+    --october-dusty-mauve:
+        #a67489;
+
+    --october-soft-mauve:
+        #bc92a4;
+
+    --october-rosewood:
+        #b85f6f;
+
+    --october-burgundy:
+        #86485e;
+
+    --october-pumpkin:
+        #d9763f;
+
+    --october-soft-pumpkin:
+        #e39159;
+
+    --october-antique-gold:
+        #c99a4f;
+
+    --october-candlelight:
+        #efb96c;
+
+    --october-smoky-lilac:
+        #a78eb8;
+
+    --october-pale-lilac:
+        #c3afcb;
+
+    --october-moss:
+        #596443;
+
+    --october-sage:
+        #929f7c;
+
+    --october-teal:
+        #456b68;
+
+    --october-warm-cream:
+        #f4e8d4;
+
+    --october-paper:
+        #f8efdf;
+
+    --october-old-paper:
+        #e8d2b4;
+
+    --october-ink:
+        #211724;
+
+
+    /* --------------------------------------------------------
+       SEMANTIC COLORS
+       -------------------------------------------------------- */
+
+    --background:
+        var(--october-night);
+
+    --background-soft:
+        #241426;
+
+    --surface-dark:
+        #2f1c31;
+
+    --surface-mid:
+        #4b2e4c;
+
+    --surface-light:
+        var(--october-paper);
+
+    --panel:
+        var(--october-warm-cream);
+
+    --paper:
+        var(--october-paper);
+
+    --paper-aged:
+        var(--october-old-paper);
+
+    --ink:
+        var(--october-ink);
+
+    --text-light:
+        var(--october-warm-cream);
+
+    --text-muted:
+        var(--october-dusty-mauve);
+
+    --accent:
+        var(--october-dusty-mauve);
+
+    --accent-dark:
+        var(--october-deep-plum);
+
+    --accent-light:
+        var(--october-candlelight);
+
+    --gold:
+        var(--october-antique-gold);
+
+    --danger:
+        var(--october-rosewood);
+
+
+    /* --------------------------------------------------------
+       TYPOGRAPHY
+
+       Fraunces gives us that soft illustrated storybook feeling.
+
+       Berkshire Swash is used sparingly for Novellow itself.
+       -------------------------------------------------------- */
+
+    --font-brand:
+        "Berkshire Swash",
+        "Fraunces",
+        Georgia,
+        serif;
+
+    --font-display:
+        "Fraunces",
+        "Cormorant Infant",
+        Georgia,
+        serif;
+
+    --font-literary:
+        "EB Garamond",
+        "Libre Baskerville",
+        Georgia,
+        serif;
+
+    --font-hand:
+        "Cormorant Infant",
+        "EB Garamond",
+        Georgia,
+        serif;
+
+    --font-ui:
+        "DM Sans",
+        Arial,
+        sans-serif;
+
+
+    /* --------------------------------------------------------
+       BOOK SPINE FONT LIBRARY
+       -------------------------------------------------------- */
+
+    --spine-font-whimsical:
+        "Fraunces",
+        Georgia,
+        serif;
+
+    --spine-font-dreamy:
+        "Bodoni Moda",
+        "Cormorant Infant",
+        Georgia,
+        serif;
+
+    --spine-font-handwritten:
+        "IM Fell English",
+        "Cormorant Infant",
+        Georgia,
+        serif;
+
+    --spine-font-spooky:
+        "Rye",
+        Georgia,
+        serif;
+
+    --spine-font-gothic:
+        "UnifrakturCook",
+        "Rye",
+        Georgia,
+        serif;
+
+    --spine-font-storybook:
+        "Cormorant Infant",
+        "EB Garamond",
+        Georgia,
+        serif;
+
+    --spine-font-vintage:
+        "IM Fell English",
+        "EB Garamond",
+        Georgia,
+        serif;
+
+    --spine-font-cozy:
+        "Fraunces",
+        "EB Garamond",
+        Georgia,
+        serif;
+
+    --spine-font-retro:
+        "Special Elite",
+        "Courier New",
+        monospace;
+
+    --spine-font-classic:
+        "Libre Baskerville",
+        Georgia,
+        serif;
+
+    --spine-font-label:
+        "Bodoni Moda",
+        "Libre Baskerville",
+        Georgia,
+        serif;
+
+
+    /* --------------------------------------------------------
+       LEGACY FONT ALIASES
+
+       Keeps older CSS working.
+       -------------------------------------------------------- */
+
+    --font-book:
+        var(--spine-font-storybook);
+
+    --font-serif:
+        var(--font-literary);
+
+    --font-sans:
+        var(--font-ui);
+
+
+    /* --------------------------------------------------------
+       MATERIALS
+       -------------------------------------------------------- */
+
+    --october-purple-wood:
+        linear-gradient(
+            145deg,
+            #8f6a97 0%,
+            #77527f 25%,
+            #5b3a6b 58%,
+            #3b214d 100%
+        );
+
+    --october-purple-wood-dark:
+        linear-gradient(
+            180deg,
+            #69476f,
+            #49304e 48%,
+            #332038
+        );
+
+    --october-worn-paper:
+        linear-gradient(
+            145deg,
+            #fff7e9,
+            #f4e8d4 55%,
+            #e5cfb1
+        );
+
+    --october-gold:
+        linear-gradient(
+            145deg,
+            #e3c273,
+            #c99a4f 52%,
+            #9e7138
+        );
+
+
+    /* --------------------------------------------------------
+       SHADOWS
+       -------------------------------------------------------- */
+
+    --shadow-room:
+        0 30px 70px
+        rgba(
+            5,
+            1,
+            7,
+            0.40
+        );
+
+    --shadow-card:
+        0 10px 28px
+        rgba(
+            7,
+            2,
+            9,
+            0.16
+        );
+
+    --shadow-book:
+        7px 12px 14px
+        rgba(
+            4,
+            1,
+            6,
+            0.30
+        );
+
+}
+
+
+/* ============================================================
+   OCTOBER SLEEPOVER
+
+   Current saved theme is still "haunted".
+   Both selectors intentionally receive identical styling.
    ============================================================ */
 
 body.theme-haunted,
@@ -48,777 +365,61 @@ body[data-theme="haunted"],
 body[data-theme="october"],
 body[data-theme="october-sleepover"] {
 
-    /* ========================================================
-       CORE PALETTE
-       ======================================================== */
+    --theme-background:
+        #170c1a;
 
-    --october-deep-plum: #5b3a6b;
-    --october-blackberry: #3b214d;
-    --october-dusty-mauve: #a67489;
-    --october-rosewood: #b85f6f;
+    --theme-surface:
+        #2f1c31;
 
-    --october-pumpkin: #d9763f;
-    --october-antique-gold: #c99a4f;
+    --theme-surface-light:
+        #f4e8d4;
 
-    --october-smoky-lilac: #a78eb8;
+    --theme-text:
+        #f4e8d4;
 
-    --october-moss: #596443;
-    --october-sage: #929f7c;
+    --theme-muted:
+        #a67489;
 
-    --october-warm-cream: #f4e8d4;
+    --theme-accent:
+        #d9763f;
 
-    --october-candlelight: #efb96c;
-    --october-mushroom: #b86567;
-    --october-burgundy: #772f45;
-    --october-teal: #315c5c;
+    --theme-secondary:
+        #a78eb8;
 
-    --october-ink: #211724;
-    --october-ink-soft: #2c1c2c;
-    --october-night: #180f1d;
+    --theme-gold:
+        #c99a4f;
 
-    --october-paper: #f2e3ca;
-    --october-paper-dark: #dfc9aa;
-
-    --october-wood-deep: #4b2630;
-    --october-wood-mid: #734033;
-    --october-wood-warm: #9a5940;
-
-    --october-purple-wood: #59355f;
-    --october-purple-mid: #765080;
-    --october-purple-light: #9875a0;
+}
 
 
-    /* ========================================================
-       APP SEMANTIC COLORS
+/* ============================================================
+   TEXT SELECTION
+   ============================================================ */
 
-       These names are used throughout the rest of Novellow.
-       ======================================================== */
-
-    --bg:
-        var(--october-night);
-
-    --bg-soft:
-        var(--october-ink);
-
-    --panel:
-        #291929;
-
-    --panel-soft:
-        #342034;
-
-    --panel-raised:
-        #3a2439;
-
-    --surface:
-        var(--october-warm-cream);
-
-    --surface-soft:
-        #ead8bd;
-
-    --surface-muted:
-        #d9c2a8;
-
-
-    --text:
-        var(--october-warm-cream);
-
-    --text-soft:
-        #dec9ba;
-
-    --text-muted:
-        #ae929f;
-
-    --text-dark:
-        var(--october-ink);
-
-
-    --accent:
+::selection {
+    background:
         var(--october-dusty-mauve);
 
-    --accent-strong:
-        var(--october-rosewood);
-
-    --accent-soft:
-        var(--october-smoky-lilac);
-
-    --accent-warm:
-        var(--october-pumpkin);
-
-    --accent-gold:
-        var(--october-antique-gold);
+    color:
+        var(--october-warm-cream);
+}
 
 
-    --border:
-        rgba(
-            201,
-            154,
-            79,
-            0.30
-        );
+/* ============================================================
+   THEME DRAWER INTRO
+   ============================================================ */
 
-    --border-soft:
+.drawer-intro {
+    margin:
+        0 0 22px;
+
+    color:
         rgba(
             244,
             232,
             212,
-            0.10
-        );
-
-    --border-strong:
-        rgba(
-            201,
-            154,
-            79,
             0.58
         );
-
-
-    /* ========================================================
-       STATUS COLORS
-       ======================================================== */
-
-    --success:
-        #7f9d71;
-
-    --warning:
-        var(--october-pumpkin);
-
-    --danger:
-        #b95c65;
-
-
-    /* ========================================================
-       GLOW
-       ======================================================== */
-
-    --glow-candle:
-        rgba(
-            239,
-            185,
-            108,
-            0.32
-        );
-
-    --glow-gold:
-        rgba(
-            201,
-            154,
-            79,
-            0.24
-        );
-
-    --glow-mauve:
-        rgba(
-            166,
-            116,
-            137,
-            0.24
-        );
-
-
-    /* ========================================================
-       TYPOGRAPHY
-       ======================================================== */
-
-    --font-brand:
-        "Berkshire Swash",
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-
-    --font-display:
-        "Fraunces",
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-
-    --font-display-romantic:
-        "DM Serif Display",
-        "Playfair Display",
-        Georgia,
-        serif;
-
-    --font-literary:
-        "Libre Baskerville",
-        Georgia,
-        serif;
-
-    --font-interface:
-        "Cormorant Garamond",
-        Georgia,
-        serif;
-
-    --font-ui:
-        "Libre Baskerville",
-        Georgia,
-        serif;
-
-    --font-hand:
-        "Caveat",
-        cursive;
-
-
-    /* ========================================================
-       FUTURE BOOK SPINE FONT OPTIONS
-
-       These will become clickable font cards/swatches inside
-       Create/Edit Book.
-       ======================================================== */
-
-    --spine-font-whimsical:
-        "Berkshire Swash",
-        serif;
-
-    --spine-font-handwritten:
-        "Caveat",
-        cursive;
-
-    --spine-font-storybook:
-        "Fraunces",
-        serif;
-
-    --spine-font-spooky:
-        "IM Fell English",
-        serif;
-
-    --spine-font-dreamy:
-        "Playfair Display",
-        serif;
-
-    --spine-font-gothic:
-        "Cinzel Decorative",
-        serif;
-
-    --spine-font-vintage:
-        "Libre Baskerville",
-        serif;
-
-    --spine-font-label:
-        "Cormorant Garamond",
-        serif;
-
-    --spine-font-cozy:
-        "DM Serif Display",
-        serif;
-
-    --spine-font-classic:
-        "Libre Baskerville",
-        serif;
-
-    --spine-font-retro:
-        "Special Elite",
-        monospace;
-
-    --spine-font-elegant:
-        "Cormorant Garamond",
-        serif;
-
-
-    /* ========================================================
-       SHADOWS
-       ======================================================== */
-
-    --shadow-soft:
-        0 12px 32px
-        rgba(
-            12,
-            5,
-            14,
-            0.20
-        );
-
-    --shadow-medium:
-        0 16px 44px
-        rgba(
-            8,
-            3,
-            10,
-            0.34
-        );
-
-    --shadow-deep:
-        0 26px 70px
-        rgba(
-            7,
-            2,
-            9,
-            0.46
-        );
-
-
-    /* ========================================================
-       CORNERS
-       ======================================================== */
-
-    --radius-small:
-        7px;
-
-    --radius-medium:
-        12px;
-
-    --radius-large:
-        18px;
-
-
-    /* ========================================================
-       MOTION
-       ======================================================== */
-
-    --motion-fast:
-        150ms;
-
-    --motion-normal:
-        280ms;
-
-    --motion-slow:
-        700ms;
-
-    --ease-storybook:
-        cubic-bezier(
-            0.2,
-            0.8,
-            0.2,
-            1
-        );
-
-
-    /* ========================================================
-       BOOK SPINE COLOR PALETTE
-
-       These are intentionally limited.
-       The editor will later render these as clickable buttons.
-       ======================================================== */
-
-    --book-color-1:
-        var(--october-deep-plum);
-
-    --book-color-2:
-        var(--october-blackberry);
-
-    --book-color-3:
-        var(--october-dusty-mauve);
-
-    --book-color-4:
-        var(--october-rosewood);
-
-    --book-color-5:
-        var(--october-pumpkin);
-
-    --book-color-6:
-        var(--october-antique-gold);
-
-    --book-color-7:
-        var(--october-smoky-lilac);
-
-    --book-color-8:
-        var(--october-moss);
-
-    --book-color-9:
-        var(--october-sage);
-
-    --book-color-10:
-        var(--october-warm-cream);
-
-
-    /* ========================================================
-       BOOK ACCENT / FOIL OPTIONS
-       ======================================================== */
-
-    --book-foil-gold:
-        var(--october-antique-gold);
-
-    --book-foil-cream:
-        var(--october-warm-cream);
-
-    --book-foil-rose:
-        var(--october-dusty-mauve);
-
-    --book-foil-lilac:
-        var(--october-smoky-lilac);
-
-    --book-foil-ink:
-        var(--october-ink);
-
-
-    /* ========================================================
-       BOOK TEXT OPTIONS
-       ======================================================== */
-
-    --book-text-cream:
-        var(--october-warm-cream);
-
-    --book-text-ink:
-        var(--october-ink);
-
-    --book-text-gold:
-        var(--october-antique-gold);
-
-}
-
-
-/* ============================================================
-   GLOBAL OCTOBER BACKGROUND
-   ============================================================ */
-
-body.theme-haunted,
-body.theme-october,
-body.theme-october-sleepover {
-
-    background:
-
-        radial-gradient(
-            circle at 18% 10%,
-            rgba(
-                117,
-                72,
-                126,
-                0.16
-            ),
-            transparent 28%
-        ),
-
-        radial-gradient(
-            circle at 82% 4%,
-            rgba(
-                217,
-                118,
-                63,
-                0.07
-            ),
-            transparent 22%
-        ),
-
-        linear-gradient(
-            180deg,
-            #1c111f 0%,
-            #160d19 48%,
-            #120a15 100%
-        );
-
-    color:
-        var(--text);
-
-    font-family:
-        var(--font-interface);
-
-}
-
-
-/* ============================================================
-   SUBTLE PAPER / NIGHT TEXTURE
-   ============================================================ */
-
-body.theme-haunted::before,
-body.theme-october::before,
-body.theme-october-sleepover::before {
-
-    content:
-        "";
-
-    position:
-        fixed;
-
-    z-index:
-        -2;
-
-    inset:
-        0;
-
-    pointer-events:
-        none;
-
-    opacity:
-        0.30;
-
-    background-image:
-
-        radial-gradient(
-            circle at 20% 40%,
-            rgba(
-                255,
-                255,
-                255,
-                0.025
-            )
-            0 1px,
-            transparent 1.5px
-        ),
-
-        radial-gradient(
-            circle at 70% 70%,
-            rgba(
-                255,
-                255,
-                255,
-                0.018
-            )
-            0 1px,
-            transparent 1.5px
-        );
-
-    background-size:
-        27px 29px,
-        43px 37px;
-
-}
-
-
-/* ============================================================
-   DREAMY AMBIENT GLOW
-   ============================================================ */
-
-body.theme-haunted::after,
-body.theme-october::after,
-body.theme-october-sleepover::after {
-
-    content:
-        "";
-
-    position:
-        fixed;
-
-    z-index:
-        -1;
-
-    inset:
-        0;
-
-    pointer-events:
-        none;
-
-    background:
-
-        radial-gradient(
-            ellipse at 50% 0%,
-            rgba(
-                117,
-                80,
-                128,
-                0.10
-            ),
-            transparent 52%
-        );
-
-}
-
-
-/* ============================================================
-   TYPOGRAPHY
-   ============================================================ */
-
-body.theme-haunted h1,
-body.theme-haunted h2,
-body.theme-october h1,
-body.theme-october h2,
-body.theme-october-sleepover h1,
-body.theme-october-sleepover h2 {
-
-    font-family:
-        var(--font-display);
-
-    font-weight:
-        500;
-
-    letter-spacing:
-        -0.025em;
-
-}
-
-
-body.theme-haunted h3,
-body.theme-october h3,
-body.theme-october-sleepover h3 {
-
-    font-family:
-        var(--font-literary);
-
-    font-weight:
-        400;
-
-}
-
-
-body.theme-haunted p,
-body.theme-october p,
-body.theme-october-sleepover p {
-
-    line-height:
-        1.65;
-
-}
-
-
-/* ============================================================
-   NOVELLOW BRAND
-   ============================================================ */
-
-body.theme-haunted .brand-copy strong,
-body.theme-haunted .auth-story-eyebrow,
-body.theme-haunted .loading-content h1,
-
-body.theme-october .brand-copy strong,
-body.theme-october .auth-story-eyebrow,
-body.theme-october .loading-content h1,
-
-body.theme-october-sleepover .brand-copy strong,
-body.theme-october-sleepover .auth-story-eyebrow,
-body.theme-october-sleepover .loading-content h1 {
-
-    font-family:
-        var(--font-brand);
-
-    font-weight:
-        400;
-
-    letter-spacing:
-        -0.04em;
-
-}
-
-
-/* ============================================================
-   APP HEADER
-   ============================================================ */
-
-body.theme-haunted .app-header,
-body.theme-october .app-header,
-body.theme-october-sleepover .app-header {
-
-    background:
-
-        linear-gradient(
-            180deg,
-            rgba(
-                36,
-                22,
-                36,
-                0.98
-            ),
-            rgba(
-                27,
-                16,
-                29,
-                0.98
-            )
-        );
-
-    border-bottom:
-        1px solid
-        rgba(
-            201,
-            154,
-            79,
-            0.18
-        );
-
-    box-shadow:
-        0 9px 30px
-        rgba(
-            6,
-            2,
-            8,
-            0.22
-        );
-
-    backdrop-filter:
-        blur(14px);
-
-}
-
-
-/* ============================================================
-   BRAND MARK
-   ============================================================ */
-
-body.theme-haunted .brand-mark,
-body.theme-october .brand-mark,
-body.theme-october-sleepover .brand-mark {
-
-    color:
-        var(--october-warm-cream);
-
-    background:
-
-        linear-gradient(
-            145deg,
-            #4d2e50,
-            #2b1a2d
-        );
-
-    border:
-        1px solid
-        rgba(
-            201,
-            154,
-            79,
-            0.32
-        );
-
-    box-shadow:
-
-        inset
-        0 0 0 1px
-        rgba(
-            255,
-            255,
-            255,
-            0.03
-        ),
-
-        0 5px 16px
-        rgba(
-            7,
-            2,
-            9,
-            0.20
-        );
-
-    font-family:
-        var(--font-display);
-
-}
-
-
-/* ============================================================
-   BRAND TEXT
-   ============================================================ */
-
-body.theme-haunted .brand-copy strong,
-body.theme-october .brand-copy strong,
-body.theme-october-sleepover .brand-copy strong {
-
-    color:
-        var(--october-warm-cream);
-
-}
-
-
-body.theme-haunted .brand-copy small,
-body.theme-october .brand-copy small,
-body.theme-october-sleepover .brand-copy small {
-
-    color:
-        var(--october-dusty-mauve);
-
-    font-family:
-        var(--font-hand);
-
-    letter-spacing:
-        0.02em;
-
-}
-
-
-/* ============================================================
-   NAVIGATION
-   ============================================================ */
-
-body.theme-haunted .nav-button,
-body.theme-october .nav-button,
-body.theme-october-sleepover .nav-button {
-
-    color:
-        #bca5b0;
 
     font-family:
         var(--font-literary);
@@ -826,390 +427,69 @@ body.theme-october-sleepover .nav-button {
     font-size:
         0.76rem;
 
-    letter-spacing:
-        0.035em;
-
-    transition:
-
-        color
-        var(--motion-normal)
-        var(--ease-storybook),
-
-        background-color
-        var(--motion-normal)
-        var(--ease-storybook);
-
-}
-
-
-body.theme-haunted .nav-button:hover,
-body.theme-october .nav-button:hover,
-body.theme-october-sleepover .nav-button:hover {
-
-    color:
-        var(--october-warm-cream);
-
-    background:
-        rgba(
-            166,
-            116,
-            137,
-            0.08
-        );
-
-}
-
-
-body.theme-haunted .nav-button.active,
-body.theme-october .nav-button.active,
-body.theme-october-sleepover .nav-button.active {
-
-    color:
-        var(--october-candlelight);
-
+    line-height:
+        1.6;
 }
 
 
 /* ============================================================
-   PRIMARY BUTTONS
+   THEME GRID
+
+   Visually treated like a little bookshelf of theme books.
    ============================================================ */
 
-body.theme-haunted .primary-button,
-body.theme-october .primary-button,
-body.theme-october-sleepover .primary-button {
+.theme-grid {
+    display:
+        grid;
 
-    color:
-        var(--october-warm-cream);
-
-    background:
-
-        linear-gradient(
-            180deg,
-            #704367,
-            #5a304f
-        );
-
-    border:
-        1px solid
-        rgba(
-            201,
-            154,
-            79,
-            0.40
-        );
-
-    border-radius:
-        9px;
-
-    font-family:
-        var(--font-literary);
-
-    font-weight:
-        700;
-
-    letter-spacing:
-        0.035em;
-
-    box-shadow:
-
-        inset
-        0 1px 0
-        rgba(
-            255,
-            255,
-            255,
-            0.08
-        ),
-
-        0 7px 16px
-        rgba(
-            8,
-            3,
-            10,
-            0.18
-        );
-
-    transition:
-
-        transform
-        var(--motion-fast)
-        var(--ease-storybook),
-
-        border-color
-        var(--motion-normal)
-        var(--ease-storybook),
-
-        box-shadow
-        var(--motion-normal)
-        var(--ease-storybook);
-
-}
-
-
-body.theme-haunted .primary-button:hover,
-body.theme-october .primary-button:hover,
-body.theme-october-sleepover .primary-button:hover {
-
-    transform:
-        translateY(-1px);
-
-    border-color:
-        rgba(
-            239,
-            185,
-            108,
-            0.62
-        );
-
-    box-shadow:
-
-        inset
-        0 1px 0
-        rgba(
-            255,
-            255,
-            255,
-            0.10
-        ),
-
-        0 9px 23px
-        rgba(
-            8,
-            3,
-            10,
-            0.26
-        ),
-
-        0 0 18px
-        rgba(
-            201,
-            154,
-            79,
-            0.09
-        );
-
-}
-
-
-/* ============================================================
-   SECONDARY BUTTONS
-   ============================================================ */
-
-body.theme-haunted .secondary-button,
-body.theme-october .secondary-button,
-body.theme-october-sleepover .secondary-button {
-
-    color:
-        var(--october-warm-cream);
-
-    background:
-        rgba(
-            44,
-            28,
-            44,
-            0.86
-        );
-
-    border:
-        1px solid
-        rgba(
-            201,
-            154,
-            79,
-            0.24
-        );
-
-    border-radius:
-        9px;
-
-    font-family:
-        var(--font-literary);
-
-}
-
-
-/* ============================================================
-   ICON BUTTONS
-   ============================================================ */
-
-body.theme-haunted .icon-button,
-body.theme-october .icon-button,
-body.theme-october-sleepover .icon-button {
-
-    color:
-        var(--october-warm-cream);
-
-    background:
-
-        linear-gradient(
-            145deg,
-            rgba(
-                75,
-                44,
-                74,
-                0.78
-            ),
-            rgba(
-                35,
-                20,
-                36,
-                0.92
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
             )
         );
 
+    gap:
+        12px;
+
+    margin-bottom:
+        24px;
+}
+
+
+/* ============================================================
+   THEME CARD
+   ============================================================ */
+
+.theme-card {
+    position:
+        relative;
+
+    min-width:
+        0;
+
+    min-height:
+        215px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        stretch;
+
+    padding:
+        10px;
+
+    overflow:
+        hidden;
+
     border:
         1px solid
-        rgba(
-            201,
-            154,
-            79,
-            0.22
-        );
-
-    border-radius:
-        8px;
-
-    box-shadow:
-        inset
-        0 1px 0
-        rgba(
-            255,
-            255,
-            255,
-            0.04
-        );
-
-}
-
-
-/* ============================================================
-   INPUTS
-   ============================================================ */
-
-body.theme-haunted input,
-body.theme-haunted select,
-body.theme-haunted textarea,
-
-body.theme-october input,
-body.theme-october select,
-body.theme-october textarea,
-
-body.theme-october-sleepover input,
-body.theme-october-sleepover select,
-body.theme-october-sleepover textarea {
-
-    color:
-        var(--october-ink);
-
-    background:
-        #f1e4d2;
-
-    border-color:
-        rgba(
-            91,
-            58,
-            107,
-            0.24
-        );
-
-    font-family:
-        var(--font-literary);
-
-}
-
-
-body.theme-haunted input:focus,
-body.theme-haunted select:focus,
-body.theme-haunted textarea:focus,
-
-body.theme-october input:focus,
-body.theme-october select:focus,
-body.theme-october textarea:focus,
-
-body.theme-october-sleepover input:focus,
-body.theme-october-sleepover select:focus,
-body.theme-october-sleepover textarea:focus {
-
-    outline:
-        none;
-
-    border-color:
-        var(--october-dusty-mauve);
-
-    box-shadow:
-        0 0 0 3px
-        rgba(
-            166,
-            116,
-            137,
-            0.14
-        );
-
-}
-
-
-/* ============================================================
-   DRAWERS
-   ============================================================ */
-
-body.theme-haunted .drawer,
-body.theme-october .drawer,
-body.theme-october-sleepover .drawer {
-
-    color:
-        var(--october-warm-cream);
-
-    background:
-
-        linear-gradient(
-            180deg,
-            #2a192a,
-            #211421
-        );
-
-    border-left:
-        1px solid
-        rgba(
-            201,
-            154,
-            79,
-            0.24
-        );
-
-    box-shadow:
-        -18px 0 50px
-        rgba(
-            8,
-            3,
-            10,
-            0.38
-        );
-
-}
-
-
-/* ============================================================
-   DRAWER HEADERS / FOOTERS
-   ============================================================ */
-
-body.theme-haunted .drawer-header,
-body.theme-haunted .drawer-footer,
-
-body.theme-october .drawer-header,
-body.theme-october .drawer-footer,
-
-body.theme-october-sleepover .drawer-header,
-body.theme-october-sleepover .drawer-footer {
-
-    background:
-        rgba(
-            35,
-            20,
-            34,
-            0.96
-        );
-
-    border-color:
         rgba(
             201,
             154,
@@ -1217,327 +497,96 @@ body.theme-october-sleepover .drawer-footer {
             0.16
         );
 
-}
-
-
-/* ============================================================
-   DRAWER LABELS
-   ============================================================ */
-
-body.theme-haunted .drawer-eyebrow,
-body.theme-october .drawer-eyebrow,
-body.theme-october-sleepover .drawer-eyebrow {
-
-    color:
-        var(--october-candlelight);
-
-    font-family:
-        var(--font-literary);
-
-    letter-spacing:
-        0.16em;
-
-}
-
-
-/* ============================================================
-   CARDS
-   ============================================================ */
-
-body.theme-haunted .card,
-body.theme-october .card,
-body.theme-october-sleepover .card {
+    border-radius:
+        12px;
 
     background:
-        rgba(
-            48,
-            29,
-            47,
-            0.80
+
+        linear-gradient(
+            145deg,
+            rgba(
+                77,
+                46,
+                75,
+                0.62
+            ),
+            rgba(
+                33,
+                18,
+                35,
+                0.78
+            )
         );
 
+    color:
+        var(--october-warm-cream);
+
+    text-align:
+        left;
+
+    cursor:
+        pointer;
+
+    box-shadow:
+        inset
+        0 1px
+        rgba(
+            255,
+            255,
+            255,
+            0.025
+        );
+
+    transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        background 160ms ease;
+}
+
+
+.theme-card:hover {
+    transform:
+        translateY(-3px);
+
+    border-color:
+        rgba(
+            239,
+            185,
+            108,
+            0.39
+        );
+
+    box-shadow:
+        var(--shadow-card);
+}
+
+
+.theme-card.active {
     border-color:
         rgba(
             201,
             154,
             79,
-            0.15
+            0.68
         );
 
-}
-
-
-/* ============================================================
-   OCTOBER SLEEPOVER AUTH SCREEN
-
-   This styles the CURRENT login structure.
-   We can replace the content/illustration later without
-   breaking authentication.
-   ============================================================ */
-
-body.theme-haunted .auth-screen,
-body.theme-october .auth-screen,
-body.theme-october-sleepover .auth-screen {
-
-    position:
-        fixed;
-
-    inset:
-        0;
-
-    overflow:
-        auto;
-
     background:
-
-        radial-gradient(
-            circle at 16% 18%,
-            rgba(
-                151,
-                109,
-                157,
-                0.22
-            ),
-            transparent 30%
-        ),
-
-        radial-gradient(
-            circle at 78% 18%,
-            rgba(
-                217,
-                118,
-                63,
-                0.10
-            ),
-            transparent 25%
-        ),
-
-        radial-gradient(
-            circle at 62% 88%,
-            rgba(
-                49,
-                92,
-                92,
-                0.08
-            ),
-            transparent 25%
-        ),
 
         linear-gradient(
             145deg,
-            #221226 0%,
-            #351d37 48%,
-            #1a0f1d 100%
-        );
-
-}
-
-
-/* ============================================================
-   AUTH AMBIENT STARS
-   ============================================================ */
-
-body.theme-haunted .auth-screen::before,
-body.theme-october .auth-screen::before,
-body.theme-october-sleepover .auth-screen::before {
-
-    content:
-        "✦  ·  ✧       ☾       ✦   ·   ✧";
-
-    position:
-        fixed;
-
-    top:
-        7%;
-    left:
-        7%;
-
-    width:
-        86%;
-
-    color:
-        rgba(
-            239,
-            185,
-            108,
-            0.58
-        );
-
-    font-size:
-        clamp(
-            0.85rem,
-            2vw,
-            1.5rem
-        );
-
-    letter-spacing:
-        clamp(
-            0.4rem,
-            2vw,
-            2.5rem
-        );
-
-    white-space:
-        nowrap;
-
-    pointer-events:
-        none;
-
-    opacity:
-        0.76;
-
-}
-
-
-/* ============================================================
-   AUTH SHELL
-   ============================================================ */
-
-body.theme-haunted .auth-shell,
-body.theme-october .auth-shell,
-body.theme-october-sleepover .auth-shell {
-
-    border:
-        1px solid
-        rgba(
-            201,
-            154,
-            79,
-            0.26
-        );
-
-    background:
-        rgba(
-            26,
-            14,
-            28,
-            0.66
-        );
-
-    box-shadow:
-        var(--shadow-deep);
-
-    backdrop-filter:
-        blur(15px);
-
-}
-
-
-/* ============================================================
-   AUTH STORY SIDE
-   ============================================================ */
-
-body.theme-haunted .auth-story,
-body.theme-october .auth-story,
-body.theme-october-sleepover .auth-story {
-
-    position:
-        relative;
-
-    background:
-
-        radial-gradient(
-            circle at 74% 20%,
             rgba(
-                239,
-                185,
-                108,
-                0.08
-            ),
-            transparent 22%
-        ),
-
-        linear-gradient(
-            160deg,
-            rgba(
-                72,
-                43,
-                75,
-                0.94
+                110,
+                68,
+                103,
+                0.84
             ),
             rgba(
-                42,
-                23,
-                45,
-                0.96
+                55,
+                30,
+                52,
+                0.90
             )
-        );
-
-    border-right:
-        1px solid
-        rgba(
-            201,
-            154,
-            79,
-            0.20
-        );
-
-}
-
-
-/* ============================================================
-   AUTH STORY ORNAMENT
-   ============================================================ */
-
-body.theme-haunted .auth-story::after,
-body.theme-october .auth-story::after,
-body.theme-october-sleepover .auth-story::after {
-
-    content:
-        "☾  ✦  ✧";
-
-    position:
-        absolute;
-
-    right:
-        2rem;
-    bottom:
-        2rem;
-
-    color:
-        var(--october-candlelight);
-
-    font-family:
-        var(--font-display);
-
-    font-size:
-        1.25rem;
-
-    letter-spacing:
-        0.45rem;
-
-    opacity:
-        0.76;
-
-}
-
-
-/* ============================================================
-   AUTH LOGO MARK
-   ============================================================ */
-
-body.theme-haunted .auth-brand-mark,
-body.theme-october .auth-brand-mark,
-body.theme-october-sleepover .auth-brand-mark {
-
-    color:
-        var(--october-warm-cream);
-
-    background:
-
-        linear-gradient(
-            145deg,
-            #724d79,
-            #3a243e
-        );
-
-    border:
-        1px solid
-        rgba(
-            239,
-            185,
-            108,
-            0.45
         );
 
     box-shadow:
@@ -1548,773 +597,1235 @@ body.theme-october-sleepover .auth-brand-mark {
             255,
             255,
             255,
-            0.05
+            0.035
         ),
 
         0 9px 22px
         rgba(
+            6,
+            2,
             8,
-            3,
-            10,
+            0.18
+        );
+}
+
+
+/* ============================================================
+   ACTIVE THEME MARK
+   ============================================================ */
+
+.theme-card.active::after {
+    content:
+        "✦";
+
+    position:
+        absolute;
+
+    top:
+        8px;
+    right:
+        9px;
+
+    width:
+        23px;
+
+    height:
+        23px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border:
+        1px solid
+        rgba(
+            244,
+            232,
+            212,
             0.25
         );
 
-    font-family:
-        var(--font-display);
+    border-radius:
+        50%;
 
-}
-
-
-/* ============================================================
-   AUTH EYEBROW
-   ============================================================ */
-
-body.theme-haunted .auth-story-eyebrow,
-body.theme-october .auth-story-eyebrow,
-body.theme-october-sleepover .auth-story-eyebrow {
-
-    color:
-        var(--october-warm-cream);
-
-    font-size:
-        clamp(
-            1.9rem,
-            4vw,
-            3.6rem
-        );
-
-    line-height:
-        1;
-
-}
-
-
-/* ============================================================
-   AUTH MAIN STORY HEADING
-   ============================================================ */
-
-body.theme-haunted .auth-story h1,
-body.theme-october .auth-story h1,
-body.theme-october-sleepover .auth-story h1 {
+    background:
+        var(--october-blackberry);
 
     color:
         var(--october-candlelight);
 
+    font-size:
+        0.55rem;
+
+    box-shadow:
+        0 3px 8px
+        rgba(
+            5,
+            1,
+            7,
+            0.22
+        );
+}
+
+
+/* ============================================================
+   THEME PREVIEW
+
+   Preview itself looks like a miniature shelf.
+   ============================================================ */
+
+.theme-preview {
+    position:
+        relative;
+
+    height:
+        116px;
+
+    flex:
+        0 0 auto;
+
+    display:
+        block;
+
+    margin-bottom:
+        11px;
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        rgba(
+            244,
+            232,
+            212,
+            0.10
+        );
+
+    border-radius:
+        8px;
+
+    background:
+        #27152b;
+
+    box-shadow:
+        inset
+        0 0 20px
+        rgba(
+            5,
+            1,
+            7,
+            0.28
+        );
+}
+
+
+/* ============================================================
+   MINI SHELF
+   ============================================================ */
+
+.theme-preview::before {
+    content:
+        "";
+
+    position:
+        absolute;
+
+    left:
+        10px;
+    right:
+        10px;
+
+    bottom:
+        15px;
+
+    height:
+        10px;
+
+    border-radius:
+        3px;
+
+    background:
+        var(--october-purple-wood);
+
+    box-shadow:
+
+        0 5px 0
+        #322039,
+
+        0 8px 10px
+        rgba(
+            4,
+            1,
+            6,
+            0.26
+        );
+}
+
+
+/* ============================================================
+   MINI BOOKS
+   ============================================================ */
+
+.theme-preview::after {
+    content:
+        "";
+
+    position:
+        absolute;
+
+    left:
+        21px;
+
+    bottom:
+        25px;
+
+    width:
+        19px;
+
+    height:
+        63px;
+
+    border-radius:
+        3px 3px 1px 1px;
+
+    background:
+        #a67489;
+
+    box-shadow:
+
+        21px 7px 0
+        -2px
+        #596443,
+
+        39px -2px 0
+        -1px
+        #d9763f,
+
+        61px 11px 0
+        -3px
+        #a78eb8,
+
+        81px -5px 0
+        0
+        #5b3a6b,
+
+        102px 6px 0
+        -2px
+        #c99a4f;
+
+    transform:
+        rotate(-1deg);
+}
+
+
+/* ============================================================
+   OCTOBER SLEEPOVER / HAUNTED PREVIEW
+   ============================================================ */
+
+.theme-card[data-theme="haunted"]
+.theme-preview,
+.theme-card[data-theme="october"]
+.theme-preview,
+.theme-card[data-theme="october-sleepover"]
+.theme-preview {
+
+    background:
+
+        radial-gradient(
+            circle at 75% 18%,
+            rgba(
+                244,
+                232,
+                212,
+                0.15
+            ),
+            transparent 19%
+        ),
+
+        linear-gradient(
+            145deg,
+            #593762,
+            #261429
+        );
+}
+
+
+/* ============================================================
+   AUTUMN PREVIEW
+   ============================================================ */
+
+.theme-card[data-theme="autumn"]
+.theme-preview {
+    background:
+
+        radial-gradient(
+            circle at 25% 20%,
+            rgba(
+                235,
+                180,
+                87,
+                0.22
+            ),
+            transparent 28%
+        ),
+
+        linear-gradient(
+            145deg,
+            #76422c,
+            #352217
+        );
+}
+
+
+/* ============================================================
+   FOREST PREVIEW
+   ============================================================ */
+
+.theme-card[data-theme="forest"]
+.theme-preview {
+    background:
+
+        radial-gradient(
+            circle at 72% 18%,
+            rgba(
+                218,
+                227,
+                190,
+                0.13
+            ),
+            transparent 20%
+        ),
+
+        linear-gradient(
+            145deg,
+            #46543c,
+            #18251c
+        );
+}
+
+
+/* ============================================================
+   RETRO PREVIEW
+   ============================================================ */
+
+.theme-card[data-theme="retro"]
+.theme-preview {
+    background:
+
+        linear-gradient(
+            155deg,
+            #5c2945,
+            #1c152a 62%,
+            #264f53
+        );
+}
+
+
+/* ============================================================
+   GHOST PREVIEW
+   ============================================================ */
+
+.theme-card[data-theme="ghosts"]
+.theme-preview {
+    background:
+
+        linear-gradient(
+            150deg,
+            #c89bae,
+            #9f8ab0 52%,
+            #788d7b
+        );
+}
+
+
+/* ============================================================
+   THEME CARD TEXT
+   ============================================================ */
+
+.theme-card > strong {
+    margin:
+        0 3px 5px;
+
+    color:
+        var(--october-warm-cream);
+
     font-family:
         var(--font-display);
 
+    font-size:
+        1.05rem;
+
     font-weight:
-        500;
+        550;
 
     line-height:
-        1.02;
-
+        1;
 }
 
 
-/* ============================================================
-   AUTH STORY COPY
-   ============================================================ */
-
-body.theme-haunted .auth-story-copy,
-body.theme-october .auth-story-copy,
-body.theme-october-sleepover .auth-story-copy {
+.theme-card > span:not(.theme-preview) {
+    margin:
+        0 3px;
 
     color:
-        #dec8ce;
-
-    font-family:
-        var(--font-literary);
-
-}
-
-
-/* ============================================================
-   AUTH FOOTER HANDWRITING
-   ============================================================ */
-
-body.theme-haunted .auth-story-footer,
-body.theme-october .auth-story-footer,
-body.theme-october-sleepover .auth-story-footer {
-
-    color:
-        var(--october-dusty-mauve);
+        rgba(
+            244,
+            232,
+            212,
+            0.48
+        );
 
     font-family:
         var(--font-hand);
 
     font-size:
-        1.05rem;
+        0.70rem;
 
-    letter-spacing:
-        0.02em;
+    line-height:
+        1.3;
+}
+
+
+/* ============================================================
+   OCTOBER DECORATION SVG
+   ============================================================ */
+
+.october-decoration-svg {
+    display:
+        block;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    overflow:
+        visible;
+
+    pointer-events:
+        none;
+
+    transform-box:
+        fill-box;
+
+    transform-origin:
+        center;
+}
+
+
+/* ============================================================
+   DECORATION MOTION
+
+   These are intentionally subtle.
+
+   They should feel alive, not like stickers bouncing around.
+   ============================================================ */
+
+
+/* ============================================================
+   GHOST — HOVER
+   ============================================================ */
+
+.october-hover {
+    animation:
+        octoberGhostHover
+        4.8s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes octoberGhostHover {
+
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            rotate(-1deg);
+    }
+
+    35% {
+        transform:
+            translateY(-4px)
+            rotate(0.7deg);
+    }
+
+    70% {
+        transform:
+            translateY(-1px)
+            rotate(-0.5deg);
+    }
 
 }
 
 
 /* ============================================================
-   AUTH PANEL
+   CAT — STRETCH
+
+   Important:
+   wrapper does not move.
+   Only SVG artwork changes shape.
+   Therefore saved shelf positioning is unaffected.
    ============================================================ */
 
-body.theme-haunted .auth-panel,
-body.theme-october .auth-panel,
-body.theme-october-sleepover .auth-panel {
+.october-stretch {
+    animation:
+        octoberCatStretch
+        8.5s
+        ease-in-out
+        infinite;
 
-    background:
+    transform-origin:
+        42% 82%;
+}
 
-        linear-gradient(
-            180deg,
+
+@keyframes octoberCatStretch {
+
+    0%,
+    67%,
+    100% {
+        transform:
+            scaleX(1)
+            scaleY(1)
+            translateX(0);
+    }
+
+    72% {
+        transform:
+            scaleX(1.05)
+            scaleY(0.98)
+            translateX(-1px);
+    }
+
+    77% {
+        transform:
+            scaleX(1.13)
+            scaleY(0.93)
+            translateX(-4px);
+    }
+
+    82% {
+        transform:
+            scaleX(1.08)
+            scaleY(0.96)
+            translateX(-3px);
+    }
+
+    88% {
+        transform:
+            scaleX(1)
+            scaleY(1)
+            translateX(0);
+    }
+
+}
+
+
+/* ============================================================
+   MOON / STARS — GENTLE FLOAT
+   ============================================================ */
+
+.october-float-gentle {
+    animation:
+        octoberGentleFloat
+        6s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes octoberGentleFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            rotate(0deg);
+    }
+
+    50% {
+        transform:
+            translateY(-2px)
+            rotate(1deg);
+    }
+
+}
+
+
+/* ============================================================
+   CANDLE FLAME FLICKER
+
+   The SVG library gives the flame the class
+   .svg-candle-flame.
+   ============================================================ */
+
+.svg-candle-flame {
+    transform-box:
+        fill-box;
+
+    transform-origin:
+        50% 100%;
+
+    animation:
+        octoberCandleFlicker
+        1.7s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes octoberCandleFlicker {
+
+    0%,
+    100% {
+        transform:
+            scaleX(1)
+            scaleY(1)
+            rotate(0deg);
+
+        opacity:
+            1;
+    }
+
+    20% {
+        transform:
+            scaleX(0.91)
+            scaleY(1.05)
+            rotate(-2deg);
+
+        opacity:
+            0.92;
+    }
+
+    43% {
+        transform:
+            scaleX(1.04)
+            scaleY(0.96)
+            rotate(1.5deg);
+
+        opacity:
+            1;
+    }
+
+    67% {
+        transform:
+            scaleX(0.95)
+            scaleY(1.06)
+            rotate(-1deg);
+
+        opacity:
+            0.95;
+    }
+
+}
+
+
+/* ============================================================
+   DECORATION TYPE PERSONALITY
+   ============================================================ */
+
+.decor-ghost
+.october-decoration-svg {
+    filter:
+        drop-shadow(
+            0 5px 5px
             rgba(
-                244,
-                232,
-                212,
-                0.985
-            ),
-            rgba(
-                232,
-                213,
-                187,
-                0.985
+                4,
+                1,
+                6,
+                0.18
             )
         );
+}
 
-    color:
-        var(--october-ink);
 
+.decor-candle
+.october-decoration-svg {
+    filter:
+        drop-shadow(
+            0 0 7px
+            rgba(
+                239,
+                185,
+                108,
+                0.16
+            )
+        );
+}
+
+
+.decor-crystal
+.october-decoration-svg,
+.decor-crystals
+.october-decoration-svg {
+    filter:
+        drop-shadow(
+            0 3px 4px
+            rgba(
+                91,
+                58,
+                107,
+                0.20
+            )
+        );
+}
+
+
+.decor-stars
+.october-decoration-svg {
+    filter:
+        drop-shadow(
+            0 0 3px
+            rgba(
+                239,
+                185,
+                108,
+                0.22
+            )
+        );
 }
 
 
 /* ============================================================
-   AUTH BOOKPLATE
+   AMBIENCE — CANDLE GLOW
    ============================================================ */
 
-body.theme-haunted .auth-bookplate,
-body.theme-october .auth-bookplate,
-body.theme-october-sleepover .auth-bookplate {
-
-    background:
-        rgba(
-            255,
-            248,
-            236,
-            0.54
-        );
-
-    border:
-        1px solid
-        rgba(
-            91,
-            58,
-            107,
-            0.20
-        );
-
-    box-shadow:
-
-        inset
-        0 0 0 4px
-        rgba(
-            255,
-            255,
-            255,
-            0.20
-        ),
-
-        0 10px 30px
-        rgba(
-            59,
-            33,
-            77,
-            0.08
-        );
-
-}
-
-
-/* ============================================================
-   AUTH BOOKPLATE INNER
-   ============================================================ */
-
-body.theme-haunted .auth-bookplate-inner,
-body.theme-october .auth-bookplate-inner,
-body.theme-october-sleepover .auth-bookplate-inner {
-
-    border-color:
-        rgba(
-            91,
-            58,
-            107,
-            0.25
-        );
-
-}
-
-
-/* ============================================================
-   AUTH LABEL
-   ============================================================ */
-
-body.theme-haunted .auth-bookplate-label,
-body.theme-october .auth-bookplate-label,
-body.theme-october-sleepover .auth-bookplate-label {
-
-    color:
-        var(--october-burgundy);
-
-    font-family:
-        var(--font-literary);
-
-    letter-spacing:
-        0.17em;
-
-}
-
-
-/* ============================================================
-   AUTH TITLE
-   ============================================================ */
-
-body.theme-haunted .auth-title,
-body.theme-october .auth-title,
-body.theme-october-sleepover .auth-title {
-
-    color:
-        var(--october-blackberry);
-
-    font-family:
-        var(--font-display);
-
-    font-weight:
-        600;
-
-}
-
-
-/* ============================================================
-   AUTH INPUTS
-   ============================================================ */
-
-body.theme-haunted .auth-panel input,
-body.theme-october .auth-panel input,
-body.theme-october-sleepover .auth-panel input {
-
-    color:
-        var(--october-ink);
-
-    background:
-        rgba(
-            255,
-            250,
-            241,
-            0.82
-        );
-
-    border:
-        1px solid
-        rgba(
-            91,
-            58,
-            107,
-            0.24
-        );
-
-}
-
-
-/* ============================================================
-   AUTH PRIMARY BUTTON
-   ============================================================ */
-
-body.theme-haunted .auth-panel .primary-button,
-body.theme-october .auth-panel .primary-button,
-body.theme-october-sleepover .auth-panel .primary-button {
-
-    color:
-        var(--october-warm-cream);
-
-    background:
-
-        linear-gradient(
-            180deg,
-            #663b62,
-            #4b2949
-        );
-
-    border-color:
-        rgba(
-            91,
-            58,
-            107,
-            0.38
-        );
-
-}
-
-
-/* ============================================================
-   LOADING SCREEN
-   ============================================================ */
-
-body.theme-haunted .loading-screen,
-body.theme-october .loading-screen,
-body.theme-october-sleepover .loading-screen {
-
+body.candle-glow
+.app-shell {
     background:
 
         radial-gradient(
-            circle at 50% 38%,
+            circle at 14% 64%,
             rgba(
-                117,
-                80,
-                128,
-                0.24
+                239,
+                185,
+                108,
+                0.075
             ),
-            transparent 32%
+            transparent 24%
         ),
 
-        #180f1d;
+        radial-gradient(
+            circle at 84% 8%,
+            rgba(
+                167,
+                142,
+                184,
+                0.14
+            ),
+            transparent 27%
+        ),
+
+        linear-gradient(
+            180deg,
+            #241426,
+            #1a0f1d 42%,
+            #160c19
+        );
+}
+
+
+/* ============================================================
+   AMBIENCE — DUST
+
+   Uses the existing app-shell pseudo layer rather than adding
+   DOM particles.
+   ============================================================ */
+
+body.dust
+.app-shell::before {
+    opacity:
+        0.63;
+
+    animation:
+        octoberDustDrift
+        28s
+        linear
+        infinite;
+}
+
+
+@keyframes octoberDustDrift {
+
+    from {
+        background-position:
+            0 0,
+            0 0,
+            0 0,
+            0 0;
+    }
+
+    to {
+        background-position:
+            38px -28px,
+            -31px -42px,
+            23px -35px,
+            -19px -23px;
+    }
 
 }
 
 
 /* ============================================================
-   LOADING MARK
+   AMBIENCE — RAIN
+
+   Light atmosphere only.
    ============================================================ */
 
-body.theme-haunted .loading-mark,
-body.theme-october .loading-mark,
-body.theme-october-sleepover .loading-mark {
+body.rain
+.app-shell::after {
+    content:
+        "";
 
-    color:
-        var(--october-warm-cream);
+    position:
+        fixed;
 
-    border-color:
-        rgba(
-            201,
-            154,
-            79,
-            0.42
+    z-index:
+        1;
+
+    inset:
+        0;
+
+    pointer-events:
+        none;
+
+    opacity:
+        0.055;
+
+    background-image:
+
+        repeating-linear-gradient(
+            104deg,
+            transparent 0 18px,
+            rgba(
+                235,
+                224,
+                237,
+                0.60
+            )
+            18px 19px,
+            transparent 19px 37px
         );
 
-    background:
-        rgba(
-            91,
-            58,
-            107,
-            0.32
-        );
+    background-size:
+        80px 120px;
 
-    font-family:
-        var(--font-display);
+    animation:
+        octoberRain
+        1.8s
+        linear
+        infinite;
+}
+
+
+@keyframes octoberRain {
+
+    from {
+        background-position:
+            0 -120px;
+    }
+
+    to {
+        background-position:
+            -20px 120px;
+    }
 
 }
 
 
 /* ============================================================
-   OCTOBER COLOR UTILITY CLASSES
+   ODDITIES
 
-   These will be useful when books.js begins creating
-   clickable color swatches.
+   Makes decorative pieces just slightly more animated.
    ============================================================ */
 
-.theme-book-color-deep-plum {
-    --swatch-color:
-        #5b3a6b;
+body.oddities
+.decor-bat
+.october-decoration-svg {
+    animation:
+        octoberBatBreathe
+        4.2s
+        ease-in-out
+        infinite;
 }
 
 
-.theme-book-color-blackberry {
-    --swatch-color:
-        #3b214d;
+@keyframes octoberBatBreathe {
+
+    0%,
+    100% {
+        transform:
+            rotate(-1deg)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            rotate(1deg)
+            scale(1.025);
+    }
+
 }
 
 
-.theme-book-color-dusty-mauve {
-    --swatch-color:
-        #a67489;
+body.oddities
+.decor-mushroom
+.october-decoration-svg {
+    animation:
+        octoberMushroomSway
+        7s
+        ease-in-out
+        infinite;
 }
 
 
-.theme-book-color-rosewood {
-    --swatch-color:
-        #b85f6f;
+@keyframes octoberMushroomSway {
+
+    0%,
+    100% {
+        transform:
+            rotate(-0.7deg);
+    }
+
+    50% {
+        transform:
+            rotate(1deg);
+    }
+
 }
 
 
-.theme-book-color-pumpkin {
-    --swatch-color:
-        #d9763f;
+body.oddities
+.decor-raven
+.october-decoration-svg {
+    animation:
+        octoberRavenLook
+        9s
+        ease-in-out
+        infinite;
+
+    transform-origin:
+        55% 70%;
 }
 
 
-.theme-book-color-antique-gold {
-    --swatch-color:
-        #c99a4f;
-}
+@keyframes octoberRavenLook {
 
+    0%,
+    69%,
+    100% {
+        transform:
+            rotate(0deg);
+    }
 
-.theme-book-color-smoky-lilac {
-    --swatch-color:
-        #a78eb8;
-}
+    74% {
+        transform:
+            rotate(-2deg);
+    }
 
+    80% {
+        transform:
+            rotate(1deg);
+    }
 
-.theme-book-color-moss {
-    --swatch-color:
-        #596443;
-}
+    86% {
+        transform:
+            rotate(0deg);
+    }
 
-
-.theme-book-color-sage {
-    --swatch-color:
-        #929f7c;
-}
-
-
-.theme-book-color-warm-cream {
-    --swatch-color:
-        #f4e8d4;
 }
 
 
 /* ============================================================
-   FUTURE SPINE FONT UTILITY CLASSES
+   BOOK FONT CLASS MAPPING
 
-   These are ready for books.js when we rebuild the editor.
+   This connects books.js font values to our actual web fonts.
    ============================================================ */
 
-.spine-font-whimsical {
+.book-font-storybook
+.spine-title,
+.book-font-storybook
+.spine-preview-title {
     font-family:
         var(--spine-font-whimsical);
 }
 
 
-.spine-font-handwritten {
-    font-family:
-        var(--spine-font-handwritten);
-}
-
-
-.spine-font-storybook {
-    font-family:
-        var(--spine-font-storybook);
-}
-
-
-.spine-font-spooky {
-    font-family:
-        var(--spine-font-spooky);
-}
-
-
-.spine-font-dreamy {
+.book-font-dreamy
+.spine-title,
+.book-font-dreamy
+.spine-preview-title {
     font-family:
         var(--spine-font-dreamy);
 }
 
 
-.spine-font-gothic {
+.book-font-handwritten
+.spine-title,
+.book-font-handwritten
+.spine-preview-title {
+    font-family:
+        var(--spine-font-handwritten);
+}
+
+
+.book-font-gothic
+.spine-title,
+.book-font-gothic
+.spine-preview-title {
+    font-family:
+        var(--spine-font-spooky);
+}
+
+
+.book-font-deco
+.spine-title,
+.book-font-deco
+.spine-preview-title {
     font-family:
         var(--spine-font-gothic);
 }
 
 
-.spine-font-vintage {
+.book-font-elegant
+.spine-title,
+.book-font-elegant
+.spine-preview-title {
+    font-family:
+        var(--spine-font-dreamy);
+}
+
+
+.book-font-bookish
+.spine-title,
+.book-font-bookish
+.spine-preview-title {
+    font-family:
+        var(--spine-font-storybook);
+}
+
+
+.book-font-vintage
+.spine-title,
+.book-font-vintage
+.spine-preview-title {
     font-family:
         var(--spine-font-vintage);
 }
 
 
-.spine-font-label {
-    font-family:
-        var(--spine-font-label);
-}
-
-
-.spine-font-cozy {
+.book-font-cozy
+.spine-title,
+.book-font-cozy
+.spine-preview-title {
     font-family:
         var(--spine-font-cozy);
 }
 
 
-.spine-font-classic {
-    font-family:
-        var(--spine-font-classic);
-}
-
-
-.spine-font-retro {
+.book-font-retro
+.spine-title,
+.book-font-retro
+.spine-preview-title {
     font-family:
         var(--spine-font-retro);
 }
 
 
-.spine-font-elegant {
+.book-font-classic
+.spine-title,
+.book-font-classic
+.spine-preview-title {
     font-family:
-        var(--spine-font-elegant);
+        var(--spine-font-classic);
+}
+
+
+.book-font-label
+.spine-title,
+.book-font-label
+.spine-preview-title {
+    font-family:
+        var(--spine-font-label);
 }
 
 
 /* ============================================================
-   CANDLE GLOW MODE
+   LEGACY BOOK FONT MAPPING
+
+   Old saved books should not suddenly lose their typography.
    ============================================================ */
 
-body.theme-haunted.candle-glow,
-body.theme-october.candle-glow,
-body.theme-october-sleepover.candle-glow {
+.book-font-serif
+.spine-title {
+    font-family:
+        var(--spine-font-vintage);
+}
 
-    --active-candle-glow:
-        0 0 30px
-        rgba(
-            239,
-            185,
-            108,
-            0.30
-        );
 
+.book-font-roman
+.spine-title {
+    font-family:
+        var(--spine-font-classic);
+}
+
+
+.book-font-typewriter
+.spine-title {
+    font-family:
+        var(--spine-font-retro);
+}
+
+
+.book-font-clean
+.spine-title {
+    font-family:
+        var(--font-literary);
+}
+
+
+.book-font-condensed
+.spine-title {
+    font-family:
+        var(--spine-font-spooky);
+}
+
+
+.book-font-heavy
+.spine-title {
+    font-family:
+        var(--spine-font-cozy);
 }
 
 
 /* ============================================================
-   AMBIENT MOTION
-
-   These classes will be picked up by our SVG decorations.
+   FONT CHARACTER TUNING
    ============================================================ */
 
-.october-hover {
+.book-font-dreamy
+.spine-title {
+    font-style:
+        italic;
 
-    animation:
-        octoberHover
-        3.8s
-        ease-in-out
-        infinite;
-
+    letter-spacing:
+        -0.025em;
 }
 
 
-.october-flicker {
+.book-font-handwritten
+.spine-title {
+    font-style:
+        italic;
 
-    animation:
-        octoberFlicker
-        2.8s
-        ease-in-out
-        infinite;
-
+    letter-spacing:
+        0.01em;
 }
 
 
-.october-stretch {
-
-    transform-origin:
-        center bottom;
-
-    animation:
-        octoberStretch
-        8s
-        ease-in-out
-        infinite;
-
+.book-font-gothic
+.spine-title {
+    letter-spacing:
+        0.025em;
 }
 
 
-.october-float-gentle {
+.book-font-deco
+.spine-title {
+    letter-spacing:
+        0.015em;
+}
 
-    animation:
-        octoberFloatGentle
-        5.8s
-        ease-in-out
-        infinite;
 
+.book-font-retro
+.spine-title {
+    letter-spacing:
+        0.02em;
+}
+
+
+.book-font-label
+.spine-title {
+    letter-spacing:
+        0.06em;
+
+    text-transform:
+        uppercase;
 }
 
 
 /* ============================================================
-   GHOST HOVER
+   MOBILE
    ============================================================ */
 
-@keyframes octoberHover {
+@media
+(max-width: 620px) {
 
-    0%,
-    100% {
+    .theme-grid {
+        grid-template-columns:
+            1fr 1fr;
 
-        transform:
-            translateY(0);
-
+        gap:
+            8px;
     }
 
 
-    48% {
+    .theme-card {
+        min-height:
+            185px;
 
-        transform:
-            translateY(-6px);
-
+        padding:
+            8px;
     }
 
 
-    56% {
-
-        transform:
-            translateY(-6px);
-
-    }
-
-}
-
-
-/* ============================================================
-   CANDLE FLICKER
-   ============================================================ */
-
-@keyframes octoberFlicker {
-
-    0%,
-    100% {
-
-        opacity:
-            1;
-
-        transform:
-            scaleY(1)
-            rotate(-1deg);
-
+    .theme-preview {
+        height:
+            96px;
     }
 
 
-    18% {
-
-        opacity:
-            0.90;
-
-        transform:
-            scaleY(0.92)
-            rotate(2deg);
-
+    .theme-card > strong {
+        font-size:
+            0.92rem;
     }
 
 
-    35% {
-
-        opacity:
-            1;
-
-        transform:
-            scaleY(1.06)
-            rotate(-2deg);
-
-    }
-
-
-    52% {
-
-        opacity:
-            0.86;
-
-        transform:
-            scaleY(0.95)
-            rotate(1deg);
-
-    }
-
-
-    72% {
-
-        opacity:
-            1;
-
-        transform:
-            scaleY(1.04)
-            rotate(-1deg);
-
+    .theme-card
+    > span:not(.theme-preview) {
+        font-size:
+            0.62rem;
     }
 
 }
 
 
 /* ============================================================
-   CAT STRETCH
-
-   SVG sub-elements can later use this.
+   SMALL MOBILE
    ============================================================ */
 
-@keyframes octoberStretch {
+@media
+(max-width: 390px) {
 
-    0%,
-    72%,
-    100% {
-
-        transform:
-            scaleX(1)
-            scaleY(1);
-
+    .theme-grid {
+        grid-template-columns:
+            1fr;
     }
 
 
-    78% {
-
-        transform:
-            scaleX(1.05)
-            scaleY(0.98);
-
+    .theme-card {
+        min-height:
+            170px;
     }
 
 
-    83% {
-
-        transform:
-            scaleX(1.16)
-            scaleY(0.92);
-
-    }
-
-
-    88% {
-
-        transform:
-            scaleX(1.08)
-            scaleY(0.97);
-
-    }
-
-
-    93% {
-
-        transform:
-            scaleX(1)
-            scaleY(1);
-
-    }
-
-}
-
-
-/* ============================================================
-   GENTLE OBJECT FLOAT
-   ============================================================ */
-
-@keyframes octoberFloatGentle {
-
-    0%,
-    100% {
-
-        transform:
-            translate3d(
-                0,
-                0,
-                0
-            );
-
-    }
-
-
-    50% {
-
-        transform:
-            translate3d(
-                0,
-                -3px,
-                0
-            );
-
+    .theme-preview {
+        height:
+            90px;
     }
 
 }
@@ -2324,102 +1835,31 @@ body.theme-october-sleepover.candle-glow {
    REDUCED MOTION
    ============================================================ */
 
-body.reduce-motion .october-hover,
-body.reduce-motion .october-flicker,
-body.reduce-motion .october-stretch,
-body.reduce-motion .october-float-gentle,
+body.reduce-motion
+.october-decoration-svg,
+
+body.reduce-motion
+.svg-candle-flame,
+
+body.reduce-motion
+.app-shell::before,
+
+body.reduce-motion
+.app-shell::after {
+    animation:
+        none !important;
+}
+
 
 @media
 (prefers-reduced-motion: reduce) {
 
-    .october-hover,
-    .october-flicker,
-    .october-stretch,
-    .october-float-gentle {
-
+    .october-decoration-svg,
+    .svg-candle-flame,
+    .app-shell::before,
+    .app-shell::after {
         animation:
             none !important;
-
-    }
-
-}
-
-
-/* ============================================================
-   MOBILE AUTH
-   ============================================================ */
-
-@media
-(max-width: 760px) {
-
-    body.theme-haunted .auth-screen,
-    body.theme-october .auth-screen,
-    body.theme-october-sleepover .auth-screen {
-
-        background:
-
-            radial-gradient(
-                circle at 50% 7%,
-                rgba(
-                    151,
-                    109,
-                    157,
-                    0.22
-                ),
-                transparent 28%
-            ),
-
-            linear-gradient(
-                180deg,
-                #28152c,
-                #170d1a
-            );
-
-    }
-
-
-    body.theme-haunted .auth-story,
-    body.theme-october .auth-story,
-    body.theme-october-sleepover .auth-story {
-
-        border-right:
-            0;
-
-        border-bottom:
-            1px solid
-            rgba(
-                201,
-                154,
-                79,
-                0.20
-            );
-
-    }
-
-
-    body.theme-haunted .auth-story-eyebrow,
-    body.theme-october .auth-story-eyebrow,
-    body.theme-october-sleepover .auth-story-eyebrow {
-
-        font-size:
-            2.3rem;
-
-    }
-
-
-    body.theme-haunted .auth-story::after,
-    body.theme-october .auth-story::after,
-    body.theme-october-sleepover .auth-story::after {
-
-        right:
-            1rem;
-
-        bottom:
-            1rem;
-
-        font-size:
-            0.9rem;
-
     }
 
 }
