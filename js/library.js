@@ -1,14 +1,17 @@
 /* =========================================================
    NOVELLOW
    LIBRARY.JS
+   VERSION 13
 
    Shelf creation
    Shelf editing
    Shelf deletion
    Shelf rendering
    Shelf book population
-   Decoration rendering
-   Decoration drag + scale
+   October Sleepover SVG decorations
+   Legacy theme decoration fallback
+   Decoration dragging
+   Decoration scaling
    ========================================================= */
 
 
@@ -48,8 +51,132 @@
        MODULE STATE
        ===================================================== */
 
+    let initialized =
+        false;
+
+
     let activeDrag =
         null;
+
+
+    /* =====================================================
+       OCTOBER SLEEPOVER ART
+       ===================================================== */
+
+    const OCTOBER_ASSET =
+        "assets/october-sleepover.svg";
+
+
+    /*
+       "haunted" is included temporarily because that is the
+       old ID used by the current default theme.
+
+       When themes.js/config.js is rebuilt, October Sleepover
+       will receive its own permanent theme ID.
+    */
+
+    const OCTOBER_THEME_IDS =
+        new Set([
+            "haunted",
+            "default",
+            "october",
+            "october-sleepover"
+        ]);
+
+
+    /*
+       Existing decoration types are mapped to the new SVG
+       illustration library.
+
+       Additional October Sleepover objects are included now
+       so we can expose them in the Shelf Designer later
+       without rewriting library.js again.
+    */
+
+    const OCTOBER_SVG_SYMBOLS = {
+
+        cat:
+            "decor-black-cat",
+
+        ghost:
+            "decor-tiny-ghost",
+
+        mushroom:
+            "decor-mushroom",
+
+        candle:
+            "decor-candle",
+
+        mug:
+            "decor-ghost-mug",
+
+        potion:
+            "decor-potion-bottle",
+
+        crystal:
+            "decor-crystals",
+
+        stars:
+            "decor-stars",
+
+        eightball:
+            "decor-magic-eight-ball",
+
+        "magic-eight-ball":
+            "decor-magic-eight-ball",
+
+        moon:
+            "decor-moon-stars",
+
+        "moon-stars":
+            "decor-moon-stars",
+
+        web:
+            "decor-spider-web",
+
+        "spider-web":
+            "decor-spider-web",
+
+        key:
+            "decor-old-key",
+
+        "old-key":
+            "decor-old-key",
+
+        flashlight:
+            "decor-flashlight",
+
+        "round-potion":
+            "decor-round-potion",
+
+        heart:
+            "decor-heart-sparkle"
+
+    };
+
+
+    /*
+       These decorations exist specifically because of the
+       October Sleepover art pack.
+
+       If they somehow exist while another theme is active,
+       we still render them rather than showing a blank item.
+    */
+
+    const OCTOBER_ONLY_DECORATIONS =
+        new Set([
+            "eightball",
+            "magic-eight-ball",
+            "moon",
+            "moon-stars",
+            "web",
+            "spider-web",
+            "key",
+            "old-key",
+            "flashlight",
+            "round-potion",
+            "heart"
+        ]);
 
 
     /* =====================================================
@@ -57,6 +184,15 @@
        ===================================================== */
 
     function init() {
+
+        if (initialized) {
+            return;
+        }
+
+
+        initialized =
+            true;
+
 
         bindShelfControls();
 
@@ -68,7 +204,7 @@
 
 
     /* =====================================================
-       BIND CONTROLS
+       SHELF DRAWER CONTROLS
        ===================================================== */
 
     function bindShelfControls() {
@@ -124,9 +260,10 @@
         );
 
 
-        Novellow.panels?.openPanel?.(
-            "shelfDrawer"
-        );
+        Novellow.panels
+            ?.openPanel?.(
+                "shelfDrawer"
+            );
 
 
         requestAnimationFrame(
@@ -151,7 +288,7 @@
     ) {
 
         const shelf =
-            H.getShelfById?.(
+            getShelfById(
                 shelfId
             );
 
@@ -214,7 +351,10 @@
 
         setInputValue(
             "shelfSort",
-            shelf.sort
+            shelf.sort ||
+            shelf.sortMode ||
+            shelf.sort_mode ||
+            "manual"
         );
 
 
@@ -223,9 +363,10 @@
         );
 
 
-        Novellow.panels?.openPanel?.(
-            "shelfDrawer"
-        );
+        Novellow.panels
+            ?.openPanel?.(
+                "shelfDrawer"
+            );
 
     }
 
@@ -236,13 +377,14 @@
 
     function closeShelfDrawer() {
 
-        Novellow.panels?.closeAllPanels?.();
+        Novellow.panels
+            ?.closeAllPanels?.();
 
     }
 
 
     /* =====================================================
-       RESET FORM
+       RESET SHELF FORM
        ===================================================== */
 
     function resetShelfForm() {
@@ -285,7 +427,8 @@
 
         setInputValue(
             "shelfSort",
-            state.settings?.defaultShelfSort ||
+            state.settings
+                ?.defaultShelfSort ||
             CONFIG.defaultShelf?.sort ||
             "manual"
         );
@@ -299,7 +442,7 @@
 
 
     /* =====================================================
-       SUBMIT SHELF
+       SAVE SHELF
        ===================================================== */
 
     function handleShelfSubmit(
@@ -317,71 +460,19 @@
 
         const existing =
             editingId
-                ? H.getShelfById?.(
+                ? getShelfById(
                     editingId
                 )
                 : null;
 
 
-        const selectedDecorations =
-            getSelectedDecorations(
-                existing
-            );
+        const name =
+            getInputValue(
+                "shelfName"
+            ).trim();
 
 
-        const shelfData =
-            H.normalizeShelf?.({
-                ...existing,
-
-                id:
-                    existing?.id ||
-                    undefined,
-
-                name:
-                    getInputValue(
-                        "shelfName"
-                    ),
-
-                description:
-                    getInputValue(
-                        "shelfDescription"
-                    ),
-
-                material:
-                    getInputValue(
-                        "shelfMaterial"
-                    ),
-
-                mood:
-                    getInputValue(
-                        "shelfMood"
-                    ),
-
-                layout:
-                    getInputValue(
-                        "shelfLayout"
-                    ),
-
-                sort:
-                    getInputValue(
-                        "shelfSort"
-                    ),
-
-                decorations:
-                    selectedDecorations,
-
-                createdAt:
-                    existing?.createdAt,
-
-                updatedAt:
-                    H.nowISO?.()
-
-            });
-
-
-        if (
-            !shelfData.name
-        ) {
+        if (!name) {
 
             H.showToast?.(
                 "Give your shelf a name first.",
@@ -393,18 +484,143 @@
         }
 
 
+        const selectedDecorations =
+            getSelectedDecorations(
+                existing
+            );
+
+
+        const sort =
+            getInputValue(
+                "shelfSort"
+            ) ||
+            "manual";
+
+
+        const rawShelf = {
+
+            ...existing,
+
+            id:
+                existing?.id ||
+                createId(
+                    "shelf"
+                ),
+
+            name,
+
+            description:
+                getInputValue(
+                    "shelfDescription"
+                ).trim(),
+
+            material:
+                getInputValue(
+                    "shelfMaterial"
+                ) ||
+                CONFIG.defaultShelf
+                    ?.material ||
+                "walnut",
+
+            mood:
+                getInputValue(
+                    "shelfMood"
+                ) ||
+                CONFIG.defaultShelf
+                    ?.mood ||
+                "cozy",
+
+            layout:
+                getInputValue(
+                    "shelfLayout"
+                ) ||
+                CONFIG.defaultShelf
+                    ?.layout ||
+                "mixed",
+
+            /*
+               Keep all three during the localStorage /
+               Supabase transition.
+            */
+
+            sort,
+
+            sortMode:
+                sort,
+
+            sort_mode:
+                sort,
+
+            decorations:
+                selectedDecorations,
+
+            position:
+                existing?.position ??
+                getNextShelfPosition(),
+
+            createdAt:
+                existing?.createdAt ||
+                existing?.created_at ||
+                nowISO(),
+
+            updatedAt:
+                nowISO()
+
+        };
+
+
+        const normalized =
+            typeof H.normalizeShelf ===
+                "function"
+                ? H.normalizeShelf(
+                    rawShelf
+                )
+                : rawShelf;
+
+
+        const shelfData = {
+
+            ...rawShelf,
+
+            ...normalized,
+
+            id:
+                rawShelf.id,
+
+            sort,
+
+            sortMode:
+                sort,
+
+            sort_mode:
+                sort,
+
+            decorations:
+                selectedDecorations,
+
+            position:
+                rawShelf.position
+
+        };
+
+
         if (existing) {
 
             const index =
                 state.shelves.findIndex(
                     shelf =>
-                        shelf.id ===
-                        existing.id
+                        String(
+                            shelf.id
+                        ) ===
+                        String(
+                            existing.id
+                        )
                 );
 
 
             if (
-                index !== -1
+                index !==
+                -1
             ) {
 
                 state.shelves[
@@ -459,12 +675,12 @@
        DELETE SHELF
        ===================================================== */
 
-    function deleteShelf(
+    async function deleteShelf(
         shelfId
     ) {
 
         const shelf =
-            H.getShelfById?.(
+            getShelfById(
                 shelfId
             );
 
@@ -475,9 +691,9 @@
 
 
         const booksOnShelf =
-            H.getBooksForShelf?.(
+            getBooksForShelf(
                 shelfId
-            ) || [];
+            );
 
 
         let message =
@@ -485,7 +701,8 @@
 
 
         if (
-            booksOnShelf.length > 0
+            booksOnShelf.length >
+            0
         ) {
 
             message +=
@@ -495,9 +712,14 @@
 
 
         const confirmed =
-            H.confirmAction?.(
-                message
-            );
+            typeof H.confirmAction ===
+                "function"
+                ? H.confirmAction(
+                    message
+                )
+                : window.confirm(
+                    message
+                );
 
 
         if (!confirmed) {
@@ -505,32 +727,66 @@
         }
 
 
+        /*
+           Remove shelf locally.
+        */
+
         state.shelves =
             state.shelves.filter(
                 item =>
-                    item.id !==
-                    shelfId
+                    String(
+                        item.id
+                    ) !==
+                    String(
+                        shelfId
+                    )
             );
 
+
+        /*
+           Books remain in Novellow.
+
+           Clear BOTH property names because different parts
+           of the app currently understand different versions.
+        */
 
         state.books =
             state.books.map(
                 book => {
 
+                    const bookShelfId =
+                        book.shelfId ||
+                        book.shelf_id ||
+                        "";
+
+
                     if (
-                        book.shelfId !==
-                        shelfId
+                        String(
+                            bookShelfId
+                        ) !==
+                        String(
+                            shelfId
+                        )
                     ) {
+
                         return book;
+
                     }
 
 
                     return {
+
                         ...book,
+
                         shelfId:
                             "",
+
+                        shelf_id:
+                            null,
+
                         updatedAt:
-                            H.nowISO?.()
+                            nowISO()
+
                     };
 
                 }
@@ -543,6 +799,44 @@
 
         Novellow.storage
             ?.saveBooks?.();
+
+
+        /*
+           app.js's general cloud queue handles inserts and
+           updates, but deleting a row requires an explicit
+           Supabase delete.
+        */
+
+        if (
+            Novellow.currentUser?.id &&
+            typeof Novellow.supabase
+                ?.deleteShelf ===
+                "function"
+        ) {
+
+            try {
+
+                await Novellow.supabase
+                    .deleteShelf(
+                        shelfId
+                    );
+
+            } catch (error) {
+
+                console.error(
+                    "Novellow could not delete the shelf from Supabase.",
+                    error
+                );
+
+
+                H.showToast?.(
+                    "The shelf was removed here, but cloud deletion needs another try.",
+                    "error"
+                );
+
+            }
+
+        }
 
 
         render();
@@ -607,7 +901,8 @@
 
 
         if (
-            shelves.length === 0
+            shelves.length ===
+            0
         ) {
 
             if (emptyState) {
@@ -631,7 +926,29 @@
         }
 
 
-        shelves.forEach(
+        const orderedShelves =
+            [...shelves].sort(
+                (
+                    first,
+                    second
+                ) => {
+
+                    return (
+                        Number(
+                            first.position ||
+                            0
+                        ) -
+                        Number(
+                            second.position ||
+                            0
+                        )
+                    );
+
+                }
+            );
+
+
+        orderedShelves.forEach(
             shelf => {
 
                 container.appendChild(
@@ -713,23 +1030,41 @@
         article.className =
             [
                 "library-shelf",
-                `material-${shelf.material}`,
-                `mood-${shelf.mood}`,
-                `layout-${shelf.layout}`
-            ].join(" ");
+                `material-${safeClass(
+                    shelf.material ||
+                    "walnut"
+                )}`,
+                `mood-${safeClass(
+                    shelf.mood ||
+                    "cozy"
+                )}`,
+                `layout-${safeClass(
+                    shelf.layout ||
+                    "mixed"
+                )}`
+            ].join(
+                " "
+            );
 
 
         article.dataset.shelfId =
             shelf.id;
 
 
+        article.dataset.theme =
+            getActiveTheme();
+
+
         const books =
-            H.sortBooks?.(
-                H.getBooksForShelf?.(
+            sortShelfBooks(
+                getBooksForShelf(
                     shelf.id
-                ) || [],
-                shelf.sort
-            ) || [];
+                ),
+                shelf.sort ||
+                shelf.sortMode ||
+                shelf.sort_mode ||
+                "manual"
+            );
 
 
         article.innerHTML =
@@ -739,15 +1074,16 @@
                     <div class="shelf-heading-copy">
 
                         <span class="shelf-eyebrow">
-                            ${H.escapeHTML?.(
+                            ${escapeHTML(
                                 shelf.mood ||
                                 "bookshelf"
                             )}
                         </span>
 
                         <h2>
-                            ${H.escapeHTML?.(
-                                shelf.name
+                            ${escapeHTML(
+                                shelf.name ||
+                                "Untitled Shelf"
                             )}
                         </h2>
 
@@ -755,7 +1091,7 @@
                             shelf.description
                                 ? `
                                     <p>
-                                        ${H.escapeHTML?.(
+                                        ${escapeHTML(
                                             shelf.description
                                         )}
                                     </p>
@@ -770,7 +1106,9 @@
                         <button
                             type="button"
                             class="shelf-action-button"
-                            data-shelf-add-book="${shelf.id}"
+                            data-shelf-add-book="${escapeHTML(
+                                shelf.id
+                            )}"
                         >
                             + Book
                         </button>
@@ -778,7 +1116,9 @@
                         <button
                             type="button"
                             class="shelf-action-button"
-                            data-shelf-edit="${shelf.id}"
+                            data-shelf-edit="${escapeHTML(
+                                shelf.id
+                            )}"
                         >
                             Edit
                         </button>
@@ -786,7 +1126,9 @@
                         <button
                             type="button"
                             class="shelf-action-button danger"
-                            data-shelf-delete="${shelf.id}"
+                            data-shelf-delete="${escapeHTML(
+                                shelf.id
+                            )}"
                         >
                             Delete
                         </button>
@@ -795,57 +1137,93 @@
 
                 </header>
 
+
                 <div
                     class="shelf-interior"
-                    data-shelf-interior="${shelf.id}"
+                    data-shelf-interior="${escapeHTML(
+                        shelf.id
+                    )}"
                 >
+
+                    <!--
+                        BOOKS
+                    -->
 
                     <div
                         class="shelf-books"
-                        data-shelf-books="${shelf.id}"
+                        data-shelf-books="${escapeHTML(
+                            shelf.id
+                        )}"
                     ></div>
+
+
+                    <!--
+                        SHELF BOARD
+                    -->
 
                     <div
                         class="shelf-floor"
                         aria-hidden="true"
                     ></div>
 
+
                     ${
-                        books.length === 0
+                        books.length ===
+                        0
                             ? `
                                 <div class="shelf-empty">
+
                                     <strong>
                                         Nothing here yet.
                                     </strong>
+
                                     <span>
                                         Add a book to this shelf.
                                     </span>
+
                                 </div>
                             `
                             : ""
                     }
 
+
+                    <!--
+                        DECOR
+
+                        SVG artwork and older CSS artwork both
+                        live inside the same movable layer.
+                    -->
+
                     <div
                         class="shelf-decoration-layer"
-                        data-decoration-layer="${shelf.id}"
+                        data-decoration-layer="${escapeHTML(
+                            shelf.id
+                        )}"
                     ></div>
 
                 </div>
 
+
                 <div class="shelf-footer-label">
+
                     ${books.length}
+
                     ${
-                        books.length === 1
+                        books.length ===
+                        1
                             ? "book"
                             : "books"
                     }
+
                 </div>
             `;
 
 
         const booksContainer =
             article.querySelector(
-                `[data-shelf-books="${shelf.id}"]`
+                `[data-shelf-books="${cssEscape(
+                    shelf.id
+                )}"]`
             );
 
 
@@ -861,11 +1239,14 @@
                             );
 
 
-                    if (bookElement) {
+                    if (
+                        bookElement
+                    ) {
 
-                        booksContainer.appendChild(
-                            bookElement
-                        );
+                        booksContainer
+                            .appendChild(
+                                bookElement
+                            );
 
                     }
 
@@ -877,7 +1258,9 @@
 
         const decorationLayer =
             article.querySelector(
-                `[data-decoration-layer="${shelf.id}"]`
+                `[data-decoration-layer="${cssEscape(
+                    shelf.id
+                )}"]`
             );
 
 
@@ -903,7 +1286,7 @@
 
 
     /* =====================================================
-       SHELF ACTION EVENTS
+       SHELF ACTIONS
        ===================================================== */
 
     function bindShelfElementActions(
@@ -911,59 +1294,53 @@
         shelf
     ) {
 
-        const addBook =
-            article.querySelector(
-                `[data-shelf-add-book="${shelf.id}"]`
+        article
+            .querySelector(
+                "[data-shelf-add-book]"
+            )
+            ?.addEventListener(
+                "click",
+                () => {
+
+                    Novellow.books
+                        ?.openAddDrawer?.(
+                            shelf.id
+                        );
+
+                }
             );
 
 
-        addBook?.addEventListener(
-            "click",
-            () => {
+        article
+            .querySelector(
+                "[data-shelf-edit]"
+            )
+            ?.addEventListener(
+                "click",
+                () => {
 
-                Novellow.books
-                    ?.openAddDrawer?.(
+                    openEditShelfDrawer(
                         shelf.id
                     );
 
-            }
-        );
-
-
-        const edit =
-            article.querySelector(
-                `[data-shelf-edit="${shelf.id}"]`
+                }
             );
 
 
-        edit?.addEventListener(
-            "click",
-            () => {
+        article
+            .querySelector(
+                "[data-shelf-delete]"
+            )
+            ?.addEventListener(
+                "click",
+                () => {
 
-                openEditShelfDrawer(
-                    shelf.id
-                );
+                    deleteShelf(
+                        shelf.id
+                    );
 
-            }
-        );
-
-
-        const remove =
-            article.querySelector(
-                `[data-shelf-delete="${shelf.id}"]`
+                }
             );
-
-
-        remove?.addEventListener(
-            "click",
-            () => {
-
-                deleteShelf(
-                    shelf.id
-                );
-
-            }
-        );
 
     }
 
@@ -984,19 +1361,43 @@
                     )
                         ? decorations
                         : []
-                ).map(
-                    decoration =>
-                        typeof decoration ===
-                        "string"
-                            ? decoration
-                            : decoration.type
                 )
+                    .map(
+                        decoration => {
+
+                            if (
+                                typeof decoration ===
+                                "string"
+                            ) {
+
+                                return decoration;
+
+                            }
+
+
+                            return (
+                                decoration?.type ||
+                                ""
+                            );
+
+                        }
+                    )
+                    .filter(
+                        Boolean
+                    )
             );
 
 
-        H.queryAll?.(
-            ".decoration-options input[type='checkbox']"
-        ).forEach(
+        const checkboxes =
+            H.queryAll?.(
+                ".decoration-options input[type='checkbox']"
+            ) ||
+            document.querySelectorAll(
+                ".decoration-options input[type='checkbox']"
+            );
+
+
+        checkboxes.forEach(
             checkbox => {
 
                 checkbox.checked =
@@ -1009,6 +1410,10 @@
 
     }
 
+
+    /* =====================================================
+       COLLECT SELECTED DECORATIONS
+       ===================================================== */
 
     function getSelectedDecorations(
         existingShelf
@@ -1030,7 +1435,7 @@
             decoration => {
 
                 const normalized =
-                    H.normalizeDecoration?.(
+                    normalizeDecoration(
                         decoration
                     );
 
@@ -1057,26 +1462,43 @@
             [];
 
 
-        H.queryAll?.(
-            ".decoration-options input[type='checkbox']:checked"
-        ).forEach(
+        const checkboxes =
+            H.queryAll?.(
+                ".decoration-options input[type='checkbox']:checked"
+            ) ||
+            document.querySelectorAll(
+                ".decoration-options input[type='checkbox']:checked"
+            );
+
+
+        checkboxes.forEach(
             checkbox => {
 
                 const type =
                     checkbox.value;
 
 
-                const previous =
+                const existingDecoration =
                     existingByType.get(
                         type
                     );
 
 
+                if (existingDecoration) {
+
+                    selected.push(
+                        existingDecoration
+                    );
+
+                    return;
+
+                }
+
+
                 selected.push(
-                    previous ||
-                    H.normalizeDecoration?.({
+                    normalizeDecoration({
                         id:
-                            H.createId?.(
+                            createId(
                                 "decor"
                             ),
 
@@ -1084,11 +1506,16 @@
 
                         x:
                             randomDecorationPosition(),
+
                         y:
                             randomDecorationHeight(),
 
                         scale:
-                            1
+                            1,
+
+                        rotate:
+                            randomDecorationRotation()
+
                     })
                 );
 
@@ -1096,13 +1523,120 @@
         );
 
 
-        return selected;
+        return selected.filter(
+            Boolean
+        );
 
     }
 
 
     /* =====================================================
-       RANDOM DECORATION POSITION
+       DECORATION NORMALIZATION
+       ===================================================== */
+
+    function normalizeDecoration(
+        decoration
+    ) {
+
+        if (
+            typeof decoration ===
+            "string"
+        ) {
+
+            decoration = {
+
+                id:
+                    createId(
+                        "decor"
+                    ),
+
+                type:
+                    decoration,
+
+                x:
+                    randomDecorationPosition(),
+
+                y:
+                    randomDecorationHeight(),
+
+                scale:
+                    1,
+
+                rotate:
+                    0
+
+            };
+
+        }
+
+
+        const helperNormalized =
+            typeof H.normalizeDecoration ===
+                "function"
+                ? H.normalizeDecoration(
+                    decoration
+                )
+                : decoration;
+
+
+        if (!helperNormalized) {
+            return null;
+        }
+
+
+        return {
+
+            ...helperNormalized,
+
+            id:
+                helperNormalized.id ||
+                createId(
+                    "decor"
+                ),
+
+            type:
+                helperNormalized.type ||
+                "stars",
+
+            x:
+                clamp(
+                    Number(
+                        helperNormalized.x
+                    ),
+                    0,
+                    1,
+                    0.5
+                ),
+
+            y:
+                clamp(
+                    Number(
+                        helperNormalized.y
+                    ),
+                    0,
+                    1,
+                    0.68
+                ),
+
+            scale:
+                Number(
+                    helperNormalized.scale
+                ) ||
+                1,
+
+            rotate:
+                Number(
+                    helperNormalized.rotate
+                ) ||
+                0
+
+        };
+
+    }
+
+
+    /* =====================================================
+       RANDOM DECORATION PLACEMENT
        ===================================================== */
 
     function randomDecorationPosition() {
@@ -1118,17 +1652,34 @@
 
     function randomDecorationHeight() {
 
+        /*
+           We keep new decor mostly toward the lower half of
+           the shelf so it feels like an object resting near
+           the books instead of floating in the cavity.
+        */
+
         return (
-            0.58 +
+            0.55 +
             Math.random() *
-            0.24
+            0.25
+        );
+
+    }
+
+
+    function randomDecorationRotation() {
+
+        return (
+            Math.random() *
+            8 -
+            4
         );
 
     }
 
 
     /* =====================================================
-       RENDER DECORATIONS
+       RENDER SHELF DECORATIONS
        ===================================================== */
 
     function renderShelfDecorations(
@@ -1152,7 +1703,7 @@
             decoration => {
 
                 const normalized =
-                    H.normalizeDecoration?.(
+                    normalizeDecoration(
                         decoration
                     );
 
@@ -1194,15 +1745,32 @@
             );
 
 
+        const useOctoberArt =
+            shouldUseOctoberArt(
+                decoration.type
+            );
+
+
         wrapper.className =
             [
                 "shelf-decoration",
                 "draggable-decoration",
-                `decor-${decoration.type}`,
+                `decor-${safeClass(
+                    decoration.type
+                )}`,
                 getDecorationScaleClass(
                     decoration.scale
+                ),
+                useOctoberArt
+                    ? "decor-svg-object"
+                    : "decor-css-object"
+            ]
+                .filter(
+                    Boolean
                 )
-            ].join(" ");
+                .join(
+                    " "
+                );
 
 
         wrapper.dataset.shelfId =
@@ -1217,12 +1785,43 @@
             decoration.type;
 
 
+        wrapper.dataset.artStyle =
+            useOctoberArt
+                ? "october-sleepover-svg"
+                : "legacy-css";
+
+
         wrapper.style.left =
             `${decoration.x * 100}%`;
 
 
         wrapper.style.top =
             `${decoration.y * 100}%`;
+
+
+        /*
+           Rotation is kept separate from the existing scale
+           transform so CSS can combine them later.
+        */
+
+        wrapper.style.setProperty(
+            "--decoration-rotate",
+            `${decoration.rotate}deg`
+        );
+
+
+        /*
+           Modern browsers support the independent rotate
+           property, which prevents it from fighting the
+           scale transforms already in library.css.
+        */
+
+        wrapper.style.rotate =
+            `${decoration.rotate}deg`;
+
+
+        wrapper.style.touchAction =
+            "none";
 
 
         wrapper.innerHTML =
@@ -1239,6 +1838,7 @@
 
                 event.stopPropagation();
 
+
                 cycleDecorationScale(
                     shelfId,
                     decoration.id
@@ -1254,6 +1854,64 @@
 
 
     /* =====================================================
+       WHICH ART SYSTEM SHOULD THIS OBJECT USE?
+       ===================================================== */
+
+    function shouldUseOctoberArt(
+        type
+    ) {
+
+        if (
+            !OCTOBER_SVG_SYMBOLS[
+                type
+            ]
+        ) {
+
+            return false;
+
+        }
+
+
+        /*
+           Objects invented specifically for October Sleepover
+           always use their SVG.
+        */
+
+        if (
+            OCTOBER_ONLY_DECORATIONS.has(
+                type
+            )
+        ) {
+
+            return true;
+
+        }
+
+
+        return (
+            OCTOBER_THEME_IDS.has(
+                getActiveTheme()
+            )
+        );
+
+    }
+
+
+    /* =====================================================
+       ACTIVE THEME
+       ===================================================== */
+
+    function getActiveTheme() {
+
+        return (
+            state.settings?.theme ||
+            "haunted"
+        );
+
+    }
+
+
+    /* =====================================================
        DECORATION MARKUP
        ===================================================== */
 
@@ -1261,7 +1919,87 @@
         type
     ) {
 
+        if (
+            shouldUseOctoberArt(
+                type
+            )
+        ) {
+
+            return getOctoberSvgMarkup(
+                type
+            );
+
+        }
+
+
+        return getLegacyDecorationMarkup(
+            type
+        );
+
+    }
+
+
+    /* =====================================================
+       OCTOBER SLEEPOVER SVG MARKUP
+       ===================================================== */
+
+    function getOctoberSvgMarkup(
+        type
+    ) {
+
+        const symbol =
+            OCTOBER_SVG_SYMBOLS[
+                type
+            ];
+
+
+        if (!symbol) {
+
+            return getLegacyDecorationMarkup(
+                type
+            );
+
+        }
+
+
+        return `
+            <svg
+                class="decor-svg decor-svg-${safeClass(type)}"
+                width="100%"
+                height="100%"
+                aria-hidden="true"
+                focusable="false"
+                preserveAspectRatio="xMidYMid meet"
+            >
+                <use
+                    href="${OCTOBER_ASSET}#${symbol}"
+                    x="0"
+                    y="0"
+                    width="100%"
+                    height="100%"
+                ></use>
+            </svg>
+        `;
+
+    }
+
+
+    /* =====================================================
+       LEGACY CSS DECORATIONS
+
+       These remain because we have not designed the SVG packs
+       for every other theme yet.
+       ===================================================== */
+
+    function getLegacyDecorationMarkup(
+        type
+    ) {
+
         switch (type) {
+
+            /* -------------------------------------------------
+               CAT
+               ------------------------------------------------- */
 
             case "cat":
 
@@ -1275,6 +2013,10 @@
                 `;
 
 
+            /* -------------------------------------------------
+               GHOST
+               ------------------------------------------------- */
+
             case "ghost":
 
                 return `
@@ -1285,6 +2027,10 @@
                 `;
 
 
+            /* -------------------------------------------------
+               BAT
+               ------------------------------------------------- */
+
             case "bat":
 
                 return `
@@ -1293,6 +2039,10 @@
                     <span class="bat-wing right"></span>
                 `;
 
+
+            /* -------------------------------------------------
+               RAVEN
+               ------------------------------------------------- */
 
             case "raven":
 
@@ -1304,6 +2054,10 @@
                     <span class="raven-eye"></span>
                 `;
 
+
+            /* -------------------------------------------------
+               GOBLIN
+               ------------------------------------------------- */
 
             case "goblin":
 
@@ -1317,6 +2071,10 @@
                 `;
 
 
+            /* -------------------------------------------------
+               MUSHROOM
+               ------------------------------------------------- */
+
             case "mushroom":
 
                 return `
@@ -1329,6 +2087,10 @@
                 `;
 
 
+            /* -------------------------------------------------
+               PLANT
+               ------------------------------------------------- */
+
             case "plant":
 
                 return `
@@ -1340,6 +2102,10 @@
                     <span class="plant-pot"></span>
                 `;
 
+
+            /* -------------------------------------------------
+               FLOWERS
+               ------------------------------------------------- */
 
             case "flowers":
 
@@ -1355,6 +2121,10 @@
                 `;
 
 
+            /* -------------------------------------------------
+               MOSS
+               ------------------------------------------------- */
+
             case "moss":
 
                 return `
@@ -1364,6 +2134,10 @@
                     <span class="moss-clump three"></span>
                 `;
 
+
+            /* -------------------------------------------------
+               PUMPKIN
+               ------------------------------------------------- */
 
             case "pumpkin":
 
@@ -1379,6 +2153,10 @@
                 `;
 
 
+            /* -------------------------------------------------
+               CANDLE
+               ------------------------------------------------- */
+
             case "candle":
 
                 return `
@@ -1389,6 +2167,10 @@
                     <span class="candle-flame"></span>
                 `;
 
+
+            /* -------------------------------------------------
+               MUG
+               ------------------------------------------------- */
 
             case "mug":
 
@@ -1402,6 +2184,10 @@
                 `;
 
 
+            /* -------------------------------------------------
+               POTION
+               ------------------------------------------------- */
+
             case "potion":
 
                 return `
@@ -1413,6 +2199,10 @@
                 `;
 
 
+            /* -------------------------------------------------
+               CRYSTALS
+               ------------------------------------------------- */
+
             case "crystal":
 
                 return `
@@ -1423,6 +2213,10 @@
                 `;
 
 
+            /* -------------------------------------------------
+               STARS
+               ------------------------------------------------- */
+
             case "stars":
 
                 return `
@@ -1431,6 +2225,74 @@
                     <span class="star-bit three"></span>
                 `;
 
+
+            /* -------------------------------------------------
+               OCTOBER-ONLY FALLBACKS
+
+               Normally these render SVGs.
+               ------------------------------------------------- */
+
+            case "eightball":
+            case "magic-eight-ball":
+
+                return `
+                    <span class="decoration-symbol">
+                        8
+                    </span>
+                `;
+
+
+            case "moon":
+            case "moon-stars":
+
+                return `
+                    <span class="decoration-symbol">
+                        ☾
+                    </span>
+                `;
+
+
+            case "web":
+            case "spider-web":
+
+                return `
+                    <span class="decoration-symbol">
+                        ✣
+                    </span>
+                `;
+
+
+            case "key":
+            case "old-key":
+
+                return `
+                    <span class="decoration-symbol">
+                        ⚿
+                    </span>
+                `;
+
+
+            case "flashlight":
+
+                return `
+                    <span class="decoration-symbol">
+                        ✦
+                    </span>
+                `;
+
+
+            case "heart":
+
+                return `
+                    <span class="decoration-symbol">
+                        ♡
+                    </span>
+                `;
+
+
+            /* -------------------------------------------------
+               UNKNOWN
+               ------------------------------------------------- */
 
             default:
 
@@ -1446,7 +2308,7 @@
 
 
     /* =====================================================
-       SCALE
+       DECORATION SCALE CLASS
        ===================================================== */
 
     function getDecorationScaleClass(
@@ -1454,27 +2316,39 @@
     ) {
 
         const value =
-            Number(scale) || 1;
+            Number(
+                scale
+            ) ||
+            1;
 
 
         if (
-            value <= 0.8
+            value <=
+            0.8
         ) {
+
             return "scale-075";
+
         }
 
 
         if (
-            value <= 1.1
+            value <=
+            1.1
         ) {
+
             return "scale-100";
+
         }
 
 
         if (
-            value <= 1.35
+            value <=
+            1.35
         ) {
+
             return "scale-125";
+
         }
 
 
@@ -1483,13 +2357,24 @@
     }
 
 
+    /* =====================================================
+       CYCLE DECORATION SCALE
+
+       Desktop:
+       double-click
+
+       Mobile:
+       we'll give this a more accessible UI when the Shelf
+       Designer itself is redesigned.
+       ===================================================== */
+
     function cycleDecorationScale(
         shelfId,
         decorationId
     ) {
 
         const shelf =
-            H.getShelfById?.(
+            getShelfById(
                 shelfId
             );
 
@@ -1500,11 +2385,16 @@
 
 
         const decoration =
-            shelf.decorations.find(
-                item =>
-                    item.id ===
-                    decorationId
-            );
+            shelf.decorations
+                ?.find(
+                    item =>
+                        String(
+                            item.id
+                        ) ===
+                        String(
+                            decorationId
+                        )
+                );
 
 
         if (!decoration) {
@@ -1520,30 +2410,47 @@
         ];
 
 
-        const currentIndex =
+        const current =
+            Number(
+                decoration.scale
+            ) ||
+            1;
+
+
+        let currentIndex =
             sizes.findIndex(
                 size =>
                     Math.abs(
                         size -
-                        Number(
-                            decoration.scale ||
-                            1
-                        )
-                    ) < 0.08
+                        current
+                    ) <
+                    0.08
             );
+
+
+        if (
+            currentIndex ===
+            -1
+        ) {
+
+            currentIndex =
+                1;
+
+        }
 
 
         decoration.scale =
             sizes[
                 (
-                    currentIndex + 1
+                    currentIndex +
+                    1
                 ) %
                 sizes.length
             ];
 
 
         shelf.updatedAt =
-            H.nowISO?.();
+            nowISO();
 
 
         Novellow.storage
@@ -1569,7 +2476,11 @@
 
         document.addEventListener(
             "pointermove",
-            handleDecorationPointerMove
+            handleDecorationPointerMove,
+            {
+                passive:
+                    false
+            }
         );
 
 
@@ -1587,14 +2498,31 @@
     }
 
 
+    /* =====================================================
+       DRAG START
+       ===================================================== */
+
     function handleDecorationPointerDown(
         event
     ) {
 
+        if (
+            event.button !==
+                undefined &&
+            event.button !==
+                0
+        ) {
+
+            return;
+
+        }
+
+
         const decoration =
-            event.target.closest(
-                ".draggable-decoration"
-            );
+            event.target
+                ?.closest?.(
+                    ".draggable-decoration"
+                );
 
 
         if (!decoration) {
@@ -1603,11 +2531,13 @@
 
 
         const shelfId =
-            decoration.dataset.shelfId;
+            decoration.dataset
+                .shelfId;
 
 
         const decorationId =
-            decoration.dataset.decorationId;
+            decoration.dataset
+                .decorationId;
 
 
         const shelfInterior =
@@ -1621,7 +2551,9 @@
             !decorationId ||
             !shelfInterior
         ) {
+
             return;
+
         }
 
 
@@ -1629,14 +2561,17 @@
 
 
         const rect =
-            shelfInterior.getBoundingClientRect();
+            shelfInterior
+                .getBoundingClientRect();
 
 
         const decorationRect =
-            decoration.getBoundingClientRect();
+            decoration
+                .getBoundingClientRect();
 
 
         activeDrag = {
+
             pointerId:
                 event.pointerId,
 
@@ -1676,18 +2611,25 @@
 
         try {
 
-            decoration.setPointerCapture(
-                event.pointerId
-            );
+            decoration
+                .setPointerCapture(
+                    event.pointerId
+                );
 
         } catch (error) {
 
-            // Not required.
+            /*
+               Pointer capture is helpful but not required.
+            */
 
         }
 
     }
 
+
+    /* =====================================================
+       DRAG MOVE
+       ===================================================== */
 
     function handleDecorationPointerMove(
         event
@@ -1696,9 +2638,11 @@
         if (
             !activeDrag ||
             event.pointerId !==
-            activeDrag.pointerId
+                activeDrag.pointerId
         ) {
+
             return;
+
         }
 
 
@@ -1735,27 +2679,29 @@
 
 
         const x =
-            H.clamp?.(
+            clamp(
                 rawX,
                 0,
                 Math.max(
                     0,
                     containerRect.width -
                     width
-                )
-            ) ?? rawX;
+                ),
+                rawX
+            );
 
 
         const y =
-            H.clamp?.(
+            clamp(
                 rawY,
                 0,
                 Math.max(
                     0,
                     containerRect.height -
                     height
-                )
-            ) ?? rawY;
+                ),
+                rawY
+            );
 
 
         element.style.left =
@@ -1768,6 +2714,10 @@
     }
 
 
+    /* =====================================================
+       DRAG END
+       ===================================================== */
+
     function handleDecorationPointerUp(
         event
     ) {
@@ -1775,9 +2725,11 @@
         if (
             !activeDrag ||
             event.pointerId !==
-            activeDrag.pointerId
+                activeDrag.pointerId
         ) {
+
             return;
+
         }
 
 
@@ -1804,35 +2756,59 @@
         const left =
             parseFloat(
                 element.style.left
-            ) || 0;
+            ) ||
+            0;
 
 
         const top =
             parseFloat(
                 element.style.top
-            ) || 0;
+            ) ||
+            0;
 
+
+        const maxLeft =
+            Math.max(
+                1,
+                containerRect.width -
+                element.offsetWidth
+            );
+
+
+        const maxTop =
+            Math.max(
+                1,
+                containerRect.height -
+                element.offsetHeight
+            );
+
+
+        /*
+           Save the top-left position relative to the space
+           available to that object.
+
+           This behaves better between desktop and mobile than
+           using the raw container width alone.
+        */
 
         const x =
-            containerRect.width > 0
-                ? H.clamp?.(
-                    left /
-                    containerRect.width,
-                    0,
-                    1
-                )
-                : 0.5;
+            clamp(
+                left /
+                maxLeft,
+                0,
+                1,
+                0.5
+            );
 
 
         const y =
-            containerRect.height > 0
-                ? H.clamp?.(
-                    top /
-                    containerRect.height,
-                    0,
-                    1
-                )
-                : 0.5;
+            clamp(
+                top /
+                maxTop,
+                0,
+                1,
+                0.65
+            );
 
 
         saveDecorationPosition(
@@ -1845,13 +2821,16 @@
 
         try {
 
-            element.releasePointerCapture(
-                event.pointerId
-            );
+            element
+                .releasePointerCapture(
+                    event.pointerId
+                );
 
         } catch (error) {
 
-            // Not required.
+            /*
+               Safe to ignore.
+            */
 
         }
 
@@ -1874,7 +2853,7 @@
     ) {
 
         const shelf =
-            H.getShelfById?.(
+            getShelfById(
                 shelfId
             );
 
@@ -1885,11 +2864,16 @@
 
 
         const decoration =
-            shelf.decorations.find(
-                item =>
-                    item.id ===
-                    decorationId
-            );
+            shelf.decorations
+                ?.find(
+                    item =>
+                        String(
+                            item.id
+                        ) ===
+                        String(
+                            decorationId
+                        )
+                );
 
 
         if (!decoration) {
@@ -1898,23 +2882,29 @@
 
 
         decoration.x =
-            H.clamp?.(
-                Number(x),
+            clamp(
+                Number(
+                    x
+                ),
                 0,
-                1
-            ) ?? 0.5;
+                1,
+                0.5
+            );
 
 
         decoration.y =
-            H.clamp?.(
-                Number(y),
+            clamp(
+                Number(
+                    y
+                ),
                 0,
-                1
-            ) ?? 0.5;
+                1,
+                0.65
+            );
 
 
         shelf.updatedAt =
-            H.nowISO?.();
+            nowISO();
 
 
         Novellow.storage
@@ -1924,7 +2914,7 @@
 
 
     /* =====================================================
-       POPULATE SHELF SELECT
+       POPULATE BOOK SHELF SELECT
        ===================================================== */
 
     function populateShelfSelect(
@@ -1972,7 +2962,29 @@
         );
 
 
-        state.shelves.forEach(
+        const orderedShelves =
+            [...state.shelves].sort(
+                (
+                    first,
+                    second
+                ) => {
+
+                    return (
+                        Number(
+                            first.position ||
+                            0
+                        ) -
+                        Number(
+                            second.position ||
+                            0
+                        )
+                    );
+
+                }
+            );
+
+
+        orderedShelves.forEach(
             shelf => {
 
                 const option =
@@ -1986,7 +2998,8 @@
 
 
                 option.textContent =
-                    shelf.name;
+                    shelf.name ||
+                    "Shelf";
 
 
                 select.appendChild(
@@ -2000,11 +3013,288 @@
         select.value =
             state.shelves.some(
                 shelf =>
-                    shelf.id ===
-                    previous
+                    String(
+                        shelf.id
+                    ) ===
+                    String(
+                        previous
+                    )
             )
                 ? previous
                 : "";
+
+    }
+
+
+    /* =====================================================
+       SHELF LOOKUP
+       ===================================================== */
+
+    function getShelfById(
+        shelfId
+    ) {
+
+        if (
+            typeof H.getShelfById ===
+            "function"
+        ) {
+
+            const helperShelf =
+                H.getShelfById(
+                    shelfId
+                );
+
+
+            if (helperShelf) {
+
+                return helperShelf;
+
+            }
+
+        }
+
+
+        return (
+            state.shelves.find(
+                shelf =>
+                    String(
+                        shelf.id
+                    ) ===
+                    String(
+                        shelfId
+                    )
+            ) ||
+            null
+        );
+
+    }
+
+
+    /* =====================================================
+       BOOKS FOR SHELF
+       ===================================================== */
+
+    function getBooksForShelf(
+        shelfId
+    ) {
+
+        if (
+            typeof H.getBooksForShelf ===
+            "function"
+        ) {
+
+            const helperBooks =
+                H.getBooksForShelf(
+                    shelfId
+                );
+
+
+            if (
+                Array.isArray(
+                    helperBooks
+                )
+            ) {
+
+                return helperBooks;
+
+            }
+
+        }
+
+
+        return (
+            Array.isArray(
+                state.books
+            )
+                ? state.books.filter(
+                    book => {
+
+                        const bookShelfId =
+                            book.shelfId ||
+                            book.shelf_id ||
+                            "";
+
+
+                        return (
+                            String(
+                                bookShelfId
+                            ) ===
+                            String(
+                                shelfId
+                            )
+                        );
+
+                    }
+                )
+                : []
+        );
+
+    }
+
+
+    /* =====================================================
+       SORT BOOKS
+       ===================================================== */
+
+    function sortShelfBooks(
+        books,
+        sortMode
+    ) {
+
+        if (
+            typeof H.sortBooks ===
+            "function"
+        ) {
+
+            return (
+                H.sortBooks(
+                    books,
+                    sortMode
+                ) ||
+                books
+            );
+
+        }
+
+
+        const copy =
+            [...books];
+
+
+        switch (
+            sortMode
+        ) {
+
+            case "title":
+
+                return copy.sort(
+                    (
+                        first,
+                        second
+                    ) =>
+                        String(
+                            first.title ||
+                            ""
+                        ).localeCompare(
+                            String(
+                                second.title ||
+                                ""
+                            )
+                        )
+                );
+
+
+            case "author":
+
+                return copy.sort(
+                    (
+                        first,
+                        second
+                    ) =>
+                        String(
+                            first.author ||
+                            ""
+                        ).localeCompare(
+                            String(
+                                second.author ||
+                                ""
+                            )
+                        )
+                );
+
+
+            case "rating":
+
+                return copy.sort(
+                    (
+                        first,
+                        second
+                    ) =>
+                        Number(
+                            second.rating ||
+                            0
+                        ) -
+                        Number(
+                            first.rating ||
+                            0
+                        )
+                );
+
+
+            case "recent":
+
+                return copy.sort(
+                    (
+                        first,
+                        second
+                    ) =>
+                        new Date(
+                            second.updatedAt ||
+                            second.updated_at ||
+                            second.createdAt ||
+                            second.created_at ||
+                            0
+                        ) -
+                        new Date(
+                            first.updatedAt ||
+                            first.updated_at ||
+                            first.createdAt ||
+                            first.created_at ||
+                            0
+                        )
+                );
+
+
+            case "manual":
+            default:
+
+                return copy.sort(
+                    (
+                        first,
+                        second
+                    ) =>
+                        Number(
+                            first.position ||
+                            0
+                        ) -
+                        Number(
+                            second.position ||
+                            0
+                        )
+                );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       NEXT SHELF POSITION
+       ===================================================== */
+
+    function getNextShelfPosition() {
+
+        if (
+            !state.shelves.length
+        ) {
+
+            return 0;
+
+        }
+
+
+        return (
+            Math.max(
+                ...state.shelves.map(
+                    shelf =>
+                        Number(
+                            shelf.position ||
+                            0
+                        )
+                )
+            ) +
+            1
+        );
 
     }
 
@@ -2015,11 +3305,14 @@
 
     function setInputValue(
         id,
-        value
+        nextValue
     ) {
 
         const element =
             H.getById?.(
+                id
+            ) ||
+            document.getElementById(
                 id
             );
 
@@ -2030,22 +3323,224 @@
 
 
         element.value =
-            value ?? "";
+            nextValue ??
+            "";
 
     }
 
 
-    function getInputValue(id) {
+    function getInputValue(
+        id
+    ) {
 
         const element =
             H.getById?.(
                 id
+            ) ||
+            document.getElementById(
+                id
             );
 
 
-        return element
-            ? element.value
-            : "";
+        return (
+            element
+                ? element.value
+                : ""
+        );
+
+    }
+
+
+    /* =====================================================
+       CREATE ID
+       ===================================================== */
+
+    function createId(
+        prefix
+    ) {
+
+        if (
+            typeof H.createId ===
+            "function"
+        ) {
+
+            return H.createId(
+                prefix
+            );
+
+        }
+
+
+        if (
+            window.crypto &&
+            typeof window.crypto
+                .randomUUID ===
+                "function"
+        ) {
+
+            return window.crypto
+                .randomUUID();
+
+        }
+
+
+        return (
+            `${prefix}-${Date.now()}-${Math.random()
+                .toString(36)
+                .slice(2, 10)}`
+        );
+
+    }
+
+
+    /* =====================================================
+       CURRENT TIME
+       ===================================================== */
+
+    function nowISO() {
+
+        return (
+            H.nowISO?.() ||
+            new Date()
+                .toISOString()
+        );
+
+    }
+
+
+    /* =====================================================
+       HTML ESCAPE
+       ===================================================== */
+
+    function escapeHTML(
+        value
+    ) {
+
+        if (
+            typeof H.escapeHTML ===
+            "function"
+        ) {
+
+            return H.escapeHTML(
+                String(
+                    value ??
+                    ""
+                )
+            );
+
+        }
+
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.textContent =
+            String(
+                value ??
+                ""
+            );
+
+
+        return div.innerHTML;
+
+    }
+
+
+    /* =====================================================
+       CSS CLASS SAFETY
+       ===================================================== */
+
+    function safeClass(
+        value
+    ) {
+
+        return String(
+            value ||
+            "default"
+        )
+            .toLowerCase()
+            .replace(
+                /[^a-z0-9_-]+/g,
+                "-"
+            );
+
+    }
+
+
+    /* =====================================================
+       CSS ATTRIBUTE ESCAPE
+       ===================================================== */
+
+    function cssEscape(
+        value
+    ) {
+
+        const string =
+            String(
+                value ??
+                ""
+            );
+
+
+        if (
+            window.CSS &&
+            typeof window.CSS.escape ===
+                "function"
+        ) {
+
+            return window.CSS.escape(
+                string
+            );
+
+        }
+
+
+        return string.replace(
+            /["\\]/g,
+            "\\$&"
+        );
+
+    }
+
+
+    /* =====================================================
+       NUMBER CLAMP
+       ===================================================== */
+
+    function clamp(
+        value,
+        minimum,
+        maximum,
+        fallback
+    ) {
+
+        const number =
+            Number(
+                value
+            );
+
+
+        if (
+            !Number.isFinite(
+                number
+            )
+        ) {
+
+            return fallback;
+
+        }
+
+
+        return Math.min(
+            maximum,
+            Math.max(
+                minimum,
+                number
+            )
+        );
 
     }
 
@@ -2074,9 +3569,43 @@
 
         createDecorationElement,
 
-        renderShelfDecorations
+        renderShelfDecorations,
+
+        getDecorationMarkup,
+
+        getActiveTheme
 
     };
 
+
+    /* =====================================================
+       START
+
+       app.js normally initializes feature modules.
+
+       This fallback allows library.js to remain safe if it is
+       loaded independently during development.
+       ===================================================== */
+
+    if (
+        document.readyState !==
+            "loading" &&
+        !initialized
+    ) {
+
+        /*
+           Do not force initialization here when Novellow.app
+           exists because app.js owns startup order.
+        */
+
+        if (
+            !Novellow.app
+        ) {
+
+            init();
+
+        }
+
+    }
 
 })();
