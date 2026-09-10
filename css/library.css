@@ -1,13 +1,17 @@
 /* =========================================================
    NOVELLOW
    LIBRARY.CSS
+   VERSION 6
+
+   OCTOBER SLEEPOVER
 
    Library page
-   Theme-aware shelves
-   Structural shelf UI
-   Book staging
-   Decorations
-   Responsive behavior
+   Illustrated furniture
+   Shelf structure
+   Correct book baseline
+   SVG decoration staging
+   Legacy decoration fallback
+   Responsive shelf system
    ========================================================= */
 
 
@@ -26,85 +30,92 @@
 
 .shelf-container {
     display: flex;
-
     flex-direction: column;
 
-    gap: 84px;
+    gap: 76px;
+
+    width: 100%;
 }
 
 
 /* =========================================================
-   LIBRARY SHELF
+   OCTOBER SLEEPOVER SHELF VARIABLES
    ========================================================= */
 
 .library-shelf {
-    --shelf-main:
-        var(--wood);
+    --shelf-main: #704032;
+    --shelf-light: #a45e48;
+    --shelf-mid: #61342f;
+    --shelf-dark: #321b23;
+    --shelf-deep: #1c1119;
+    --shelf-back: #2c2028;
 
-    --shelf-light:
-        color-mix(
-            in srgb,
-            var(--wood-mid) 78%,
-            white
-        );
+    --shelf-gold: #d6a364;
+    --shelf-pink: #cc7f98;
+    --shelf-plum: #714664;
+    --shelf-cream: #f1deca;
 
-    --shelf-mid:
-        var(--wood-mid);
-
-    --shelf-dark:
-        var(--wood-dark);
-
-    --shelf-back:
-        color-mix(
-            in srgb,
-            var(--wood-dark) 78%,
-            var(--bg)
-        );
+    --shelf-radius: 14px;
+    --shelf-depth: 30px;
 
     position: relative;
-
     isolation: isolate;
+
+    width: 100%;
+
+    padding:
+        22px
+        24px
+        32px;
 
     overflow: visible;
 
-    padding:
-        20px 22px 26px;
-
     border:
         1px solid
-        rgba(0, 0, 0, 0.30);
+        rgba(31, 14, 22, 0.72);
 
     border-radius:
-        var(--shelf-radius);
+        16px;
 
     background:
-        repeating-linear-gradient(
-            0deg,
-            transparent 0 8px,
-            rgba(255, 255, 255, 0.012) 8px 9px,
-            transparent 9px 18px
+        radial-gradient(
+            ellipse at 18% 0%,
+            rgba(255, 196, 149, 0.08),
+            transparent 35%
         ),
+
         repeating-linear-gradient(
-            90deg,
-            transparent 0 95px,
-            rgba(0, 0, 0, 0.025) 95px 97px
+            5deg,
+            transparent 0 12px,
+            rgba(255, 255, 255, 0.012) 12px 13px,
+            transparent 13px 25px
         ),
-        var(--shelf-main);
+
+        linear-gradient(
+            135deg,
+            var(--shelf-light) 0%,
+            var(--shelf-main) 34%,
+            var(--shelf-mid) 70%,
+            var(--shelf-dark) 100%
+        );
 
     box-shadow:
-        0 30px 52px
-        rgba(0, 0, 0, 0.24),
+        0 28px 55px
+        rgba(10, 5, 12, 0.38),
 
-        inset 0 1px
-        rgba(255, 255, 255, 0.09),
+        0 7px 0
+        rgba(32, 14, 20, 0.32),
 
-        inset 0 -4px
-        rgba(0, 0, 0, 0.10);
+        inset 0 2px
+        rgba(255, 226, 192, 0.10),
+
+        inset 0 -6px
+        rgba(24, 10, 18, 0.16);
 }
 
 
 /* =========================================================
-   TOP SHELF CAP
+   TOP WOOD CAP
    ========================================================= */
 
 .library-shelf::before {
@@ -112,49 +123,58 @@
 
     position: absolute;
 
-    z-index: 20;
+    z-index: 12;
 
-    top: -14px;
-    left: -10px;
-    right: -10px;
+    top: -16px;
+    left: -9px;
+    right: -9px;
 
-    height:
-        var(--shelf-depth);
+    height: 24px;
 
     border:
         1px solid
-        rgba(0, 0, 0, 0.30);
+        rgba(34, 15, 22, 0.72);
 
     border-radius:
-        calc(
-            var(--shelf-radius)
-            * 0.8
-        );
+        15px 15px 7px 7px;
 
     background:
         linear-gradient(
             to bottom,
-            rgba(255, 255, 255, 0.10),
-            transparent 35%
+            rgba(255, 218, 181, 0.18),
+            transparent 25%
         ),
+
         repeating-linear-gradient(
-            90deg,
-            transparent 0 86px,
-            rgba(255, 255, 255, 0.018) 86px 88px
+            3deg,
+            transparent 0 23px,
+            rgba(255, 239, 214, 0.025) 23px 25px,
+            transparent 25px 51px
         ),
-        var(--shelf-light);
+
+        linear-gradient(
+            90deg,
+            #62342f 0%,
+            #9a5541 18%,
+            #784035 45%,
+            #a25b45 70%,
+            #60302e 100%
+        );
 
     box-shadow:
-        0 7px 10px
-        rgba(0, 0, 0, 0.22),
+        0 8px 12px
+        rgba(15, 6, 12, 0.34),
 
-        inset 0 -7px
-        rgba(0, 0, 0, 0.08);
+        inset 0 2px
+        rgba(255, 232, 204, 0.11),
+
+        inset 0 -5px
+        rgba(37, 15, 21, 0.20);
 }
 
 
 /* =========================================================
-   SHELF DROP SHADOW
+   SHELF SHADOW
    ========================================================= */
 
 .library-shelf::after {
@@ -162,21 +182,24 @@
 
     position: absolute;
 
-    z-index: -3;
+    z-index: -2;
 
-    left: 7%;
-    right: 7%;
-    bottom: -29px;
+    left: 6%;
+    right: 6%;
 
-    height: 32px;
+    bottom: -30px;
+
+    height: 31px;
 
     border-radius: 50%;
 
     background:
-        rgba(0, 0, 0, 0.28);
+        rgba(9, 4, 10, 0.34);
 
     filter:
-        blur(13px);
+        blur(14px);
+
+    pointer-events: none;
 }
 
 
@@ -187,24 +210,24 @@
 .shelf-header {
     position: relative;
 
-    z-index: 30;
+    z-index: 40;
 
     display: flex;
 
     align-items: flex-start;
     justify-content: space-between;
 
-    gap: 20px;
+    gap: 24px;
 
     margin:
-        7px 7px 18px;
+        3px 4px 18px;
 
     padding:
-        9px 4px 18px;
+        8px 5px 17px;
 
     border-bottom:
         1px solid
-        rgba(255, 255, 255, 0.07);
+        rgba(246, 211, 186, 0.09);
 }
 
 
@@ -219,80 +242,93 @@
     margin-bottom: 6px;
 
     color:
-        color-mix(
-            in srgb,
-            var(--accent-light) 74%,
-            var(--paper)
+        var(
+            --accent-light,
+            #df9a82
         );
 
     font-family:
-        var(--font-label);
+        var(
+            --font-label,
+            "Trebuchet MS",
+            sans-serif
+        );
 
     font-size:
-        0.49rem;
+        0.52rem;
 
-    font-weight:
-        700;
+    font-weight: 800;
 
     letter-spacing:
-        var(--label-letter-spacing);
+        0.20em;
 
-    text-transform:
-        uppercase;
+    line-height: 1.2;
+
+    text-transform: uppercase;
 }
 
 
 .shelf-header h2 {
-    margin-bottom: 5px;
+    margin: 0;
 
     color:
-        var(--paper);
+        var(
+            --paper,
+            #f3dfce
+        );
 
     font-family:
-        var(--font-display);
+        var(
+            --font-display,
+            Georgia,
+            serif
+        );
 
     font-size:
         clamp(
-            1.9rem,
+            2rem,
             3vw,
-            2.9rem
+            3rem
         );
 
-    font-weight:
-        500;
+    font-weight: 600;
 
     letter-spacing:
-        -0.03em;
+        -0.035em;
 
-    line-height:
-        0.96;
+    line-height: 0.98;
 
-    text-transform:
-        var(--shelf-header-transform);
+    text-shadow:
+        0 2px 0
+        rgba(0, 0, 0, 0.22);
 }
 
 
 .shelf-header p {
-    max-width:
-        720px;
+    max-width: 720px;
 
-    margin: 0;
+    margin:
+        7px 0 0;
 
     color:
-        color-mix(
-            in srgb,
-            var(--paper) 64%,
-            transparent
+        rgba(
+            244,
+            224,
+            208,
+            0.66
         );
 
     font-family:
-        var(--font-body);
+        var(
+            --font-body,
+            Georgia,
+            serif
+        );
 
     font-size:
-        0.61rem;
+        0.72rem;
 
-    line-height:
-        1.6;
+    line-height: 1.55;
 }
 
 
@@ -307,49 +343,53 @@
 
     gap: 7px;
 
-    flex:
-        0 0 auto;
+    flex: 0 0 auto;
 }
 
 
 .shelf-action-button {
-    min-height:
-        34px;
+    min-height: 34px;
 
     padding:
         0 12px;
 
     border:
         1px solid
-        rgba(255, 255, 255, 0.10);
+        rgba(248, 220, 200, 0.13);
 
     border-radius:
-        var(--radius-small);
+        8px;
 
     background:
-        rgba(0, 0, 0, 0.13);
+        rgba(30, 14, 24, 0.22);
 
     color:
-        color-mix(
-            in srgb,
-            var(--paper) 72%,
-            transparent
+        rgba(
+            245,
+            226,
+            211,
+            0.82
         );
 
     font-family:
-        var(--font-ui);
+        var(
+            --font-ui,
+            Arial,
+            sans-serif
+        );
 
     font-size:
-        0.5rem;
+        0.53rem;
 
-    font-weight:
-        700;
+    font-weight: 800;
 
     letter-spacing:
-        var(--button-letter-spacing);
+        0.08em;
 
     text-transform:
-        var(--button-transform);
+        uppercase;
+
+    cursor: pointer;
 
     transition:
         transform 0.16s ease,
@@ -364,209 +404,223 @@
         translateY(-2px);
 
     border-color:
-        var(--border);
+        rgba(225, 160, 129, 0.44);
 
     background:
-        rgba(0, 0, 0, 0.20);
+        rgba(54, 24, 42, 0.44);
 
     color:
-        var(--paper);
+        #fff3e9;
 }
 
 
 .shelf-action-button.danger {
     color:
-        #d9aaa4;
+        #e7aaa2;
+}
+
+
+.shelf-action-button.danger:hover {
+    border-color:
+        rgba(216, 110, 104, 0.45);
+
+    background:
+        rgba(109, 42, 54, 0.24);
 }
 
 
 /* =========================================================
    SHELF INTERIOR
 
-   The interior is the actual bookcase cavity.
+   IMPORTANT:
+   There are intentionally NO ::before / ::after side posts.
 
-   The previous version was much taller than the books and
-   made the books appear to float inside a giant empty box.
-   This version uses a tighter furniture-like proportion.
+   This removes the unwanted vertical bar that was appearing
+   inside the shelf.
    ========================================================= */
 
 .shelf-interior {
     position: relative;
 
-    z-index: 8;
+    z-index: 10;
 
-    min-height: 292px;
+    height: 300px;
+    min-height: 300px;
 
-    overflow: visible;
-
-    padding:
-        24px 30px 0;
+    overflow: hidden;
 
     border:
         1px solid
-        rgba(0, 0, 0, 0.32);
+        rgba(26, 11, 18, 0.76);
 
     border-radius:
-        calc(
-            var(--shelf-radius)
-            * 0.55
-        );
+        10px 10px 5px 5px;
 
     background:
-        linear-gradient(
-            to right,
-            rgba(255, 255, 255, 0.018),
-            transparent 12%,
-            transparent 88%,
-            rgba(0, 0, 0, 0.11)
+        radial-gradient(
+            ellipse at 50% -8%,
+            rgba(217, 126, 119, 0.07),
+            transparent 45%
         ),
+
+        linear-gradient(
+            90deg,
+            rgba(255, 221, 187, 0.032),
+            transparent 9%,
+            transparent 89%,
+            rgba(5, 2, 7, 0.15)
+        ),
+
         linear-gradient(
             to bottom,
-            rgba(255, 255, 255, 0.018),
-            transparent 19%
+            rgba(255, 229, 202, 0.025),
+            transparent 24%
         ),
+
+        repeating-linear-gradient(
+            2deg,
+            transparent 0 18px,
+            rgba(255, 255, 255, 0.008) 18px 20px,
+            transparent 20px 39px
+        ),
+
         var(--shelf-back);
 
     box-shadow:
-        inset 0 20px 29px
-        rgba(0, 0, 0, 0.18),
+        inset 0 25px 30px
+        rgba(10, 4, 10, 0.27),
 
-        inset 10px 0 16px
-        rgba(0, 0, 0, 0.08),
+        inset 13px 0 18px
+        rgba(10, 4, 10, 0.12),
 
-        inset -10px 0 17px
-        rgba(0, 0, 0, 0.12);
+        inset -13px 0 18px
+        rgba(10, 4, 10, 0.16),
+
+        inset 0 -20px 24px
+        rgba(9, 4, 9, 0.24);
 }
 
 
 /* =========================================================
-   SIDE SUPPORTS
+   BACK PANEL DETAILS
+
+   Little wallpaper-ish marks help it feel illustrated
+   without forcing the entire shelf to be an image.
    ========================================================= */
 
-.shelf-interior::before,
-.shelf-interior::after {
-    content: "";
+.shelf-interior > .shelf-books::before {
+    content:
+        "✦  ·  ☾  ·  ✧";
 
     position: absolute;
 
-    z-index: 18;
+    z-index: -1;
 
-    top: -7px;
-    bottom: 2px;
+    top: 20px;
+    right: 22px;
 
-    width: 19px;
+    color:
+        rgba(
+            222,
+            145,
+            161,
+            0.10
+        );
 
-    border:
-        1px solid
-        rgba(0, 0, 0, 0.25);
+    font-size:
+        0.7rem;
 
-    background:
-        linear-gradient(
-            to right,
-            rgba(255, 255, 255, 0.05),
-            transparent 44%
-        ),
-        var(--shelf-mid);
+    letter-spacing:
+        0.42em;
 
-    box-shadow:
-        inset -5px 0 7px
-        rgba(0, 0, 0, 0.10);
-}
-
-
-.shelf-interior::before {
-    left: -12px;
-
-    border-radius:
-        6px 2px 2px 6px;
-}
-
-
-.shelf-interior::after {
-    right: -12px;
-
-    border-radius:
-        2px 6px 6px 2px;
-
-    transform:
-        scaleX(-1);
+    pointer-events: none;
 }
 
 
 /* =========================================================
    SHELF FLOOR
 
-   This is the physical board the books stand on.
+   This is the front lip / physical wood board.
    ========================================================= */
 
 .shelf-floor {
     position: absolute;
 
-    z-index: 16;
+    z-index: 32;
 
-    left: -4px;
-    right: -4px;
+    left: -3px;
+    right: -3px;
 
-    bottom: 4px;
+    bottom: -1px;
 
     height:
-        calc(
-            var(--shelf-depth)
-            + 2px
-        );
+        var(--shelf-depth);
 
     border:
         1px solid
-        rgba(0, 0, 0, 0.28);
+        rgba(31, 13, 18, 0.70);
 
     border-radius:
-        4px;
+        4px 4px 8px 8px;
 
     background:
         linear-gradient(
             to bottom,
-            var(--shelf-light),
-            var(--shelf-main) 48%,
-            var(--shelf-mid)
+            rgba(255, 225, 194, 0.12),
+            transparent 15%
+        ),
+
+        repeating-linear-gradient(
+            4deg,
+            transparent 0 34px,
+            rgba(255, 240, 218, 0.025) 34px 36px,
+            transparent 36px 70px
+        ),
+
+        linear-gradient(
+            to bottom,
+            var(--shelf-light) 0%,
+            var(--shelf-main) 43%,
+            var(--shelf-mid) 74%,
+            var(--shelf-dark) 100%
         );
 
     box-shadow:
-        0 6px 9px
-        rgba(0, 0, 0, 0.26),
+        0 9px 11px
+        rgba(11, 5, 9, 0.35),
 
         inset 0 2px
-        rgba(255, 255, 255, 0.08),
+        rgba(255, 234, 207, 0.10),
 
-        inset 0 -5px
-        rgba(0, 0, 0, 0.10);
+        inset 0 -6px
+        rgba(25, 10, 15, 0.18);
+
+    pointer-events: none;
 }
 
 
 /* =========================================================
-   BOOK STAGING AREA
+   BOOK STAGING
 
-   IMPORTANT:
-   Books are now positioned relative to the TOP of the
-   physical shelf floor instead of being held up by padding.
+   The row is now absolutely attached to the shelf floor.
 
-   This is what makes the bottoms of the books actually
-   touch the shelf.
+   Books cannot float because the bottom of this container is
+   calculated directly from the physical wood lip.
    ========================================================= */
 
 .shelf-books {
     position: absolute;
 
-    z-index: 22;
+    z-index: 24;
 
-    top: 22px;
-
-    left: 30px;
-    right: 30px;
+    top: 20px;
+    left: 26px;
+    right: 26px;
 
     bottom:
         calc(
             var(--shelf-depth)
-            + 6px
+            - 1px
         );
 
     min-height: 0;
@@ -575,87 +629,59 @@
 
     align-items: flex-end;
 
-    justify-content: flex-start;
-
     gap: 2px;
 
     padding:
-        0 14px;
+        0 9px;
 
     overflow: visible;
-
-    box-sizing: border-box;
 }
 
 
 /* =========================================================
-   BOOK BASELINE
-
-   Every upright book shares the same floor line regardless
-   of its height.
+   BOOK RHYTHM
    ========================================================= */
 
-.shelf-books > .book-spine {
-    flex:
-        0 0 auto;
+.shelf-books
+.book-spine {
+    flex: 0 0 auto;
 
-    align-self:
-        flex-end;
+    align-self: flex-end;
 
-    margin-bottom:
-        0 !important;
+    margin-bottom: 0;
 
     transform-origin:
         bottom center;
 }
 
 
-/* =========================================================
-   MORE NATURAL BOOK RHYTHM
-   ========================================================= */
-
 .shelf-books
-.book-spine:nth-child(5n + 2) {
+.book-spine:nth-child(6n + 2) {
     margin-left:
         2px;
 }
 
 
 .shelf-books
-.book-spine:nth-child(7n + 3) {
+.book-spine:nth-child(8n + 4) {
     margin-right:
         3px;
 }
 
 
 .shelf-books
-.book-spine:nth-child(9n + 4) {
-    transform:
-        rotate(-1.2deg);
-
-    transform-origin:
-        bottom center;
+.book-spine:nth-child(10n + 3) {
+    rotate:
+        -1deg;
 }
 
 
 .shelf-books
-.book-spine:nth-child(11n + 6) {
-    transform:
-        rotate(1.4deg);
-
-    transform-origin:
-        bottom center;
+.book-spine:nth-child(13n + 7) {
+    rotate:
+        1.1deg;
 }
 
-
-.shelf-books
-.book-spine:hover {
-    transform:
-        translateY(
-            var(--book-hover-lift)
-        )
-        rotate(0deg);
-}
 
 /* =========================================================
    EMPTY SHELF
@@ -664,10 +690,15 @@
 .shelf-empty {
     position: absolute;
 
-    z-index: 8;
+    z-index: 12;
 
     inset:
-        26px 25px 43px;
+        24px
+        25px
+        calc(
+            var(--shelf-depth)
+            + 18px
+        );
 
     display: flex;
 
@@ -676,58 +707,83 @@
     align-items: center;
     justify-content: center;
 
-    text-align:
-        center;
+    text-align: center;
 
     pointer-events: none;
 }
 
 
+.shelf-empty::before {
+    content: "✦";
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color:
+        rgba(
+            211,
+            140,
+            154,
+            0.43
+        );
+
+    font-size:
+        1.15rem;
+}
+
+
 .shelf-empty strong {
     color:
-        color-mix(
-            in srgb,
-            var(--paper) 70%,
-            transparent
+        rgba(
+            242,
+            221,
+            205,
+            0.75
         );
 
     font-family:
-        var(--font-display);
+        var(
+            --font-display,
+            Georgia,
+            serif
+        );
 
     font-size:
-        1.45rem;
+        1.35rem;
 
-    font-weight:
-        500;
+    font-weight: 600;
 }
 
 
 .shelf-empty span {
-    margin-top: 6px;
+    margin-top:
+        5px;
 
     color:
-        color-mix(
-            in srgb,
-            var(--paper) 40%,
-            transparent
+        rgba(
+            240,
+            215,
+            199,
+            0.40
         );
 
     font-size:
-        0.54rem;
+        0.58rem;
 }
 
 
 /* =========================================================
-   SHELF LABEL PLATE
+   SHELF COUNT PLATE
    ========================================================= */
 
 .shelf-footer-label {
     position: absolute;
 
-    z-index: 30;
+    z-index: 42;
 
     left: 50%;
-    bottom: -13px;
+    bottom: -14px;
 
     transform:
         translateX(-50%);
@@ -736,189 +792,170 @@
         126px;
 
     padding:
-        5px 14px;
+        6px 17px;
 
     border:
         1px solid
-        rgba(0, 0, 0, 0.30);
+        rgba(
+            223,
+            167,
+            111,
+            0.30
+        );
 
     border-radius:
-        var(--radius-small);
+        7px;
 
     background:
-        color-mix(
-            in srgb,
-            var(--shelf-mid) 88%,
-            black
+        linear-gradient(
+            to bottom,
+            #754437,
+            #4d2a2a
         );
 
     color:
-        color-mix(
-            in srgb,
-            var(--paper) 84%,
-            transparent
-        );
+        #ecd8c3;
 
     font-family:
-        var(--font-label);
+        var(
+            --font-label,
+            "Trebuchet MS",
+            sans-serif
+        );
 
     font-size:
-        0.68rem;
+        0.63rem;
 
-    font-weight:
-        600;
+    font-weight: 800;
 
     letter-spacing:
-        var(--label-letter-spacing);
+        0.13em;
 
     text-align:
         center;
 
     text-transform:
-        var(--shelf-label-transform);
+        uppercase;
 
     box-shadow:
-        0 5px 9px
-        rgba(0, 0, 0, 0.24),
+        0 5px 10px
+        rgba(9, 4, 8, 0.32),
 
         inset 0 1px
-        rgba(255, 255, 255, 0.06);
+        rgba(255, 231, 203, 0.08);
 }
 
 
 /* =========================================================
-   WALNUT
+   MATERIAL — WALNUT
    ========================================================= */
 
 .library-shelf.material-walnut {
-    --shelf-main:
-        #654737;
-
-    --shelf-light:
-        #88634e;
-
-    --shelf-mid:
-        #52392e;
-
-    --shelf-dark:
-        #34251f;
-
-    --shelf-back:
-        #302723;
+    --shelf-main: #744333;
+    --shelf-light: #a45e46;
+    --shelf-mid: #60352e;
+    --shelf-dark: #361d24;
+    --shelf-back: #2d2228;
 }
 
 
 /* =========================================================
-   HONEY OAK
+   MATERIAL — HONEY
    ========================================================= */
 
 .library-shelf.material-honey {
-    --shelf-main:
-        #9b7147;
-
-    --shelf-light:
-        #c19461;
-
-    --shelf-mid:
-        #805937;
-
-    --shelf-dark:
-        #543820;
-
-    --shelf-back:
-        #594634;
+    --shelf-main: #a46d42;
+    --shelf-light: #cb9460;
+    --shelf-mid: #7f4f35;
+    --shelf-dark: #4b2a26;
+    --shelf-back: #49352f;
 }
 
 
 /* =========================================================
-   CREAM
+   MATERIAL — CREAM
    ========================================================= */
 
 .library-shelf.material-cream {
-    --shelf-main:
-        #c9b69a;
-
-    --shelf-light:
-        #e0d2ba;
-
-    --shelf-mid:
-        #aa9577;
-
-    --shelf-dark:
-        #746451;
-
-    --shelf-back:
-        #948775;
+    --shelf-main: #c6aa8c;
+    --shelf-light: #ead5b9;
+    --shelf-mid: #a17e69;
+    --shelf-dark: #66505a;
+    --shelf-back: #5a4c56;
 }
 
 
 .library-shelf.material-cream
-.shelf-header h2,
+.shelf-header h2 {
+    color:
+        #382431;
+}
+
+
 .library-shelf.material-cream
-.shelf-header p,
+.shelf-header p {
+    color:
+        rgba(
+            55,
+            35,
+            46,
+            0.70
+        );
+}
+
+
 .library-shelf.material-cream
 .shelf-eyebrow {
     color:
-        #413832;
+        #72485e;
 }
 
 
 /* =========================================================
-   SAGE
+   MATERIAL — SAGE
    ========================================================= */
 
 .library-shelf.material-sage {
-    --shelf-main:
-        #69705d;
-
-    --shelf-light:
-        #8b947d;
-
-    --shelf-mid:
-        #555d4d;
-
-    --shelf-dark:
-        #384038;
-
-    --shelf-back:
-        #454d42;
+    --shelf-main: #66715c;
+    --shelf-light: #89977c;
+    --shelf-mid: #4d5e4f;
+    --shelf-dark: #293a34;
+    --shelf-back: #303d39;
 }
 
 
 /* =========================================================
-   DUSTY ROSE
+   MATERIAL — ROSE
    ========================================================= */
 
 .library-shelf.material-rose {
-    --shelf-main:
-        #8d6266;
-
-    --shelf-light:
-        #af8084;
-
-    --shelf-mid:
-        #744f53;
-
-    --shelf-dark:
-        #4d3539;
-
-    --shelf-back:
-        #5b474a;
+    --shelf-main: #985e68;
+    --shelf-light: #c17d83;
+    --shelf-mid: #744551;
+    --shelf-dark: #412733;
+    --shelf-back: #432f39;
 }
 
 
 /* =========================================================
-   MOOD: GOTHIC
+   MOOD — GOTHIC
    ========================================================= */
 
 .library-shelf.mood-gothic
 .shelf-interior {
     background:
+        radial-gradient(
+            ellipse at 50% -10%,
+            rgba(148, 59, 92, 0.12),
+            transparent 45%
+        ),
+
         linear-gradient(
             to bottom,
-            rgba(142, 58, 79, 0.08),
-            transparent 28%
+            rgba(0, 0, 0, 0.02),
+            rgba(0, 0, 0, 0.20)
         ),
+
         var(--shelf-back);
 }
 
@@ -927,108 +964,92 @@
 .shelf-footer-label {
     border:
         3px double
-        color-mix(
-            in srgb,
-            var(--accent-light) 30%,
-            transparent
+        rgba(
+            212,
+            151,
+            116,
+            0.30
         );
 }
 
 
 /* =========================================================
-   MOOD: BOTANICAL
+   MOOD — BOTANICAL
    ========================================================= */
 
 .library-shelf.mood-botanical
 .shelf-interior > .shelf-books::before {
-    content: "❦";
-
-    position: absolute;
-
-    z-index: -1;
-
-    right: 22px;
-    top: 15px;
+    content:
+        "❦     ✦";
 
     color:
-        rgba(173, 194, 147, 0.11);
+        rgba(
+            161,
+            190,
+            142,
+            0.12
+        );
 
     font-family:
         Georgia,
         serif;
 
     font-size:
-        4rem;
+        2.7rem;
 }
 
 
 /* =========================================================
-   MOOD: CELESTIAL
+   MOOD — CELESTIAL
    ========================================================= */
 
 .library-shelf.mood-celestial
-.shelf-books::before {
+.shelf-interior > .shelf-books::before {
     content:
-        "✦   ·   ☾   ·   ✧";
-
-    position: absolute;
-
-    top: 14px;
-    right: 16px;
+        "✦  ·  ☾  ·  ✧  ·  ★";
 
     color:
-        rgba(224, 200, 131, 0.13);
-
-    font-size:
-        0.82rem;
-
-    letter-spacing:
-        0.48em;
-
-    pointer-events: none;
+        rgba(
+            231,
+            195,
+            121,
+            0.16
+        );
 }
 
 
 /* =========================================================
-   MOOD: COTTAGE
+   MOOD — COTTAGE
    ========================================================= */
 
 .library-shelf.mood-cottage {
     --shelf-radius:
-        18px;
+        19px;
+
+    border-radius:
+        21px 21px 14px 14px;
 }
 
 
 .library-shelf.mood-cottage
-.shelf-footer-label {
+.shelf-interior {
     border-radius:
-        12px;
-
-    font-style:
-        italic;
+        14px 14px 7px 7px;
 }
 
 
 /* =========================================================
-   MOOD: SIMPLE
+   MOOD — SIMPLE
    ========================================================= */
 
 .library-shelf.mood-simple {
     --shelf-radius:
-        5px;
-}
-
-
-.library-shelf.mood-simple
-.shelf-interior::before,
-.library-shelf.mood-simple
-.shelf-interior::after {
-    width: 12px;
+        7px;
 }
 
 
 /* =========================================================
-   LAYOUT: UPRIGHT
+   LAYOUTS
    ========================================================= */
 
 .library-shelf.layout-upright
@@ -1038,9 +1059,19 @@
 }
 
 
-/* =========================================================
-   LAYOUT: STACKED
-   ========================================================= */
+.library-shelf.layout-mixed
+.shelf-books {
+    flex-wrap:
+        nowrap;
+}
+
+
+/*
+   Stacked is still supported.
+
+   A future book-stack component can improve this further,
+   but this prevents existing stacked shelves from breaking.
+*/
 
 .library-shelf.layout-stacked
 .shelf-books {
@@ -1051,240 +1082,119 @@
         flex-end;
 
     gap:
-        5px 8px;
+        5px 7px;
 }
 
 
 /* =========================================================
-   LAYOUT: MIXED
-   ========================================================= */
+   OCTOBER SLEEPOVER / CURRENT HAUNTED ID
 
-.library-shelf.layout-mixed
-.shelf-books {
-    flex-wrap:
-        nowrap;
-}
-
-
-/* =========================================================
-   THEME: HAUNTED
+   "haunted" is temporarily acting as October Sleepover
+   until the full theme system gets renamed.
    ========================================================= */
 
 body.theme-haunted
+.library-shelf,
+body[data-theme="october-sleepover"]
+.library-shelf,
+body.theme-october-sleepover
 .library-shelf {
-    border-radius:
-        7px;
-
-    box-shadow:
-        0 34px 56px
-        rgba(0, 0, 0, 0.32),
-
-        inset 0 1px
-        rgba(225, 196, 160, 0.05);
+    --shelf-main: #744033;
+    --shelf-light: #ad6249;
+    --shelf-mid: #5a302d;
+    --shelf-dark: #311922;
+    --shelf-back: #291c28;
 }
 
 
 body.theme-haunted
+.library-shelf::before,
+body[data-theme="october-sleepover"]
+.library-shelf::before,
+body.theme-october-sleepover
 .library-shelf::before {
-    border-radius:
-        5px;
-
     background:
-        repeating-linear-gradient(
-            90deg,
-            transparent 0 72px,
-            rgba(255, 255, 255, 0.016) 72px 74px
+        linear-gradient(
+            to bottom,
+            rgba(255, 227, 197, 0.17),
+            transparent 27%
         ),
-        var(--shelf-light);
-}
 
+        repeating-linear-gradient(
+            2deg,
+            transparent 0 34px,
+            rgba(255, 239, 214, 0.024) 34px 36px,
+            transparent 36px 72px
+        ),
 
-body.theme-haunted
-.shelf-interior {
-    border-radius:
-        3px;
-}
-
-
-body.theme-haunted
-.shelf-footer-label {
-    border-radius:
-        2px;
-
-    border:
-        3px double
-        rgba(211, 172, 127, 0.20);
-
-    background:
-        #4b342d;
+        linear-gradient(
+            90deg,
+            #61312e,
+            #99503e 20%,
+            #713a34 50%,
+            #a35b44 75%,
+            #542b2d
+        );
 }
 
 
 /* =========================================================
-   THEME: AUTUMN
+   OLD THEME COMPATIBILITY
+
+   We are not redesigning these yet.
+   Their basic visual difference remains intact.
    ========================================================= */
 
 body.theme-autumn
 .library-shelf {
-    border-radius:
-        16px 16px 10px 10px;
+    --shelf-main: #91603e;
+    --shelf-light: #bd8350;
+    --shelf-mid: #74482f;
+    --shelf-dark: #493023;
+    --shelf-back: #46352f;
 }
 
-
-body.theme-autumn
-.library-shelf::before {
-    border-radius:
-        15px 15px 5px 5px;
-}
-
-
-body.theme-autumn
-.shelf-interior::before,
-body.theme-autumn
-.shelf-interior::after {
-    border-radius:
-        8px;
-}
-
-
-body.theme-autumn
-.shelf-footer-label {
-    border-radius:
-        999px;
-
-    padding-left:
-        18px;
-
-    padding-right:
-        18px;
-}
-
-
-/* =========================================================
-   THEME: FOREST
-   ========================================================= */
 
 body.theme-forest
 .library-shelf {
+    --shelf-main: #596350;
+    --shelf-light: #78836b;
+    --shelf-mid: #455044;
+    --shelf-dark: #2c3430;
+    --shelf-back: #303b36;
+
     border-radius:
-        20px 20px 11px 11px;
+        20px;
 }
 
-
-body.theme-forest
-.library-shelf::before {
-    border-radius:
-        22px 22px 6px 6px;
-}
-
-
-body.theme-forest
-.shelf-interior {
-    border-radius:
-        14px 14px 5px 5px;
-}
-
-
-body.theme-forest
-.shelf-footer-label {
-    border-radius:
-        11px;
-
-    border-color:
-        rgba(196, 185, 121, 0.20);
-}
-
-
-/* =========================================================
-   THEME: RETRO HORROR
-   ========================================================= */
 
 body.theme-retro
 .library-shelf {
+    --shelf-main: #754139;
+    --shelf-light: #a75d49;
+    --shelf-mid: #552e2b;
+    --shelf-dark: #231a22;
+    --shelf-back: #211b25;
+
     border-radius:
-        2px;
+        3px;
 
     box-shadow:
         8px 8px 0
-        rgba(0, 0, 0, 0.22);
+        rgba(0, 0, 0, 0.30);
 }
 
-
-body.theme-retro
-.library-shelf::before,
-body.theme-retro
-.shelf-interior,
-body.theme-retro
-.shelf-footer-label {
-    border-radius:
-        1px;
-}
-
-
-body.theme-retro
-.library-shelf::before {
-    box-shadow:
-        4px 4px 0
-        rgba(0, 0, 0, 0.18);
-}
-
-
-body.theme-retro
-.shelf-footer-label {
-    border:
-        1px solid
-        var(--accent-light);
-
-    box-shadow:
-        3px 3px 0
-        rgba(0, 0, 0, 0.16);
-}
-
-
-/* =========================================================
-   THEME: PASTEL GHOSTS
-   ========================================================= */
 
 body.theme-ghosts
 .library-shelf {
+    --shelf-main: #a78e96;
+    --shelf-light: #d2bac1;
+    --shelf-mid: #88717c;
+    --shelf-dark: #5e4d5d;
+    --shelf-back: #766b78;
+
     border-radius:
-        23px 23px 14px 14px;
-
-    border-color:
-        rgba(80, 65, 72, 0.12);
-}
-
-
-body.theme-ghosts
-.library-shelf::before {
-    border-radius:
-        24px 24px 8px 8px;
-
-    border-color:
-        rgba(80, 65, 72, 0.11);
-}
-
-
-body.theme-ghosts
-.shelf-interior {
-    border-radius:
-        18px 18px 8px 8px;
-
-    border-color:
-        rgba(80, 65, 72, 0.10);
-}
-
-
-body.theme-ghosts
-.shelf-footer-label {
-    border-radius:
-        999px;
-
-    background:
-        #aaa08f;
-
-    color:
-        #4e4145;
+        23px;
 }
 
 
@@ -1295,9 +1205,11 @@ body.theme-ghosts
 .shelf-decoration-layer {
     position: absolute;
 
-    z-index: 40;
+    z-index: 35;
 
     inset: 0;
+
+    overflow: hidden;
 
     pointer-events: none;
 }
@@ -1308,12 +1220,14 @@ body.theme-ghosts
    ========================================================= */
 
 .shelf-decoration {
+    --decor-scale: 1;
+
     position: absolute;
 
-    z-index: 45;
+    z-index: 40;
 
-    width: 66px;
-    height: 66px;
+    width: 72px;
+    height: 72px;
 
     cursor: grab;
 
@@ -1326,37 +1240,46 @@ body.theme-ghosts
     transform-origin:
         center bottom;
 
+    transform:
+        scale(
+            var(--decor-scale)
+        );
+
     filter:
         drop-shadow(
-            0 6px 4px
-            rgba(0, 0, 0, 0.20)
+            0 7px 5px
+            rgba(5, 2, 6, 0.25)
         );
+
+    transition:
+        filter 0.16s ease;
 }
 
 
 .shelf-decoration:hover {
     filter:
         drop-shadow(
-            0 8px 6px
-            rgba(0, 0, 0, 0.24)
+            0 10px 7px
+            rgba(5, 2, 6, 0.34)
         );
 }
 
 
-.shelf-decoration:active {
-    cursor: grabbing;
+.shelf-decoration:active,
+.shelf-decoration.is-dragging {
+    cursor:
+        grabbing;
 }
 
 
 .shelf-decoration.is-dragging {
-    z-index: 150;
-
-    cursor: grabbing;
+    z-index:
+        150;
 
     filter:
         drop-shadow(
-            0 12px 10px
-            rgba(0, 0, 0, 0.30)
+            0 14px 10px
+            rgba(4, 1, 5, 0.42)
         );
 }
 
@@ -1367,18 +1290,250 @@ body.theme-ghosts
 }
 
 
-.decoration-symbol {
-    display: none;
+/* =========================================================
+   SVG DECORATIONS
+   ========================================================= */
+
+.decor-svg-object {
+    overflow:
+        visible;
+
+    background:
+        transparent;
 }
 
 
+.decor-svg {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: visible;
+
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   OCTOBER SVG OBJECT SIZES
+   ========================================================= */
+
+.decor-svg-object.decor-cat {
+    width:
+        96px;
+
+    height:
+        96px;
+}
+
+
+.decor-svg-object.decor-ghost {
+    width:
+        78px;
+
+    height:
+        88px;
+}
+
+
+.decor-svg-object.decor-mushroom {
+    width:
+        68px;
+
+    height:
+        82px;
+}
+
+
+.decor-svg-object.decor-candle {
+    width:
+        65px;
+
+    height:
+        98px;
+}
+
+
+.decor-svg-object.decor-mug {
+    width:
+        86px;
+
+    height:
+        86px;
+}
+
+
+.decor-svg-object.decor-potion {
+    width:
+        68px;
+
+    height:
+        94px;
+}
+
+
+.decor-svg-object.decor-crystal {
+    width:
+        84px;
+
+    height:
+        76px;
+}
+
+
+.decor-svg-object.decor-stars {
+    width:
+        92px;
+
+    height:
+        78px;
+
+    filter:
+        none;
+}
+
+
+.decor-svg-object.decor-eightball,
+.decor-svg-object.decor-magic-eight-ball {
+    width:
+        84px;
+
+    height:
+        84px;
+}
+
+
+.decor-svg-object.decor-moon,
+.decor-svg-object.decor-moon-stars {
+    width:
+        92px;
+
+    height:
+        92px;
+
+    filter:
+        drop-shadow(
+            0 0 8px
+            rgba(219, 163, 102, 0.10)
+        );
+}
+
+
+.decor-svg-object.decor-web,
+.decor-svg-object.decor-spider-web {
+    width:
+        94px;
+
+    height:
+        94px;
+
+    filter:
+        none;
+}
+
+
+.decor-svg-object.decor-key,
+.decor-svg-object.decor-old-key {
+    width:
+        106px;
+
+    height:
+        57px;
+}
+
+
+.decor-svg-object.decor-flashlight {
+    width:
+        112px;
+
+    height:
+        56px;
+}
+
+
+.decor-svg-object.decor-round-potion {
+    width:
+        76px;
+
+    height:
+        94px;
+}
+
+
+.decor-svg-object.decor-heart {
+    width:
+        70px;
+
+    height:
+        70px;
+
+    filter:
+        none;
+}
+
+
+/* =========================================================
+   DECORATION SCALE
+   ========================================================= */
+
+.shelf-decoration.scale-075 {
+    --decor-scale:
+        0.75;
+}
+
+
+.shelf-decoration.scale-100 {
+    --decor-scale:
+        1;
+}
+
+
+.shelf-decoration.scale-125 {
+    --decor-scale:
+        1.25;
+}
+
+
+.shelf-decoration.scale-150 {
+    --decor-scale:
+        1.5;
+}
+
+
+/* =========================================================
+   DRAG TARGET
+   ========================================================= */
+
+.shelf-interior.is-drag-target {
+    outline:
+        2px dashed
+        rgba(
+            222,
+            139,
+            157,
+            0.38
+        );
+
+    outline-offset:
+        -9px;
+}
+
+
+/* =========================================================
+   LEGACY CSS DECORATION SHADOW
+   ========================================================= */
+
+.decor-css-object
 .decor-shadow {
     position: absolute;
 
     z-index: 0;
 
-    left: 15%;
-    right: 15%;
+    left: 13%;
+    right: 13%;
+
     bottom: 1px;
 
     height: 7px;
@@ -1386,7 +1541,7 @@ body.theme-ghosts
     border-radius: 50%;
 
     background:
-        rgba(0, 0, 0, 0.20);
+        rgba(0, 0, 0, 0.25);
 
     filter:
         blur(3px);
@@ -1394,12 +1549,15 @@ body.theme-ghosts
 
 
 /* =========================================================
-   CAT
+   LEGACY CAT
    ========================================================= */
 
-.decor-cat {
-    width: 70px;
-    height: 72px;
+.decor-css-object.decor-cat {
+    width:
+        70px;
+
+    height:
+        72px;
 }
 
 
@@ -1409,6 +1567,7 @@ body.theme-ghosts
     z-index: 3;
 
     left: 17px;
+
     bottom: 6px;
 
     width: 37px;
@@ -1418,11 +1577,7 @@ body.theme-ghosts
         50% 50% 42% 42%;
 
     background:
-        #2d2b2f;
-
-    box-shadow:
-        inset -6px 0
-        rgba(255, 255, 255, 0.025);
+        #24202a;
 }
 
 
@@ -1432,16 +1587,17 @@ body.theme-ghosts
     z-index: 5;
 
     left: 16px;
+
     top: 8px;
 
     width: 38px;
     height: 34px;
 
     border-radius:
-        48% 48% 42% 42%;
+        48%;
 
     background:
-        #313035;
+        #29242e;
 }
 
 
@@ -1451,37 +1607,32 @@ body.theme-ghosts
 
     position: absolute;
 
-    top: -7px;
+    top: -8px;
 
     width: 15px;
     height: 18px;
 
     background:
-        #313035;
+        #29242e;
+
+    clip-path:
+        polygon(
+            50% 0,
+            100% 100%,
+            0 100%
+        );
 }
 
 
 .cat-head::before {
-    left: 2px;
-
-    clip-path:
-        polygon(
-            0 100%,
-            50% 0,
-            100% 100%
-        );
+    left:
+        2px;
 }
 
 
 .cat-head::after {
-    right: 2px;
-
-    clip-path:
-        polygon(
-            0 100%,
-            50% 0,
-            100% 100%
-        );
+    right:
+        2px;
 }
 
 
@@ -1495,20 +1646,23 @@ body.theme-ghosts
     width: 4px;
     height: 5px;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
     background:
-        #d8b86a;
+        #e0bf6a;
 }
 
 
 .cat-eye.left {
-    left: 26px;
+    left:
+        26px;
 }
 
 
 .cat-eye.right {
-    right: 26px;
+    right:
+        26px;
 }
 
 
@@ -1518,6 +1672,7 @@ body.theme-ghosts
     z-index: 2;
 
     right: 3px;
+
     bottom: 12px;
 
     width: 26px;
@@ -1525,29 +1680,33 @@ body.theme-ghosts
 
     border:
         7px solid
-        #2d2b2f;
+        #24202a;
 
     border-left: 0;
 
     border-radius:
         0 30px 30px 0;
 
-    transform:
-        rotate(-18deg);
+    rotate:
+        -18deg;
 }
 
 
 /* =========================================================
-   GHOST
+   LEGACY GHOST
    ========================================================= */
 
-.decor-ghost {
-    width: 64px;
-    height: 70px;
+.decor-css-object.decor-ghost {
+    width:
+        64px;
+
+    height:
+        70px;
 
     animation:
-        ghostFloat
-        3.8s ease-in-out infinite;
+        octoberGhostFloat
+        3.8s ease-in-out
+        infinite;
 }
 
 
@@ -1566,11 +1725,7 @@ body.theme-ghosts
         50% 50% 18% 18%;
 
     background:
-        #e9e1d5;
-
-    box-shadow:
-        inset -8px -5px
-        rgba(102, 87, 83, 0.06);
+        #eee1d7;
 }
 
 
@@ -1581,12 +1736,13 @@ body.theme-ghosts
 
     left: 0;
     right: 0;
+
     bottom: -7px;
 
     height: 15px;
 
     background:
-        #e9e1d5;
+        #eee1d7;
 
     clip-path:
         polygon(
@@ -1611,46 +1767,36 @@ body.theme-ghosts
     width: 5px;
     height: 7px;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
     background:
-        #574c4f;
+        #493a4d;
 }
 
 
 .ghost-eye.left {
-    left: 24px;
+    left:
+        24px;
 }
 
 
 .ghost-eye.right {
-    right: 24px;
-}
-
-
-@keyframes ghostFloat {
-
-    0%,
-    100% {
-        transform:
-            translateY(0);
-    }
-
-    50% {
-        transform:
-            translateY(-5px);
-    }
-
+    right:
+        24px;
 }
 
 
 /* =========================================================
-   BAT
+   LEGACY BAT
    ========================================================= */
 
 .decor-bat {
-    width: 70px;
-    height: 50px;
+    width:
+        70px;
+
+    height:
+        50px;
 }
 
 
@@ -1665,10 +1811,11 @@ body.theme-ghosts
     width: 13px;
     height: 25px;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
     background:
-        #30282f;
+        #28212c;
 }
 
 
@@ -1683,54 +1830,47 @@ body.theme-ghosts
     height: 29px;
 
     background:
-        #342a33;
+        #332938;
+
+    clip-path:
+        polygon(
+            100% 20%,
+            60% 0,
+            42% 31%,
+            0 18%,
+            18% 58%,
+            2% 100%,
+            62% 73%,
+            100% 100%
+        );
 }
 
 
 .bat-wing.left {
-    left: 2px;
-
-    clip-path:
-        polygon(
-            100% 20%,
-            60% 0,
-            42% 31%,
-            0 18%,
-            18% 58%,
-            2% 100%,
-            62% 73%,
-            100% 100%
-        );
+    left:
+        2px;
 }
 
 
 .bat-wing.right {
-    right: 2px;
+    right:
+        2px;
 
     transform:
         scaleX(-1);
-
-    clip-path:
-        polygon(
-            100% 20%,
-            60% 0,
-            42% 31%,
-            0 18%,
-            18% 58%,
-            2% 100%,
-            62% 73%,
-            100% 100%
-        );
 }
 
 
 /* =========================================================
-   RAVEN
+   LEGACY RAVEN
    ========================================================= */
 
 .decor-raven {
-    width: 69px;
-    height: 68px;
+    width:
+        69px;
+
+    height:
+        68px;
 }
 
 
@@ -1740,6 +1880,7 @@ body.theme-ghosts
     z-index: 3;
 
     left: 19px;
+
     bottom: 6px;
 
     width: 35px;
@@ -1749,7 +1890,7 @@ body.theme-ghosts
         50% 55% 42% 48%;
 
     background:
-        #23252a;
+        #22232a;
 }
 
 
@@ -1764,10 +1905,11 @@ body.theme-ghosts
     width: 31px;
     height: 29px;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
     background:
-        #26282d;
+        #26272f;
 }
 
 
@@ -1783,7 +1925,7 @@ body.theme-ghosts
     height: 11px;
 
     background:
-        #584c43;
+        #7a5847;
 
     clip-path:
         polygon(
@@ -1805,20 +1947,24 @@ body.theme-ghosts
     width: 4px;
     height: 4px;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
     background:
-        #d3b46d;
+        #d6b761;
 }
 
 
 /* =========================================================
-   GOBLIN
+   LEGACY GOBLIN
    ========================================================= */
 
 .decor-goblin {
-    width: 68px;
-    height: 70px;
+    width:
+        68px;
+
+    height:
+        70px;
 }
 
 
@@ -1837,7 +1983,7 @@ body.theme-ghosts
         48%;
 
     background:
-        #73815d;
+        #72815f;
 }
 
 
@@ -1852,12 +1998,13 @@ body.theme-ghosts
     height: 16px;
 
     background:
-        #6d7957;
+        #697858;
 }
 
 
 .goblin-ear.left {
-    left: 2px;
+    left:
+        2px;
 
     clip-path:
         polygon(
@@ -1869,7 +2016,8 @@ body.theme-ghosts
 
 
 .goblin-ear.right {
-    right: 2px;
+    right:
+        2px;
 
     clip-path:
         polygon(
@@ -1890,30 +2038,36 @@ body.theme-ghosts
     width: 5px;
     height: 5px;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
     background:
-        #e4c575;
+        #e4c574;
 }
 
 
 .goblin-eye.left {
-    left: 27px;
+    left:
+        27px;
 }
 
 
 .goblin-eye.right {
-    right: 27px;
+    right:
+        27px;
 }
 
 
 /* =========================================================
-   MUSHROOM
+   LEGACY MUSHROOM
    ========================================================= */
 
-.decor-mushroom {
-    width: 64px;
-    height: 64px;
+.decor-css-object.decor-mushroom {
+    width:
+        64px;
+
+    height:
+        64px;
 }
 
 
@@ -1923,6 +2077,7 @@ body.theme-ghosts
     z-index: 2;
 
     left: 25px;
+
     bottom: 5px;
 
     width: 18px;
@@ -1932,7 +2087,7 @@ body.theme-ghosts
         8px 8px 5px 5px;
 
     background:
-        #d9cfb7;
+        #dfcfba;
 }
 
 
@@ -1951,11 +2106,7 @@ body.theme-ghosts
         50% 50% 38% 38%;
 
     background:
-        #a65d4c;
-
-    box-shadow:
-        inset 0 -6px
-        rgba(0, 0, 0, 0.05);
+        #b65b58;
 }
 
 
@@ -1967,38 +2118,51 @@ body.theme-ghosts
     width: 6px;
     height: 6px;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
     background:
-        #e9dec5;
+        #f1dcc4;
 }
 
 
 .mushroom-spot.one {
-    left: 21px;
-    top: 14px;
+    left:
+        21px;
+
+    top:
+        14px;
 }
 
 
 .mushroom-spot.two {
-    right: 19px;
-    top: 19px;
+    right:
+        19px;
+
+    top:
+        19px;
 }
 
 
 .mushroom-spot.three {
-    left: 32px;
-    top: 8px;
+    left:
+        32px;
+
+    top:
+        8px;
 }
 
 
 /* =========================================================
-   PLANT
+   LEGACY PLANT
    ========================================================= */
 
 .decor-plant {
-    width: 65px;
-    height: 70px;
+    width:
+        66px;
+
+    height:
+        72px;
 }
 
 
@@ -2008,6 +2172,7 @@ body.theme-ghosts
     z-index: 4;
 
     left: 18px;
+
     bottom: 4px;
 
     width: 32px;
@@ -2022,7 +2187,7 @@ body.theme-ghosts
         );
 
     background:
-        #9a6851;
+        #9a6550;
 }
 
 
@@ -2038,7 +2203,7 @@ body.theme-ghosts
         80% 20% 80% 20%;
 
     background:
-        #657650;
+        #657954;
 
     transform-origin:
         bottom;
@@ -2046,48 +2211,63 @@ body.theme-ghosts
 
 
 .plant-leaf.one {
-    left: 23px;
-    top: 7px;
+    left:
+        23px;
 
-    transform:
-        rotate(-24deg);
+    top:
+        7px;
+
+    rotate:
+        -24deg;
 }
 
 
 .plant-leaf.two {
-    left: 33px;
-    top: 4px;
+    left:
+        33px;
 
-    transform:
-        rotate(18deg);
+    top:
+        4px;
+
+    rotate:
+        18deg;
 }
 
 
 .plant-leaf.three {
-    left: 16px;
-    top: 18px;
+    left:
+        16px;
 
-    transform:
-        rotate(-48deg);
+    top:
+        18px;
+
+    rotate:
+        -48deg;
 }
 
 
 .plant-leaf.four {
-    left: 39px;
-    top: 17px;
+    left:
+        39px;
 
-    transform:
-        rotate(47deg);
+    top:
+        17px;
+
+    rotate:
+        47deg;
 }
 
 
 /* =========================================================
-   FLOWERS
+   LEGACY FLOWERS
    ========================================================= */
 
 .decor-flowers {
-    width: 65px;
-    height: 69px;
+    width:
+        65px;
+
+    height:
+        69px;
 }
 
 
@@ -2097,13 +2277,14 @@ body.theme-ghosts
     z-index: 1;
 
     left: 50%;
+
     bottom: 5px;
 
     width: 2px;
     height: 40px;
 
     background:
-        #657752;
+        #687853;
 
     transform-origin:
         bottom;
@@ -2111,22 +2292,14 @@ body.theme-ghosts
 
 
 .flower-stem.stem-1 {
-    transform:
-        translateX(-50%)
-        rotate(-16deg);
-}
-
-
-.flower-stem.stem-2 {
-    transform:
-        translateX(-50%);
+    rotate:
+        -16deg;
 }
 
 
 .flower-stem.stem-3 {
-    transform:
-        translateX(-50%)
-        rotate(18deg);
+    rotate:
+        18deg;
 }
 
 
@@ -2138,44 +2311,43 @@ body.theme-ghosts
     width: 21px;
     height: 21px;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
     background:
         radial-gradient(
             circle,
-            #dab97c 0 20%,
-            #cb8b93 21% 48%,
+            #e0bb73 0 20%,
+            #c77b98 22% 48%,
             transparent 50%
         );
 }
 
 
 .flower-bloom.bloom-1 {
-    left: 8px;
-    top: 12px;
+    left:
+        8px;
+
+    top:
+        12px;
 }
 
 
 .flower-bloom.bloom-2 {
-    left: 25px;
-    top: 2px;
+    left:
+        25px;
 
-    transform:
-        scale(1.08);
+    top:
+        2px;
 }
 
 
 .flower-bloom.bloom-3 {
-    right: 5px;
-    top: 17px;
+    right:
+        5px;
 
-    background:
-        radial-gradient(
-            circle,
-            #dab97c 0 20%,
-            #b486a0 21% 48%,
-            transparent 50%
-        );
+    top:
+        17px;
 }
 
 
@@ -2185,6 +2357,7 @@ body.theme-ghosts
     z-index: 3;
 
     left: 21px;
+
     bottom: 4px;
 
     width: 25px;
@@ -2194,17 +2367,20 @@ body.theme-ghosts
         5px 5px 11px 11px;
 
     background:
-        #74665f;
+        #705d66;
 }
 
 
 /* =========================================================
-   MOSS
+   LEGACY MOSS
    ========================================================= */
 
 .decor-moss {
-    width: 76px;
-    height: 38px;
+    width:
+        76px;
+
+    height:
+        38px;
 }
 
 
@@ -2220,19 +2396,22 @@ body.theme-ghosts
         50% 50% 35% 35%;
 
     background:
-        #5b6d4b;
+        #576a4c;
 }
 
 
 .moss-clump.one {
-    left: 5px;
+    left:
+        5px;
 }
 
 
 .moss-clump.two {
-    left: 25px;
+    left:
+        25px;
 
-    height: 25px;
+    height:
+        25px;
 
     background:
         #657956;
@@ -2240,20 +2419,21 @@ body.theme-ghosts
 
 
 .moss-clump.three {
-    right: 5px;
-
-    background:
-        #536447;
+    right:
+        5px;
 }
 
 
 /* =========================================================
-   PUMPKIN
+   LEGACY PUMPKIN
    ========================================================= */
 
 .decor-pumpkin {
-    width: 70px;
-    height: 59px;
+    width:
+        70px;
+
+    height:
+        59px;
 }
 
 
@@ -2266,11 +2446,8 @@ body.theme-ghosts
 
     height: 40px;
 
-    border-radius: 50%;
-
-    box-shadow:
-        inset 0 -5px
-        rgba(0, 0, 0, 0.035);
+    border-radius:
+        50%;
 }
 
 
@@ -2280,7 +2457,7 @@ body.theme-ghosts
     width: 28px;
 
     background:
-        #ba6035;
+        #b65b35;
 }
 
 
@@ -2290,7 +2467,7 @@ body.theme-ghosts
     width: 29px;
 
     background:
-        #d27640;
+        #ce7041;
 }
 
 
@@ -2300,7 +2477,7 @@ body.theme-ghosts
     width: 27px;
 
     background:
-        #dc8047;
+        #df824b;
 }
 
 
@@ -2310,7 +2487,7 @@ body.theme-ghosts
     width: 29px;
 
     background:
-        #cf6d3b;
+        #ca683b;
 }
 
 
@@ -2320,7 +2497,7 @@ body.theme-ghosts
     width: 27px;
 
     background:
-        #b85d34;
+        #ac5332;
 }
 
 
@@ -2330,18 +2507,25 @@ body.theme-ghosts
     z-index: 6;
 
     left: 27px;
+
     bottom: 15px;
 
     width: 8px;
     height: 19px;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
     background:
-        rgba(255, 255, 255, 0.065);
+        rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
 
-    transform:
-        rotate(7deg);
+    rotate:
+        7deg;
 }
 
 
@@ -2362,18 +2546,21 @@ body.theme-ghosts
     background:
         #65704e;
 
-    transform:
-        rotate(7deg);
+    rotate:
+        7deg;
 }
 
 
 /* =========================================================
-   CANDLE
+   LEGACY CANDLE
    ========================================================= */
 
-.decor-candle {
-    width: 51px;
-    height: 72px;
+.decor-css-object.decor-candle {
+    width:
+        51px;
+
+    height:
+        72px;
 }
 
 
@@ -2383,6 +2570,7 @@ body.theme-ghosts
     z-index: 3;
 
     left: 14px;
+
     bottom: 5px;
 
     width: 25px;
@@ -2392,14 +2580,7 @@ body.theme-ghosts
         7px 7px 3px 3px;
 
     background:
-        #e5d4b2;
-
-    box-shadow:
-        inset -4px 0
-        rgba(0, 0, 0, 0.03),
-
-        0 3px 4px
-        rgba(0, 0, 0, 0.08);
+        #e6cdb0;
 }
 
 
@@ -2409,16 +2590,14 @@ body.theme-ghosts
     z-index: 6;
 
     left: 25px;
+
     top: 16px;
 
     width: 2px;
     height: 9px;
 
-    border-radius:
-        2px;
-
     background:
-        #3b2f29;
+        #3a292d;
 }
 
 
@@ -2428,6 +2607,7 @@ body.theme-ghosts
     z-index: 7;
 
     left: 20px;
+
     top: 1px;
 
     width: 13px;
@@ -2437,17 +2617,22 @@ body.theme-ghosts
         70% 35% 65% 35%;
 
     background:
-        #efa05e;
+        #f0a15e;
 
-    transform:
-        rotate(43deg);
+    rotate:
+        43deg;
 
     box-shadow:
-        0 0 9px
-        rgba(235, 150, 82, 0.35);
+        0 0 12px
+        rgba(
+            239,
+            149,
+            76,
+            0.42
+        );
 
     animation:
-        candleFlicker
+        octoberCandleFlicker
         1.5s ease-in-out
         infinite alternate;
 }
@@ -2459,6 +2644,7 @@ body.theme-ghosts
     z-index: 4;
 
     left: 17px;
+
     top: 23px;
 
     width: 8px;
@@ -2468,34 +2654,20 @@ body.theme-ghosts
         0 0 7px 7px;
 
     background:
-        #f1dfbd;
-}
-
-
-@keyframes candleFlicker {
-
-    from {
-        transform:
-            rotate(41deg)
-            scale(0.97);
-    }
-
-    to {
-        transform:
-            rotate(45deg)
-            scale(1.03);
-    }
-
+        #f0d9b9;
 }
 
 
 /* =========================================================
-   MUG
+   LEGACY MUG
    ========================================================= */
 
-.decor-mug {
-    width: 63px;
-    height: 58px;
+.decor-css-object.decor-mug {
+    width:
+        63px;
+
+    height:
+        58px;
 }
 
 
@@ -2505,6 +2677,7 @@ body.theme-ghosts
     z-index: 3;
 
     left: 11px;
+
     bottom: 5px;
 
     width: 38px;
@@ -2514,7 +2687,7 @@ body.theme-ghosts
         4px 4px 10px 10px;
 
     background:
-        #8e7164;
+        #93666f;
 }
 
 
@@ -2524,6 +2697,7 @@ body.theme-ghosts
     z-index: 2;
 
     right: 4px;
+
     bottom: 13px;
 
     width: 22px;
@@ -2531,7 +2705,7 @@ body.theme-ghosts
 
     border:
         6px solid
-        #8e7164;
+        #93666f;
 
     border-left: 0;
 
@@ -2546,15 +2720,17 @@ body.theme-ghosts
     z-index: 5;
 
     left: 11px;
+
     bottom: 32px;
 
     width: 38px;
     height: 7px;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
     background:
-        #ad9182;
+        #b58089;
 }
 
 
@@ -2570,35 +2746,46 @@ body.theme-ghosts
 
     border-left:
         2px solid
-        rgba(235, 225, 210, 0.28);
+        rgba(
+            240,
+            221,
+            208,
+            0.30
+        );
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 }
 
 
 .mug-steam.steam-1 {
-    left: 18px;
+    left:
+        18px;
 
-    transform:
-        rotate(10deg);
+    rotate:
+        10deg;
 }
 
 
 .mug-steam.steam-2 {
-    left: 32px;
+    left:
+        32px;
 
-    transform:
-        rotate(-8deg);
+    rotate:
+        -8deg;
 }
 
 
 /* =========================================================
-   POTION
+   LEGACY POTION
    ========================================================= */
 
-.decor-potion {
-    width: 58px;
-    height: 67px;
+.decor-css-object.decor-potion {
+    width:
+        58px;
+
+    height:
+        67px;
 }
 
 
@@ -2608,6 +2795,7 @@ body.theme-ghosts
     z-index: 3;
 
     left: 13px;
+
     bottom: 5px;
 
     width: 34px;
@@ -2615,13 +2803,23 @@ body.theme-ghosts
 
     border:
         2px solid
-        rgba(221, 212, 197, 0.36);
+        rgba(
+            233,
+            218,
+            216,
+            0.36
+        );
 
     border-radius:
         12px 12px 15px 15px;
 
     background:
-        rgba(91, 69, 96, 0.60);
+        rgba(
+            108,
+            65,
+            103,
+            0.72
+        );
 }
 
 
@@ -2632,6 +2830,7 @@ body.theme-ghosts
 
     left: 16px;
     right: 13px;
+
     bottom: 8px;
 
     height: 24px;
@@ -2640,7 +2839,7 @@ body.theme-ghosts
         8px 8px 12px 12px;
 
     background:
-        #7d4f79;
+        #995878;
 }
 
 
@@ -2650,6 +2849,7 @@ body.theme-ghosts
     z-index: 2;
 
     left: 23px;
+
     top: 5px;
 
     width: 16px;
@@ -2657,12 +2857,23 @@ body.theme-ghosts
 
     border:
         2px solid
-        rgba(221, 212, 197, 0.36);
+        rgba(
+            233,
+            218,
+            216,
+            0.36
+        );
 
-    border-bottom: 0;
+    border-bottom:
+        0;
 
     background:
-        rgba(91, 69, 96, 0.42);
+        rgba(
+            108,
+            65,
+            103,
+            0.50
+        );
 }
 
 
@@ -2672,25 +2883,30 @@ body.theme-ghosts
     z-index: 6;
 
     left: 22px;
+
     top: 1px;
 
     width: 18px;
     height: 9px;
 
-    border-radius: 3px;
+    border-radius:
+        3px;
 
     background:
-        #8b6549;
+        #9a6b49;
 }
 
 
 /* =========================================================
-   CRYSTAL
+   LEGACY CRYSTALS
    ========================================================= */
 
-.decor-crystal {
-    width: 62px;
-    height: 65px;
+.decor-css-object.decor-crystal {
+    width:
+        62px;
+
+    height:
+        65px;
 }
 
 
@@ -2702,7 +2918,7 @@ body.theme-ghosts
     bottom: 5px;
 
     background:
-        #8f7dab;
+        #936fa8;
 
     clip-path:
         polygon(
@@ -2712,56 +2928,67 @@ body.theme-ghosts
             20% 100%,
             0 30%
         );
-
-    box-shadow:
-        inset -5px -5px
-        rgba(0, 0, 0, 0.08);
 }
 
 
 .crystal-shard.one {
-    left: 10px;
+    left:
+        10px;
 
-    width: 20px;
-    height: 40px;
+    width:
+        20px;
 
-    transform:
-        rotate(-10deg);
+    height:
+        40px;
+
+    rotate:
+        -10deg;
 }
 
 
 .crystal-shard.two {
-    left: 23px;
+    left:
+        23px;
 
-    width: 23px;
-    height: 54px;
+    width:
+        23px;
+
+    height:
+        54px;
 
     background:
-        #a08db9;
+        #af83b5;
 }
 
 
 .crystal-shard.three {
-    right: 7px;
+    right:
+        7px;
 
-    width: 18px;
-    height: 34px;
+    width:
+        18px;
 
-    transform:
-        rotate(12deg);
+    height:
+        34px;
+
+    rotate:
+        12deg;
 
     background:
-        #7f709b;
+        #775f9b;
 }
 
 
 /* =========================================================
-   STARS
+   LEGACY STARS
    ========================================================= */
 
-.decor-stars {
-    width: 72px;
-    height: 58px;
+.decor-css-object.decor-stars {
+    width:
+        72px;
+
+    height:
+        58px;
 }
 
 
@@ -2769,17 +2996,25 @@ body.theme-ghosts
     position: absolute;
 
     color:
-        #d9bd77;
+        #e2bc72;
 
     text-shadow:
-        0 0 6px
-        rgba(217, 189, 119, 0.18);
+        0 0 8px
+        rgba(
+            226,
+            188,
+            114,
+            0.16
+        );
 }
 
 
 .star-bit.one {
-    left: 12px;
-    top: 16px;
+    left:
+        12px;
+
+    top:
+        16px;
 
     font-size:
         0.75rem;
@@ -2787,13 +3022,17 @@ body.theme-ghosts
 
 
 .star-bit.one::before {
-    content: "✦";
+    content:
+        "✦";
 }
 
 
 .star-bit.two {
-    left: 35px;
-    top: 4px;
+    left:
+        35px;
+
+    top:
+        4px;
 
     font-size:
         0.55rem;
@@ -2801,13 +3040,17 @@ body.theme-ghosts
 
 
 .star-bit.two::before {
-    content: "✧";
+    content:
+        "✧";
 }
 
 
 .star-bit.three {
-    right: 8px;
-    top: 25px;
+    right:
+        8px;
+
+    top:
+        25px;
 
     font-size:
         0.7rem;
@@ -2815,63 +3058,67 @@ body.theme-ghosts
 
 
 .star-bit.three::before {
-    content: "✦";
+    content:
+        "✦";
 }
 
 
 /* =========================================================
-   DECORATION SCALES
+   FALLBACK SYMBOL
    ========================================================= */
 
-.shelf-decoration.scale-075 {
-    transform:
-        scale(0.75);
-}
+.decoration-symbol {
+    display: grid;
 
+    width: 100%;
+    height: 100%;
 
-.shelf-decoration.scale-100 {
-    transform:
-        scale(1);
-}
+    place-items: center;
 
+    color:
+        #d99384;
 
-.shelf-decoration.scale-125 {
-    transform:
-        scale(1.25);
-}
+    font-family:
+        Georgia,
+        serif;
 
-
-.shelf-decoration.scale-150 {
-    transform:
-        scale(1.5);
+    font-size:
+        2rem;
 }
 
 
 /* =========================================================
-   USER DECORATIONS ALWAYS VISIBLE
+   ANIMATIONS
    ========================================================= */
 
-.draggable-decoration {
-    display:
-        block !important;
+@keyframes octoberGhostFloat {
+
+    0%,
+    100% {
+        translate:
+            0 0;
+    }
+
+    50% {
+        translate:
+            0 -5px;
+    }
+
 }
 
 
-/* =========================================================
-   DRAG STATE
-   ========================================================= */
+@keyframes octoberCandleFlicker {
 
-.shelf-interior.is-drag-target {
-    outline:
-        1px dashed
-        color-mix(
-            in srgb,
-            var(--accent-light) 38%,
-            transparent
-        );
+    from {
+        transform:
+            scale(0.96);
+    }
 
-    outline-offset:
-        -10px;
+    to {
+        transform:
+            scale(1.04);
+    }
+
 }
 
 
@@ -2883,43 +3130,52 @@ body.theme-ghosts
 
     .shelf-container {
         gap:
-            68px;
+            66px;
+    }
+
+
+    .library-shelf {
+        padding:
+            19px
+            18px
+            28px;
     }
 
 
     .shelf-interior {
+        height:
+            285px;
+
         min-height:
-            280px;
-
-        padding-left:
-            22px;
-
-        padding-right:
-            22px;
+            285px;
     }
 
 
     .shelf-books {
-        top:
-            20px;
-
         left:
-            22px;
+            18px;
 
         right:
-            22px;
+            18px;
+    }
 
-        bottom:
-            calc(
-                var(--shelf-depth)
-                + 6px
-            );
 
-        min-height:
-            0;
+    .decor-svg-object.decor-cat {
+        width:
+            86px;
 
-        padding:
-            0 10px;
+        height:
+            86px;
+    }
+
+
+    .decor-svg-object.decor-eightball,
+    .decor-svg-object.decor-magic-eight-ball {
+        width:
+            76px;
+
+        height:
+            76px;
     }
 
 }
@@ -2933,13 +3189,21 @@ body.theme-ghosts
 
     .shelf-container {
         gap:
-            58px;
+            52px;
     }
 
 
     .library-shelf {
+        --shelf-depth:
+            23px;
+
         padding:
-            16px 13px 20px;
+            15px
+            10px
+            24px;
+
+        border-radius:
+            12px;
     }
 
 
@@ -2948,13 +3212,16 @@ body.theme-ghosts
             -10px;
 
         left:
-            -5px;
+            -4px;
 
         right:
-            -5px;
+            -4px;
 
         height:
-            19px;
+            17px;
+
+        border-radius:
+            10px 10px 5px 5px;
     }
 
 
@@ -2965,8 +3232,30 @@ body.theme-ghosts
         align-items:
             flex-start;
 
+        gap:
+            11px;
+
         margin:
-            4px 3px 15px;
+            3px 2px 12px;
+
+        padding:
+            5px 2px 12px;
+    }
+
+
+    .shelf-header h2 {
+        font-size:
+            clamp(
+                1.7rem,
+                8vw,
+                2.2rem
+            );
+    }
+
+
+    .shelf-header p {
+        font-size:
+            0.66rem;
     }
 
 
@@ -2982,112 +3271,125 @@ body.theme-ghosts
     .shelf-action-button {
         flex:
             1 1 auto;
+
+        min-height:
+            36px;
     }
 
 
     .shelf-interior {
+        height:
+            250px;
+
         min-height:
-            260px;
+            250px;
 
-        padding:
-            20px 13px 0;
+        border-radius:
+            8px 8px 4px 4px;
     }
 
 
-    .shelf-interior::before,
-    .shelf-interior::after {
-        width:
-            13px;
-    }
-
-
-    .shelf-interior::before {
-        left:
-            -8px;
-    }
-
-
-    .shelf-interior::after {
-        right:
-            -8px;
-    }
-
+    /*
+       Correct mobile baseline.
+    */
 
     .shelf-books {
         top:
-            18px;
+            16px;
 
         left:
-            13px;
+            7px;
 
         right:
-            13px;
+            7px;
 
         bottom:
             calc(
                 var(--shelf-depth)
-                + 5px
+                - 1px
             );
-
-        min-height:
-            0;
 
         gap:
             1px;
 
         padding:
-            0 4px;
+            0 2px;
+
+        align-items:
+            flex-end !important;
     }
 
 
-    .shelf-decoration {
-        --mobile-decoration-scale:
-            0.82;
+    .shelf-books
+    > .book-spine {
+        align-self:
+            flex-end !important;
 
-        transform:
-            scale(
-                var(--mobile-decoration-scale)
-            );
+        margin-bottom:
+            0 !important;
+    }
+
+
+    .shelf-floor {
+        height:
+            var(--shelf-depth);
+    }
+
+
+    .shelf-footer-label {
+        bottom:
+            -12px;
+
+        min-width:
+            105px;
+
+        padding:
+            5px 10px;
+
+        font-size:
+            0.55rem;
+    }
+
+
+    /*
+       SVG artwork scales down automatically on phones.
+    */
+
+    .shelf-decoration {
+        --mobile-decor-factor:
+            0.78;
     }
 
 
     .shelf-decoration.scale-075 {
-        transform:
-            scale(
-                calc(
-                    var(--mobile-decoration-scale)
-                    * 0.75
-                )
+        --decor-scale:
+            calc(
+                0.75 *
+                var(--mobile-decor-factor)
             );
     }
 
 
     .shelf-decoration.scale-100 {
-        transform:
-            scale(
-                var(--mobile-decoration-scale)
-            );
+        --decor-scale:
+            var(--mobile-decor-factor);
     }
 
 
     .shelf-decoration.scale-125 {
-        transform:
-            scale(
-                calc(
-                    var(--mobile-decoration-scale)
-                    * 1.25
-                )
+        --decor-scale:
+            calc(
+                1.25 *
+                var(--mobile-decor-factor)
             );
     }
 
 
     .shelf-decoration.scale-150 {
-        transform:
-            scale(
-                calc(
-                    var(--mobile-decoration-scale)
-                    * 1.5
-                )
+        --decor-scale:
+            calc(
+                1.5 *
+                var(--mobile-decor-factor)
             );
     }
 
@@ -3101,8 +3403,13 @@ body.theme-ghosts
 @media (max-width: 430px) {
 
     .library-shelf {
+        --shelf-depth:
+            21px;
+
         padding:
-            14px 8px 18px;
+            13px
+            7px
+            22px;
     }
 
 
@@ -3114,64 +3421,64 @@ body.theme-ghosts
 
     .shelf-header p {
         font-size:
-            0.55rem;
+            0.62rem;
+    }
+
+
+    .shelf-eyebrow {
+        font-size:
+            0.45rem;
     }
 
 
     .shelf-interior {
-        min-height:
-            240px;
+        height:
+            230px;
 
-        padding:
-            18px 8px 0;
+        min-height:
+            230px;
     }
 
 
     .shelf-books {
         top:
-            16px;
+            14px;
 
         left:
-            8px;
+            4px;
 
         right:
-            8px;
-
-        bottom:
-            calc(
-                var(--shelf-depth)
-                + 5px
-            );
-
-        min-height:
-            0;
+            4px;
 
         padding:
-            0 1px;
+            0;
     }
 
 
     .shelf-footer-label {
         min-width:
-            105px;
+            96px;
 
         font-size:
-            0.56rem;
+            0.50rem;
     }
 
 
     .shelf-decoration {
-        --mobile-decoration-scale:
-            0.72;
+        --mobile-decor-factor:
+            0.67;
     }
 
 }
+
+
 /* =========================================================
    REDUCED MOTION
    ========================================================= */
 
 .reduce-motion
 .decor-ghost,
+
 .reduce-motion
 .decor-candle
 .candle-flame {
